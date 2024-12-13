@@ -1,0 +1,14 @@
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6" *ngFor="let item of ctablock;let i = index">
+            <div class="cta cta-2 item{{1+i}}">
+                <i [class]="item.icon"></i>
+                <div class="cta-body">
+                    <h4>{{item.title}}</h4>
+                    <p>{{item.text}}</p>
+                    <a routerLink="/pricing" class="btn-link">Find Out More <i class="fas fa-arrow-right"></i> </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

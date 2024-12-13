@@ -1,0 +1,2716 @@
+<p-toast key="toastMsg"></p-toast>
+
+<div class="tint">
+    <div class="search-bar-locations p-p-0">
+        <!-- <p class="animation-text-heading">Eaziest Way to discover and book venues&nbsp;</p>
+        <div class="verticalFlip">
+             <span *ngFor="let category of categoryMenuList">for {{category.name}}</span>
+          </div> -->
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-8 col-sm-12 animation-text-one">
+                <div class="verticalFlip mb-10">
+                    Eaziest Way to discover and book venues&nbsp;
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-4 col-sm-12 animation-text-two">
+                <div class="verticalFlip mb-10">
+                    <b
+                        ><span *ngFor="let category of categoryMenuList"
+                            >for {{ category.name }}</span
+                        ></b
+                    >
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center search-bar search_bar_listing_page">
+        <div
+            class="vendor-text w-100 text-primary h-50 v-center padding-h-10 h6 bg-white text-bold f-space-between"
+            (click)="showVenueListSearch()"
+        >
+            <i class="find-venue-search-icon pi pi-search"></i
+            ><span class="venue-search">Search Venue</span>
+            <span class="find-venue-icon">
+                <i class="pi pi-angle-right"></i>
+            </span>
+        </div>
+        <div
+            [ngClass]="isNavbarFixed ? 'fixed' : 'notfixed'"
+            (scroll)="onScroll()"
+        >
+            <div class="city-field col-md-2 p-p-0">
+                <span class="p-fluid">
+                    <label for="" class="icons-image">
+                        <img
+                            src="assets/images/category-icons/celebration.svg"
+                        />
+                    </label>
+                    <p-autoComplete
+                        [(ngModel)]="selectedOccasion"
+                        (onSelect)="onClickCategory($event)"
+                        (onClear)="onClickCategory($event)"
+                        placeholder="Occasion"
+                        class="occasion-list"
+                        [dropdown]="true"
+                        [suggestions]="filterOccasion"
+                        (completeMethod)="filterCategory($event)"
+                        field="name"
+                    ></p-autoComplete>
+                    <!-- <p-dropdown [options]="categoryMenuList" [filter]="true" [(ngModel)]="selectedOccasion"
+                        placeholder="Occasion" optionLabel="name" [showClear]="true"
+                        (onChange)="onClickCategory($event.value)"></p-dropdown> -->
+                    <!-- <p-dropdown [options]="categoryMenuList" [(ngModel)]="selectedOccasion" placeholder="Occasion"
+                        optionLabel="name" [showClear]="true" (onChange)="onClickCategory($event.value)"
+                        class="occasion-drop"></p-dropdown> -->
+                </span>
+            </div>
+            <div class="serch-bar-field col-3 p-p-0">
+                <span class="p-fluid">
+                    <label for="" class="icons-image search-icon">
+                        <img
+                            src="assets/images/category-icons/search.png"
+                            class="search-icon"
+                        />
+                    </label>
+                    <p-autoComplete
+                        [ngModelOptions]="{ standalone: true }"
+                        [(ngModel)]="selectedFilter"
+                        [suggestions]="filteredList"
+                        (completeMethod)="search($event)"
+                        (onSelect)="onSelectSearch($event)"
+                        (onUnselect)="onClearResetAllData($event)"
+                        field="name"
+                        placeholder="City/Area/Venue/Restaurant/Banquet"
+                        [multiple]="true"
+                    >
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center">
+                                {{ item.name }}
+                                <span *ngIf="item.mode == 'subarea'">
+                                    <span *ngIf="item.cityname"
+                                        >, {{ item.cityname }}</span
+                                    >
+                                    <span *ngIf="item.statename"
+                                        >, {{ item.statename }}</span
+                                    >
+                                </span>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                </span>
+            </div>
+            <div class="col-auto p-p-0 guest_field_list">
+                <div class="Guest-field">
+                    <label for="" class="icons-image">
+                        <img src="assets/images/svg-icons/guest-icon.svg" />
+                    </label>
+                    <p-dropdown
+                        class=""
+                        [options]="filterGuestArray"
+                        placeholder="Guest Count"
+                        optionLabel="label"
+                        [(ngModel)]="guestCount"
+                        [editable]="true"
+                        (onChange)="onClickTopGuestCount($event.value, $event)"
+                    ></p-dropdown>
+                    <!-- <p-button [label]="selectedProduct ? selectedProduct.name : 'Guest Count'"
+                        (click)="op.toggle($event)"></p-button> -->
+                </div>
+                <p-overlayPanel #op [showCloseIcon]="false">
+                    <ng-template pTemplate>
+                        <div class="p-field p-col-12 p-md-12 gest-count-module">
+                            <div class="gets-count-list">
+                                <label for="horizontal">Adults</label>
+                                <p-inputNumber
+                                    [(ngModel)]="value18"
+                                    [showButtons]="true"
+                                    buttonLayout="horizontal"
+                                    inputId="horizontal"
+                                    spinnerMode="horizontal"
+                                    [step]="10"
+                                    decrementButtonClass="left-button"
+                                    incrementButtonClass="right-button"
+                                    incrementButtonIcon="pi pi-plus"
+                                    decrementButtonIcon="pi pi-minus"
+                                >
+                                </p-inputNumber>
+                            </div>
+                            <div class="gets-count-list">
+                                <label for="horizontal">Children</label>
+                                <p-inputNumber
+                                    [(ngModel)]="value19"
+                                    [showButtons]="true"
+                                    buttonLayout="horizontal"
+                                    inputId="horizontal"
+                                    spinnerMode="horizontal"
+                                    [step]="10"
+                                    decrementButtonClass="left-button"
+                                    incrementButtonClass="right-button"
+                                    incrementButtonIcon="pi pi-plus"
+                                    decrementButtonIcon="pi pi-minus"
+                                >
+                                </p-inputNumber>
+                            </div>
+                            <div class="gets-count-list">
+                                <label for="horizontal">Infants</label>
+                                <p-inputNumber
+                                    [(ngModel)]="value20"
+                                    [showButtons]="true"
+                                    buttonLayout="horizontal"
+                                    inputId="horizontal"
+                                    spinnerMode="horizontal"
+                                    [step]="10"
+                                    decrementButtonClass="left-button"
+                                    incrementButtonClass="right-button"
+                                    incrementButtonIcon="pi pi-plus"
+                                    decrementButtonIcon="pi pi-minus"
+                                >
+                                </p-inputNumber>
+                            </div>
+                            <div class="gets-count-list">
+                                <label for="horizontal">Pets</label>
+                                <p-inputNumber
+                                    [(ngModel)]="value21"
+                                    [showButtons]="true"
+                                    buttonLayout="horizontal"
+                                    inputId="horizontal"
+                                    spinnerMode="horizontal"
+                                    [step]="10"
+                                    decrementButtonClass="left-button"
+                                    incrementButtonClass="right-button"
+                                    incrementButtonIcon="pi pi-plus"
+                                    decrementButtonIcon="pi pi-minus"
+                                >
+                                </p-inputNumber>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-overlayPanel>
+            </div>
+            <div class="col-md-auto p-p-0 calendar-div">
+                <label for="" class="icons-image"
+                    ><img src="assets/images/svg-icons/calender-icon.svg"
+                /></label>
+                <p-calendar
+                    #searchCalendar
+                    dateFormat="dd/mm/yy"
+                    [minDate]="minDateValue"
+                    [(ngModel)]="rangeDates"
+                    appendTo="body"
+                    placeholder="Date"
+                    selectionMode="range"
+                    [readonlyInput]="true"
+                    inputId="range"
+                    [numberOfMonths]="1"
+                    (onSelect)="onSelectDate($event)"
+                >
+                    <ng-template pTemplate="header">
+                        <div class="ui-g">
+                            <div class="ui-g-10">
+                                <ng-content></ng-content>
+                            </div>
+                            <div
+                                class="ui-g-2 ui-text-right"
+                                style="
+                                    float: right;
+                                    padding: 10px;
+                                    border-bottom: 1px solid #d4d6d9;
+                                "
+                            >
+                                <span
+                                    class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+                                    (click)="clearDatesAndClose()"
+                                    style="cursor: pointer"
+                                    pRipple
+                                >
+                                    <i class="pi pi-times"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </ng-template>
+                    <!-- <ng-template pTemplate="footer">
+                        <p-button label="Clear" icon="pi pi-filter-slash"
+                            styleClass="p-button-raised p-button-text p-button-danger p-button-sm clear-btn-bottom"
+                            (click)="onClickClear()"></p-button>
+                        <p-button label="Close" icon="pi pi-times" (click)="onClickCalendarClose()"
+                            styleClass="p-button-sm p-button-raised p-button-text p-button-danger close-btn-bottom"></p-button>
+                    </ng-template> -->
+                </p-calendar>
+                <button
+                    (click)="onClickSearch()"
+                    pButton
+                    pRipple
+                    type="button"
+                    icon="pi pi-search"
+                    class="p-button-rounded p-button-danger secondary btn-custom secondary"
+                ></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section desktop-view">
+    <div class="container-fluid">
+        <div class="listing-page">
+            <div class="top-link">
+                <div class="row">
+                    <div class="col-10">
+                        <div
+                            class="BreadCrumbs regular"
+                            style="line-height: normal"
+                        >
+                            <span class="crumb">
+                                <a href="/" class="display-name text-tertiary"
+                                    >Home</a
+                                >
+                            </span>
+                            <span>
+                                <a
+                                    class="display-name text-tertiary active"
+                                    href="/vendors/all"
+                                    >Venue</a
+                                >
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <p-button
+                            class="venuelistfilter"
+                            (click)="showVenueListSearch()"
+                        >
+                            Search</p-button
+                        >
+                    </div>
+                </div>
+            </div>
+            <!-- <div style="display: grid; place-items: center;">
+                <h1 style="font-weight: 600; text-transform: capitalize;">Explore the top banquet halls near you</h1>
+            </div> -->
+            <div class="row">
+                <h1 class="venue-title">{{ faqComponent.title }}</h1>
+                <div class="col-lg-12">
+                    <div class="header-part">
+                        <div class="row">
+                            <div class="col-3 filters-list-top">
+                                <h5 class="filter-page">Venue Filters</h5>
+                                <p-button
+                                    class="filter"
+                                    (click)="venueListFilter()"
+                                    ><i
+                                        class="pi pi-filter"
+                                        style="font-size: 1rem"
+                                    ></i>
+                                    Filter</p-button
+                                >
+                                <div class="clear-btn">
+                                    <p-button
+                                        (onClick)="onClickClearAll()"
+                                        label="Clear All"
+                                        styleClass="p-button-raised p-button-text"
+                                    ></p-button>
+                                </div>
+                                <div class="filter-btn">
+                                    <p-button
+                                        class="venuelistfilter"
+                                        (click)="venueListFilter()"
+                                        ><i
+                                            class="pi pi-filter"
+                                            style="font-size: 1rem"
+                                        ></i>
+                                        Filter</p-button
+                                    >
+                                </div>
+                            </div>
+                            <!-- <div class="col-3 filters-list-top">
+                                <h5 class="filter-page">Venue Filters</h5>
+                                <div class="clear-btn">
+                                    <p-button (onClick)="onClickClearAll()" label="Clear All"
+                                        styleClass="p-button-raised p-button-text"></p-button>
+                                </div>
+                                <div class="filter-btn">
+                                    <p-button class="venuelistfilter" (click)="venueListFilter()">
+                                        <i class="pi pi-filter" style="font-size: 1rem"></i> Filter</p-button>
+                                </div>
+                            </div> -->
+                            <div class="col-9">
+                                <div class="row">
+                                    <div class="col">
+                                        <div
+                                            class="acr-global-listing-controls"
+                                        >
+                                            <div
+                                                class="acr-listing-active-filters"
+                                            >
+                                                <div
+                                                    *ngIf="
+                                                        selectedCategoriesNames.length >
+                                                        0
+                                                    "
+                                                >
+                                                    <div
+                                                        class="div lisiting-page-chip"
+                                                        *ngFor="
+                                                            let category of selectedCategoriesNames
+                                                        "
+                                                    >
+                                                        <p-chip
+                                                            (onRemove)="
+                                                                onClickCategory(
+                                                                    category
+                                                                )
+                                                            "
+                                                            label="{{
+                                                                category.name
+                                                            }}"
+                                                            [removable]="true"
+                                                        ></p-chip>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    *ngIf="
+                                                        selectedPropertyTypeNames.length >
+                                                        0
+                                                    "
+                                                >
+                                                    <div
+                                                        class="div lisiting-page-chip"
+                                                        *ngFor="
+                                                            let propertyType of selectedPropertyTypeNames
+                                                        "
+                                                    >
+                                                        <p-chip
+                                                            (onRemove)="
+                                                                onClickPropertyType(
+                                                                    propertyType
+                                                                )
+                                                            "
+                                                            label="{{
+                                                                propertyType.name
+                                                            }}"
+                                                            [removable]="true"
+                                                        ></p-chip>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    *ngIf="
+                                                        selectedFoodTypeNames.length >
+                                                        0
+                                                    "
+                                                >
+                                                    <div
+                                                        class="div lisiting-page-chip"
+                                                        *ngFor="
+                                                            let foodType of selectedFoodTypeNames
+                                                        "
+                                                    >
+                                                        <p-chip
+                                                            (onRemove)="
+                                                                onClickFoodType(
+                                                                    foodType
+                                                                )
+                                                            "
+                                                            label="{{
+                                                                foodType.name
+                                                            }}"
+                                                            [removable]="true"
+                                                        ></p-chip>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    *ngIf="
+                                                        selectedSeatingCapacityNames.length >
+                                                        0
+                                                    "
+                                                >
+                                                    <div
+                                                        class="div lisiting-page-chip"
+                                                        *ngFor="
+                                                            let seatingCapacity of selectedSeatingCapacityNames
+                                                        "
+                                                    >
+                                                        <p-chip
+                                                            (onRemove)="
+                                                                onClickSeatingCapacity(
+                                                                    seatingCapacity,
+                                                                    $event
+                                                                )
+                                                            "
+                                                            label="{{
+                                                                seatingCapacity.name
+                                                            }}"
+                                                            [removable]="true"
+                                                        ></p-chip>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    *ngIf="
+                                                        selectedFloatingCapacityNames.length >
+                                                        0
+                                                    "
+                                                >
+                                                    <div
+                                                        class="div lisiting-page-chip"
+                                                        *ngFor="
+                                                            let floatingCapacity of selectedFloatingCapacityNames
+                                                        "
+                                                    >
+                                                        <p-chip
+                                                            (onRemove)="
+                                                                onClickGuestCount(
+                                                                    floatingCapacity,
+                                                                    $event
+                                                                )
+                                                            "
+                                                            label="{{
+                                                                floatingCapacity.name
+                                                            }}"
+                                                            [removable]="true"
+                                                        ></p-chip>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="acr-toggle-views">
+                                            <h5 class="sortby">Sort By :</h5>
+                                            <p-dropdown
+                                                appendTo="div"
+                                                [options]="filterList"
+                                                [autoDisplayFirst]="true"
+                                                (onChange)="
+                                                    onClickFilter($event.value)
+                                                "
+                                                [(ngModel)]="selectedSort"
+                                                class="sortbydrop"
+                                                optionLabel="name"
+                                            ></p-dropdown>
+                                            <!-- <a [routerLink]="'/venue-list'" class="Check-Enquiry">
+                                            <span class="mr-2">
+                                                <img src="../../../assets/img/listings-list/icons/Document.svg" alt="">
+                                            </span>Check
+                                            Enquiry
+                                        </a> -->
+                                            <!-- <a [routerLink]="'/venue-list'" class="Instant-Available"> <span class="mr-2">
+                                                <img src="../../../assets/img/listings-list/icons/Check.svg" alt="">
+                                            </span>Instant
+                                            Available</a> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3 filter-list">
+                    <div class="sidebar Filter-siderbar sidebar-left">
+                        <div class="sidebar-widget">
+                            <p-accordion>
+                                <!-- <p-accordionTab
+                                    header="Budget"
+                                    class="filter-head-text"
+                                    [selected]="true"
+                                    style="margin-top: -10px"
+                                > -->
+                                <!-- <ngx-slider [(value)]="minValue" [(highValue)]="maxValue"
+                                    [options]="priceSliderOptions"></ngx-slider> -->
+                                <!-- <div
+                                        *ngIf="
+                                            venuePriceRangeValues != undefined
+                                        "
+                                        class="min-max-price-heading"
+                                    >
+                                        <div class="min-heading">
+                                            <h5
+                                                style="
+                                                    font-size: 12px !important;
+                                                    font-weight: 500;
+                                                "
+                                            >
+                                                Min :
+                                                <span class="text-center"> -->
+                                <!-- {{' ₹ ' +  rangeValues[0]}} -->
+                                <!-- {{
+                                                        " ₹ " +
+                                                            venuePriceRangeValues[0]
+                                                    }}
+                                                </span>
+                                            </h5> -->
+                                <!-- </div> -->
+                                <!-- <div class="max-heading">
+                                            <h5
+                                                style="
+                                                    font-size: 12px !important;
+                                                    font-weight: 500;
+                                                "
+                                            >
+                                                Max :
+                                                <span class="text-center"> -->
+                                <!-- {{ ' ₹ ' + rangeValues[1]}} -->
+                                <!-- {{
+                                                        " ₹ " +
+                                                            venuePriceRangeValues[1]
+                                                    }}
+                                                </span>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <p-slider
+                                        [(ngModel)]="rangeValues"
+                                        [range]="true"
+                                        [step]="1000"
+                                        [min]="venuePriceRangeValues[0]"
+                                        [max]="venuePriceRangeValues[1]"
+                                    ></p-slider> -->
+                                <!-- <p-slider [(ngModel)]="venuePriceRangeValues" [range]="true"></p-slider> -->
+                                <!-- <div class="price-input">
+                                        <!-- <form> -->
+                                <!-- <div class="form-row">
+                                            <div class="form-group col-md-6"> -->
+                                -->
+                                <!-- <input type="number" class="form-control" id="inputEmail4"
+                                                placeholder="{{ venuePriceRangeValues[0]}}" value="{{ venuePriceRangeValues[0]}}"> -->
+                                <!-- <input
+                                                    *ngIf="
+                                                        venuePriceRangeValues !=
+                                                        undefined
+                                                    "
+                                                    type="number"
+                                                    #minVenuePriceInput
+                                                    [style]="{ width: '100px' }"
+                                                    [value]="rangeValues[0]"
+                                                    [step]="1000"
+                                                    [min]="
+                                                        venuePriceRangeValues[0]
+                                                    "
+                                                    [max]="
+                                                        venuePriceRangeValues[1]
+                                                    "
+                                                    (change)="
+                                                        onVenuePriceChange()
+                                                    "
+                                                    style="
+                                                        margin-bottom: 18px;
+                                                        font-size: 14px;
+                                                        padding-left: 10px;
+                                                    "
+                                                />
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <input
+                                                    *ngIf="
+                                                        venuePriceRangeValues !=
+                                                        undefined
+                                                    "
+                                                    type="number"
+                                                    #maxVenuePriceInput
+                                                    [style]="{ width: '100px' }"
+                                                    [value]="rangeValues[1]"
+                                                    [step]="1000"
+                                                    [min]="
+                                                        venuePriceRangeValues[0]
+                                                    "
+                                                    [max]="
+                                                        venuePriceRangeValues[1]
+                                                    "
+                                                    (change)="
+                                                        onVenuePriceChange()
+                                                    "
+                                                    style="
+                                                        margin-bottom: 18px;
+                                                        font-size: 14px;
+                                                        padding-left: 10px;
+                                                    "
+                                                />
+                                            </div>
+                                        </div> -->
+                                <!-- <h3
+                                        style="color: #69707a;font-size: 14px;text-align: center;margin-bottom: 0px;">
+                                        Per pax cost</h3> -->
+                                <!-- <div class="perpax-cost">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="min-heading">
+                                                        <h5
+                                                            style="
+                                                                font-size: 12px !important;
+                                                                font-weight: 500;
+                                                            "
+                                                        >
+                                                            MIN PER PAX COST
+                                                        </h5>
+                                                        <p
+                                                            style="
+                                                                text-align: center;
+                                                            "
+                                                        >
+                                                            <span
+                                                                *ngIf="
+                                                                    venuePriceRangeValues !=
+                                                                    undefined
+                                                                "
+                                                                class="text-center perpax-cost-price"
+                                                            >
+                                                                {{
+                                                                    " ₹ " +
+                                                                        (
+                                                                            rangeValues[0] /
+                                                                            guestCount
+                                                                        ).toFixed(
+                                                                            0
+                                                                        )
+                                                                }}</span
+                                                            >
+                                                        </p>
+                                                        {{' ₹ ' + venuePriceRangeValues[0]}} -->
+                                <!-- </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="max-heading">
+                                                        <h5
+                                                            style="
+                                                                font-size: 12px !important;
+                                                                font-weight: 500;
+                                                            "
+                                                        >
+                                                            MAX PER PAX COST
+                                                        </h5>
+                                                        <p
+                                                            style="
+                                                                text-align: center;
+                                                            "
+                                                        >
+                                                            <span
+                                                                *ngIf="
+                                                                    venuePriceRangeValues !=
+                                                                    undefined
+                                                                "
+                                                                class="text-center perpax-cost-price"
+                                                                >{{
+                                                                    " ₹ " +
+                                                                        (
+                                                                            rangeValues[1] /
+                                                                            guestCount
+                                                                        ).toFixed(
+                                                                            0
+                                                                        )
+                                                                }}</span
+                                                            >
+                                                        </p> -->
+                                <!-- {{ ' ₹ ' + venuePriceRangeValues[1]}} -->
+                                <!-- </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+
+                                <!-- </form> -->
+                                <!-- </div>
+                                </p-accordionTab> -->
+                                <!-- <p-accordionTab header="Occasions" [selected]="true"> -->
+                                <!-- <div class="slider-Occasions">
+                                        <div class="Occasions-fillter">
+                                            <div class="image">
+                                                <img src="http://103.204.131.217:3006/uploads/categoryPic/wedding.png"
+                                                    alt="">
+                                            </div>
+                                            <h4 class="title">
+                                                Wedding
+                                            </h4>
+                                        </div>
+                                    </div> -->
+                                <!-- <div class="right-slider-filter">
+                                        <div class="col-md-12  col-xl-12  col-lg-12 col-md-12 p-p-0 pt-0 pb-0">
+                                            <p-carousel [value]=" categoryMenuList" [numVisible]="4" [numScroll]="4"
+                                                [circular]="false" [showIndicators]="false"
+                                                [responsiveOptions]="carouselResponsiveOptions">
+
+                                                <ng-template let-categoryMenu pTemplate="item">
+
+                                                    <div [ngClass]="categoryMenu.selected ? 'category-active' : ''"
+                                                        class="product-item">
+                                                        <div (click)="onClickCategory(categoryMenu)"
+                                                            class="product-item-content">
+                                                            <p-avatarGroup styleClass="mb-4">
+                                                                <p-avatar image="{{categoryMenu.categoryImage}}"
+                                                                    size=" large" shape="circle"
+                                                                    pTooltip={{categoryMenu.name}} tooltipPosition="top"
+                                                                    [style]="{'width':'50px', 'height':'50px','color': '#ffffff', 'background-color':'#fff' , 'box-shadow' : 'inset 0px 1px 2px #00000029, 0px 3px 6px #00000029'}"></p-avatar>
+                                                            </p-avatarGroup>
+                                                            <div>
+                                                                <h4 class="p-mb-1">{{categoryMenu.name}}</h4>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </ng-template>
+                                            </p-carousel>
+                                        </div>
+                                    </div>
+
+                                </p-accordionTab> -->
+
+                                <p-accordionTab header="Property Type">
+                                    <div class="slider-Property">
+                                        <div class="col">
+                                            <p-carousel
+                                                [value]="propertyTypesList"
+                                                [numVisible]="2"
+                                                [numScroll]="2"
+                                                [circular]="false"
+                                                [showIndicators]="false"
+                                                [responsiveOptions]="
+                                                    carouselResponsiveOptions
+                                                "
+                                            >
+                                                <ng-template
+                                                    let-propertyType
+                                                    pTemplate="item"
+                                                >
+                                                    <!-- <div [ngClass]="propertyType.selected ? 'property-active' : ''"
+                                                        class="product-item">
+                                                        <div class="propertyType">
+                                                            <div (click)="onClickPropertyType(propertyType)"
+                                                                class="product-item-content">
+                                                                <div class="p-mb-1">
+
+
+                                                                    <img src="{{propertyType.categoryImage}}"
+                                                                        [alt]="propertyType.name"
+                                                                        class="product-image" />
+                                                                </div>
+                                                                <div>
+                                                                    <h4 class="p-mb-1">{{propertyType.name}}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
+
+                                                    <div
+                                                        class="product-item"
+                                                        [ngClass]="
+                                                            propertyType.selected
+                                                                ? 'property-active'
+                                                                : ''
+                                                        "
+                                                    >
+                                                        <div
+                                                            class="propertyType"
+                                                        >
+                                                            <div
+                                                                (click)="
+                                                                    onClickPropertyType(
+                                                                        propertyType
+                                                                    )
+                                                                "
+                                                                class="product-item-content"
+                                                            >
+                                                                <div
+                                                                    class="p-mb-1"
+                                                                >
+                                                                    <img
+                                                                        src="assets/images/category-icons/{{
+                                                                            propertyType.slug
+                                                                        }}.svg"
+                                                                        class="product-image"
+                                                                        tooltipPosition="top"
+                                                                        pTooltip="{{
+                                                                            propertyType.name
+                                                                        }}"
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <h4
+                                                                        class="p-mb-1"
+                                                                    >
+                                                                        {{
+                                                                            propertyType.name
+                                                                        }}
+                                                                    </h4>
+                                                                </div>
+                                                                <!-- <div class="property_name">
+                                                                <label>{{propertyType.name}}</label>
+                                                            </div> -->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
+                                            </p-carousel>
+                                        </div>
+                                        <!-- <div class="Property-fillter">
+                                            <div class="image">
+                                                <img src="../../../assets/img/listings-list/icons/wed.png" alt="">
+                                                <h4 class="title"> Wedding Lawns</h4>
+                                            </div>
+
+                                        </div> -->
+                                    </div>
+                                </p-accordionTab>
+                                <p-accordionTab header="Time Slot">
+                                    <div
+                                        *ngIf="slotList.length > 0"
+                                        class="row"
+                                    >
+                                        <div
+                                            class="col text-center"
+                                            *ngFor="let slot of slotList"
+                                        >
+                                            <h5
+                                                class="decor-name pb-1 slot-name"
+                                            >
+                                                {{ slot.slot }}
+                                            </h5>
+                                            <p-radioButton
+                                                [value]="slot"
+                                                [(ngModel)]="selectedSlot"
+                                                (click)="onSlotClick(slot)"
+                                            >
+                                            </p-radioButton>
+                                        </div>
+                                    </div>
+                                </p-accordionTab>
+                                <!-- start floating-capacity-page-data -->
+                                <p-accordionTab header="Seating Capacity">
+                                    <ng-template pTemplate="header">
+                                        <i
+                                            class="pi pi-info-circle info-icon ml-2"
+                                            pTooltip="Specify the number of Seating Capacity "
+                                            tooltipPosition="bottom"
+                                            showDelay="100"
+                                            hideDelay="100"
+                                        ></i>
+                                    </ng-template>
+                                    <div class="Guest-fillter">
+                                        <ul>
+                                            <!-- {{filterCapacityArray|json}} -->
+                                            <li
+                                                *ngFor="
+                                                    let seatingCapacity of filterCapacityArray
+                                                "
+                                            >
+                                                <div
+                                                    class="p-field-checkbox mb-0"
+                                                >
+                                                    <p-checkbox
+                                                        binary="true"
+                                                        optionLabel="label"
+                                                        [value]="
+                                                            seatingCapacity.status
+                                                        "
+                                                        [(ngModel)]="
+                                                            seatingCapacity.status
+                                                        "
+                                                        [inputId]="
+                                                            seatingCapacity.id
+                                                        "
+                                                        (onChange)="
+                                                            onClickSeatingCapacity(
+                                                                seatingCapacity,
+                                                                $event
+                                                            )
+                                                        "
+                                                    >
+                                                    </p-checkbox>
+                                                    <label [for]="100">
+                                                        {{
+                                                            seatingCapacity.label
+                                                        }}
+                                                    </label>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </p-accordionTab>
+                                <!-- End floating-capacity-page-data -->
+                                <p-accordionTab header="Floating Capacity">
+                                    <ng-template pTemplate="header">
+                                        <i
+                                            class="pi pi-info-circle info-icon ml-2"
+                                            pTooltip="Specify the number of People Count"
+                                            tooltipPosition="bottom"
+                                            showDelay="100"
+                                            hideDelay="100"
+                                        ></i>
+                                    </ng-template>
+                                    <div class="Guest-fillter">
+                                        <ul>
+                                            <!-- {{filterCapacityArray|json}} -->
+                                            <li
+                                                *ngFor="
+                                                    let capacity of filterGuestArray
+                                                "
+                                            >
+                                                <div
+                                                    class="p-field-checkbox mb-0"
+                                                >
+                                                    <p-checkbox
+                                                        binary="true"
+                                                        optionLabel="label"
+                                                        [(ngModel)]="
+                                                            capacity.status
+                                                        "
+                                                        [inputId]="capacity.id"
+                                                        [value]="
+                                                            capacity.status
+                                                        "
+                                                        (onChange)="
+                                                            onClickGuestCount(
+                                                                capacity,
+                                                                $event
+                                                            )
+                                                        "
+                                                    ></p-checkbox>
+                                                    <label for="50">{{
+                                                        capacity.label
+                                                    }}</label>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </p-accordionTab>
+
+                                <!-- floating-capacity-page-data -->
+                                <p-accordionTab header="Menu Type">
+                                    <div class="food-Property">
+                                        <div
+                                            class="col-md-12 col-xl-12 col-lg-12 col-md-12"
+                                        >
+                                            <p-carousel
+                                                [value]="foodTypesList"
+                                                [numVisible]="5"
+                                                [numScroll]="5"
+                                                [circular]="false"
+                                                [showNavigators]="false"
+                                            >
+                                                <ng-template
+                                                    let-foodType
+                                                    pTemplate="item"
+                                                >
+                                                    <div
+                                                        [ngClass]="
+                                                            foodType.selected
+                                                                ? 'food-active'
+                                                                : ''
+                                                        "
+                                                        class="product-item"
+                                                    >
+                                                        <div
+                                                            (click)="
+                                                                onClickFoodType(
+                                                                    foodType
+                                                                )
+                                                            "
+                                                            class="product-item-content"
+                                                        >
+                                                            <div class="p-mb-1">
+                                                                <img
+                                                                    src="{{
+                                                                        foodType.categoryImage
+                                                                    }}"
+                                                                    [alt]="
+                                                                        foodType.name
+                                                                    "
+                                                                    class="product-image"
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <h4
+                                                                    class="p-mb-1"
+                                                                >
+                                                                    {{
+                                                                        foodType.name
+                                                                    }}
+                                                                </h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
+                                            </p-carousel>
+                                        </div>
+                                    </div>
+                                </p-accordionTab>
+
+                                <!-- start amenities-page-data -->
+                                <p-accordionTab header="Amenities">
+                                    <div class="Guest-fillter">
+                                        <ul>
+                                            <!-- {{filterCapacityArray|json}} -->
+                                            <li
+                                                class="amenitiessection"
+                                                *ngFor="
+                                                    let amenity of amenitiesArray
+                                                "
+                                            >
+                                                <div
+                                                    class="p-field-checkbox mb-0"
+                                                >
+                                                    <p-checkbox
+                                                        name="group"
+                                                        [value]="amenity"
+                                                        [(ngModel)]="
+                                                            selectedAmenities
+                                                        "
+                                                        (onChange)="
+                                                            onSelectAmenities(
+                                                                amenity,
+                                                                $event
+                                                            )
+                                                        "
+                                                        [inputId]="amenity.key"
+                                                    ></p-checkbox>
+                                                    <label
+                                                        [for]="amenity.key"
+                                                        >{{
+                                                            amenity.name
+                                                        }}</label
+                                                    >
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </p-accordionTab>
+                            </p-accordion>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-12 venue-list">
+                    <!---->
+
+                    <!-- <div class="right-slider-filter">
+                        <div class="col-md-11  col-xl-11  col-lg-10 col-md-10  filter-slider">
+                            <p-carousel [value]="categoryMenuList" [numVisible]="12" [numScroll]="12" [circular]="false"
+                                [showIndicators]="false" [responsiveOptions]="carouselResponsiveOptions">
+
+                                <ng-template let-categoryMenu pTemplate="item">
+
+                                    <div class="product-item">
+                                        <div (click)="onClickCategory(categoryMenu)" class="product-item-content">
+                                            <div class="p-mb-1">
+                                                <img src="{{categoryMenu.categoryImage}}" [alt]="categoryMenu.name"
+                                                    class="product-image" />
+                                            </div>
+                                            <div>
+                                                <h4 class="p-mb-1">{{categoryMenu.name}}</h4>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </ng-template>
+                            </p-carousel>
+                        </div>
+                        <div class="slider">
+                            <div class="product-item-content">
+                                <div class="p-mb-1"><img class="product-image"
+                                        src="http://103.204.131.217:3006/uploads/categoryPic/wedding.png" alt="Wedding">
+                                </div>
+                                <div>
+                                    <h4 class="p-mb-1">Wedding</h4>
+                                </div>
+                            </div>
+                        </div>
+                </div> -->
+                    <div class="desktop-view-gallery">
+                        <p-galleria
+                            [(value)]="venueImages"
+                            [(activeIndex)]="activeIndex"
+                            [(visible)]="displayBasic"
+                            [responsiveOptions]="responsiveOptions"
+                            [containerStyle]="{ 'max-width': '100%;' }"
+                            [numVisible]="1"
+                            [circular]="true"
+                            [fullScreen]="true"
+                            [showItemNavigators]="true"
+                            [showThumbnails]="true"
+                        >
+                            <ng-template pTemplate="item" let-img>
+                                <img
+                                    *ngIf="!img.video"
+                                    [src]="img.venue_image_src"
+                                    style="
+                                        width: 900px;
+                                        height: 250px;
+                                        display: block;
+                                    "
+                                />
+                                <video
+                                    *ngIf="img.video"
+                                    style="width: 100%; display: block"
+                                    muted
+                                >
+                                    <source
+                                        src="{{ img.video }}"
+                                        type="video/mp4"
+                                    />
+                                    Your browser does not support the video tag.
+                                </video>
+                            </ng-template>
+                            <ng-template pTemplate="thumbnail" let-img>
+                                <img
+                                    *ngIf="!img.video"
+                                    [src]="img.venue_image_src"
+                                    style="
+                                        height: 10vh;
+                                        width: 100%;
+                                        display: block;
+                                        visibility: visible;
+                                    "
+                                />
+                                <video
+                                    *ngIf="img.video"
+                                    style="
+                                        width: 100%;
+                                        display: block;
+                                        visibility: visible;
+                                    "
+                                >
+                                    <source
+                                        src="{{ img.video }}"
+                                        type="video/mp4"
+                                    />
+                                    Your browser does not support the video tag.
+                                </video>
+                            </ng-template>
+                        </p-galleria>
+                    </div>
+                    <div class="mobile-view-gallery">
+                        <p-galleria
+                            [(value)]="venueImages"
+                            [(activeIndex)]="activeIndex"
+                            [(visible)]="displayBasic"
+                            [responsiveOptions]="responsiveOptions"
+                            [containerStyle]="{ 'max-width': '100%;' }"
+                            [numVisible]="1"
+                            [circular]="true"
+                            [fullScreen]="true"
+                            [showItemNavigators]="true"
+                            [showThumbnails]="true"
+                        >
+                            <!-- <ng-template pTemplate="item" let-img>
+                            <img *ngIf="!img.video" [src]="img.venue_image_src"
+                                style="width: 900px;height: 250px;display: block;" />
+                            <video *ngIf="img.video" style="width: 100%; display: block;" autoplay controls loop>
+                                <source src="{{img.video}}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </ng-template> -->
+                            <ng-template pTemplate="thumbnail" let-img>
+                                <img
+                                    *ngIf="!img.video"
+                                    [src]="img.venue_image_src"
+                                    style="
+                                        height: 40vh;
+                                        width: 100%;
+                                        display: block;
+                                        visibility: visible;
+                                    "
+                                />
+                                <video
+                                    controls
+                                    muted
+                                    loop
+                                    *ngIf="img.video"
+                                    style="
+                                        width: 100%;
+                                        display: block;
+                                        visibility: visible;
+                                    "
+                                >
+                                    <source
+                                        src="{{ img.video }}"
+                                        type="video/mp4"
+                                    />
+                                    Your browser does not support the video tag.
+                                </video>
+                            </ng-template>
+                        </p-galleria>
+                    </div>
+                    <div *ngIf="finalVenueList.length > 0">
+                        <div
+                            class="listing listing-list venue_listing"
+                            *ngFor="let venue of finalVenueList"
+                        >
+                            <div class="listing-thumbnail">
+                                <div class="mobile-view-gallery">
+                                    <p-galleria
+                                        [(value)]="venue.venueImage"
+                                        [(visible)]="displayBasic"
+                                        [responsiveOptions]="responsiveOptions"
+                                        [containerStyle]="{
+                                            'max-width': '100%;'
+                                        }"
+                                        [numVisible]="1"
+                                        [showItemNavigators]="true"
+                                        [showThumbnails]="true"
+                                        [showIndicators]="true"
+                                        [showItemNavigatorsOnHover]="true"
+                                        [showIndicatorsOnItem]="true"
+                                    >
+                                        <ng-template pTemplate="item">
+                                            <div
+                                                class="transparent"
+                                                (click)="open(venue.id)"
+                                            ></div>
+                                        </ng-template>
+                                        <ng-template
+                                            pTemplate="thumbnail"
+                                            let-iItem
+                                        >
+                                            <img
+                                                *ngIf="!iItem.video"
+                                                (click)="open(venue.id)"
+                                                [src]="iItem.venue_image_src"
+                                                style="
+                                                    width: 100%;
+                                                    display: block;
+                                                    visibility: visible;
+                                                "
+                                            />
+                                            <video
+                                                *ngIf="iItem.video"
+                                                style="
+                                                    width: 100%;
+                                                    display: block;
+                                                    visibility: visible;
+                                                "
+                                                muted
+                                                controls
+                                                loop
+                                            >
+                                                <source
+                                                    src="{{ iItem.video }}"
+                                                    type="video/mp4"
+                                                />
+                                                Your browser does not support
+                                                the video tag.
+                                            </video>
+                                        </ng-template>
+                                    </p-galleria>
+                                </div>
+                                <div class="desktop-view-gallery">
+                                    <p-galleria
+                                        [(value)]="venue.venueImage"
+                                        [(visible)]="displayBasic"
+                                        [responsiveOptions]="responsiveOptions"
+                                        [containerStyle]="{
+                                            'max-width': '100%;'
+                                        }"
+                                        [numVisible]="5"
+                                        [circular]="true"
+                                        [showItemNavigators]="true"
+                                        [showThumbnails]="false"
+                                        [showIndicators]="true"
+                                        [showItemNavigatorsOnHover]="true"
+                                        [showIndicatorsOnItem]="true"
+                                    >
+                                        <ng-template pTemplate="item" let-iItem>
+                                            <img
+                                                *ngIf="!iItem.video"
+                                                (click)="open(venue.id)"
+                                                [src]="iItem.venue_image_src"
+                                                style="
+                                                    width: 100%;
+                                                    display: block;
+                                                "
+                                            />
+                                            <video
+                                                *ngIf="iItem.video"
+                                                controls
+                                                muted
+                                                loop
+                                            >
+                                                <source
+                                                    src="{{ iItem.video }}"
+                                                    type="video/mp4"
+                                                />
+                                                Your browser does not support
+                                                the video tag.
+                                            </video>
+                                        </ng-template>
+                                    </p-galleria>
+                                </div>
+
+                                <!-- <p-galleria [(value)]="venue.venueImage" [(visible)]="displayBasic"
+                                        [responsiveOptions]="responsiveOptions"
+                                        [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
+                                        [showItemNavigators]="true" [showThumbnails]="false" [showIndicators]="true"
+                                        [showItemNavigatorsOnHover]="true" [showIndicatorsOnItem]="true">
+                                        <ng-template pTemplate="item" let-iItem>
+                                            <img *ngIf="!iItem.video" (click)="open(venue.id)"
+                                                [src]="iItem.venue_image_src" style="width:100%; display: block;" />
+                                            <video *ngIf="iItem.video" style="width: 100%; display: block;" autoplay>
+                                                <source src="{{iItem.video}}" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </ng-template>
+
+                                    </p-galleria> -->
+
+                                <div class="flex align-items-center gap-1">
+                                    <!-- <p-checkbox name="group1" value="{{venue.id}}" binary="true"
+                                            (onChange)="onchange(venue.id,$event)" inputId="sf"></p-checkbox> -->
+                                    <p-checkbox
+                                        [(ngModel)]="venue.selectedStatus"
+                                        [value]="venue.selectedStatus"
+                                        binary="true"
+                                        [inputId]="venue.selectedStatus"
+                                        (onChange)="onchange(venue, $event)"
+                                    ></p-checkbox>
+                                    <label
+                                        class="mb-0 compare-text"
+                                        for="{{ venue.id }}"
+                                    >
+                                        Compare</label
+                                    >
+                                </div>
+
+                                <!-- <div class="flex align-items-center gap-1">
+                                <p-checkbox name="group1" style="margin-right: 10px;" value="San Francisco"  inputId="sf"></p-checkbox>
+                                <label class="mb-0" for="sf">Compare</label>
+                            </div> -->
+
+                                <div class="listing-badges">
+                                    <span class="listing-badge Assured">
+                                        <span class="icon"> </span>
+                                        Instant Available</span
+                                    >
+                                </div>
+
+                                <!-- <div class="listing-controls">
+                                <a class="favorite" href="#"><i class="pi  pi-heart"></i></a>
+
+                            </div> -->
+                            </div>
+
+                            <div class="listing-body col-lg-10">
+                                <div class="listing-author">
+                                    <div class="listing-author-body pt-0">
+                                        <div class="left-side-details">
+                                            <div class="venue-name-package">
+                                                <h1
+                                                    (click)="
+                                                        getVenueDetails(
+                                                            venue.metaUrl
+                                                        )
+                                                    "
+                                                >
+                                                    {{ venue.name }}
+                                                </h1>
+                                                <div
+                                                    *ngFor="
+                                                        let venueFoodType of venue.foodType
+                                                    "
+                                                >
+                                                    <img
+                                                        src="assets/images/food-pacakge/{{
+                                                            venueFoodType.slug
+                                                        }}.png"
+                                                        alt=""
+                                                        class="food-pacakge1"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div class="address-list">
+                                                <ul>
+                                                    <li>
+                                                        <div
+                                                            class="location details"
+                                                        >
+                                                            <div class="icon">
+                                                                <img
+                                                                    src="assets/images/icons/location-icon.png"
+                                                                    alt=""
+                                                                    style="
+                                                                        width: 11px;
+                                                                        margin-right: 5px;
+                                                                    "
+                                                                />
+                                                            </div>
+                                                            <div class="title">
+                                                                <h5
+                                                                    style="
+                                                                        font-weight: 400;
+                                                                    "
+                                                                >
+                                                                    {{
+                                                                        venue.cityname
+                                                                    }},
+                                                                    {{
+                                                                        venue.subarea
+                                                                    }}
+                                                                </h5>
+
+                                                                <!--{{venue.cityname}}, {{venue.subarea}}-->
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="vl"></div>
+                                                    </li>
+
+                                                    <li class="google-review">
+                                                        <div
+                                                            class="location details"
+                                                        >
+                                                            <div class="icon">
+                                                                <img
+                                                                    src="assets/img/svg/google.png"
+                                                                    alt=""
+                                                                />
+                                                            </div>
+                                                            <div class="star">
+                                                                <span>
+                                                                    <i
+                                                                        class="pi pi-star-fill"
+                                                                    ></i>
+                                                                </span>
+                                                                <span
+                                                                    style="
+                                                                        font-size: 14px;
+                                                                        color: black;
+                                                                    "
+                                                                    ><b>{{
+                                                                        venue.googleRating
+                                                                    }}</b
+                                                                    >/5</span
+                                                                >
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="vl"></div>
+                                                    </li>
+
+                                                    <li class="google-review">
+                                                        <div
+                                                            class="location details"
+                                                        >
+                                                            <div class="icon">
+                                                                <img
+                                                                    src="assets/layout/images/pages/logo.png"
+                                                                    alt=""
+                                                                />
+                                                            </div>
+                                                            <div class="star">
+                                                                <span>
+                                                                    <i
+                                                                        class="pi pi-star-fill"
+                                                                    ></i>
+                                                                </span>
+                                                                <span
+                                                                    style="
+                                                                        font-size: 14px;
+                                                                        color: black;
+                                                                    "
+                                                                    ><b>{{
+                                                                        venue.eazyVenueRating
+                                                                    }}</b
+                                                                    >/5</span
+                                                                >
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="price-div">
+                                            <div
+                                                *ngIf="venue.minVenuePrice > 0"
+                                                class="price-title text-right"
+                                            >
+                                                <h1 class="final-venue-price">
+                                                    {{
+                                                        venue.minVenuePrice
+                                                            | currency : "INR"
+                                                    }}
+                                                </h1>
+                                                <h4>
+                                                    For
+                                                    {{ venue.minCapacity }}
+                                                    Guest &
+                                                    {{
+                                                        venue.minFoodType
+                                                            .foodType
+                                                    }}
+                                                    {{ venue.minFoodType.slug }}
+                                                    Menu
+                                                </h4>
+                                            </div>
+                                            <div
+                                                *ngIf="venue.minVenuePrice == 0"
+                                            >
+                                                N/A
+                                            </div>
+                                            <div *ngIf="venue.showSendEnquiry">
+                                                <span class="revenue-color">
+                                                    Minimum Venue Revenue is
+                                                    {{
+                                                        venue.minRevenue
+                                                            | currency : "INR"
+                                                    }}. Please send enquiry.
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="listing-body-bottom pt-0">
+                                        <!-- <h5 class="listing-title" [innerHtml]="venue.shortdescription">
+                                    </h5>
+                                    <span class="listing-price">{{venue.venuePrice| currency:"INR"}}
+                                        <span>/person</span></span> -->
+                                        <div
+                                            class="acr-listing-icons amenities"
+                                        >
+                                            <ul>
+                                                <div class="row">
+                                                    <div
+                                                        class="col-lg-3 col-md-6 col-sm-6"
+                                                    >
+                                                        <li
+                                                            class="pl-0 amenities"
+                                                        >
+                                                            <div class="media">
+                                                                <div
+                                                                    class="media-left mr-2"
+                                                                >
+                                                                    <div
+                                                                        class="icon"
+                                                                        style="
+                                                                            width: 35px !important;
+                                                                            height: 35px !important;
+                                                                        "
+                                                                    >
+                                                                        <img
+                                                                            src="assets/images/category-icons/area.svg"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                                <div
+                                                                    class="media-body"
+                                                                >
+                                                                    <h4
+                                                                        style="
+                                                                            font-weight: 600;
+                                                                        "
+                                                                    >
+                                                                        Area
+                                                                    </h4>
+                                                                    <h5
+                                                                        class="venue_area"
+                                                                    >
+                                                                        {{
+                                                                            venue.area
+                                                                        }}
+                                                                        Sq. m.
+                                                                    </h5>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </div>
+                                                    <div
+                                                        class="col-lg-3 col-md-6 col-sm-6"
+                                                    >
+                                                        <li
+                                                            class="pl-0 amenities"
+                                                        >
+                                                            <div class="media">
+                                                                <div
+                                                                    class="media-left mr-2"
+                                                                >
+                                                                    <div
+                                                                        class="icon"
+                                                                        style="
+                                                                            width: 44px !important;
+                                                                            height: 35px !important;
+                                                                        "
+                                                                    >
+                                                                        <img
+                                                                            src="assets/images/category-icons/capacity.svg"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                                <div
+                                                                    class="media-body"
+                                                                >
+                                                                    <h4
+                                                                        style="
+                                                                            font-weight: 600;
+                                                                        "
+                                                                    >
+                                                                        Capacity
+                                                                    </h4>
+                                                                    <h5
+                                                                        class="venue_area"
+                                                                    >
+                                                                        {{
+                                                                            venue.capacity
+                                                                        }}
+                                                                        People
+                                                                    </h5>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </div>
+                                                    <div
+                                                        class="col-lg-3 col-md-6 col-sm-6"
+                                                    >
+                                                        <li
+                                                            class="pl-0 amenities"
+                                                        >
+                                                            <div class="media">
+                                                                <div
+                                                                    class="media-left mr-2"
+                                                                >
+                                                                    <div
+                                                                        class="icon"
+                                                                        style="
+                                                                            width: 35px !important;
+                                                                            height: 35px !important;
+                                                                        "
+                                                                    >
+                                                                        <img
+                                                                            src="assets/images/category-icons/round-table.svg"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                                <div
+                                                                    class="media-body"
+                                                                >
+                                                                    <h4
+                                                                        style="
+                                                                            font-weight: 600;
+                                                                        "
+                                                                    >
+                                                                        Round
+                                                                        Table
+                                                                    </h4>
+                                                                    <h5
+                                                                        class="venue_area"
+                                                                    >
+                                                                        {{
+                                                                            venue.roundTable
+                                                                        }}
+                                                                    </h5>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </div>
+                                                    <div
+                                                        class="col-lg-3 col-md-6 col-sm-6"
+                                                    >
+                                                        <li
+                                                            class="pl-0 amenities"
+                                                        >
+                                                            <div class="media">
+                                                                <div
+                                                                    class="media-left mr-2"
+                                                                >
+                                                                    <div
+                                                                        class="icon"
+                                                                        style="
+                                                                            width: 48px !important;
+                                                                            height: 35px !important;
+                                                                        "
+                                                                    >
+                                                                        <img
+                                                                            src="assets/images/category-icons/theater-seats.svg"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                                <div
+                                                                    class="media-body"
+                                                                >
+                                                                    <h4
+                                                                        style="
+                                                                            font-weight: 600;
+                                                                        "
+                                                                    >
+                                                                        Theater
+                                                                        Seats
+                                                                    </h4>
+                                                                    <h5
+                                                                        class="venue_area"
+                                                                    >
+                                                                        {{
+                                                                            venue.theaterSitting
+                                                                        }}
+                                                                    </h5>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </div>
+                                                </div>
+                                            </ul>
+                                        </div>
+
+                                        <div
+                                            class="row col-lg-12 listing-page-bottom"
+                                        >
+                                            <div class="col-lg-6 amenties-list">
+                                                <div
+                                                    class="icons-slider amenities-list"
+                                                    *ngIf="venue.amenities"
+                                                >
+                                                    <div
+                                                        *ngIf="
+                                                            venue.amenities
+                                                                .length > 0
+                                                        "
+                                                        class="div"
+                                                    >
+                                                        <p-carousel
+                                                            [value]="
+                                                                venue.amenities
+                                                            "
+                                                            styleClass="custom-carousel"
+                                                            [numVisible]="3"
+                                                            [numScroll]="3"
+                                                            [circular]="true"
+                                                            [autoplayInterval]="
+                                                                3000
+                                                            "
+                                                        >
+                                                            <ng-template
+                                                                let-amenities
+                                                                pTemplate="item"
+                                                            >
+                                                                <div
+                                                                    class="product-item"
+                                                                >
+                                                                    <div
+                                                                        class="media"
+                                                                    >
+                                                                        <!-- <div class="service-icon">
+                                                                        <img src="{{amenities.icon}}" alt="">
+                                                                    </div> -->
+                                                                        <div
+                                                                            class="media-body"
+                                                                            *ngIf="
+                                                                                amenities.title
+                                                                            "
+                                                                        >
+                                                                            <h4
+                                                                                *ngIf="
+                                                                                    amenities.title
+                                                                                "
+                                                                            >
+                                                                                {{
+                                                                                    amenities.title
+                                                                                }}
+                                                                            </h4>
+                                                                            <!-- <div *ngIf="amenities.details"
+                                                                            class="div class-status">
+                                                                            <span class="mr-2">Available</span> <img
+                                                                                src="assets/img/svg/check.svg" alt=""
+                                                                                class="icon">
+                                                                        </div> -->
+                                                                            <!-- <div *ngIf="!amenities.details"
+                                                                            class="div class-status">
+                                                                            <span class="mr-2"> Not Available</span> <img
+                                                                                src="assets/img/svg/check.svg" alt=""
+                                                                                class="icon">
+                                                                        </div> -->
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </ng-template>
+                                                        </p-carousel>
+                                                    </div>
+                                                    <div
+                                                        *ngIf="
+                                                            venue.amenities
+                                                                .length == 0
+                                                        "
+                                                        class="div"
+                                                    >
+                                                        amenities at banquet not
+                                                        available.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-4 right-btns">
+                                                <!-- <a *ngIf="!venue.showSendEnquiry" (click)="showDialog()"
+                                                        class=" btn-custom btn-sm secondary">
+                                                        Check Availability
+                                                    </a> -->
+                                                <a
+                                                    *ngIf="
+                                                        venue.showSendEnquiry
+                                                    "
+                                                    (click)="
+                                                        onClickSendEnquiries(
+                                                            venue,
+                                                            'send_enquires'
+                                                        )
+                                                    "
+                                                    class="btn-custom btn-sm secondary"
+                                                >
+                                                    Send Enquiry
+                                                </a>
+                                                <a
+                                                    (click)="
+                                                        getVenueDetails(
+                                                            venue.metaUrl
+                                                        )
+                                                    "
+                                                    class="btn-custom btn-sm secondary"
+                                                    >View Details
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pageformat">
+                            <div
+                                class="flex items-center justify-center space-x-4"
+                            >
+                                <!-- Previous arrow -->
+                                <span
+                                (click)="getNextVenues()"
+                                [ngStyle]="{
+                                    color:
+                                        currentPage * pageSize <
+                                        totalRecords
+                                            ? '#ef4444'
+                                            : '#9ca3af',
+                                    cursor:
+                                        currentPage * pageSize <
+                                        totalRecords
+                                            ? 'pointer'
+                                            : 'not-allowed'
+                                }"
+                                class="text-lg"
+                                >
+                                    ◀
+                                </span>
+
+                                <!-- Current page display -->
+                                <span>Page {{ 11-currentPage }}</span>
+
+                                <!-- Next arrow -->
+                                    <span
+                                    (click)="getPreviousVenues()"
+                                    [ngStyle]="{
+                                        color:
+                                            currentPage > 1
+                                                ? '#ef4444'
+                                                : '#9ca3af',
+                                        cursor:
+                                            currentPage > 1
+                                                ? 'pointer'
+                                                : 'not-allowed'
+                                    }"
+                                    class="text-lg"
+                                >
+                                    ▶
+                                </span>
+                            </div>
+                    </div>
+                    <div *ngIf="noVenueFlag">
+                        <h3 class="text-center">
+                            No venues matching your query found.
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <section class="faq-section">
+                <app-faq
+                    #faqComponent
+                    [selectedVenueList]="finalVenueList"
+                ></app-faq>
+            </section>
+        </div>
+    </div>
+</div>
+<p-sidebar
+    class="compare-popup-sidebar"
+    (onHide)="clearAll()"
+    [(visible)]="showbottombar"
+    position="bottom"
+    [baseZIndex]="10000"
+>
+    <div class="row justify-content-center">
+        <div class="compare-row">
+            <div
+                class="col-lg-2 col-md-2 compare-item"
+                *ngFor="let venue of venuearray"
+            >
+                <div class="card compare-img">
+                    <div class="card-body img-select">
+                        <div class="venue-img-select">
+                            <img
+                                src="{{
+                                    venue['venueImage'][0]['venue_image_src']
+                                }}"
+                                class="venue-img-select"
+                                alt=""
+                            />
+                        </div>
+                        <div
+                            class="img-close-btn"
+                            (click)="onchange(venue, $event)"
+                        >
+                            <i class="pi pi-times"></i>
+                        </div>
+                        <div class="venue-name-comapare">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h4 class="venue-name-detail">
+                                        {{ venue.name }}
+                                    </h4>
+                                    <h5 class="venue-add-detail">
+                                        {{ venue.cityname }},
+                                        {{ venue.subarea }}
+                                    </h5>
+                                </div>
+                                <div class="col-12 venue-price-col">
+                                    <h5 class="venue-price-detail">
+                                        {{
+                                            venue.minVenuePrice
+                                                | currency : "INR"
+                                        }}
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="venue-buttons compare-btn">
+                <div class="div-compare">
+                    <a
+                        class="compare-btns btn-custom btn-sm secondary"
+                        value="compare"
+                        (click)="onCompareClick()"
+                        >Compare</a
+                    >
+                </div>
+                <div class="div clear-all-btn">
+                    <a
+                        (click)="clearAll()"
+                        class="compare-btns btn-custom btn-sm secondary"
+                        >Clear All
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-sidebar>
+
+<p-dialog
+    [(visible)]="visible"
+    [modal]="true"
+    [style]="{ width: '25vw' }"
+    [draggable]="false"
+    [resizable]="false"
+>
+    <h2 class="time-slot-popup">Select a Time Slot</h2>
+    <div class="row">
+        <div class="col text-center">
+            <h5 class="decor-name slot-name">Morning</h5>
+            <p-radioButton
+                name="morning"
+                value="Morning"
+                [(ngModel)]="ingredient"
+                inputId="ingredient6"
+            ></p-radioButton>
+        </div>
+
+        <div class="col text-center">
+            <h5 class="decor-name slot-name">Evening</h5>
+            <p-radioButton
+                name="evening"
+                value="Evening"
+                [(ngModel)]="ingredient"
+                inputId="ingredient7"
+            ></p-radioButton>
+        </div>
+        <div class="col text-center">
+            <h5 class="decor-name slot-name">Entire Day</h5>
+            <p-radioButton
+                name="entire"
+                value="Entire"
+                [(ngModel)]="ingredient"
+                inputId="ingredient8"
+            ></p-radioButton>
+        </div>
+    </div>
+    <div class="submit-button">
+        <div class="row">
+            <div class="col-12 text-center">
+                <a class="time-slot-btn btn-custom btn-sm secondary">Submit </a>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+<p-confirmDialog
+    class="confirmation"
+    [style]="{ width: '450px' }"
+    id="confirmation"
+></p-confirmDialog>
+
+<p-dialog
+    header="Venue Filters"
+    [(visible)]="showVenueListFilter"
+    [modal]="true"
+    [style]="{ width: '90%' }"
+    [draggable]="false"
+    [resizable]="false"
+>
+    <!-- <h3 class="home-search-popup-heading">Venue Filters</h3> -->
+
+    <div class="popupfilter sidebar Filter-siderbar sidebar-left popupfilter">
+        <div class="sidebar-widget">
+            <p-accordion>
+                <p-accordionTab
+                    header="Budget"
+                    class="filter-head-text"
+                    [selected]="true"
+                    style="margin-top: -10px"
+                >
+                    <!-- <ngx-slider [(value)]="minValue" [(highValue)]="maxValue"
+                            [options]="priceSliderOptions"></ngx-slider> -->
+                    <div
+                        *ngIf="venuePriceRangeValues != undefined"
+                        class="min-max-price-heading"
+                    >
+                        <div class="min-heading">
+                            <h5>
+                                Min :
+                                <span class="text-center">
+                                    <!-- {{' ₹ ' +  rangeValues[0]}} -->
+                                    {{ " ₹ " + venuePriceRangeValues[0] }}
+                                </span>
+                            </h5>
+                        </div>
+                        <div class="max-heading">
+                            <h5>
+                                Max :
+                                <span class="text-center">
+                                    <!-- {{ ' ₹ ' + rangeValues[1]}} -->
+                                    {{ " ₹ " + venuePriceRangeValues[1] }}
+                                </span>
+                            </h5>
+                        </div>
+                    </div>
+                    <p-slider
+                        [(ngModel)]="rangeValues"
+                        [step]="1000"
+                        [min]="venuePriceRangeValues[0]"
+                        [max]="venuePriceRangeValues[1]"
+                        [range]="true"
+                    ></p-slider>
+                    <!-- <p-slider [(ngModel)]="venuePriceRangeValues" [range]="true"></p-slider> -->
+                    <div class="price-input">
+                        <!-- <form> -->
+                        <div class="form-row">
+                            <div class="form-group col-6">
+                                <!-- <input type="number" class="form-control" id="inputEmail4"
+                                        placeholder="{{ venuePriceRangeValues[0]}}" value="{{ venuePriceRangeValues[0]}}"> -->
+                                <input
+                                    *ngIf="venuePriceRangeValues != undefined"
+                                    type="number"
+                                    #minVenuePriceInput
+                                    [style]="{ width: '100px' }"
+                                    [value]="venuePriceRangeValues[0]"
+                                    [step]="1000"
+                                    [min]="venuePriceRangeValues[0]"
+                                    [max]="venuePriceRangeValues[1]"
+                                    (change)="onVenuePriceChange()"
+                                    style="
+                                        margin-bottom: 18px;
+                                        font-size: 14px;
+                                        padding-left: 10px;
+                                    "
+                                />
+                            </div>
+                            <div class="form-group col-6">
+                                <input
+                                    *ngIf="venuePriceRangeValues != undefined"
+                                    type="number"
+                                    #maxVenuePriceInput
+                                    [style]="{ width: '100px' }"
+                                    [value]="venuePriceRangeValues[1]"
+                                    [step]="1000"
+                                    [min]="venuePriceRangeValues[0]"
+                                    [max]="venuePriceRangeValues[1]"
+                                    (change)="onVenuePriceChange()"
+                                    style="
+                                        margin-bottom: 18px;
+                                        font-size: 14px;
+                                        padding-left: 10px;
+                                    "
+                                />
+                            </div>
+                        </div>
+                        <!-- <h3
+                                style="color: #69707a;font-size: 14px;text-align: center;margin-bottom: 0px;">
+                                Per pax cost</h3> -->
+                        <div class="perpax-cost">
+                            <div class="min-heading">
+                                <h5
+                                    style="
+                                        font-size: 12px !important;
+                                        font-weight: 500;
+                                    "
+                                >
+                                    MIN PER PAX COST
+                                </h5>
+                                <span
+                                    *ngIf="venuePriceRangeValues != undefined"
+                                    class="text-center perpax-cost-price"
+                                >
+                                    {{ " ₹ " + rangeValues[0] }}</span
+                                >
+                                <!-- {{' ₹ ' + venuePriceRangeValues[0]}} -->
+                            </div>
+                            <div class="max-heading">
+                                <h5
+                                    style="
+                                        font-size: 12px !important;
+                                        font-weight: 500;
+                                    "
+                                >
+                                    MAX PER PAX COST
+                                </h5>
+                                <span
+                                    *ngIf="venuePriceRangeValues != undefined"
+                                    class="text-center perpax-cost-price"
+                                    >{{ " ₹ " + rangeValues[1] }}</span
+                                >
+                                <!-- {{ ' ₹ ' + venuePriceRangeValues[1]}} -->
+                            </div>
+                        </div>
+
+                        <!-- </form> -->
+                    </div>
+                </p-accordionTab>
+                <!-- <p-accordionTab header="Occasions" [selected]="true"> -->
+                <!-- <div class="slider-Occasions">
+                            <div class="Occasions-fillter">
+                                <div class="image">
+                                    <img src="http://103.204.131.217:3006/uploads/categoryPic/wedding.png"
+                                        alt="">
+                                </div>
+                                <h4 class="title">
+                                    Wedding
+                                </h4>
+                            </div>
+                        </div> -->
+                <!-- <div class="right-slider-filter">
+                            <div class="col-md-12  col-xl-12  col-lg-12 col-md-12 p-p-0 pt-0 pb-0">
+                                <p-carousel [value]=" categoryMenuList" [numVisible]="4" [numScroll]="4"
+                                    [circular]="false" [showIndicators]="false"
+                                    [responsiveOptions]="carouselResponsiveOptions">
+
+                                    <ng-template let-categoryMenu pTemplate="item">
+
+                                        <div [ngClass]="categoryMenu.selected ? 'category-active' : ''"
+                                            class="product-item">
+                                            <div (click)="onClickCategory(categoryMenu)"
+                                                class="product-item-content">
+                                                <p-avatarGroup styleClass="mb-4">
+                                                    <p-avatar image="{{categoryMenu.categoryImage}}"
+                                                        size=" large" shape="circle"
+                                                        pTooltip={{categoryMenu.name}} tooltipPosition="top"
+                                                        [style]="{'width':'50px', 'height':'50px','color': '#ffffff', 'background-color':'#fff' , 'box-shadow' : 'inset 0px 1px 2px #00000029, 0px 3px 6px #00000029'}"></p-avatar>
+                                                </p-avatarGroup>
+                                                <div>
+                                                    <h4 class="p-mb-1">{{categoryMenu.name}}</h4>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </ng-template>
+                                </p-carousel>
+                            </div>
+                        </div>
+
+                    </p-accordionTab> -->
+
+                <p-accordionTab header="Property Type">
+                    <div class="slider-Property">
+                        <div class="col">
+                            <p-carousel
+                                [value]="propertyTypesList"
+                                [numVisible]="2"
+                                [numScroll]="2"
+                                [circular]="false"
+                                [showIndicators]="false"
+                                [responsiveOptions]="carouselResponsiveOptions"
+                            >
+                                <ng-template let-propertyType pTemplate="item">
+                                    <!-- <div [ngClass]="propertyType.selected ? 'property-active' : ''"
+                                            class="product-item">
+                                            <div class="propertyType">
+                                                <div (click)="onClickPropertyType(propertyType)"
+                                                    class="product-item-content">
+                                                    <div class="p-mb-1">
+
+
+                                                        <img src="{{propertyType.categoryImage}}"
+                                                            [alt]="propertyType.name"
+                                                            class="product-image" />
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="p-mb-1">{{propertyType.name}}</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+
+                                    <div
+                                        class="product-item"
+                                        [ngClass]="
+                                            propertyType.selected
+                                                ? 'property-active'
+                                                : ''
+                                        "
+                                    >
+                                        <div class="propertyType">
+                                            <div
+                                                (click)="
+                                                    onClickPropertyType(
+                                                        propertyType
+                                                    )
+                                                "
+                                                class="product-item-content"
+                                            >
+                                                <div class="p-mb-1 text-center">
+                                                    <img
+                                                        src="assets/images/category-icons/{{
+                                                            propertyType.slug
+                                                        }}.svg"
+                                                        class="product-image text-center"
+                                                        tooltipPosition="top"
+                                                        pTooltip="{{
+                                                            propertyType.name
+                                                        }}"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <h4
+                                                        class="p-mb-1 text-center"
+                                                    >
+                                                        {{ propertyType.name }}
+                                                    </h4>
+                                                </div>
+                                                <!-- <div class="property_name">
+                                                    <label>{{propertyType.name}}</label>
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </p-carousel>
+                        </div>
+                        <!-- <div class="Property-fillter">
+                                <div class="image">
+                                    <img src="../../../assets/img/listings-list/icons/wed.png" alt="">
+                                    <h4 class="title"> Wedding Lawns</h4>
+                                </div>
+
+                            </div> -->
+                    </div>
+                </p-accordionTab>
+                <p-accordionTab header="Time Slot">
+                    <div *ngIf="slotList.length > 0" class="row">
+                        <div
+                            class="col text-center"
+                            *ngFor="let slot of slotList"
+                        >
+                            <h5 class="decor-name pb-1 slot-name">
+                                {{ slot.slot }}
+                            </h5>
+                            <p-radioButton
+                                [value]="slot"
+                                [(ngModel)]="selectedSlot"
+                                (click)="onSlotClick(slot)"
+                            >
+                            </p-radioButton>
+                        </div>
+                    </div>
+                </p-accordionTab>
+                <p-accordionTab header="Floating Capacity">
+                    <div class="Guest-fillter">
+                        <ul>
+                            <!-- {{filterCapacityArray|json}} -->
+                            <li *ngFor="let capacity of filterGuestArray">
+                                <div class="p-field-checkbox mb-0">
+                                    <p-checkbox
+                                        binary="true"
+                                        optionLabel="label"
+                                        [(ngModel)]="capacity.status"
+                                        [inputId]="capacity.id"
+                                        [value]="capacity.status"
+                                        (onChange)="
+                                            onClickGuestCount(capacity, $event)
+                                        "
+                                    ></p-checkbox>
+                                    <label for="50">{{ capacity.label }}</label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </p-accordionTab>
+
+                <!-- start floating-capacity-page-data -->
+                <p-accordionTab header="Seating Capacity">
+                    <div class="Guest-fillter">
+                        <ul>
+                            <!-- {{filterCapacityArray|json}} -->
+                            <li
+                                *ngFor="
+                                    let seatingCapacity of filterCapacityArray
+                                "
+                            >
+                                <div class="p-field-checkbox mb-0">
+                                    <p-checkbox
+                                        binary="true"
+                                        optionLabel="label"
+                                        [value]="seatingCapacity.status"
+                                        [(ngModel)]="seatingCapacity.status"
+                                        [inputId]="seatingCapacity.id"
+                                        (onChange)="
+                                            onClickSeatingCapacity(
+                                                seatingCapacity,
+                                                $event
+                                            )
+                                        "
+                                    >
+                                    </p-checkbox>
+                                    <label [for]="100">
+                                        {{ seatingCapacity.label }}
+                                    </label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </p-accordionTab>
+                <!-- End floating-capacity-page-data -->
+
+                <!-- floating-capacity-page-data -->
+                <p-accordionTab header="Menu Type">
+                    <div class="food-Property">
+                        <div class="col-md-12 col-xl-12 col-lg-12 col-md-12">
+                            <p-carousel
+                                [value]="foodTypesList"
+                                [numVisible]="5"
+                                [numScroll]="5"
+                                [circular]="false"
+                                [showNavigators]="false"
+                            >
+                                <ng-template let-foodType pTemplate="item">
+                                    <div
+                                        [ngClass]="
+                                            foodType.selected
+                                                ? 'food-active'
+                                                : ''
+                                        "
+                                        class="product-item"
+                                    >
+                                        <div
+                                            (click)="onClickFoodType(foodType)"
+                                            class="product-item-content"
+                                        >
+                                            <div class="p-mb-1">
+                                                <img
+                                                    src="{{
+                                                        foodType.categoryImage
+                                                    }}"
+                                                    [alt]="foodType.name"
+                                                    class="product-image"
+                                                />
+                                            </div>
+                                            <div>
+                                                <h4 class="p-mb-1">
+                                                    {{ foodType.name }}
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </p-carousel>
+                        </div>
+                    </div>
+                </p-accordionTab>
+
+                <!-- start amenities-page-data -->
+                <p-accordionTab header="Amenities">
+                    <div class="Guest-fillter">
+                        <ul>
+                            <!-- {{filterCapacityArray|json}} -->
+                            <li
+                                class="amenitiessection"
+                                *ngFor="let amenity of amenitiesArray"
+                            >
+                                <div class="p-field-checkbox mb-0">
+                                    <p-checkbox
+                                        name="group"
+                                        [value]="amenity"
+                                        [(ngModel)]="selectedAmenities"
+                                        (onChange)="
+                                            onSelectAmenities(amenity, $event)
+                                        "
+                                        [inputId]="amenity.key"
+                                    ></p-checkbox>
+                                    <label [for]="amenity.key">{{
+                                        amenity.name
+                                    }}</label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </p-accordionTab>
+                <div class="filter-popup-btn">
+                    <p-button
+                        label="Apply"
+                        (click)="close()"
+                        styleClass="p-button-denger apply-btn"
+                    ></p-button>
+                </div>
+            </p-accordion>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog
+    header="Search Venue"
+    [(visible)]="venueListSearch"
+    [modal]="true"
+    [style]="{ width: '90%', height: '345px', overflow: 'visible' }"
+>
+    <!-- <h3 class="home-search-popup-heading">Search Venue</h3> -->
+    <div class="home-search-fields">
+        <div
+            class="row justify-content-center popup_venue-list_search search-bar search_bar_listing_page"
+        >
+            <div class="city-field col-md-2 p-p-0">
+                <span class="p-fluid">
+                    <label for="" class="icons-image">
+                        <img
+                            src="assets/images/category-icons/celebration.svg"
+                        />
+                    </label>
+                    <!-- <p-dropdown [options]="categoryMenuList" [(ngModel)]="occasion" optionLabel="name"
+                        (onChange)="onClickCategory($event.value)" placeholder="Occasion" class="occasion-list home-search-popup">
+                    </p-dropdown> -->
+
+                    <!-- <p-autoComplete [(ngModel)]="selectedOccasion" (onSelect)="onClickCategory($event)"
+                            (onClear)="onClickCategory($event)" placeholder="Occasion" class="occasion-list"
+                            [dropdown]="true" [suggestions]="filterOccasion" (completeMethod)="filterCategory($event)"
+                            field="name"></p-autoComplete> -->
+                    <!-- <p-dropdown appendTo="body" [options]="categoryMenuList" [(ngModel)]="occasion" optionLabel="name"
+                            [showClear]="true" (onChange)="onClickCategory($event.value)" placeholder="Occasion"
+                            class="occasion-list home-search-popup">
+                        </p-dropdown> -->
+                    <p-dropdown
+                        [options]="categoryMenuList"
+                        [(ngModel)]="selectedOccasion"
+                        placeholder="Occasion"
+                        optionLabel="name"
+                        (onChange)="onClickCategory($event.value)"
+                    ></p-dropdown>
+                    <!-- <p-dropdown [options]="categoryMenuList" [(ngModel)]="selectedOccasion" placeholder="Occasion"
+                                optionLabel="name" [showClear]="true" (onChange)="onClickCategory($event.value)"
+                                class="occasion-drop"></p-dropdown> -->
+                </span>
+            </div>
+            <div class="serch-bar-field col-3 p-p-0">
+                <span class="p-fluid">
+                    <label for="" class="icons-image search-icon">
+                        <img
+                            src="assets/images/category-icons/search.png"
+                            class="search-icon"
+                        />
+                    </label>
+                    <p-autoComplete
+                        [ngModelOptions]="{ standalone: true }"
+                        [(ngModel)]="selectedFilter"
+                        [suggestions]="filteredList"
+                        (completeMethod)="search($event)"
+                        (onSelect)="onSelectSearch($event)"
+                        (onUnselect)="onClearResetAllData($event)"
+                        field="name"
+                        placeholder="City/Area/Venue/Restaurant/Banquet"
+                        [multiple]="true"
+                    >
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center">
+                                {{ item.name }}
+                                <span *ngIf="item.mode == 'subarea'">
+                                    <span *ngIf="item.cityname"
+                                        >, {{ item.cityname }}</span
+                                    >
+                                    <span *ngIf="item.statename"
+                                        >, {{ item.statename }}</span
+                                    >
+                                </span>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                </span>
+            </div>
+            <div class="col-auto p-p-0 guest_field_list">
+                <div class="Guest-field">
+                    <label for="" class="icons-image">
+                        <img src="assets/images/svg-icons/guest-icon.svg" />
+                    </label>
+
+                    <p-dropdown
+                        [editable]="true"
+                        class="guest-count"
+                        [options]="filterGuestArray"
+                        placeholder="Guest Count"
+                        optionLabel="label"
+                        [(ngModel)]="guestCount"
+                        optionLabel="label"
+                        (onChange)="onClickGuestCount($event.value, $event)"
+                    ></p-dropdown>
+
+                    <!-- <p-dropdown [editable]="true" class="guest-count" [options]="filterGuestArray"
+                        placeholder="Guest Count" optionLabel="label" [(ngModel)]="guestCount"
+                             (onChange)="onClickTopGuestCount($event.value, $event)"></p-dropdown> -->
+
+                    <!-- <p-button [label]="selectedProduct ? selectedProduct.name : 'Guest Count'"
+                                (click)="op.toggle($event)"></p-button> -->
+                </div>
+                <p-overlayPanel #op [showCloseIcon]="false">
+                    <ng-template pTemplate>
+                        <div class="p-field p-col-12 p-md-12 gest-count-module">
+                            <div class="gets-count-list">
+                                <label for="horizontal">Adults</label>
+                                <p-inputNumber
+                                    [(ngModel)]="value18"
+                                    [showButtons]="true"
+                                    buttonLayout="horizontal"
+                                    inputId="horizontal"
+                                    spinnerMode="horizontal"
+                                    [step]="10"
+                                    decrementButtonClass="left-button"
+                                    incrementButtonClass="right-button"
+                                    incrementButtonIcon="pi pi-plus"
+                                    decrementButtonIcon="pi pi-minus"
+                                >
+                                </p-inputNumber>
+                            </div>
+                            <div class="gets-count-list">
+                                <label for="horizontal">Children</label>
+                                <p-inputNumber
+                                    [(ngModel)]="value19"
+                                    [showButtons]="true"
+                                    buttonLayout="horizontal"
+                                    inputId="horizontal"
+                                    spinnerMode="horizontal"
+                                    [step]="10"
+                                    decrementButtonClass="left-button"
+                                    incrementButtonClass="right-button"
+                                    incrementButtonIcon="pi pi-plus"
+                                    decrementButtonIcon="pi pi-minus"
+                                >
+                                </p-inputNumber>
+                            </div>
+                            <div class="gets-count-list">
+                                <label for="horizontal">Infants</label>
+                                <p-inputNumber
+                                    [(ngModel)]="value20"
+                                    [showButtons]="true"
+                                    buttonLayout="horizontal"
+                                    inputId="horizontal"
+                                    spinnerMode="horizontal"
+                                    [step]="10"
+                                    decrementButtonClass="left-button"
+                                    incrementButtonClass="right-button"
+                                    incrementButtonIcon="pi pi-plus"
+                                    decrementButtonIcon="pi pi-minus"
+                                >
+                                </p-inputNumber>
+                            </div>
+                            <div class="gets-count-list">
+                                <label for="horizontal">Pets</label>
+                                <p-inputNumber
+                                    [(ngModel)]="value21"
+                                    [showButtons]="true"
+                                    buttonLayout="horizontal"
+                                    inputId="horizontal"
+                                    spinnerMode="horizontal"
+                                    [step]="10"
+                                    decrementButtonClass="left-button"
+                                    incrementButtonClass="right-button"
+                                    incrementButtonIcon="pi pi-plus"
+                                    decrementButtonIcon="pi pi-minus"
+                                >
+                                </p-inputNumber>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-overlayPanel>
+            </div>
+            <div class="col-md-12 p-p-0 calendar-div">
+                <label for="" class="icons-image"
+                    ><img src="assets/images/svg-icons/calender-icon.svg"
+                /></label>
+                <p-calendar
+                    #searchCalendarMobile
+                    dateFormat="dd/mm/yy"
+                    [minDate]="minDateValue"
+                    [(ngModel)]="rangeDates"
+                    appendTo="body"
+                    placeholder="Date"
+                    selectionMode="range"
+                    [readonlyInput]="true"
+                    inputId="range"
+                    [numberOfMonths]="1"
+                    (onSelect)="onSelectDate($event)"
+                >
+                    <ng-template pTemplate="header">
+                        <div class="ui-g">
+                            <div class="ui-g-10">
+                                <ng-content></ng-content>
+                            </div>
+                            <div
+                                class="ui-g-2 ui-text-right"
+                                style="
+                                    float: right;
+                                    padding: 10px;
+                                    border-bottom: 1px solid #d4d6d9;
+                                "
+                            >
+                                <span
+                                    class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+                                    (click)="closeDatesMobileView()"
+                                    style="cursor: pointer"
+                                    pRipple
+                                >
+                                    <i class="pi pi-times"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </ng-template>
+                    <!-- <ng-template pTemplate="footer">
+                                <p-button label="Clear" icon="pi pi-filter-slash"
+                                    styleClass="p-button-raised p-button-text p-button-danger p-button-sm clear-btn-bottom"
+                                    (click)="onClickClear()"></p-button>
+                                <p-button label="Close" icon="pi pi-times" (click)="onClickCalendarClose()"
+                                    styleClass="p-button-sm p-button-raised p-button-text p-button-danger close-btn-bottom"></p-button>
+                            </ng-template> -->
+                </p-calendar>
+            </div>
+            <div class="col-md-12 p-p-0 calendar-div">
+                <button
+                    (click)="onClickSearch()"
+                    pButton
+                    pRipple
+                    type="button"
+                    class="p-button-rounded p-button-danger secondary btn-custom secondary w-100"
+                >
+                    Search
+                </button>
+            </div>
+        </div>
+    </div>
+</p-dialog>

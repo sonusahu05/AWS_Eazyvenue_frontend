@@ -1,0 +1,65 @@
+*:hover{
+    text-decoration: none !important;
+}
+
+.checkbox-mt-10 {
+   position: relative;
+   top: 10px;
+}
+input.radio-btn {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    top: 6px;
+    left: -4px;
+}
+
+button.p-treetable-toggler.p-link.p-ripple{
+    margin-left: 40px;
+}
+.same-as-place{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+
+}
+label.same-agency{
+    margin: 10px;
+}
+
+.product-image {
+	width: 50px;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+}
+
+:host ::ng-deep button {
+	margin-right: .25em;
+}
+.mandatory-feilds{
+    color:#FF0000;
+}
+.banner-add-main-section .title-area h5{
+    font-size: 30px;
+    font-weight: 600;
+    text-transform: capitalize;  
+}
+.text-right
+{
+    text-align: right !important;
+}
+
+.baner-image-update button .p-button.p-component.p-button-icon-only {
+    width: 30%;
+}
+.div-border{
+    background: -webkit-linear-gradient(top, #FFFFFF 0%, #EEEEEE 100%);
+    border-right: 1px solid #E3E3E3;
+    border-bottom: 1px solid #E3E3E3;
+    width: 100%;
+    padding:15px;
+}
+.pare_margin{
+    margin-right: -1.5rem;
+    margin-left: -1.4rem;
+}

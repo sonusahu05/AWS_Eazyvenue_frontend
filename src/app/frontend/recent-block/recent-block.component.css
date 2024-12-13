@@ -1,0 +1,8 @@
+.price-icons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.p-avatar.p-avatar-circle{
+    background: #ec35394f;
+}

@@ -1,0 +1,37 @@
+<!-- Browse By Location Start -->
+<div class="section section-padding bg-norepeat bg-bottom light-bg" [style.background-image]="'url(assets/img/misc/bldg.png)'">
+    <div class="container">
+        <div class="section-title-wrap section-header">
+            <h5 class="custom-primary">Find Your Paradise</h5>
+            <h2 class="title">Browse By City</h2>
+        </div>
+        <div class="row masonry">
+            <div class="col-lg-6 masonry-item" *ngFor="let item of locations | slice:0:1">
+                <div class="acr-country-item acr-country-item-lg">
+                    <div class="acr-country-thumb">
+                        <img [src]="item.image" [alt]="item.location">
+                    </div>
+                    <a routerLink="/listing-map" class="acr-country-content">
+                        <h4>{{item.location}}</h4>
+                        <span>{{item.price}}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 masonry-item">
+                <div class="row">
+                    <div class="col-lg-6 col-sm-6" *ngFor="let item of locations | slice:1:5">
+                        <div class="acr-country-item">
+                            <div class="acr-country-thumb">
+                                <img [src]="item.image" [alt]="item.location">
+                            </div>
+                            <a routerLink="/listing-map" class="acr-country-content">
+                                <h6>{{item.location}}</h6>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Browse By Location End -->

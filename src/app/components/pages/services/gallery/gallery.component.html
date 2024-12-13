@@ -1,0 +1,24 @@
+<!-- Gallery Start -->
+<div class="section section-padding">
+    <div class="container">
+        <div class="section-title-wrap section-header">
+            <h5 class="custom-primary">Our Office</h5>
+            <h2 class="title">What You're Working With</h2>
+        </div>
+        <div class="row gallery">
+            <div class="col-lg-6" *ngFor="let item of gallery | slice:0:1">
+                <a href="{{item.image}}" class="gallery-thumb">
+                    <img [src]="item.image" [alt]="item.title">
+                    <p class="gallery-caption">{{item.title}}</p>
+                </a>
+            </div>
+            <div class="col-lg-6">
+                <a href="{{item.image}}" class="gallery-thumb" *ngFor="let item of gallery | slice:1:3">
+                    <img [src]="item.image" [alt]="item.title">
+                    <p class="gallery-caption">{{item.title}}</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Gallery End -->

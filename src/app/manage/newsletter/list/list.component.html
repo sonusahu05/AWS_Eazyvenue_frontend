@@ -1,0 +1,133 @@
+<div class="p-grid manage-product-section">
+  <div class="p-col-12">
+    <div class="card">
+      <h1 class="page-title">Newsletter Management</h1>
+      <p-toolbar styleClass="p-col-12 p-mb-4">
+        <ng-template pTemplate="right">
+          <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-secondary"
+            (click)="exportExcel()"></button>
+        </ng-template>
+      </p-toolbar>
+      <!-- <p-table #dt [value]="cmsmodules" [columns]="cols" [rows]="10" [paginator]="true" [resizableColumns]="true"
+        [autoLayout]="true"  [rowsPerPageOptions]="paginationOption"
+        [globalFilterFields]="['cmsTitle','cmspageTitle','cmsContent','cmsDescription','cmsImage','metaKeyword','metaDescription','status']"
+        [rowHover]="true" dataKey="_id" styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped" [autoLayout]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"> -->
+
+      <p-table #dt [value]="newsLetterList" [columns]="cols" [rows]="10" [paginator]="true" [resizableColumns]="true"
+        [autoLayout]="true" [rowsPerPageOptions]="paginationOption"
+        [globalFilterFields]="['firstName', 'lastName', 'firstName', 'email', 'created_at','status']" [rowHover]="true"
+        dataKey="id" styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped">
+
+
+        
+        <ng-template pTemplate="caption">
+          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-end table-header">
+            <!-- <h5 class="p-m-0">News Letter List</h5> -->
+            <span class="p-input-icon-left">
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                placeholder="Search..." />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <!-- <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th> -->
+            <th pSortableColumn="sl">SL <p-sortIcon field="sl"></p-sortIcon>
+            </th>
+            <th pSortableColumn="firstName">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                First Name
+                <p-sortIcon field="firstName"></p-sortIcon>
+                <p-columnFilter type="text" field="firstName" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="lastName">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Last Name
+                <p-sortIcon field="lastName"></p-sortIcon>
+                <p-columnFilter type="text" field="lastName" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="email">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Email
+                <p-sortIcon field="email"></p-sortIcon>
+                <p-columnFilter type="text" field="email" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+
+            <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon>
+            </th>
+
+            <th pSortableColumn="created_at">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Subscription Date
+                <p-sortIcon field="created_at"></p-sortIcon>
+                <p-columnFilter type="text" field="created_at" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+
+            <!--
+            <th pSortableColumn="created_at">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Subscription Date  -->
+            <!-- <p-sortIcon field="created_at"></p-sortIcon> -->
+            <!-- <p-columnFilter type="text" field="created_at" display="menu" class="p-ml-auto"></p-columnFilter> -->
+            <!--   </div>
+            </th> -->
+
+
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-newsLetter let-rowIndex="rowIndex">
+          <tr>
+            <!-- <td>
+              <p-tableCheckbox [value]="newsLetter"></p-tableCheckbox>
+            </td> -->
+            <td><span class="p-column-title" id="typeName">SR</span>
+              {{rowIndex+1}}
+            </td>
+            <td><span class="p-column-title" id="name">First Name</span>
+              {{newsLetter.firstName}}
+            </td>
+            <td><span class="p-column-title" id="name">Last Name</span>
+              {{newsLetter.lastName}}
+            </td>
+            <td><span class="p-column-title" id="name">Email</span>
+              {{newsLetter.email}}
+            </td>
+            <td>
+              <p-inputSwitch [(ngModel)]="newsLetter.status" (onChange)="changeStatus(newsLetter)"></p-inputSwitch>
+            </td>
+            <!-- <td><span class="p-column-title">Status</span>
+              <div *ngIf="newsLetter.status == true; else elsePart">
+                Active
+              </div>
+              <ng-template #elsePart>
+                Inactive
+              </ng-template>
+            </td> -->
+            <td><span class="p-column-title" id="name">Created At</span>
+              {{newsLetter.created_at | date:'yyyy-M-d'}}
+            </td>
+            <td><span class="p-column-title">Action</span>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-denger p-mr-2"
+                (click)="onDelete(newsLetter)" pTooltip="Delete Newsletter" tooltipPosition="bottom"></button>
+              <!--<button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-rounded"></button>  | date:'d/M/yyyy h:mm a' -->
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+          <div class="p-d-flex p-ai-center p-jc-between">
+            In total there are {{newsLetterList ? newsLetterList.length : 0 }} Newsletters.
+          </div>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+</div>

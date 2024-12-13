@@ -1,0 +1,29 @@
+<!-- Testimonials Start -->
+<div class="section section-padding pt-0">
+    <div class="container">
+        <div class="section-title-wrap section-header">
+            <h5 class="custom-primary">Testimonials</h5>
+            <h2 class="title">What Are People Saying</h2>
+        </div>
+        <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings" class="sigma_testimonial-slider">
+            <!-- Data -->
+            <div ngxSlickItem class="sigma_testimonial style-2" *ngFor="let item of testimonials">
+                <div class="sigma_testimonial-body">
+                    <span class="fas fa-quote-left sigma_testimonial-icon"></span>
+                    <p>{{item.comment}}</p>
+                    <div class="d-flex align-items-center" *ngFor="let author of getAuthor(item.author)">
+                        <div class="sigma_testimonial-thumb">
+                            <img [src]="author.image" [alt]="author.name">
+                        </div>
+                        <div class="sigma_author-block">
+                            <h5>{{author.name}}</h5>
+                            <span class="sigma_testimonial-category">{{author.post}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Data -->
+        </ngx-slick-carousel>
+    </div>
+</div>
+<!-- Testimonials End -->

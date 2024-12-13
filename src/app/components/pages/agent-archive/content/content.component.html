@@ -1,0 +1,37 @@
+<div class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="row">
+                    <!-- Vendor Start --> 
+                    <div class="col-lg-6" *ngFor="let item of agentblock | paginate: { itemsPerPage: 4, currentPage: page }">
+                        <div class="acr-agent">
+                            <div class="listing-badge featured" *ngIf="item.star">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="acr-dots-wrapper acr-agent-thumb">
+                                <div class="acr-dots"></div>
+                                <a routerLink="/vendor-details/{{item.id}}"> <img [src]="item.image" [alt]="item.name"></a>
+                            </div>
+                            <div class="acr-agent-body">
+                                <h6> <a routerLink="/vendor-details/{{item.id}}">{{item.name}}</a> </h6>
+                                <span>{{item.post}}</span>
+                                <p>{{item.text | slice:0:150}}</p>
+                                <a routerLink="/vendor-details/{{item.id}}" class="btn-custom secondary btn-sm">View Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Vendor End -->
+                </div>
+                <!-- Pagination Start -->
+                <div class="pagination">
+                    <pagination-controls (pageChange)="page = $event"></pagination-controls>
+                </div>
+                <!-- Pagination End -->
+            </div>
+            <div class="col-lg-4">
+                <app-blog-sidebar></app-blog-sidebar>
+            </div>
+        </div>
+    </div>
+</div>

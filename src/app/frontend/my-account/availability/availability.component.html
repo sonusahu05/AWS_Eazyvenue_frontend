@@ -1,0 +1,487 @@
+<!-- <h1 class="mt-0 mb-0 page-title">Availability Updates</h1> -->
+<p-tabView>
+    <p-tabPanel header="Order">
+        <div class="card" *ngFor="let venueOrder of venueOrderList">
+            <div class="row">
+                <!-- <div class="col-lg-12  avilability-status-section">
+                    <h5 class="avail-status-label mb-0">Availability Status</h5>
+                    <div class="availability-status-output">
+                        <span *ngIf="venueOrder.status"><span class="circle-dot"></span> Available</span>
+                        <span *ngIf="!venueOrder.status">Not Available</span>
+                    </div>
+                </div> -->
+                <div class="col-lg-3 col-md-4 col-sm-12" #dt [(selection)]="selectedvenueOrders" dataKey="id"
+                    styleClass="p-datatable-venueOrders" id="search-order-section">
+                    <div class="image">
+                        <img class="venue-img" src="{{venueOrder.venueImage[0].venue_image_src}}" alt="">
+                    </div>
+                    <div class="availability-status-section-1">
+                        <h5 class="avail-status-label mb-0">Availability Status</h5>
+                        <div class="availability-status-output">
+                            <span *ngIf="venueOrder.status"><span class="circle-dot"></span> Available</span>
+                            <span *ngIf="!venueOrder.status">Not Available</span>
+                        </div>
+                        </div>
+                </div>
+                <div class="col-lg-9 col-md-8 col-sm-12">
+                    <div class="row availability-rowgap">
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <h4 class="Venue-name">{{venueOrder.venueName}}</h4>
+                            <div class="Venue-location">
+                                <h5><span><img src="assets/img/svg/location-icon.svg"></span>{{venueOrder.venuecity}}
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 availability-status-section-2">
+                            <h5 class="status mb-0">Availability Status</h5>
+                            <div class="availability-status">
+                                <span *ngIf="venueOrder.status"><span class="circle-dot"></span> Available</span>
+                                <span *ngIf="!venueOrder.status">Not Available</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <ul class="category-lists">
+                                <li class="mt-1">
+                                    <div class="media right-line">
+                                        <div class="media-left mr-3">
+                                            <div class="icon">
+                                                <img class="mr-0 category-img"
+                                                    src="assets/images/category-icons/{{venueOrder.categorySlug}}.svg">
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="category">Occasion</h4>
+                                            <h5 class="category-name">{{venueOrder.categoryName}}</h5>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mt-1 pipe-line">
+                                    <div class="pipe"></div>
+                                </li>
+                                <li class="mt-1">
+                                    <div class="media right-line">
+                                        <div class="media-left mr-3">
+                                            <div class="icon">
+                                                <img class="mr-0 category-img"
+                                                    src="../../../../assets/images/svg-icons/guest-count-icon.svg">
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="category">Guest Count</h4>
+                                            <h5 class="category-name" *ngIf="venueOrder['guestcnt']">
+                                                {{venueOrder['guestcnt']}} People</h5>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mt-1 pipe-line">
+                                    <div class="pipe"></div>
+                                </li>
+                                <li class="mt-1">
+                                    <div class="media right-line">
+                                        <div class="media-left mr-3">
+                                            <div class="icon">
+                                                <img class="mr-0 category-img"
+                                                    src="../../../../assets/images/svg-icons/calender-icon.svg">
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="category">Date Of Event</h4>
+                                            <h5 class="category-name">
+                                                {{venueOrder['duration'][0]['occasionStartDate']|date:"EE, d MMM, y"}}
+                                                <!-- {{venueOrder['duration'][0]['occasionEndDate']|date:"EE, d MMM, y"}} -->
+                                            </h5>
+
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mt-1 pipe-line">
+                                    <div class="pipe"></div>
+                                </li>
+                                <li class="mt-1">
+                                    <div class="media">
+                                        <div class="media-left mr-3">
+                                            <div class="icon">
+                                                <img class="mr-0 category-img" src="../../../../assets/images/svg-icons/time.svg">
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="category">Time Slot</h4>
+                                            <h5 class="category-name">{{venueOrder['slotName']}}</h5>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- <div class="col-3">
+                            <div class="media right-line">
+                                <div class="media-left mr-2">
+                                    <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                        <img src="{{venueOrder.categoryImage}}">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="category">Occasion</h4>
+                                    <h5 class="category-name">{{venueOrder.categoryName}}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 pl-0 pr-0">
+                            <div class="media right-line">
+                                <div class="media-left mr-2">
+                                    <div class="icon" style="width: 43px!important; height: 43px!important;">
+                                        <img src="../../../../assets/images/svg-icons/guest-count-icon.svg">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="category">Guest Count</h4>
+                                    <h5 class="category-name">200 People</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 pl-0 pr-0">
+                            <div class="media right-line">
+                                <div class="media-left mr-2">
+                                    <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                        <img src="../../../../assets/images/svg-icons/calender-icon.svg">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="category">Date Of Event</h4>
+                                    <h5 class="category-name">Wed, 14 Feb, 2024</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="media">
+                                <div class="media-left mr-2">
+                                    <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                        <img src="../../../../assets/images/svg-icons/time.svg">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="category">Time Slot</h4>
+                                    <h5 class="category-name">Morning</h5>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+
+                </div>
+                <div class="col-md-12 list-icons-section-1" style="display: none;">
+                    <div class="row">
+                        <div class="col-12">
+                            <ul class="category-lists">
+                                <li class="mt-1">
+                                    <div class="media right-line">
+                                        <div class="media-left mr-3">
+                                            <div class="icon">
+                                                <img class="mr-0 category-img"
+                                                    src="assets/images/category-icons/{{venueOrder.categorySlug}}.svg">
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="category">Occasion</h4>
+                                            <h5 class="category-name">{{venueOrder.categoryName}}</h5>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mt-1 pipe-line">
+                                    <div class="pipe"></div>
+                                </li>
+                                <li class="mt-1">
+                                    <div class="media right-line">
+                                        <div class="media-left mr-3">
+                                            <div class="icon">
+                                                <img class="mr-0 category-img"
+                                                    src="../../../../assets/images/svg-icons/guest-count-icon.svg">
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="category">Guest Count</h4>
+                                            <h5 class="category-name" *ngIf="venueOrder['guestcnt']">
+                                                {{venueOrder['guestcnt']}} People</h5>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mt-1 pipe-line">
+                                    <div class="pipe"></div>
+                                </li>
+                                <li class="mt-1">
+                                    <div class="media right-line">
+                                        <div class="media-left mr-3">
+                                            <div class="icon">
+                                                <img class="mr-0 category-img"
+                                                    src="../../../../assets/images/svg-icons/calender-icon.svg">
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="category">Date Of Event</h4>
+                                            <h5 class="category-name">
+                                                {{venueOrder['duration'][0]['occasionStartDate']|date:"EE, d MMM, y"}}
+                                                <!-- {{venueOrder['duration'][0]['occasionEndDate']|date:"EE, d MMM, y"}} -->
+                                            </h5>
+
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mt-1 pipe-line">
+                                    <div class="pipe"></div>
+                                </li>
+                                <li class="mt-1">
+                                    <div class="media">
+                                        <div class="media-left mr-3">
+                                            <div class="icon">
+                                                <img class="mr-0 category-img" src="../../../../assets/images/svg-icons/time.svg">
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="category">Time Slot</h4>
+                                            <h5 class="category-name">{{venueOrder['slotName']}}</h5>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- <div class="col-3">
+                            <div class="media right-line">
+                                <div class="media-left mr-2">
+                                    <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                        <img src="{{venueOrder.categoryImage}}">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="category">Occasion</h4>
+                                    <h5 class="category-name">{{venueOrder.categoryName}}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 pl-0 pr-0">
+                            <div class="media right-line">
+                                <div class="media-left mr-2">
+                                    <div class="icon" style="width: 43px!important; height: 43px!important;">
+                                        <img src="../../../../assets/images/svg-icons/guest-count-icon.svg">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="category">Guest Count</h4>
+                                    <h5 class="category-name">200 People</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 pl-0 pr-0">
+                            <div class="media right-line">
+                                <div class="media-left mr-2">
+                                    <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                        <img src="../../../../assets/images/svg-icons/calender-icon.svg">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="category">Date Of Event</h4>
+                                    <h5 class="category-name">Wed, 14 Feb, 2024</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="media">
+                                <div class="media-left mr-2">
+                                    <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                        <img src="../../../../assets/images/svg-icons/time.svg">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="category">Time Slot</h4>
+                                    <h5 class="category-name">Morning</h5>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </p-tabPanel>
+</p-tabView>
+
+
+<!-- <p-tabView>
+    <p-tabPanel header="Order">
+        <div class="order-div">
+            <p-table #dt [value]="venueOrderList" [(selection)]="selectedvenueOrders" dataKey="id"
+                styleClass="p-datatable-venueOrders" id="search-order-section" [rowHover]="true" [rows]="10"
+                [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [loading]="loading" [paginator]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [filterDelay]="0"
+                [globalFilterFields]="['name','country.name','representative.name','status']">
+                <ng-template pTemplate="caption">
+                    <div class="table-header text-right">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search search-order-icon"></i>
+                            <input id="search-order" pInputText type="text"
+                                (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search order" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr> -->
+<!-- <th style="width: 3rem"> <p-tableCheckbox [value]="venueOrder"></p-tableCheckbox></th> -->
+<!-- <th style="width: 10%;"></th>
+                        <th pSortableColumn="name" style="width: 22%">Venue<p-sortIcon field="name"></p-sortIcon></th>
+                        <th pSortableColumn="country.name">Occasion <p-sortIcon field="country.name"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="date">Venue Date <p-sortIcon field="date"></p-sortIcon></th>
+                        <th pSortableColumn="representative.name">Price <p-sortIcon
+                                field="representative.name"></p-sortIcon></th>
+
+                        <th pSortableColumn="status">Availability Status <p-sortIcon field="status"></p-sortIcon></th> -->
+<!-- <th pSortableColumn="activity">Payment <p-sortIcon field="activity"></p-sortIcon></th> -->
+<!-- <th style="width: 10%">Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-venueOrder>
+                    <tr class="p-selectable-row"> -->
+<!-- <td>
+                                <p-tableCheckbox [value]="venueOrder"></p-tableCheckbox>
+                            </td> -->
+<!-- <td>
+                            <div class="image">
+                                <img class="venue-img" src="{{venueOrder.venueImage[0].venue_image_src}}" alt="">
+                            </div>
+                        </td>
+                        <td>
+                            <span class="p-column-title">{{venueOrder.venueName}}</span>
+
+                            <div class="media venue-name-details">
+
+                                <div class="media-body">
+                                    <div class="Venue-name">
+                                        <h4>{{venueOrder.venueName}}</h4>
+                                    </div>
+                                    <div class="Venue-location">
+                                        <h5><span><img
+                                                    src="assets/img/svg/location-icon.svg"></span>{{venueOrder.venuecity}}
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
+                        <td>
+                            <span class="p-column-title">{{venueOrder.categoryName}}</span>
+                            <span class="image-text">
+                                <div class="occasion media">
+                                    <div class="image">
+                                        <img src="{{venueOrder.categoryImage}}" alt="">
+                                    </div>
+                                    <div class="media-body m-auto">
+                                        <h4>{{venueOrder.categoryName}}</h4>
+                                    </div>
+                                </div>
+                            </span>
+                        </td>
+                        <td>
+
+                            {{venueOrder.duration[0]['occasionDate']| date:'d-MM-YYYY'}}
+                        </td>
+                        <td>
+                            <span class="p-column-title">Representative</span> -->
+<!-- <img src="{{representatives.image}}" alt=""> -->
+<!-- <span class="image-text">{{venueOrder.price| currency:'INR'}}</span>
+                        </td>
+
+                        <td>
+                            <span class="p-column-title">Availability Status</span> -->
+<!-- <span
+                                    [class]="'venueOrder-badge status-' + venueOrder.status">{{venueOrder.status}}</span> -->
+<!-- <span *ngIf="venueOrder.status">Availbale</span>
+                            <span *ngIf="!venueOrder.status">Not Available</span>
+                        </td> -->
+<!-- <td>
+                                <span class="p-column-title">Activity</span>
+                                <div class="percent">{{venueOrder.activity}}</div>
+                                <p-progressBar [value]="venueOrder.activity" [showValue]="false"></p-progressBar>
+                            </td> -->
+<!-- <td style="text-align: left">
+                            <div class="action-buttons">
+                                <button pButton type="button" class="p-button-secondary view" icon="pi pi-eye"
+                                    (click)="onVenueOrderView(venueOrder)"></button> -->
+<!-- <button pButton type="button" class="p-button-secondary comment"
+                                        icon="pi pi-comment"></button> -->
+
+<!-- </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="8">No Venue Orders found.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-tabPanel>
+    <p-tabPanel header="Wishlist">
+
+        <div class="order-div">
+            <p-table #dt [value]="wishlist" dataKey="id" styleClass="p-datatable-venueOrders" [rowHover]="true"
+                [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [loading]="loading"
+                [paginator]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [filterDelay]="0" [globalFilterFields]="['venueName','customerName','status']">
+                <ng-template pTemplate="caption">
+                    <div class="table-header text-right">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                placeholder="Search order" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr> -->
+<!-- <th style="width: 3rem"> <p-tableCheckbox [value]="venueOrder"></p-tableCheckbox></th> -->
+<!-- <th pSortableColumn="name" style="width: 20%">Venue Name <p-sortIcon field="name"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="customerName">Customer Name <p-sortIcon field="country.name"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th> -->
+<!-- <th pSortableColumn="activity">Payment <p-sortIcon field="activity"></p-sortIcon></th> -->
+<!-- <th style="width: 10%">Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr class="p-selectable-row"> -->
+<!-- <td>
+                                <p-tableCheckbox [value]="venueOrder"></p-tableCheckbox>
+                            </td> -->
+<!-- <td>
+                            {{item.venueName}}
+
+                        </td>
+                        <td>
+                            {{item.customerName}}
+                        </td>
+                        <td>
+                            <span *ngIf="item.status">Active</span>
+                            <span *ngIf="!item.status">In-Active</span>
+                        </td>
+                        <td style="text-align: center">
+                            <div class="action-buttons">
+                                <button pButton type="button" class="p-button-secondary view" icon="pi pi-eye"
+                                    (click)="onVenueVenueView(item)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                    (click)="onClickDeleteItem(item)"></button>
+
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="8">No Wishlist found.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-tabPanel>
+
+</p-tabView> -->

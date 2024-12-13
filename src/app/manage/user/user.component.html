@@ -1,0 +1,227 @@
+<div class="p-grid table-demo manage-product-section">
+	<div class="p-col-12">
+		<div class="card">
+			<h1 class="page-title">Register User Account Management</h1>
+			<p-toast key="toastmsg"></p-toast>
+			<!-- <h5>Register Customer Account</h5> -->
+			<p-toolbar styleClass="p-mb-4">
+				<ng-template pTemplate="left">
+					<!-- <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" (click)="addNewUser()"></button> -->
+					<button pButton label="Clear Filters" class="p-button-outlined p-mr-2"
+						icon="pi pi-filter-slash" (click)="clear()
+					"></button>
+				</ng-template>
+				<ng-template pTemplate="right">
+					<button pButton pRipple label="Export" icon="pi pi-file-excel" (click)="exportExcel()"
+						class="p-button-secondary"></button>
+					<!-- <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning mr-2" pTooltip="PDF" tooltipPosition="bottom"></button> -->
+				</ng-template>
+			</p-toolbar>
+			<!-- <div class="card">
+				<div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-2"> 
+						<label for="searchfield">Select Field</label>
+						<p-dropdown inputId="searchfield" [options]="searchBy" [(ngModel)]="searchby" placeholder="Select Field" optionLabel="label"></p-dropdown>
+					</div>
+					<div class="p-field p-col-3"> 
+						<label for="startdt">Start Date</label>
+						<p-calendar  monthNavigator="true" yearNavigator="true" yearRange="2022:2050"  [(ngModel)]="startDate" class="p-calendar" inputId="calendar" dateFormat="dd/mm/yy" [showIcon]="true" ></p-calendar>
+					</div>
+					<div class="p-field p-col-3"> 
+						<label for="enddt">End Date</label>
+						<p-calendar  monthNavigator="true" yearNavigator="true" yearRange="2022:2050"  [(ngModel)]="endDate" class="p-calendar" inputId="calendar"  dateFormat="dd/mm/yy" [showIcon]="true" ></p-calendar>
+					</div>
+					<div class="p-field p-col-3"> 						
+						<button pButton pRipple label="Search" class="p-button p-mr-1 p-mb-2" (click)="loadUsers($event)"></button>
+					</div>
+				</div>
+			</div> -->
+			<p-table class="p2-table-columns show-columns" #dt [value]="userlist"  [paginator]="true" [rows]="10" [autoLayout]="true"
+				[lazy]="true" (onLazyLoad)="loadUsers($event)" [totalRecords]="totalRecords" [loading]="loading"
+				[rowsPerPageOptions]="paginationOption" styleClass="p-datatable-gridlines p-datatable-striped">
+				<!-- <ng-template pTemplate="caption">
+				<div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+				 <h5 class="p-m-0">Register Customer Account</h5> 
+				  <span class="p-input-icon-left">
+					<i class="pi pi-search"></i>
+					<input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+					  placeholder="Search..." />
+				  </span> 
+				</div>
+			  </ng-template> -->
+				<ng-template pTemplate="header" let-columns>
+					<tr>
+						<th pSortableColumn="firstName" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								First Name
+								<p-sortIcon field="firstName"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="lastName" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Last Name
+								<p-sortIcon field="lastName"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="gender" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Gender
+								<p-sortIcon field="gender"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="email" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Email Id
+								<p-sortIcon field="email"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="mobileNumber" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Mobile
+								<p-sortIcon field="mobileNumber"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="dob" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								DOB
+								<p-sortIcon field="dob"></p-sortIcon>
+							</div>
+						</th>
+						<!-- <th pSortableColumn="weddingDate" class="col-width">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Wedding Date
+								<p-sortIcon field="weddingDate"></p-sortIcon>
+							</div>
+						</th> -->
+						<th pSortableColumn="updated_at" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Modification Date
+								<p-sortIcon field="updated_at"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="status" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Status
+								<p-sortIcon field="status"></p-sortIcon>
+							</div>
+						</th>
+						<th class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Action
+							</div>
+						</th>
+					</tr>
+					<tr>
+						<th [ngSwitch]="firstName">
+							<input pInputText type="text"
+								(keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'firstName', 'contains')"
+								[value]="dt.filters['firstName'] ? dt.filters['firstName'].value : ''" />
+						</th>
+						<th [ngSwitch]="lastName">
+							<input pInputText type="text"
+								(keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'lastName', 'contains')"
+								[value]="dt.filters['lastName'] ? dt.filters['lastName'].value : ''" />
+						</th>
+						<th [ngSwitch]="gender" class="	">
+							<p-dropdown #pDropDownId [options]="genders"
+								(onChange)="setDownloadFlag(); dt.filter($event.value, 'gender', 'equals')"
+								styleClass="p-column-filter" placeholder="Select Gender" [showClear]="true">
+								<ng-template let-option pTemplate="item">
+									<span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+								</ng-template>
+							</p-dropdown>
+						</th>
+						<th [ngSwitch]="email" class="">
+							<input pInputText type="text"
+								(keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'email', 'contains')"
+								[value]="dt.filters['email'] ? dt.filters['email'].value : ''" />
+						</th>
+						<th [ngSwitch]="mobileNumber" class="">
+							<input pInputText type="text"
+								(keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'mobileNumber', 'contains')"
+								[value]="dt.filters['mobileNumber'] ? dt.filters['mobileNumber'].value : ''" />
+						</th>
+						<th [ngSwitch]="dob" class="">
+							<p-calendar monthNavigator="true" class="mb-2" readonlyInput="true" yearNavigator="true"
+							yearRange="{{yearRange}}" #pCalendarId class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy" placeholder="DD/MM/YYYY"
+								(onSelect)="setDownloadFlag(); dt.filter($event,'dob', 'dateIs')" [showIcon]="true" appendTo="body"
+								[(ngModel)]="dcalvalue"></p-calendar>
+						</th>
+						<!-- <th [ngSwitch]="weddingDate" class="">
+							<p-calendar #pCalendarId class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy"
+								(onSelect)="setDownloadFlag(); dt.filter($event,'weddingDate', 'dateIs')"
+								[showIcon]="true" [(ngModel)]="wdcalvalue"></p-calendar>
+						</th> -->
+						<th [ngSwitch]="updated_at" class="">
+							<p-calendar monthNavigator="true" class="mb-2" readonlyInput="true" yearNavigator="true"
+							yearRange="{{yearRange}}" #pCalendarId class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy" placeholder="DD/MM/YYYY"
+								(onSelect)="setDownloadFlag(); dt.filter($event,'updated_at', 'dateIs')" appendTo="body"
+								[showIcon]="true" [(ngModel)]="ucalvalue"></p-calendar>
+						</th>
+						<th [ngSwitch]="status" class="">
+							<p-dropdown #pDropDownId [options]="statuses"
+								(onChange)="setDownloadFlag(); dt.filter($event.value, 'status', 'equals')"
+								styleClass="p-column-filter" placeholder="Select Status" [showClear]="true">
+								<ng-template let-option pTemplate="item">
+									<span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+								</ng-template>
+							</p-dropdown>
+						</th>
+						<th>
+							<!-- <button pButton [style]="{'margin-left':'20px'}" icon="pi pi-plus" class="p-button-rounded" (click)="addColumns()"></button> -->
+						</th>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="body" let-user>
+					<tr class="p-selectable-row">
+						<td>
+							{{user.firstName}}
+						</td>
+						<td>
+							{{user.lastName}}
+						</td>
+						<td>
+							{{user.gender}}
+						</td>
+						<td>
+							{{user.email}}
+						</td>
+						<td>
+							{{user.mobileNumber}}
+						</td>
+						<td>
+							{{user.dob | date:'d/M/yyyy'}}
+						</td>
+						<!-- <td>
+							{{user.weddingDate | date:'d/M/yyyy'}}
+						</td> -->
+						<td>
+							{{user.updated_at | date:'d/M/yyyy'}}
+						</td>
+						<td>
+							<p-inputSwitch [(ngModel)]="user.status" (onChange)="changeStatus(user)"></p-inputSwitch>
+						</td>
+						<td class="col-width text-nowrap">
+							<!-- <button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-success p-mr-2" (click)="viewUser(user.id)"></button> -->
+							<button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
+								(click)="editUser(user.id)" pTooltip="Edit Account" tooltipPosition="bottom"></button>
+							<button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-denger"
+								(click)="deleteUser(user)" pTooltip="Delete Account" tooltipPosition="bottom"></button>
+						</td>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="emptymessage">
+					<tr>
+						<td colspan="7">No Register Customers found.</td>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="summary">
+					<div class="p-d-flex p-ai-center p-jc-between">
+						In total there are {{totalRecords }} Register Customers.
+					</div>
+				</ng-template>
+			</p-table>
+		</div>
+		<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+	</div>
+</div>

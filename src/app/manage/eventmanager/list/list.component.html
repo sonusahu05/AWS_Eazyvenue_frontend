@@ -1,0 +1,104 @@
+<div class="p-grid manage-product-section">
+  <div class="p-col-12">
+    <div class="card">
+      <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="right">
+          <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help p-mb-2"
+            (click)="dt.exportCSV()"></button>
+        </ng-template>
+      </p-toolbar>
+      <p-table #dt [value]="eventPlannerList" [columns]="cols" [rows]="10" [paginator]="true" [resizableColumns]="true"
+        [autoLayout]="true" [globalFilterFields]="['name', 'email', 'message', 'phoneNumber', 'created_at', 'status']"
+        [rowHover]="true" dataKey="id" styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-end table-header">
+            <!-- <h5 class="p-m-0">Contact Us</h5> -->
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                placeholder="Search..." />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <!-- <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th> -->
+            <th pSortableColumn="sl">SL <p-sortIcon field="sl"></p-sortIcon>
+            </th>
+            <th pSortableColumn="name">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Name
+                <p-sortIcon field="name"></p-sortIcon>
+                <p-columnFilter type="text" field="name" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+
+            <th pSortableColumn="email">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Email
+                <p-sortIcon field="email"></p-sortIcon>
+                <p-columnFilter type="text" field="email" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="mobileNumber">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Mobile Number
+                <p-sortIcon field="mobileNumber"></p-sortIcon>
+                <p-columnFilter type="text" field="mobileNumber" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="eventdate">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Event Date
+                <p-sortIcon field="eventdate"></p-sortIcon>
+                <p-columnFilter type="text" field="eventdate" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="guestcnt">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Guest Count
+                <p-sortIcon field="guestcnt"></p-sortIcon>
+                <p-columnFilter type="text" field="guestcnt" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="created_at">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Date
+                <!-- <p-sortIcon field="created_at"></p-sortIcon> -->
+                <!-- <p-columnFilter type="text" field="created_at" display="menu" class="p-ml-auto"></p-columnFilter> -->
+              </div>
+            </th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-eventPlanner let-rowIndex="rowIndex">
+          <tr>
+            <td>{{rowIndex+1}}</td>
+            <td>{{eventPlanner.name}}</td>
+            <td>{{eventPlanner.email}}</td>
+            <td>{{eventPlanner.mobileNumber}}</td>
+            <td>{{eventPlanner.eventdate| date:'d/M/yyyy'}}</td>
+            <td>{{eventPlanner.guestcnt}}</td>
+            <td><span class="p-column-title" id="name">Created at</span>
+              {{eventPlanner.created_at | date:'d/M/yyyy'}}
+            </td>
+            <td><span class="p-column-title">Action</span>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning p-mr-4"
+                (click)="onDelete(eventPlanner)"></button>
+              <!--<button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-rounded"></button>-->
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+          <div class="p-d-flex p-ai-center p-jc-between">
+            In total there are {{eventPlannerList ? eventPlannerList.length : 0 }} Event Planners.
+          </div>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+</div>

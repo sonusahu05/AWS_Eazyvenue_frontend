@@ -1,0 +1,30 @@
+<!-- Categories Start -->
+<div class="section section-padding">
+    <div class="container">
+        <div class="section-title-wrap section-header">
+            <h5 class="custom-primary">Categories</h5>
+            <h2 class="title">Browse By Category</h2>
+        </div>
+        <div class="row">
+            <!-- Data -->
+            <div class="col-lg-4 col-md-6" *ngFor="let item of category">
+                <div class="acr-category">
+                    <div class="acr-category-thumb">
+                        <a routerLink="/listing/cat/{{item.id}}"><img [src]="item.img" [alt]="item.title"></a>
+                        <div class="acr-category-body d-flex align-items-center justify-content-between">
+                            <div class="category-title">
+                                <h5> <a routerLink="/listing/cat/{{item.id}}">{{item.title}}</a> </h5>
+                                <span>{{item.count}} Weddings</span>
+                            </div>
+                            <div class="category-img">
+                                <i [class]="item.icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Data -->
+        </div>
+    </div>
+</div>
+<!-- Categories End -->

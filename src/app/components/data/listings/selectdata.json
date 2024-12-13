@@ -1,0 +1,78 @@
+{
+    "locationlist":[
+        "Any Location",
+        "California, CA",
+        "Lawndale, CA",
+        "Stroudsburg, PA",
+        "West Roxbury, MA",
+        "Ponte Vedra Beach, FL",
+        "Fort Worth, TX",
+        "Willingboro, NJ"
+    ],
+    "statuslist":[
+        "Any Status",
+        "For Party",
+        "For Birthday",
+        "For Wedding",
+        "New Addition"
+    ],
+    "pricerangelist":[
+        "Any Range",
+        "$60k - $80k",
+        "$80k - $100k",
+        "$100k - $120k",
+        "$120k - $140k",
+        "$140k - $160k",
+        "$160k - $180k",
+        "$180k - $200k"
+    ],
+    "price":[
+        "Any amount",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5+"
+    ],
+    "guestroom":[
+        "Any amount",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5+"
+    ],
+    "typelist":[
+        "Any Type",
+        "Party Launge",
+        "Photobooth",
+        "Wedding Music",
+        "Wedding Cakes",
+        "Wedding Gifts",
+        "Wedding Website"
+    ],
+    "diameterlist":[
+        "Any Range",
+        "Within 2 miles",
+        "Within 4 miles",
+        "Within 6 miles",
+        "Within 8 miles",
+        "Within 10 miles",
+        "Within 22 miles"
+    ],
+    "floorlist":[
+        "Any Floor",
+        "1st",
+        "2nd",
+        "3rd",
+        "4th",
+        "5th"
+    ],
+    "sortbylist":[
+        "Any",
+        "Top Selling",
+        "Most Popular",
+        "Price: High - Low",
+        "Price: Low - High"
+    ]
+}

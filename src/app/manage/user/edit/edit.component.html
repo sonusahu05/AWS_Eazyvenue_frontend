@@ -1,0 +1,137 @@
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="title-area">
+            <h5 class="admin-heading">
+                Edit User
+            </h5>
+        </div>
+        <div class="card p-pt-3">
+            <p-toast key="toastmsg" position="top-right"></p-toast>
+            <form [formGroup]="userForm" *ngIf="this.userForm" (ngSubmit)="onSubmit()">
+                <div class="p-fluid p-formgrid p-grid pare_margin">
+                    <div class="p-field p-col-4">
+                        <label for="firstName">First Name</label>
+                        <input formControlName="firstName" type="text" pInputText class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }">
+                        <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
+                            <div *ngIf="f.firstName.errors.required">First name is required</div>
+                            <div *ngIf="f.firstName.errors">Only alphabets allowed</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="lastName">Last Name</label>
+                        <input formControlName="lastName" type="text" pInputText class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }">
+                        <div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">
+                            <div *ngIf="f.lastName.errors.required">Last name is required</div>
+                            <div *ngIf="f.lastName.errors">Only alphabets allowed</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-1">
+                        <label for="status">Status</label>
+                        <p-inputSwitch class="checkbox-mt-10" formControlName="status" style="display: block;"
+                        (ngModelChange)="onStatusSelect($event)"></p-inputSwitch>
+                        <div *ngIf="submitted && f.status.errors" class="invalid-feedback">
+                            <div *ngIf="f.status.errors.required">Please select status</div>
+                        </div>
+                        <!-- <p-dropdown inputId="status" [options]="statuses" formControlName="status" placeholder="Select"
+                            optionLabel="label" (ngModelChange)="onStatusSelect($event)"></p-dropdown>
+                        <div *ngIf="submitted && f.status.errors" class="invalid-feedback">
+                            <div *ngIf="f.status.errors.required">Please, Select Status</div>
+                        </div> -->
+                    </div>
+                   
+                </div>
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4">
+                        <label for="email">Email Id</label>
+                        <input formControlName="email" type="text" pInputText
+                            [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+                        <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                            <div *ngIf="f.email.errors.required">Email is required</div>
+                            <div *ngIf="f.email.errors.email">Enter valid email address</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="textarea">Gender</label>
+                        <p-dropdown inputId="gender" [options]="genders" formControlName="gender" placeholder="Select"
+                            optionLabel="name" (ngModelChange)="onGenderSelect($event)"></p-dropdown>
+                        <div *ngIf="submitted && f.gender.errors" class="invalid-feedback">
+                            <div *ngIf="f.gender.errors.required">Please select gender</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="dob">DOB</label>
+                        <p-calendar [readonlyInput]="true" placeholder="DD/MM/YYYY" formControlName="dob"
+                             monthNavigator="true" class="p-calendar" yearNavigator="true" 
+                            inputId="calendar" dateFormat="dd/mm/yy" [readonlyInput]="true" [showIcon]="true" yearRange="1950:2050"
+                            (onSelect)="setDOB($event)" [ngClass]="{ 'is-invalid': submitted && f.dob.errors }">
+                        </p-calendar>
+                        <div *ngIf="submitted && f.dob.errors" class="invalid-feedback">
+                            <div *ngIf="f.dob.errors.required">Please enter dob</div>
+                        </div>
+                    </div>
+                    <!-- <div class="p-field p-col-4">
+                        <label>Password</label>
+                        <input type="password" formControlName="password" pInputText [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+                        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                            <div *ngIf="f.password.errors.required">Password is required</div>
+                            <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label>Confirm Password</label>
+                        <input type="password" formControlName="confirmPassword" pInputText [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }" />
+                        <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                            <div *ngIf="f.confirmPassword.errors.required">Confirm Password is required</div>
+                            <div *ngIf="f.confirmPassword.errors.mustMatch">Passwords must match</div>
+                        </div>
+                    </div> -->
+
+                </div>
+                <!-- <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4">
+                        <label for="country">Country</label>
+                        <p-dropdown inputId="country" [filter]="true" [options]="countrylist" formControlName="country"
+                            (onChange)="getStates('true',$event)" placeholder="Select" optionLabel="name"></p-dropdown>
+                        <div *ngIf="submitted && f.country.errors" class="invalid-feedback">
+                            <div *ngIf="f.country.errors.required">Please, Select Country</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="state">State</label>
+                        <p-dropdown inputId="state" [filter]="true" [options]="statelist" formControlName="state"
+                            (onChange)="getCities('true', $event)" placeholder="Select" optionLabel="name"></p-dropdown>
+                        <!-- <div *ngIf="submitted && f.state.errors" class="invalid-feedback">
+                            <div *ngIf="f.state.errors.required">Please, Select State</div>
+                        </div> -->
+                <!-- <-- </div>
+                    <div class="p-field p-col-4">
+                        <label for="city">City</label>
+                        <p-dropdown inputId="city" [filter]="true" [options]="citylist" formControlName="city"
+                            (onChange)="onCitySelect($event)" placeholder="Select" optionLabel="name"></p-dropdown> -->
+                <!-- <div *ngIf="submitted && f.city.errors" class="invalid-feedback">
+                            <div *ngIf="f.city.errors.required">Please, Select City</div>
+                        </div> -->
+                <!-- </div>
+                </div> -->
+             
+                <div class="button-set p-col-12 d-flex p-fluid p-jc-md-end">
+                    <div class="p-formgrid p-grid">
+                        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-success p-mr-2"
+                            style="width:auto;"></button>
+                        <!-- <button pButton pRipple label="Save" icon="pi pi-check" [disabled]="userForm.invalid"></button> -->
+                        <!-- <button pButton pRipple label="Reset" icon="pi pi-times" type="reset" (click)="onReset()"></button> -->
+                        <button pButton pRipple type="button" icon="pi pi-arrow-left" label="Back" class="p-button-denger" (click)="backLink()"
+                            style="width:auto;"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="button-set back">
+            <div class="p-fluid p-formgrid">
+                <p-toast></p-toast>
+            </div>
+        </div>
+    </div>
+</div>

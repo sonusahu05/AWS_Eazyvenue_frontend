@@ -1,0 +1,3 @@
+User-agent: *
+
+Sitemap: https://eazyvenue.com/sitemap_index.xml

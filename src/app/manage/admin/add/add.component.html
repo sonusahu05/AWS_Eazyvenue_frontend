@@ -1,0 +1,156 @@
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="title-area">
+			<h5 class="admin-heading">
+				Add Admin
+			</h5>
+		</div>
+        <div class="card">
+            <p-toast key="toastmsg" position="top-right"></p-toast>
+            <form [formGroup]="userForm" *ngIf="this.userForm" (ngSubmit)="onSubmit()">
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4">
+                        <label for="firstName">First Name <span class="mandatory-fields">*</span></label>
+                        <input formControlName="firstName" type="text" pInputText class="form-control"  [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }">
+                        <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
+                            <div *ngIf="f.firstName.errors.required">First name is required</div>
+                            <div *ngIf="f.firstName.errors">Only alphabets allowed</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="lastName">Last Name <span class="mandatory-fields">*</span></label>
+                        <input formControlName="lastName" type="text" pInputText class="form-control"  [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }">
+                        <div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">
+                            <div *ngIf="f.lastName.errors.required">Last name is required</div>
+                            <div *ngIf="f.lastName.errors">Only alphabets allowed</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="status" class="mr-2">Status</label>
+                        <p-inputSwitch class="checkbox-mt-10" formControlName="status" style="display: block;"
+                        (ngModelChange)="onStatusSelect($event)"></p-inputSwitch>
+                        <div *ngIf="submitted && f.status.errors" class="invalid-feedback">
+                            <div *ngIf="f.status.errors.required">Please select status</div>
+                        </div>
+                    </div>
+                                  
+                </div>
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4">
+                        <label for="email">Email Id <span class="mandatory-fields">*</span></label>
+                        <input formControlName="email" type="email" pInputText   [ngClass]="{ 'is-invalid': submitted && f.email.errors }" >
+                        <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                            <div *ngIf="f.email.errors.required">Email is required</div>
+                            <div *ngIf="f.email.errors.email">Enter valid email address</div>
+                        </div>
+                    </div>     
+                    <div class="p-field p-col-4">
+                        <label>Password <span class="mandatory-fields">*</span></label>
+                        <input type="password" formControlName="password" pInputText [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+                        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                            <div *ngIf="f.password.errors.required">Password is required</div>
+                            <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label>Confirm Password <span class="mandatory-fields">*</span></label>
+                        <input type="password" formControlName="confirmPassword" pInputText [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }" />
+                        <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                            <div *ngIf="f.confirmPassword.errors.required">Confirm password is required</div>
+                            <div *ngIf="f.confirmPassword.errors.mustMatch">Passwords must match</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="mobileNumber">Mobile Number <span class="mandatory-fields">*</span></label>
+                        <input formControlName="mobileNumber" minlength="10" maxlength="12" type="text" pInputText class="form-control"  [ngClass]="{ 'is-invalid': submitted && f.mobileNumber.errors }">
+                        <div *ngIf="submitted && f.mobileNumber.errors" class="invalid-feedback">
+                            <div *ngIf="f.mobileNumber.errors.required">Mobile number is required</div>
+                            <div *ngIf="f.mobileNumber.errors">Please check mobile number</div>
+                        </div>
+                    </div>
+                    <input formControlName="disable" type="hidden" value="No" >
+                    <div class="p-field p-col-4">
+                        <label for="textarea">Gender<span class="mandatory-fields">*</span></label>
+                        <p-dropdown inputId="gender" [options]="genders" formControlName="gender" placeholder="Select" optionLabel="name" (ngModelChange)="onGenderSelect($event)" [ngClass]="{ 'is-invalid': submitted && f.gender.errors }"></p-dropdown>
+                        <div *ngIf="submitted && f.gender.errors" class="invalid-feedback">
+                            <div *ngIf="f.gender.errors.required">Please select gender</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="dob">DOB <span class="mandatory-fields">*</span></label>
+                        <!-- <p-calendar #pCalendarId  class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy" [showIcon]="true"  [(ngModel)]="calvalue" ></p-calendar> -->
+                        <p-calendar monthNavigator="true" placeholder="DD/MM/YYYY" yearNavigator="true" yearRange="1950:2050" formControlName="dob" class="p-calendar" inputId="calendar" [defaultDate]="defaultDate" dateFormat="dd-mm-yy" [showIcon]="true" [ngClass]="{ 'is-invalid': submitted && f.dob.errors }"></p-calendar>
+                        <div *ngIf="submitted && f.dob.errors" class="invalid-feedback">
+                            <div *ngIf="f.dob.errors.required">Please enter DOB</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label style="display: block;"><span class="invisible">Search</span></label>
+                        <p-fileUpload chooseLabel="Upload Profile Photo" uploadLabel="Show data" cancelLabel="Cancel" accept="image/*"
+                        maxFileSize="1000000" auto="auto" customUpload="true" (uploadHandler)="picUploader($event)">
+                            <ng-template pTemplate="content">
+                            </ng-template>
+                        </p-fileUpload>
+                    </div>
+                </div>
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4">
+                        <label for="country">Country <span class="mandatory-fields">*</span></label>
+                        <p-dropdown inputId="country" [options]="countrylist" [filter]="true" formControlName="country" (onChange)="getStates($event)" placeholder="Select" optionLabel="name" [ngClass]="{ 'is-invalid': submitted && f.gender.errors }"></p-dropdown>
+                        <div *ngIf="submitted && f.country.errors" class="invalid-feedback">
+                            <div *ngIf="f.country.errors.required">Please select country</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="state">State</label>
+                        <!-- <select class="custom-select" formControlName="state" (change)="getCities($event)">
+                            <option value="">Choose your State</option>
+                            <option *ngFor="let item of stateList" [value]="item.state_code">{{item.name}}</option>
+                        </select> -->
+                        <p-dropdown inputId="state" [options]="statelist" [filter]="true" formControlName="state" (onChange)="getCities($event)" placeholder="Select" optionLabel="name"></p-dropdown>
+                        
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="city">City</label>
+                        <!-- <select class="custom-select" formControlName="city">
+                            <option value="">Choose your City</option>
+                            <option *ngFor="let item of cityList" [value]="item.name">{{item.name}}</option>
+                        </select> -->
+                        <p-dropdown inputId="city" [options]="citylist" [filter]="true" formControlName="city" placeholder="Select" optionLabel="name" (onChange)="onCitySelect($event)"></p-dropdown>
+                        
+                    </div>
+                </div>
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4">
+                        <label for="textarea">Address</label>
+                        <textarea inputId="textarea" rows="3" cols="30" class="form-control" formControlName ="address" pInputTextarea></textarea>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="zipcode">Zipcode</label>
+                        <input formControlName="zipcode" type="text" maxlength="10" pInputText class="form-control"  [ngClass]="{ 'is-invalid': submitted && f.zipcode.errors }">
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="textarea">Timezone<span class="mandatory-fields">*</span></label>
+                        <p-dropdown inputId="timezone" [options]="timeZoneArray" formControlName="timeZone" placeholder="Select" optionLabel="name" (ngModelChange)="onTimezoneSelect($event)" [ngClass]="{ 'is-invalid': submitted && f.timeZone.errors }"></p-dropdown>
+                        <div *ngIf="submitted && f.timeZone.errors" class="invalid-feedback">
+                            <div *ngIf="f.timeZone.errors.required">Please select timeZone</div>
+                        </div>
+                    </div>
+                   
+                </div>
+              
+                <div class="text-right">
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-success mr-2"></button>
+                    <!-- <button pButton pRipple label="Save" icon="pi pi-check" [disabled]="userForm.invalid"></button> -->
+                    <button pButton pRipple label="Reset"  icon="pi pi-refresh" type="reset" (click)="onReset()" class="p-button-info mr-2"></button>
+                    <button pButton pRipple type="button" label="Back" icon="pi pi-arrow-left" class="p-button-denger" (click)="backLink()"></button>
+                </div>
+            </form>
+        </div>
+        <div class="button-set back">
+            <div class="p-fluid p-formgrid">
+            <p-toast></p-toast>
+            </div>
+        </div>
+    </div>
+</div>

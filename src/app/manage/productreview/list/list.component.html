@@ -1,0 +1,138 @@
+<div class="p-grid manage-product-section ">
+  <div class="p-col-12">
+    <div class="card">
+      <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="Add Product Review" icon="pi pi-plus" class="p-button-success p-mr-2"
+            (click)="openNew()"></button>
+        </ng-template>
+        <ng-template pTemplate="right">
+          <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-secondary"
+            (click)="dt.exportCSV()"></button>
+        </ng-template>
+      </p-toolbar>
+      <p-table #dt [value]="productreviews" [columns]="cols" [rows]="10" [paginator]="true" [resizableColumns]="true"
+        [autoLayout]="true"  [rowsPerPageOptions]="paginationOption"
+        [globalFilterFields]="['sku','reviewHeading','customerName','reviewDescription','reviewImage','rating','email','date','status', 'approve']"
+        [rowHover]="true" dataKey="_id" styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped">
+        <ng-template pTemplate="caption">
+          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-end table-header">
+            <!-- <h5 class="p-m-0">Product Review List</h5> -->
+            <span class="p-input-icon-left">
+              <!-- <i class="pi pi-search"></i> -->
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                placeholder="Search..." />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <!-- <th style="width: 3rem" class="text-center">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th> -->
+            <th pSortableColumn="sl">SL <p-sortIcon field="sl"></p-sortIcon></th>
+            <th pSortableColumn="name">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Sku
+                <p-sortIcon field="sku"></p-sortIcon>
+                <p-columnFilter type="text" field="sku" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="name">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Heading
+                <p-sortIcon field="reviewHeading"></p-sortIcon>
+                <p-columnFilter type="text" field="reviewHeading" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="name">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Review
+                <p-sortIcon field="reviewDescription"></p-sortIcon>
+                <p-columnFilter type="text" field="reviewDescription" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="name">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Name
+                <p-sortIcon field="customerName"></p-sortIcon>
+                <p-columnFilter type="text" field="customerName" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <!-- <th pSortableColumn="cmsImage">Image <p-sortIcon field="cmsImage"></p-sortIcon></th>   -->
+            <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+            <th pSortableColumn="rating">Rating <p-sortIcon field="rating"></p-sortIcon></th>
+            <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
+            <th pSortableColumn="approve">Approve <p-sortIcon field="approve"></p-sortIcon></th>
+            <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-productreview let-rowIndex="rowIndex">
+          <tr>
+            <!--   <td class="text-center">
+              <p-tableCheckbox [value]="productreview"></p-tableCheckbox>
+            </td> -->
+            <td><span class="p-column-title" id="typeName">SL</span>
+              {{rowIndex+1}}
+            </td>
+            <td><span class="p-column-title" id="cmsTitle">Sku</span>
+              {{productreview.sku}}
+            </td>
+            <td><span class="p-column-title" id="sku">Heading</span>
+              {{productreview.reviewHeading}}
+            </td>
+            <td><span class="p-column-title truncate" id="cmsContent" style="white-space: nowrap;
+              overflow: hidden; text-overflow: ellipsis; max-width: 100px;">Review</span>
+              {{productreview.reviewDescription}}
+            </td>
+            <td><span class="p-column-title" id="sku">Name</span>
+              {{productreview.customerName}}
+            </td>
+            <!-- <td><span class="p-column-title">Image</span>
+              <img src="{{staticPath}}{{productreview.cmsImage}}" style="height:100px; width:100px;">
+            </td>            -->
+            <td><span class="p-column-title">Email</span>
+              {{productreview.email}}
+            </td>
+            <td><span class="p-column-title">Rating</span>
+              {{productreview.rating}}
+            </td>
+            <td><span class="p-column-title">Date</span>
+              {{productreview.date | date: 'd/M/yyyy'}}
+            </td>
+            <td class="text-center">
+              <p-inputSwitch [(ngModel)]="productreview.approve"
+                (onChange)="changeApproveStatus(productreview)"></p-inputSwitch>
+            </td>
+            <td class="text-center">
+              <p-inputSwitch [(ngModel)]="productreview.status"
+                (onChange)="changeStatus(productreview)"></p-inputSwitch>
+            </td>
+            <!-- <td><span class="p-column-title">Status</span>
+              <div *ngIf="productreview.status == true; else elsePart">
+                Active
+              </div>
+              <ng-template #elsePart>
+                Inactive
+              </ng-template>
+            </td> -->
+            <td><span class="p-column-title">Action</span>
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-4"
+                (click)="onEdit(productreview)"></button>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning p-mr-4"
+                (click)="onDelete(productreview)"></button>
+              <!--<button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-rounded"></button>-->
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+          <div class="p-d-flex p-ai-center p-jc-between">
+            In total there are {{productreviews ? productreviews.length : 0 }} Product Reviews.
+          </div>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+</div>

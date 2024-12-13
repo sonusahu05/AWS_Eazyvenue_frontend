@@ -1,0 +1,20 @@
+<!-- Services Start -->
+<div class="section light-bg infographics-2 bg-norepeat bg-bottom" [style.background-image]="'url(assets/img/misc/bldg.png)'">
+    <div class="container">
+        <div class="section-title-wrap section-header">
+            <h5 class="custom-primary">Services</h5>
+            <h2 class="title">You Need It, We Got It</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-6" *ngFor="let item of services | slice:0:6">
+                <div class="acr-infographic-item">
+                    <i [class]="item.icon"></i>
+                    <h5>{{item.title}}</h5>
+                    <p>{{item.text}}</p>
+                    <a routerLink="/services"> <span>Get Started</span> <i class="fas fa-chevron-right"></i> </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Services End -->

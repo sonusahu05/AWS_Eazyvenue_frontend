@@ -1,0 +1,19 @@
+<div class="exception-body notfound">
+    <div class="exception-topbar">
+        <a id="logolink" [routerLink]="['/']" class="layout-topbar-logo">
+            <img [src]="'assets/layout/images/logo-' + (app.topbarTheme === 'dark' ? 'freya-white' : 'freya') + '.svg'" alt="freya-layout"/>
+        </a>
+    </div>
+    <div class="exception-wrapper">
+        <div class="exception-content">
+            <img src="assets/layout/images/pages/asset-404.svg" alt="freya-layout" />
+            <span>404</span>
+            <span class="exception-subtitle">Looks like you are lost.</span>
+            <button pButton pRipple type="button" label="Go back to home" [routerLink]="['/']" ></button>
+        </div>
+        <div class="exception-footer">
+            <h4>freya</h4>
+            <h6>Copyright Ⓒ PrimeTek Informatics</h6>
+        </div>
+    </div>
+</div>

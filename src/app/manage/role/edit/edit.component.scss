@@ -1,0 +1,99 @@
+
+
+*:hover{
+    text-decoration: none !important;
+}
+
+
+.p-fluid .p-formgroup-inline .p-inputtext {
+    width: auto;
+    flex-grow: 2;
+}
+.p-formgroup-file{
+    display: flex;
+    .p-inputtext{
+        flex-grow: 2;
+        border-radius:6px 0 0 6px;
+    }
+    .p-button-primary{
+        width: 110px;
+        border-radius:0 6px 6px 0;
+    }
+}
+
+
+:host ::ng-deep {
+    button {
+        margin-right: .25em;
+    }
+    td.editModule p-checkbox{
+       position: relative;
+       top: -6px;
+       left: 0;
+    }
+}
+
+.button-set{
+    float: right;
+}
+h5.list-label b {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+.button-set.back{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.modulename {
+    padding-left: 10px;
+    width: 206px;
+}
+.submodule {
+    padding-left: 50px;
+}
+.submodulename {
+    padding-left: 10px;
+}
+
+.submodulename-radio {
+    width: 500px;
+    text-align: right;
+    padding-left: 20px;
+}
+span.right {
+    /* display: flex; */
+    margin-left: 1rem;
+    display: flex;
+    grid-gap: 10px;
+    gap: 10px;
+}
+
+p-panel {
+    margin: 15px 0px !important;
+    display: block;
+    width: 100%;
+}
+
+
+.sub-category1 {
+    // padding-left: 30px;
+    padding-right: 16px;
+    background: white;
+    border-radius: 8px;
+    margin-top: 3px;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+}
+
+
+.modules-category {
+    border-bottom: 1px solid #d4d6d9;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+h5.admin-heading {
+    color: #eb3438;
+    font-size: 16px;
+}

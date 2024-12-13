@@ -1,0 +1,141 @@
+<div class="p-grid manage-product-section">
+  <div class="p-col-12">
+    <div class="card">
+      <p-toast key="toastmsg"></p-toast>
+      <h1 class="page-title">Content Management</h1>
+
+      
+      <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+          <button pButton pRipple label="Add Cms Page" icon="pi pi-plus" class="p-button-success p-mr-2"
+            (click)="openNew()"></button>
+        </ng-template>
+        <ng-template pTemplate="right">
+          <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-secondary"
+            (click)="dt.exportCSV()"></button>
+        </ng-template>
+      </p-toolbar>
+      
+      <p-table #dt [value]="cmsmodules" [columns]="cols" [rows]="10" [paginator]="true" [resizableColumns]="true"
+        [autoLayout]="true"  [rowsPerPageOptions]="paginationOption"
+        [globalFilterFields]="['cmsTitle','cmspageTitle','cmsContent','cmsDescription','cmsImage','metaKeyword','metaDescription','status']"
+        [rowHover]="true" dataKey="_id" styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped" [autoLayout]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+        <ng-template pTemplate="caption">
+          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-end table-header">
+            <!-- <h5 class="p-m-0">Cms Page List</h5> -->
+            <span class="p-input-icon-left">
+              <!-- <i class="pi pi-search"></i> -->
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                placeholder="Search..." />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <!--   <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th> -->
+            <th pSortableColumn="sl">SL <p-sortIcon field="sl"></p-sortIcon></th>
+            <th pSortableColumn="name">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Title
+                <p-sortIcon field="cmsTitle"></p-sortIcon>
+                <p-columnFilter type="text" field="cmsTitle" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="name">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Page Title
+                <p-sortIcon field="cmspageTitle"></p-sortIcon>
+                <p-columnFilter type="text" field="cmspageTitle" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="name">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Content
+                <p-sortIcon field="cmsContent"></p-sortIcon>
+                <p-columnFilter type="text" field="cmsContent" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <!-- <th pSortableColumn="name">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Description
+                <p-sortIcon field="cmsDescription"></p-sortIcon>
+                <p-columnFilter type="text" field="cmsDescription" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>  -->
+            <!-- <th pSortableColumn="cmsImage">Image <p-sortIcon field="cmsImage"></p-sortIcon></th>   -->
+            <th pSortableColumn="metaKeyword">Meta Keyword <p-sortIcon field="metaKeyword"></p-sortIcon></th>
+            <th pSortableColumn="metaDescription">Meta Description <p-sortIcon field="metaDescription"></p-sortIcon>
+            </th>
+            <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-cmsmodule let-rowIndex="rowIndex">
+          <tr>
+            <!--   <td>
+              <p-tableCheckbox [value]="cmsmodule"></p-tableCheckbox>
+            </td> -->
+            <td><span class="p-column-title" id="typeName">SL</span>
+              {{rowIndex+1}}
+            </td>
+            <td><span class="p-column-title" id="cmsTitle">Title</span>
+              {{cmsmodule.cmsTitle}}
+            </td>
+            <td><span class="p-column-title" id="sku">Page Title</span>
+              {{cmsmodule.cmspageTitle}}
+            </td>
+            <td><span class="p-column-title truncate" id="cmsContent" style="white-space: nowrap;
+              overflow: hidden; text-overflow: ellipsis; max-width: 100px;">Content</span>
+              {{cmsmodule.cmsContent}}
+            </td>
+            <!-- <td><span class="p-column-title truncate" id="cmsDescription" style="white-space: nowrap;
+               overflow: hidden; text-overflow: ellipsis; max-width: 100px;">Description</span>
+              {{cmsmodule.cmsDescription}}
+            </td>   -->
+            <!-- <td><span class="p-column-title">Image</span>
+              <img src="{{staticPath}}{{cmsmodule.cmsImage}}" style="height:100px; width:100px;">
+            </td>            -->
+            <td><span class="p-column-title">Meta Keyword</span>
+              {{cmsmodule.metaKeyword}}
+            </td>
+            <td><span class="p-column-title">Meta Description</span>
+              {{cmsmodule.metaDescription}}
+            </td>
+
+            <td><span class="p-column-title">Status</span>
+              <!-- <div *ngIf="cmsmodule.status == true; else elsePart">
+                Active
+              </div>
+              <ng-template #elsePart>
+                Inactive
+              </ng-template> -->
+              <span *ngIf="cmsmodule.status">
+                <p-tag styleClass="mr-2" severity="success" value="Active"></p-tag>
+              </span>
+              <span *ngIf="!cmsmodule.status">
+                <p-tag severity="danger" value="In-Active"></p-tag>
+              </span>
+              <p-inputSwitch [(ngModel)]="cmsmodule.status" (onChange)="changeStatus(cmsmodule)"></p-inputSwitch>
+            </td>
+            <td><span class="p-column-title">Action</span>
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
+                (click)="onEdit(cmsmodule)" pTooltip="Edit Content" tooltipPosition="bottom"></button>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-denger p-mr-2"
+                (click)="onDelete(cmsmodule)" pTooltip="Delete Content" tooltipPosition="bottom"></button>
+              <!--<button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-rounded"></button>-->
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+          <div class="p-d-flex p-ai-center p-jc-between">
+            In total there are {{cmsmodules ? cmsmodules.length : 0 }} Cms Pages.
+          </div>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+</div>

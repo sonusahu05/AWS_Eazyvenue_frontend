@@ -1,0 +1,167 @@
+<div class="container p-0 about-fasinating-diamond-main-section">
+	<div class="secure-shopping about-fasinating-diamond">
+		<p-carousel [value]="bannerImageList" [numVisible]="1" [numScroll]="1" [circular]="true"
+			[showIndicators]="false" [showNavigators]="false" [responsiveOptions]="carouselResponsiveOptions">
+			<ng-template let-banner pTemplate="item">
+				<div class="product-item">
+					<div class="product-item-content">
+						<div class="p-mb-1 banner-item-main">
+							<img [src]="banner.banner_image_src" class="product-image" alt="banner" />
+						</div>
+					</div>
+				</div>
+			</ng-template>
+		</p-carousel>
+		<div class="container p-0">
+			<div class="section-title-wrap section-header flex-header text-center" style="justify-content: center;">
+				<div class="section-title-text text-center pt-4">
+					<h1 class="title">Get in touch with us.</h1>
+				</div>
+			</div>
+			<!-- <div [innerHTML]="cmsContentData" class="section-contain"></div> -->
+			<div class="container mb-5">
+				<div class="contact-us-page card">
+					<div class="row">
+						<div class="col-md-4">
+						  <div class="contact-info">
+							<div class="contact-info-item">
+							  <div class="contact-info-icon">
+								<i class="fas fa-map-marked"></i>
+							  </div>
+							  <div class="contact-info-text">
+								<h2>Call or leave a message on</h2>
+								<span><a>+91 9372091300</a></span> 
+								<span>and we will call you back.</span> 
+								
+							  </div>
+							</div>            
+						  </div>          
+						</div>          
+						<div class="col-md-4">
+						  <div class="contact-info">
+							<div class="contact-info-item">
+							  <div class="contact-info-icon">
+								<i class="fas fa-envelope"></i>
+							  </div>
+							  <div class="contact-info-text">
+								<h2>Email Us</h2>
+								<span>Mail us on <a href="mailto:book@eazyvenue.com" title="contact us">book@eazyvenue.com</a>
+									and and we will revert back to you within 2 business days.</span> 
+							
+							  </div>
+							</div>            
+						  </div>                
+						</div>                
+						<div class="col-md-4">
+						  <div class="contact-info">
+							<div class="contact-info-item">
+							  <div class="contact-info-icon">
+								<i class="fas fa-clock"></i>
+							  </div>
+							  <div class="contact-info-text">
+								<h2>Address</h2>
+								<span>3010, 1 Aerocity, NIBR Corporate Park, Andheri Kurla Road, Sakinaka,
+									Mumbai - 400072</span>
+							  </div>
+							</div>            
+						  </div>          
+						</div>          
+					  </div>
+
+					  <div class="row">
+						<div class="col-md-4">        
+							<div class="contact-page-map">
+							  <iframe src="https://maps.google.com/maps?width=600&height=400&hl=en&q=mumbai&t=&z=14&ie=UTF8&iwloc=B&output=embed" width="100%" height="320" frameborder="0" style="border:0" allowfullscreen></iframe>
+							</div>          
+						  </div>    
+						<div class="col-md-8">
+						  <div class="contact-page-form">
+							<!-- <h2>Get in Touch</h2>  -->
+							<form [formGroup]="contactUsForm" *ngIf="this.contactUsForm"
+							(ngSubmit)="onSubmit()">
+							  <div class="row">
+							  <div class="col-md-6 col-sm-6 col-xs-12">
+								<div class="single-input-field">
+									<label for="name">Name<span
+										class="mandatory-fields">*</span></label>
+								  <input formControlName="name" type="text" pInputText
+								  class="form-control" placeholder="Enter Name"
+								  [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+							  <div *ngIf="submitted && f.name.errors"
+								  class="invalid-feedback">
+								  <div *ngIf="f.name.errors.required">
+									  Name is required</div>
+								  <div *ngIf="f.name.errors">Only
+									  Alphabets allowed</div>
+							  </div>
+								</div>
+							  </div>  
+							  <div class="col-md-6 col-sm-6 col-xs-12">
+								<div class="single-input-field">
+									<label for="name">Email<span
+										class="mandatory-fields">*</span></label>
+								  <input formControlName="email" type="email" pInputText
+								  placeholder="Enter E-Mail"
+								  [ngClass]="{ 'is-invalid': submitted && f.email.errors }"
+								  class="form-control">
+							  <div *ngIf="submitted && f.email.errors"
+								  class="invalid-feedback">
+								  <div *ngIf="f.email.errors.required">
+									  Email is required</div>
+								  <div *ngIf="f.email.errors.email">
+									  Enter valid email address
+								  </div>
+							  </div>
+								</div>
+							  </div>                              
+							  <div class="col-md-12 message-input">
+								<div class="single-input-field">
+									<label for="name">Phone</label>
+								  <input input placeholder="Enter Phone"
+								  formControlName="mobileNumber" type="text"
+								  minlength="10" maxlength="12" pInputText
+								  class="form-control"
+								  [ngClass]="{ 'is-invalid': submitted && f.mobileNumber.errors }">
+							  <div *ngIf="submitted && f.mobileNumber.errors"
+								  class="invalid-feedback">
+								  <div *ngIf="f.mobileNumber.errors.required">
+									  Phone Number is Required</div>
+								  <div *ngIf="f.mobileNumber.errors">
+									  Please Check Phone Number
+								  </div>
+							  </div>
+								</div>
+							  </div>  
+							                
+							  <div class="col-md-12 message-input">
+								<div class="single-input-field">
+									<label for="name">Message<span
+										class="mandatory-fields">*</span></label>
+								  <textarea  pInputTextarea formControlName="message"
+								  class="form-control" placeholder="Enter Message"
+								  [ngClass]="{ 'is-invalid': submitted && f.message.errors }">
+							  </textarea>
+							  <div *ngIf="submitted && f.message.errors"
+								  class="invalid-feedback">
+								  <div *ngIf="f.message.errors.required">
+									  Message is required
+								  </div>
+							  </div>
+								</div>
+							  </div>                                                
+							  <div class="single-input-fieldsbtn">
+								<button pButton pRipple label="Send Message"
+														class="FS_button"></button>
+							  </div>                          
+							</div>
+							</form>   
+						  </div>      
+						</div>
+						    
+					  </div>	
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

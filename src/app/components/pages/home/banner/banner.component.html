@@ -1,0 +1,52 @@
+<!-- Banner Start -->
+<div class="banner banner-2 pt-0">
+    <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings" class="banner-slider">
+        <!-- Data -->
+        <div ngxSlickItem class="banner-inner bg-cover bg-center dark-overlay" [style.background-image]="'url('+item.image+')'" *ngFor="let item of bannerpost">
+            <div class="container">
+                <div class="banner-text text-center">
+                    <h1 class="title text-white">{{item.title}}</h1>
+                    <p class="subtitle text-white">{{item.text}}</p>
+                </div>
+                <div class="acr-filter-form">
+                    <form method="post">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-group acr-custom-select">
+                                    <label>Location: </label>
+                                    <ng-select2 [data]="select.locationlist" [options]="options">
+                                    </ng-select2>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-group acr-custom-select">
+                                    <label>Status: </label>
+                                    <ng-select2 [data]="select.statuslist" [options]="options">
+                                    </ng-select2>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-group acr-custom-select">
+                                    <label>Price List: </label>
+                                    <ng-select2 [data]="select.pricerangelist" [options]="options">
+                                    </ng-select2>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-6">
+                                <div class="form-group">
+                                    <button type="submit" class="btn-custom btn-block" name="button">Search Vendor</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Data -->
+    </ngx-slick-carousel>
+    <div class="acr-arrows">
+        <i class="slider-prev fas fa-arrow-left slick-arrow"></i>
+        <i class="slider-next fas fa-arrow-right slick-arrow"></i>
+    </div>
+</div>
+<!-- Banner End -->

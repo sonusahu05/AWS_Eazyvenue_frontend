@@ -1,0 +1,42 @@
+<div class="hot-muhurats-drawer" [class.open]="isOpen">
+    <div class="drawer-content">
+      <button class="close-btn" (click)="close()">×</button>
+
+      <img src="https://api.eazyvenue.com/uploads/muhurat/Header_Muhrat_Dates_2024-01.jpg" alt="Hot Muhurat Dates 2024" class="header-image" />
+
+      <div class="content-wrapper">
+        <div class="wedding-image">
+          <img src="https://i.pinimg.com/564x/40/1d/fd/401dfddc2f315f193c93b60689c668f0.jpg" alt="Wedding Couple" />
+        </div>
+
+        <div class="calendar-section">
+          <div class="calendars">
+            <div class="calendar" *ngIf="displayedMonths[currentMonthIndex]">
+                <div class="middle-calender">
+                    <span class="arrow-button previous" (click)="previousMonths()">&#9664;</span>
+                    <h3 class="month-name">{{ displayedMonths[currentMonthIndex].name }}</h3>
+                    <span class="arrow-button next" (click)="nextMonths()">&#9654;</span>
+                </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th *ngFor="let day of weekDays">{{ day }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let week of displayedMonths[currentMonthIndex].weeks">
+                    <td *ngFor="let date of week"
+                        [class.important]="isImportantDate(date)"
+                        [class.current-month]="date.getMonth() === displayedMonths[currentMonthIndex].number"
+                        (click)="onDateClick(date)">
+                      {{ date.getDate() }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

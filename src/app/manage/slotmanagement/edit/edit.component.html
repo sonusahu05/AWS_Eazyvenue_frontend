@@ -1,0 +1,50 @@
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="title-area">
+            <h5 class="admin-heading">
+                Edit Slot
+            </h5>
+            <!-- <button pButton pRipple label="Back" icon="pi pi-arrow-left" class="p-button-primary" 
+                (click)="backLink()"></button> -->
+        </div>
+        <div class="card">
+            <form [formGroup]="slotForm" *ngIf="this.slotForm" (ngSubmit)="onSubmit()">
+                <div class="p-fluid p-formgrid p-grid">
+                </div>
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-fluid p-col-4">
+                        <label for="binary">Slot Name</label>
+                        <input pInputText type="text" formControlName="slot" placeholder="Enter slot name"
+                            [ngClass]="{ 'is-invalid': submitted && f.slot.errors}" />
+                        <div *ngIf="submitted && f.slot.errors" class="invalid-feedback">
+                            <div *ngIf="f.slot.errors">Please enter slot name</div>
+                        </div>
+                    </div>
+                    <div class="p-fluid p-col-4">
+                        <label for="binary">Description</label>
+                        <textarea class="form-control" formControlName="description"  rows="3"
+                        placeholder="Enter description" pInputTextarea></textarea>
+
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="status" class="mb-0">Status</label>
+                        <p-inputSwitch formControlName="status" (ngModelChange)="onStatusSelect($event)"
+                        style="display: block;" [ngClass]="{ 'is-invalid': submitted && f.status.errors}"></p-inputSwitch>
+                        <!-- <p-dropdown inputId="status" [options]="statuses"  formControlName="status" placeholder="Select" optionLabel="label" (ngModelChange)="onStatusSelect($event)"></p-dropdown> -->
+                        <div *ngIf="submitted && f.status.errors" class="invalid-feedback">
+                            <div *ngIf="f.status.errors.required">Please, Select Status</div>
+                        </div>
+                    </div>   
+                </div>
+                <div class="text-right">
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-success mr-2"></button>
+                    <!-- <button pButton pRipple label="Save" icon="pi pi-check" [disabled]="userForm.invalid"></button> -->
+                    <button pButton pRipple label="Reset" class="p-button-info mr-2" icon="pi pi-refresh" type="reset" (click)="resetAddSlotForm()"></button>
+                    <button type="text" (click)="backLink()" pButton icon="pi pi-arrow-left" label="Back" class="p-button-denger" style="width: auto"></button>
+
+                </div>
+               
+            </form>
+        </div>
+    </div>
+</div>

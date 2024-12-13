@@ -1,0 +1,51 @@
+
+
+*:hover{
+    text-decoration: none !important;
+}
+
+
+.p-fluid .p-formgroup-inline .p-inputtext {
+    width: auto;
+    flex-grow: 2;
+}
+.p-formgroup-file{
+    display: flex;
+    .p-inputtext{
+        flex-grow: 2;
+        border-radius:6px 0 0 6px;
+    }
+    .p-button-primary{
+        width: 110px;
+        border-radius:0 6px 6px 0;
+    }
+}
+
+
+:host ::ng-deep {
+    button {
+        margin-right: .25em;
+    }
+    td.editModule p-checkbox{
+       position: relative;
+       top: -6px;
+       left: 0;
+    }
+}
+
+.button-set{
+    float: right;
+}
+h5.list-label b {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+.button-set.back{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+h5.admin-heading {
+    color: #ec3539;
+    font-size: 16px;
+}

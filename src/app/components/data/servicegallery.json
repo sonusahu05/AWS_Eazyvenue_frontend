@@ -1,0 +1,17 @@
+[
+    {
+        "id":1,
+        "image":"assets/img/services/1.jpg",
+        "title":"Our Team"
+    },
+    {
+        "id":2,
+        "image":"assets/img/services/2.jpg",
+        "title":"The Meeting Room"
+    },
+    {
+        "id":3,
+        "image":"assets/img/services/3.jpg",
+        "title":"The Office"
+    }
+]

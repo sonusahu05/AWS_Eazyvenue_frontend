@@ -1,0 +1,109 @@
+<div class="p-grid manage-product-section">
+    <div class="p-col-12">
+        <div class="card">
+            <p-toolbar styleClass="p-mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Add Country" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2"
+                        (click)="openNew()"></button>
+                    <!--    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger p-mb-2" (click)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length"></button> -->
+                </ng-template>
+
+                <!-- <ng-template pTemplate="right">               
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help p-mb-2" (click)="dt.exportCSV()"></button>
+                </ng-template> -->
+            </p-toolbar>
+
+            <p-table #dt [value]="countries" [columns]="cols" [rows]="10" [paginator]="true" [resizableColumns]="true"
+                [autoLayout]="true" [globalFilterFields]="['name','code','status']" [rowHover]="true" dataKey="_id"
+                styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true">
+                <ng-template pTemplate="caption">
+                    <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-end table-header">
+                        <!-- <h5 class="p-m-0">Country List</h5> -->
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                placeholder="Search..." />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem" class="text-center">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pSortableColumn="sl">SL <p-sortIcon field="sl"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="name">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Country Name
+                                <p-sortIcon field="name"></p-sortIcon>
+                                <p-columnFilter type="text" field="name" display="menu" class="p-ml-auto">
+                                </p-columnFilter>
+                            </div>
+                        </th>
+                        <th pSortableColumn="iso2">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Country Code
+                                <p-sortIcon field="iso2"></p-sortIcon>
+                                <p-columnFilter type="text" field="iso2" display="menu" class="p-ml-auto">
+                                </p-columnFilter>
+                            </div>
+                        </th>
+                        <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon>
+                        </th>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-country let-rowIndex="rowIndex">
+                    <tr>
+                        <td class="text-center">
+                            <p-tableCheckbox [value]="country"></p-tableCheckbox>
+                        </td>
+                        <td><span class="p-column-title" id="typeName">SL</span>
+                            {{rowIndex+1}}
+                        </td>
+                        <td><span class="p-column-title" id="styleName">Name</span>
+                            {{country.name}}
+                        </td>
+                        <td><span class="p-column-title" id="styleName">Code</span>
+                            {{country.iso2}}
+                        </td>
+
+                        <td><span class="p-column-title">Status</span>
+                            <!-- <div *ngIf="country.status == true; else elsePart">
+                                Active
+                            </div>
+                            <ng-template #elsePart>
+                                Inactive
+                            </ng-template> -->
+                            <span *ngIf="country.status">
+								<p-tag styleClass="mr-2" severity="success" value="Active"></p-tag>
+							</span>
+							<span *ngIf="!country.status">
+								<p-tag severity="danger" value="In-Active"></p-tag>
+							  </span>
+							<p-inputSwitch [(ngModel)]="country.status" (onChange)="changeStatus(country)"></p-inputSwitch>
+                        </td>
+                        <td><span class="p-column-title">Action</span>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-4"
+                                (click)="onEdit(country)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning p-mr-4"
+                                (click)="onDelete(country)"></button>
+                            <!--<button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-rounded"></button>-->
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        In total there are {{totalCountries}} Countries.
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+
+    </div>
+</div>

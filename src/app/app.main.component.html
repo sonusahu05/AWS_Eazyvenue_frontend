@@ -1,0 +1,51 @@
+<!-- <div class="" *ngIf="isActiveCss else elseshow"> -->
+<div id="admin">
+    <div class="layout-wrapper layout-menu-light layout-topbar-light layout-sidebar layout-static p-ripple-disabled"
+    [class]="'layout-menu-'+ app.menuTheme+ ' layout-topbar-'+ app.topbarTheme" (click)="onLayoutClick()">
+    <!--<div class="layout-wrapper" [ngClass]="{
+    'layout-sidebar': app.menuMode === 'sidebar',
+    'layout-static': app.menuMode === 'sidebar' && sidebarStatic,
+    'layout-horizontal': app.menuMode === 'horizontal',
+    'layout-rightpanel-active': rightPanelActive,
+    'layout-slim': app.menuMode === 'slim',
+    'layout-mobile-active': staticMenuMobileActive,
+    'p-input-filled': app.inputStyle === 'filled', 'p-ripple-disabled': !app.ripple}"
+     [class]="'layout-menu-'+ app.menuTheme+ ' layout-topbar-'+ app.topbarTheme"
+     (click)="onLayoutClick()">-->
+     <app-loader></app-loader>
+    <app-topbar></app-topbar>
+
+    <app-rightpanel></app-rightpanel>
+
+    <app-config></app-config>
+
+    <div class="layout-main">
+        <div class="layout-content">
+            <router-outlet></router-outlet>
+        </div>
+        
+        <app-footer></app-footer>
+    </div>
+
+    <div class="layout-mask modal-in"></div>
+</div>
+</div>
+<!-- 
+</div>
+
+<ng-template  #elseshow> -->
+    <!-- <section class="wrapper">
+        <nav class="navbar navbar-expand-sm">
+          <trainer-sidebar></trainer-sidebar>
+        </nav>
+        <div class="main-content">
+          <trainer-page-header></trainer-page-header>
+          <div class="page-wrapper">
+          
+          <router-outlet></router-outlet>
+          <trainer-page-footer></trainer-page-footer>
+        </div>
+        </div>
+    </section>
+        
+</ng-template> -->

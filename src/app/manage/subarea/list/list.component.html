@@ -1,0 +1,122 @@
+<div class="p-grid manage-product-section">
+    <div class="p-col-12">
+        <div class="card">
+            <h1 class="page-title">Subarea Management</h1>
+            <p-toolbar styleClass="p-mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Add Subarea" icon="pi pi-plus" class="p-button-success p-mr-2"
+                        (click)="openNew()"></button>
+                    <button pButton pRipple class="p-button-outlined" (click)="clear()"><i
+                            class="pi pi-filter-slash p-mr-2"></i> Clear Filters</button>
+                </ng-template>
+            </p-toolbar>
+            <div>
+                <p-table #dt [value]="subareas" [rows]="10" [paginator]="true" [resizableColumns]="true"
+                    [autoLayout]="true" [rowHover]="true" dataKey="_id" [autoLayout]="true"
+                    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped"
+                    [rowsPerPageOptions]="paginationOption" [lazy]="true" (onLazyLoad)="refreshSubareaList($event)"
+                    [totalRecords]="totalRecords" [loading]="loading">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>SL
+                            </th>
+                            <th pSortableColumn="statename">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    State Name
+                                </div>
+                            </th>
+                            <th pSortableColumn="citydata.cityname">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    City Name
+                                </div>
+                            </th>
+                            <th pSortableColumn="name">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Area Name
+                                    <p-sortIcon field="name"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th pSortableColumn="status">Status 
+                                <p-sortIcon field="status"></p-sortIcon>
+                            </th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <th>
+                            </th>
+                            <th [ngSwitch]="statename" pfrozencolumn=""
+                                class="p-element p-frozen-column col-80 text-nowrap" style="left: 0px;">
+                                <input pInputText type="text"
+                                    (keyup.enter)=" dt.filter($event.target.value, 'statename', 'contains')"
+                                    [value]="dt.filters['statename'] ? dt.filters['statename'].value : ''" />
+                            </th>
+                            <th [ngSwitch]="cityname" pfrozencolumn=""
+                                class="p-element p-frozen-column col-80 text-nowrap" style="left: 0px;">
+                                <input pInputText type="text"
+                                    (keyup.enter)=" dt.filter($event.target.value, 'cityname', 'contains')"
+                                    [value]="dt.filters['cityname'] ? dt.filters['cityname'].value : ''" />
+                            </th>
+                            <th [ngSwitch]="name" pfrozencolumn="" class="p-element p-frozen-column col-100 text-nowrap"
+                                style="left: 0px;">
+                                <input pInputText type="text"
+                                    (keyup.enter)=" dt.filter($event.target.value, 'name', 'contains')"
+                                    [value]="dt.filters['name'] ? dt.filters['name'].value : ''" />
+                            </th>
+                            <th [ngSwitch]="status">
+                                <p-dropdown #pDropDownId [options]="statuses" [style]="{'width':'100%'}"
+                                    (onChange)="dt.filter($event.value, 'status', 'equals')"
+                                    styleClass="p-column-filter" placeholder="Select Status" [showClear]="true" appendTo="body">
+                                    <ng-template let-option pTemplate="item">
+                                        <span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+                                    </ng-template>
+                                </p-dropdown>
+                            </th>
+                            <th>
+
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-subarea let-rowIndex="rowIndex">
+                        <tr>
+                            <td><span class="p-column-title" id="typeName">SL</span>
+                                {{rowIndex+1}}
+                            </td>
+                            <td>
+                                {{subarea.statename}}
+                            </td>
+                            <td>
+                                {{subarea.cityname}}
+                            </td>
+                            <td>
+                                {{subarea.name}}
+                            </td>
+
+                            <td><span class="p-column-title">Status</span>
+                                <span *ngIf="subarea.status">
+                                    <p-tag styleClass="mr-2" severity="success" value="Active"></p-tag>
+                                </span>
+                                <span *ngIf="!subarea.status">
+                                    <p-tag severity="danger" value="In-Active"></p-tag>
+                                </span>
+                                <p-inputSwitch [(ngModel)]="subarea.status"
+                                    (onChange)="changeStatus(subarea)"></p-inputSwitch>
+                            </td>
+                            <td><span class="p-column-title">Action</span>
+                                <button pButton pRipple icon="pi pi-pencil" pTooltip="Edit Subarea" tooltipPosition="bottom"
+                                    class="p-button-rounded p-button-success p-mr-2" (click)="onEdit(subarea)"></button>
+                                <button pButton pRipple icon="pi pi-trash" pTooltip="Delete Subarea" tooltipPosition="bottom"
+                                    class="p-button-rounded p-button-denger p-mr-2" (click)="onDelete(subarea)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                        <div class="p-d-flex p-ai-center p-jc-between">
+                            In total there are {{totalRecords }} Subareas.
+                        </div>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+    <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+</div>

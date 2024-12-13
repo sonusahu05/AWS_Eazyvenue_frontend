@@ -1,0 +1,68 @@
+.invalid-feedback{
+    color: red;
+    padding-top: 10px;
+    display: block;
+}
+.form-control {
+    text-transform:capitalize;
+}
+
+*:hover{
+    text-decoration: none !important;
+}
+
+
+.p-fluid .p-formgroup-inline .p-inputtext {
+    width: auto;
+    flex-grow: 2;
+}
+.p-formgroup-file{
+    display: flex;
+    .p-inputtext{
+        flex-grow: 2;
+        border-radius:6px 0 0 6px;
+    }
+    .p-button-primary{
+        width: 110px;
+        border-radius:0 6px 6px 0;
+    }
+}
+
+
+:host ::ng-deep {
+    button {
+        margin-right: .25em;
+    }
+    td.editModule p-checkbox{
+       position: relative;
+       top: -6px;
+       left: 0;
+    }
+}
+
+.button-set{
+    float: right;
+}
+h5.list-label b {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+.button-set.back{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.mandatory-fields{
+    color:#FF0000;
+}
+
+.p-multiselect .p-multiselect-label.p-placeholder {
+    color: #83888F;
+    border-radius: 6px!important;
+    height: calc(1.5em + 0.75rem + 2px)!important;
+    border-color: #d4d6d9 !important;
+}
+h5.admin-heading {
+    color: #eb3438;
+    font-size: 16px;
+}

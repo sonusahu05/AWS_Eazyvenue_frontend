@@ -1,0 +1,137 @@
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="title-area">
+            <h5 class="admin-heading">
+                Edit Role
+            </h5>
+            <!-- <button pButton pRipple label="Back" icon="pi pi-arrow-left" class="p-button-primary" 
+                (click)="backLink()"></button> -->
+        </div>
+        <div class="card">
+            <p-toast key="toastmsg" position="top-right"></p-toast>
+            <form [formGroup]="roleForm" *ngIf="this.roleForm" (ngSubmit)="onSubmit()">
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4">
+                        <label for="rolename">Name</label>
+                        <input formControlName="rolename" type="text" pInputText class="form-control"  [ngClass]="{ 'is-invalid': submitted && f.rolename.errors }">
+                        <div *ngIf="submitted && f.rolename.errors" class="invalid-feedback">
+                            <div *ngIf="f.rolename.errors.required">Role name is required</div>
+                            <div *ngIf="f.rolename.errors">Only alphabets allowed</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="description">Description</label>
+                        <textarea inputId="textarea" class="form-control" rows="3" formControlName ="description" pInputTextarea></textarea>
+                    </div>   
+                    <div class="p-field p-col-4">
+                        <label for="status">Status</label>
+                        <p-inputSwitch formControlName="status" (ngModelChange)="onStatusSelect($event)" style="display: block;"></p-inputSwitch>
+                        <!-- <p-dropdown inputId="status" [options]="statuses"  formControlName="status" placeholder="Select" optionLabel="label" (ngModelChange)="onStatusSelect($event)"></p-dropdown> -->
+                        <div *ngIf="submitted && f.status.errors" class="invalid-feedback">
+                            <div *ngIf="f.status.errors.required">Please select status</div>
+                        </div>
+                    </div>   
+                   
+                    <div class="p-field p-col-12 d-flex">
+                        <p-checkbox binary="true" (onChange)="selectAll($event);" formControlName="selectAll" value="selectAll" ></p-checkbox>                            
+                        <span class="modulename">Module List</span>
+                        <div *ngIf="permissionerrors" style="color:red;">
+                            <div>Please select at least 1 module</div>
+                        </div>
+                    </div>   
+                    <div class="p-col-12">
+                        <div class="row">
+                        <p-panel *ngFor="let module of  moduleList ;let i = index;" class="col-6 main-card" [toggleable]="true" [collapsed]="false" toggler="header" header="{{module.module | titlecase }}">
+                                    <p-content>
+                                        <div class="row">
+                                            <div class="col-12 d-flex">
+                                                <p-checkbox binary="true"  (onChange)="setModuleCheckbox($event, module.module, module);" formControlName="{{module.module}}" value="{{module.module}}" ></p-checkbox>
+                                                <span class="modulename">{{module.module | titlecase }}</span>
+                                                <span class="right">
+                                                    <p-radioButton value="view" (onClick)="setModuleRadiobutton($event, module.module, 'view');" label="View" formControlName="{{module.module}}_radio"></p-radioButton>
+                                                    <p-radioButton value="edit" (onClick)="setModuleRadiobutton($event, module.module, 'edit');" label="Edit" formControlName="{{module.module}}_radio"></p-radioButton>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </p-content>
+                                    <div class="sub-category1">
+                                        <p-content *ngFor="let submodule of module.submodule; let sub = index">
+                                            <div class="row">
+                                                <div class="col-12 d-flex">
+                                                    <p-checkbox binary="true" (onChange)="setSubModuleCheckbox($event, submodule, module.module);" formControlName="{{submodule.module}}" value="{{submodule.module}}" ></p-checkbox>
+                                                    <span class="modulename">{{submodule.module | titlecase }}</span>
+                                                    <span class="right">
+                                                        <p-radioButton value="view" (onClick)="setSubModuleRadiobutton($event, submodule.module, module.module, 'view');" label="View" id="view" formControlName="{{submodule.module}}_radio"></p-radioButton>
+                                                        <p-radioButton value="edit" (onClick)="setSubModuleRadiobutton($event, submodule.module, module.module, 'edit');" label="Edit" id="edit" formControlName="{{submodule.module}}_radio"></p-radioButton>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </p-content>
+                                    </div>
+                        </p-panel>
+                    </div>
+                    </div>                   
+                </div>
+                <div class="text-right">
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-success mr-2"></button>
+                    <!-- <button pButton pRipple label="Save" icon="pi pi-check" [disabled]="userForm.invalid"></button> -->
+                    <button pButton pRipple label="Reset" icon="pi pi-refresh" class="p-button-info mr-2" type="reset" (click)="onReset()"></button>
+                    <button pButton pRipple type="button" icon="pi pi-arrow-left" label="Back" class="p-button-denger" (click)="backLink()"></button>
+                </div>
+            </form>
+        </div>
+        <div class="button-set back">
+            <div class="p-fluid p-formgrid">
+            <p-toast></p-toast>
+            </div>
+        </div>
+    </div>
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              
+                <!-- <div class="p-col-12 p-lg-12">
+                   
+                    <p-panel *ngFor="let module of  moduleList ;let i = index;" [toggleable]="true" [collapsed]="false" toggler="header">
+                        
+                        <p-content>
+                            <div class="text-center">
+                                <p-checkbox binary="true"  (onChange)="setModuleCheckbox($event, module.module, module);" formControlName="{{module.module}}" value="{{module.module}}" ></p-checkbox>
+                                <span class="modulename">{{module.module | titlecase }}</span>
+                                <span class="right" >
+                                    <p-radioButton value="edit" (onClick)="setModuleRadiobutton($event, module.module, 'edit');" label="Edit" formControlName="{{module.module}}_radio"></p-radioButton>
+                                    <p-radioButton value="view" (onClick)="setModuleRadiobutton($event, module.module, 'view');" label="View" formControlName="{{module.module}}_radio"></p-radioButton>
+                                </span>
+                            </div>
+                        </p-content>
+                        <p-content *ngFor="let submodule of module.submodule; let sub = index">
+                            <div class="submodule" >
+                                <p-checkbox binary="true" (onChange)="setSubModuleCheckbox($event, submodule, module.module);" formControlName="{{submodule.module}}" value="{{submodule.module}}" ></p-checkbox>
+                                <span >{{submodule.module | titlecase }}</span>
+                                <span >
+                                    <p-radioButton value="edit" (onClick)="setSubModuleRadiobutton($event, submodule.module, module.module, 'edit');" label="Edit" id="edit" formControlName="{{submodule.module}}_radio"></p-radioButton>
+                                    <p-radioButton value="view" (onClick)="setSubModuleRadiobutton($event, submodule.module, module.module, 'view');" label="View" id="view" formControlName="{{submodule.module}}_radio"></p-radioButton>
+                                </span>
+                            </div>
+                        </p-content>
+                    </p-panel>
+                </div> -->
+               
+</div>

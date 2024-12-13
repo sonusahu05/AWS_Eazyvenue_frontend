@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="shortcut icon" href="../layout/images/favicon.ico" type="image/x-icon"></link>
+    <link rel="icon" href="../layout/images/favicon.ico" type="image/x-icon"></link>
+    <title>PrimeNG Freya</title>
+    <link rel="stylesheet" href="primeicons-static.css"/>
+    <link rel="stylesheet" href="primeflex.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../theme/purple/theme-light.css">
+    <link rel="stylesheet" type="text/css" href="../layout/css/layout-light.css">
+</head>
+
+<body class="landing-body">
+<div class="landing-wrapper">
+    <div class="landing-topbar">
+        <div class="landing-topbar-left">
+            <a id="logolink" href="#" class="logo">
+                <img src="../layout/images/logo-freya.svg" alt="freya-layout" />
+            </a>
+
+            <ul class="landing-menu">
+                <li>
+                    <a href="#" id="landing-menu-close" onclick="closeMenu()">
+                        <i class="pi pi-times"></i>
+                    </a>
+                </li>
+                <li class="landing-menu-item">
+                    <a href="#home">Home</a>
+                </li>
+                <li class="landing-menu-item">
+                    <a href="#features">Features</a>
+                </li>
+                <li class="landing-menu-item">
+                    <a href="#pricing">Pricing</a>
+                </li>
+            </ul>
+        </div>
+        <div class="landing-topbar-right">
+            <a href="#" class="second-menubutton">Login</a>
+            <button class="landing-button p-button"><span class="p-button-text">Sign up</span></button>
+            <a href="#" id="landing-menu-button" onclick="openMenu()">
+                <i class="pi pi-bars"></i>
+            </a>
+        </div>
+    </div>
+
+    <div id="home"  class="landing-banner">
+        <div class="landing-banner-content">
+            <span class="title">Simple, bold and fresh.</span>
+            <h3>What we build for you is one of its kind. <br/>
+                Simplicity is now coming to PrimeNG, with Freya</h3>
+            <button class="landing-button p-button"><span class="p-button-text">See pricing</span></button>
+        </div>
+    </div>
+
+    <div id="features" class="landing-features">
+        <div class="p-grid parallax-box">
+            <div class="p-col-12 p-lg-3">
+                <div class="feature yellow">
+                    <span>1</span>
+                    <div class="feature-card ">
+                        <span>1</span>
+                        <div class="card-content">
+                            <h3>Responsive Layout</h3>
+                            <h5>View it on the web and mobile device. Prime premium themes are aready for the all devices.</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-col-12 p-lg-3">
+                <div class="p-grid">
+                    <div class="p-col-12">
+                        <div class="feature blue">
+                            <span>2</span>
+                            <div class="feature-card ">
+                                <span>2</span>
+                                <div class="card-content">
+                                    <h3>Fresh</h3>
+                                    <h5>Freya is sleek! What we are doing for this theme is make you ready for today’s web!</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-col-12">
+                        <div class="feature gray">
+                            <span>3</span>
+                            <div class="feature-card " >
+                                <span>3</span>
+                                <div class="card-content">
+                                    <h3>Well <br/>
+                                        documented</h3>
+                                    <h5>We work hard to write down all aspects of prime themes to make sure that there is no unanswered questions left.</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-col-12 p-lg-3 feature-4">
+                <div class="p-col-12">
+                    <div class="feature darker-gray ">
+                        <span>4</span>
+                        <div class="feature-card " >
+                            <span>4</span>
+                            <div class="card-content">
+                                <h3>Modern Design</h3>
+                                <h5>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-col-12">
+                    <div class="feature darker-blue">
+                        <span>5</span>
+                        <div class="feature-card " >
+                            <span>4</span>
+                            <div class="card-content">
+                                <h3>Clean code</h3>
+                                <h5>Our frontend is so easy to understand. If you want to modify the code it’s an easy job for you. Our code is clean and easy to read.</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="p-col-12 p-lg-3">
+                <div class="feature gray">
+                    <span>6</span>
+                    <div class="feature-card ">
+                        <span>5</span>
+                        <div class="card-content">
+                            <h3>Ready!</h3>
+                            <h5>We work hard to write down all aspects of prime themes to make sure that there is no unanswered questions left.</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pricing" class="landing-pricing">
+        <div class="section-header">
+            <span class="title">Pricing</span>
+            <h3>Take advantage of media's most prominent business trend, and empowers your internal advertising teams. </h3>
+        </div>
+        <div class="p-grid">
+            <div class="p-col-12 p-lg-4">
+                <div class="pricing-card">
+                    <h2>Standart</h2>
+                    <span class="price">5$</span>
+                    <span class="time">per month</span>
+                    <ul>
+                        <li>Mail support</li>
+                        <li>Lorem ipsium dolor</li>
+                        <li>Sit amet</li>
+                        <li>3 projects</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="p-col-12 p-lg-4 preferred">
+                <div class="pricing-card pro ">
+                    <span class="preferred-tag">MOST PREFERED</span>
+                    <h2>Professional</h2>
+                    <span class="price">25$</span>
+                    <span class="time">per month</span>
+                    <ul>
+                        <li>everything on standard, plus:</li>
+                        <li>100 users</li>
+                        <li>Phone support</li>
+                        <li>20 projects </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="p-col-12 p-lg-4">
+                <div class="pricing-card enterprise">
+                    <h2>Enterprise</h2>
+                    <span class="price">99$</span>
+                    <span class="time">per month</span>
+                    <ul>
+                        <li>everything on standard, plus:</li>
+                        <li>7/24 phone support</li>
+                        <li>Solution service</li>
+                        <li>Communication bundle </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <a href="#">Go to all features</a>
+    </div>
+
+    <div class="layout-footer">
+        <div class="p-grid">
+            <div class="p-col-12  p-lg-4">
+                <div class="p-grid">
+                    <div class="p-col-6 ">
+                        <span class="footer-menutitle">SITE MAP</span>
+                        <ul>
+                            <li><a href="#">Dashboard</a></li>
+                            <li><a href="#">CRUD</a></li>
+                            <li><a href="#">Invoice</a></li>
+                            <li><a href="#">Help</a></li>
+                        </ul>
+                    </div>
+                    <div class="p-col-6">
+                        <span class="footer-menutitle"></span>
+                        <ul>
+                            <li><a href="#">Calendar</a></li>
+                            <li><a href="#">Widgets</a></li>
+                            <li><a href="#">Documentation</a></li>
+                            <li><a href="https://www.primefaces.org/store">Buy Now</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-3">
+                <span class="footer-menutitle">CONTACT US</span>
+                <ul>
+                    <li>(415) 931-1624 794</li>
+                    <li>Mcallister St San Francisco,</li>
+                    <li>California(CA), 94102</li>
+                </ul>
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-5">
+                <span class="footer-menutitle">NEWSLETTER</span>
+                <span class="footer-subtitle">Join our newslatter to get notification about the new features.</span>
+                <div class="newsletter-input">
+                    <input type="text" class="p-inputtext" placeholder="email adress" />
+                    <button type="button" class="p-button p-button-secondary ">
+                        <span class="p-button-text">Join</span>
+                    </button>
+                </div>
+
+            </div>
+            <div class="p-col-12">
+                <div class="footer-bottom">
+                    <h4>freya</h4>
+                    <h6>Copyright Ⓒ PrimeTek Informatics</h6>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="landing-mask"></div>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+    document.addEventListener('scroll', function () {
+        var scrolled = document.documentElement.scrollTop;
+
+        var banner = document.querySelector('.landing-banner');
+        var content = document.querySelector('.landing-banner-content');
+        var boxes = document.querySelectorAll('.parallax-box .p-lg-3');
+
+        banner.style.top = -(scrolled*0.01)+'%';
+        content.style.top = +(scrolled*-0.065)+'%';
+
+        for (i = 0; i < boxes.length; i++) {
+            var box = boxes[i];
+
+            if ((i+1)%2 === 0) {
+                box.style.transform = 'translateY('+(scrolled * 0.01)+'%)';
+            }
+            else {
+                box.style.marginTop = -(scrolled * 0.01)+'%';
+            }
+        }
+    })
+
+    var body = document.querySelector('.landing-body');
+    var wrapper = document.querySelector('.landing-wrapper');
+    var menu = document.querySelector('.landing-menu');
+
+    function openMenu() {
+        wrapper.classList.add('landing-menu-active');
+        menu.classList.add('fadeInDown');
+        body.classList.add('block-scroll');
+    }
+
+    function closeMenu() {
+        menu.classList.remove('fadeInDown');
+        menu.classList.add('fadeOutUp');
+
+        setTimeout( function () {
+            wrapper.classList.remove('landing-menu-active');
+            menu.classList.remove('fadeOutUp');
+            body.classList.remove('block-scroll');
+        }, 150)
+    }
+
+
+    var menuitems = document.querySelectorAll('.landing-menu-item');
+
+    for (var i = 0; i < menuitems.length; i++) {
+        var menuitem = menuitems[i];
+        menuitem.addEventListener('click', function(e) {
+            closeMenu();
+        });
+    }
+
+    var links = document.querySelectorAll('a[href^="#"]');
+    for (var i = 0; i < links.length; i++) {
+        var link = links[i];
+        link.addEventListener('click', function(e) {
+            if (document.documentElement.scrollIntoView) {
+                e.preventDefault();
+                if(document.getElementById(e.currentTarget.getAttribute('href').substring(1))) {
+                    document.getElementById(e.currentTarget.getAttribute('href').substring(1)).scrollIntoView({
+                        behavior: 'smooth',
+                        offsetTop: 20
+                    });
+                }
+            }
+        });
+    }
+
+    //]]>
+</script>
+
+</body>
+
+</html>

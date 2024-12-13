@@ -1,0 +1,29 @@
+$bodyBgColor:#F2F4F6  !default;
+$dividerColor:#dee2e6 !default;
+$textSecondaryColor:#6c757d !default;
+$overlayBorder:0 none !default;
+$overlayShadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12) !default;
+
+//text
+$textShade100:#3E4754 !default;
+$textShade200:rgba(41, 50, 65, 0.8) !default;
+$textShade300:rgba(41, 50, 65, 0.5) !default;
+
+//content
+$contentShade100:#ffffff !default;
+$contentShade200: #F7FAFF !default;
+$contentShade300: #EEF5FF !default;
+$contentShade400: #F7F7F8 !default;
+$dividerColor: #D4D6D9 !default;
+//accent
+$accentColor: #1976D2 !default;
+$accentTextColor: #ffffff !default;
+
+$menuTooltipBgColor:#293241!default;
+$menuTooltipTextColor:#ffffff !default;
+
+//sidebar right
+$rightSidebarWidth: 16rem !default;
+$rightSidebarBg: #ffffff !default;
+
+@import './_layout_common.scss';

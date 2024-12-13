@@ -1,0 +1,200 @@
+<div class="p-grid table-demo manage-product-section">
+	<div class="p-col-12">
+		<div class="card">
+			<p-toast key="toastmsg"></p-toast>
+			<h5>Caterers List</h5>
+			<p-toolbar styleClass="p-mb-4">
+				<ng-template pTemplate="left">
+					<button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" (click)="addNewCaterer()"></button>
+					<button pButton label="Clear Filters" class="p-button-outlined p-mr-2 p-mb-2"
+						icon="pi pi-filter-slash" (click)="clear()
+					"></button>
+				</ng-template>
+				<ng-template pTemplate="right">
+					<button pButton pRipple label="Export" icon="pi pi-file-excel" (click)="exportExcel()"
+						class="p-button-help mr-2" pTooltip="XLS" tooltipPosition="bottom"></button>
+					<!-- <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning mr-2" pTooltip="PDF" tooltipPosition="bottom"></button> -->
+				</ng-template>
+			</p-toolbar>
+			<div class="card">
+				<div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-2"> 
+						<label for="searchfield">Select Field</label>
+						<p-dropdown inputId="searchfield" [options]="searchBy" [(ngModel)]="searchby" placeholder="Select Field" optionLabel="label"></p-dropdown>
+					</div>
+					<div class="p-field p-col-3"> 
+						<label for="startdt">Start Date</label>
+						<p-calendar  monthNavigator="true" yearNavigator="true" yearRange="2022:2050"  [(ngModel)]="startDate" class="p-calendar" inputId="calendar" dateFormat="dd/mm/yy" [showIcon]="true" ></p-calendar>
+					</div>
+					<div class="p-field p-col-3"> 
+						<label for="enddt">End Date</label>
+						<p-calendar  monthNavigator="true" yearNavigator="true" yearRange="2022:2050"  [(ngModel)]="endDate" class="p-calendar" inputId="calendar"  dateFormat="dd/mm/yy" [showIcon]="true" ></p-calendar>
+					</div>
+					<div class="p-field p-col-3"> 						
+						<button pButton pRipple label="Search" class="p-button p-mr-1 p-mb-2" (click)="loadVendors($event)"></button>
+					</div>
+				</div>
+			</div>
+			<p-table class="p2-table-columns show-columns" #dt [value]="userlist" [paginator]="true" [rows]="10"
+				[lazy]="true" (onLazyLoad)="loadVendors($event)" [totalRecords]="totalRecords" [loading]="loading"
+				[rowsPerPageOptions]="paginationOption" styleClass="p-datatable-gridlines p-datatable-striped">
+				<ng-template pTemplate="header" let-columns>
+					<tr>
+						<th pSortableColumn="firstName" [style]="{'width':'120px'}">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								First Name
+								<p-sortIcon field="firstName"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="lastName" [style]="{'width':'120px'}">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Last Name
+								<p-sortIcon field="lastName"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="gender" [style]="{'width':'120px'}">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Gender
+								<p-sortIcon field="gender"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="email" [style]="{'width':'210px'}">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Email Id
+								<p-sortIcon field="email"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="dob" class="col-width">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								DOB
+								<p-sortIcon field="dob"></p-sortIcon>
+							</div>
+						</th>
+						<!-- <th pSortableColumn="weddingDate" class="col-width">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Wedding Date
+								<p-sortIcon field="weddingDate"></p-sortIcon>
+							</div>
+						</th> -->
+						<th pSortableColumn="updated_at" class="col-width">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Modification Date
+								<p-sortIcon field="updated_at"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="status" [style]="{'width':'120px'}">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Status
+								<p-sortIcon field="status"></p-sortIcon>
+							</div>
+						</th>
+						<th [style]="{'width':'100px'}">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Action
+							</div>
+						</th>
+					</tr>
+					<tr>
+						<th [ngSwitch]="firstName">
+							<input pInputText type="text"
+								(keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'firstName', 'contains')"
+								[value]="dt.filters['firstName'] ? dt.filters['firstName'].value : ''" />
+						</th>
+						<th [ngSwitch]="lastName">
+							<input pInputText type="text"
+								(keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'lastName', 'contains')"
+								[value]="dt.filters['lastName'] ? dt.filters['lastName'].value : ''" />
+						</th>
+						<th [ngSwitch]="gender" class="	">
+							<p-dropdown #pDropDownId [options]="genders"
+								(onChange)="setDownloadFlag(); dt.filter($event.value, 'gender', 'equals')"
+								styleClass="p-column-filter" placeholder="Select Gender" [showClear]="true">
+								<ng-template let-option pTemplate="item">
+									<span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+								</ng-template>
+							</p-dropdown>
+						</th>
+						<th [ngSwitch]="email" class="">
+							<input pInputText type="text"
+								(keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'email', 'contains')"
+								[value]="dt.filters['email'] ? dt.filters['email'].value : ''" />
+						</th>
+						<th [ngSwitch]="dob" class="">
+							<p-calendar #pCalendarId class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy"
+								(onSelect)="setDownloadFlag(); dt.filter($event,'dob', 'dateIs')" [showIcon]="true"
+								[(ngModel)]="dcalvalue"></p-calendar>
+						</th>
+						<!-- <th [ngSwitch]="weddingDate" class="">
+							<p-calendar #pCalendarId class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy"
+								(onSelect)="setDownloadFlag(); dt.filter($event,'weddingDate', 'dateIs')"
+								[showIcon]="true" [(ngModel)]="wdcalvalue"></p-calendar>
+						</th> -->
+						<th [ngSwitch]="updated_at" class="">
+							<p-calendar #pCalendarId class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy"
+								(onSelect)="setDownloadFlag(); dt.filter($event,'updated_at', 'dateIs')"
+								[showIcon]="true" [(ngModel)]="ucalvalue"></p-calendar>
+						</th>
+						<th [ngSwitch]="status" class="">
+							<p-dropdown #pDropDownId [options]="statuses"
+								(onChange)="setDownloadFlag(); dt.filter($event.value, 'status', 'equals')"
+								styleClass="p-column-filter" placeholder="Select Status" [showClear]="true">
+								<ng-template let-option pTemplate="item">
+									<span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+								</ng-template>
+							</p-dropdown>
+						</th>
+						<th>
+							<!-- <button pButton [style]="{'margin-left':'20px'}" icon="pi pi-plus" class="p-button-rounded" (click)="addColumns()"></button> -->
+						</th>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="body" let-user>
+					<tr class="p-selectable-row">
+						<td>
+							{{user.firstName}}
+						</td>
+						<td>
+							{{user.lastName}}
+						</td>
+						<td>
+							{{user.gender}}
+						</td>
+						<td>
+							{{user.email}}
+						</td>
+						<td>
+							{{user.dob | date:'d/M/yyyy'}}
+						</td>
+						<!-- <td>
+							{{user.weddingDate | date:'d/M/yyyy'}}
+						</td> -->
+						<td>
+							{{user.updated_at | date:'d/M/yyyy'}}
+						</td>
+						<td class="text-center">
+							<p-inputSwitch [(ngModel)]="user.status" (onChange)="changeStatus(user)"></p-inputSwitch>
+						</td>
+						<td>
+							<!-- <button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-success p-mr-2" (click)="viewUser(user.id)"></button> -->
+							<button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
+								(click)="editCaterer(user.id)"></button>
+							<button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+								(click)="deleteCaterer(user)"></button>
+						</td>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="emptymessage">
+					<tr>
+						<td colspan="8">Caterers not found.</td>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="summary">
+					<div class="p-d-flex p-ai-center p-jc-between">
+						In total there are {{totalRecords }} Caterers.
+					</div>
+				</ng-template>
+			</p-table>
+		</div>
+		<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+	</div>
+</div>

@@ -1,0 +1,826 @@
+.sigma_header .sigma_logo-wrapper .sigma_logo {
+    display: flex;
+    align-items: center;
+}
+
+
+
+.navbar-brand img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+
+.sigma_logo img {
+    width: 140px;
+    margin-left: 0px;
+}
+
+.user_btn {
+    box-shadow: var(--shadow);
+    display: flex;
+    margin: 0px 0px 0px auto;
+    width: auto;
+    height: 47px;
+    border-radius: 33px;
+    justify-content: space-around;
+    align-items: center;
+    border: 1px solid var(--grey-color);
+    background-color: #fff;
+
+}
+
+.top-header-heading::after {
+    content: '';
+    display: block;
+    position: relative;
+    height: 2px;
+    width: 50%;
+    background: #bf343e;
+    margin: 15px 0px;
+}
+
+.user_btn svg {
+    margin-right: 10px;
+    fill: var(--darkgrey-color) !important;
+}
+
+.user_image {
+    width: 40px;
+    height: 40px;
+}
+
+.filter_icon img {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+}
+
+.filter_icon {
+    display: contents;
+}
+
+.filter_icon .dir-ltr {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    padding: 15px;
+}
+
+.sigma_header-bottom img {
+    width: 100%;
+}
+
+.sigma_header-bottom .container-fluid .col-md-1 {
+    max-width: 10%;
+    flex: 0 0 10%;
+}
+
+.sigma_header-bottom .container-fluid .col-md-11 {
+    max-width: 90%;
+    flex: 0 0 90%;
+}
+
+.p-tabview .p-tabview-nav {
+    justify-content: center;
+}
+
+
+ul.user-dropdown {
+
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 26px;
+    left: auto;
+    right: calc(0px - 10px);
+    border: 1px solid #f1f1f1;
+    border-radius: 0.4em;
+    min-width: 220px;
+    height: auto;
+    box-shadow: 0px 4px 12px rgb(0 0 0 / 10%);
+    padding: 12px 15px;
+    z-index: 999999;
+    background-color: #fff;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: 0.2s ease-in-out;
+    padding: 0px;
+}
+
+.mobile-version-header-top-list ul.user-dropdown {
+    align-items: flex-start;
+}
+
+ul.user-dropdown li a .fa {
+    font-size: 14px;
+    margin-right: 10px;
+    transition: 0.2s ease-in-out;
+}
+
+ul.user-dropdown li a:hover {
+    color: #bf343e;
+}
+
+ul.user-dropdown li a:hover .fa {
+    padding-left: 5px;
+}
+
+.user-section:hover ul.user-dropdown {
+    opacity: 1;
+    overflow: visible;
+    display: inline-flex !important;
+}
+
+ul.user-dropdown li {
+    line-height: initial;
+
+    border-bottom: 1px solid #f1f1f1;
+    display: block;
+    width: 100%;
+}
+
+
+ul.user-dropdown li a {
+    font-size: 14px;
+    color: #7f7f7f;
+    padding: 12px 12px;
+    display: block;
+}
+
+.account-list ul {
+    margin-bottom: 0px !important;
+}
+
+.account-list ul li {
+    margin-top: 0px !important;
+    padding: 10px;
+    cursor: pointer;
+    transition: 0.5s ease;
+}
+
+.hot-muhurats-container .nav-link {
+    cursor: pointer;
+  }
+
+.account-list ul li:hover {
+    color: var(--main-color);
+}
+
+.mandatory-fields {
+    color: #df4554;
+    font-size: 80% !important;
+}
+@media (max-width: 820px) {
+
+.global-search-icon {
+    z-index: 1 !important;
+    background-color: #ffffff;
+    width: 28px!important;
+    margin-left: 1px;
+    position: absolute;
+    height: 32px!important;
+    border-radius: 20px 0px 0px 20px;
+    top: 1px;
+}
+.sigma_logo img {
+    width: 140px;
+    margin-left: 57px;
+}
+}
+@media (max-width: 768px) {
+    .sigma_logo img {
+        width: 140px;
+        margin-left: 54px;
+        // margin-top: 4px;
+    }
+    .navigation-search-bar .p-fluid .p-calendar .p-inputtext {
+        border-radius: 33px !important;
+        padding: 10px 30px;
+        padding-left: 60px;
+    }
+
+    .user_btn {
+        width: 50px;
+        height: 50px;
+        padding: 0px;
+    }
+
+    .user_btn .dir-ltr {
+        display: none;
+    }
+
+    .sigma_header .sigma_header-controls ul .aside-toggle {
+        width: 50px;
+        height: 50px;
+        margin-left: 10px;
+    }
+
+    .live-location p-button button {
+        width: auto !important;
+    }
+
+}
+
+
+// for navigation
+// div#navbarNav {
+//   margin-left: 100px;
+// }
+.navbar-nav li a {
+    display: block;
+    padding: 0px 20px;
+    color: #222;
+    font-family: "Segoe UI";
+    position: relative;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+a.nav-link.border-end {
+    border-right: 1px solid #929292;
+}
+
+// for logo end
+
+// for login-header start
+.text-align-text p {
+    line-height: 8px;
+}
+
+.text-align-text {
+    text-align: right;
+}
+
+p.vendor-text {
+    color: #ec3539;
+    font-size: 15px;
+    font-weight: 500;
+
+}
+
+p.login-text {
+    color: black;
+    font-size: 15px;
+}
+
+a.nav-link.border-end {
+    border-right: 1px solid #bdbdbe;
+}
+
+button.p-element.p-ripple.p-button-rounded.p-button-danger.secondary.btn-custom.p-button.p-component.p-button-icon-only {
+    position: absolute;
+    right: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+}
+
+input.p-inputtext.p-component.p-element {
+    font-size: 14px;
+    color: #69707A;
+    background: #ffffff;
+    padding: 3px 10px 3px 10px;
+    border: 1px solid #d5d5d5;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: -16px;
+    border-radius: 23px;
+    margin-left: 100px;
+    width: 360px;
+    padding-left: 30px;
+}
+
+i.pi.pi-search {
+    left: 11px;
+    color: #83888F;
+    z-index: 9999;
+}
+
+a.nav-link.ng-tns-c94-1 {
+    color: black !important;
+}
+
+button.p-element.p-ripple.general-search.p-button-rounded.p-button-danger.secondary.btn-custom.p-button.p-component.p-button-icon-only {
+    width: 30px !important;
+    height: 30px !important;
+}
+
+.sigma_header-controls.style-2.ng-star-inserted {
+    margin-bottom: 10px;
+}
+
+.vendor-popup-heading {
+    font-size: 21px;
+    text-align: center;
+    color: #ec3539;
+    margin-bottom: 0px;
+}
+
+.required-color {
+    color: #ec3539;
+}
+
+.mobile-num-design {
+    text-align: center;
+    font-size: 14px;
+    font-family: "Segoe UI", sans-serif!important;
+}
+
+h2.popup-heading {
+    font-size: 16px;
+    line-height: 1.3em;
+    text-align: center;
+    color: #ec3539;
+}
+
+.offer-text {
+    font-size: 23px;
+}
+
+.p-element.ng-trigger.ng-trigger-animation.ng-tns-c91-5.p-dialog.p-component.p-dialog-draggable.p-dialog-resizable {
+    width: 31vw !important;
+}
+
+// @media only screen and (max-width: 991px) {
+//     .text-align-text p {
+//         display: none !important;
+//     }
+// }
+
+// for login-header end
+span.p-tabview-title {
+    font-size: 13px;
+}
+
+h5.mobile-num-design {
+    font-size: 14px;
+}
+
+.head-con {
+    font-size: 13px !important;
+}
+
+h1.thankyou-popup {
+    text-align: center;
+    color: #ec3539;
+}
+
+.login-popup.ng-tns-c91-10 {
+    padding: 50px 15px 15px 15px;
+}
+
+.p-tabview-title {
+    line-height: 1;
+    white-space: nowrap;
+    font-size: 12px !important;
+}
+
+.p-element.ng-trigger.ng-trigger-animation.ng-tns-c91-5.p-dialog.p-component.p-dialog-draggable.p-dialog-resizable {
+    width: 31vw;
+}
+
+.popup-button {
+    margin-bottom: 10px !important;
+}
+
+.sigma_header-controls.style-2 {
+    margin-right: 0px !important;
+}
+
+.p-dialog-header.ng-tns-c91-4 {
+    position: absolute;
+    z-index: 3;
+    right: -10px !important;
+    top: -14px !important;
+}
+
+h5.otp-head {
+    font-size: 16px!important;
+    text-align: center;
+    color: #ec3539;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+input#first {
+    width: 43px;
+}
+
+input#second {
+    width: 43px;
+}
+
+input#third {
+    width: 43px;
+}
+
+input#fourth {
+    width: 43px;
+}
+
+h5.resend-head {
+    font-size: 14px;
+    text-decoration: underline;
+    text-align: center;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    color: #69707A;
+    font-weight: 400;
+    font-size: 16px!important;
+}
+
+.otp-head1 {
+  color: #333;
+  font-size: 20px;
+  margin: 0px;
+}
+
+h4.thankyou-popup {
+    text-align: center;
+    color: #ec3539;
+}
+
+.active {
+    color: #ec3539 !important;
+}
+
+.vendor-drop .p-dropdown.p-component {
+    border-radius: 7px !important;
+}
+
+
+@media (min-width:961px) {
+
+    .p-input-icon-left,
+    .p-input-icon-right {
+        position: relative;
+        // display: inline-block;
+    }
+
+    p-button.p-element.toggle-btn {
+        display: none;
+    }
+
+    #pr_id_29 .p-carousel-item {
+        flex: 1 0 11.11111111111111% !important;
+    }
+
+    .navbar-nav li a {
+        display: block;
+        padding: 0px 13px;
+        color: #000;
+        font-family: "Segoe UI", sans-serif!important;
+        position: relative;
+        font-weight: 400;
+        text-transform: uppercase;
+        font-size: 13.5px;
+        line-height: 16px;
+    }
+
+    .top_search_list ul.p-autocomplete-multiple-container.p-component.p-inputtext.ng-tns-c68-0.ng-star-inserted {
+        border-radius: 20px;
+        width: 300px;
+        border-color: #e3e3e3;
+    }
+
+    button.p-element.p-ripple.general-search.p-button-rounded.p-button-danger.secondary.btn-custom.p-button.p-component.p-button-icon-only {
+        width: 26px !important;
+        height: 26px !important;
+    }
+
+    i.pi.pi-search {
+        left: 15px;
+        color: #83888F;
+        z-index: 9999;
+    }
+
+    p.vendor-text {
+        color: #ec3539;
+        font-size: 13px;
+        font-weight: 400;
+    }
+
+    p.login-text {
+        color: black;
+        font-size: 13px;
+        font-weight: 400;
+    }
+}
+
+.otp-timer {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #ffffff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgb(117 117 117 / 34%);
+    right: 0px;
+    border-radius: 7px;
+    top: 47px;
+
+}
+
+.list-account:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown {
+    position: relative;
+    display: block;
+    margin-top: 5px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 3px 16px;
+    text-decoration: none;
+    display: block !important;
+
+}
+
+.dropdown-content::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    right: 7px;
+    height: 20px;
+    width: 20px;
+    background-color: #ffffff;
+    rotate: 42deg;
+
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+a.menu-list {
+    color: black;
+}
+
+i.pi.pi-search {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    z-index: 2;
+    transform: translateY(-50%);
+    display: flex;
+}
+@media only screen and (max-width: 768px) {
+    a.menu-list {
+        color: black;
+        font-size: 14px;
+    }
+    li.menue-list {
+        margin: 0px 16px 0px 15px;
+        padding: 0px 10px 0px 10px;
+    }
+.list-account.m-0.mobile-view {
+    position: absolute;
+    right: 30px;
+    top: 5px;
+}
+// li.list-account.m-0 {
+//     display: none;
+// }
+a.nav-link.ng-tns-c94-46 {
+    color: black;
+}
+label.col-5.pr-9 {
+    padding-right: 9px;
+}
+.sigma_header-controls.style-2.vendor-login {
+    display: none;
+}
+span.user-login-text {
+    display: none;
+}
+i.user-login-icon.pi.pi-user-plus {
+    font-size: 19px;
+    color: #eb3438;
+    border-radius: 10p;
+    width: 36px;
+    height: 36px;
+    border-radius: 20px;
+    text-align: center;
+    line-height: 32px;
+    margin-top: 6px;
+    border: 1px solid #eb3438;
+}
+.col-2.header-login {
+    margin: unset!important;
+}
+img.mobile-view-logo {
+    margin-left: 10px!important;
+}
+}
+label.col-5.pr-9 {
+    text-align: right;
+}
+// .top_search_list ul.p-autocomplete-multiple-container.p-component.p-inputtext.ng-tns-c68-0 {
+//     border-radius: 20px;
+//     width: 350px;
+//     border-color: #e1e1e1;
+//     padding-left: 37px;
+//     overflow: auto;
+// }
+// .top_search_list ul.p-autocomplete-multiple-container.p-component.p-inputtext.ng-tns-c68-0::-webkit-scrollbar {
+//     width: 7px;
+//     height: 2px;
+//     background-color: #e2e2e2;
+// }
+.global-search-icon {
+    z-index: 1 !important;
+    background-color: #ffffff;
+    width: 41px;
+    margin-left: 1px;
+    position: absolute;
+    height: 34px;
+    border-radius: 20px 0px 0px 20px;
+    top: 1px;
+}
+.pi .pi-search{
+    height: 18px;
+position: absolute;
+top: 26%;
+display: block;
+margin-left: 10px;
+margin-right: auto;
+width: 50%;
+}
+
+// .top_search_list ul.p-autocomplete-multiple-container.p-component.p-inputtext.ng-tns-c68-0::-webkit-scrollbar{
+//     width: 7px;
+//     height: 2px;
+//     background-color: #e2e2e2;
+// }
+
+label.mobile-number-text {
+    font-size: 15px;
+}
+@media only screen and (max-width: 820px) {
+    i.user-login-icon.pi.pi-user-plus {
+        font-size: 19px;
+        color: #eb3438;
+        border-radius: 10p;
+        width: 36px;
+        height: 36px;
+        border-radius: 20px;
+        text-align: center;
+        line-height: 32px;
+        margin-top: 6px;
+        border: 1px solid #eb3438;
+    }
+    span.user-login-text {
+        display: none;
+    }
+    .sigma_header-controls.style-2.vendor-login {
+        display: none;
+    }
+
+    .list-account.m-0.mobile-view {
+        position: absolute;
+        right: 30px;
+        top: 5px;
+    }
+    // li.list-account.m-0 {
+    //     display: none;
+    // }
+    }
+
+    // #front .serch-bar-field .p-autocomplete-multiple-container::-webkit-scrollbar{
+    //     width: 7px;
+    //     height: 2px;
+    //     background-color: #e2e2e2;
+    // }
+
+    img.mobile-view-logo {
+        margin-left: 10px!important;
+    }
+    .col-2.header-login {
+        margin: auto;
+    }
+
+    @media (min-width:1281px) {
+          i.user-login-icon.pi.pi-user-plus {
+        display: none;
+    }
+    }
+    ul#nav {
+        justify-content: right;
+    }
+    // .list-items .p-button.p-button-info, .p-buttonset.p-button-info > .p-button, .p-splitbutton.p-button-info > .p-button {
+    //     color: #888d94;
+    //     background: #e7e7e7;
+    //     border: 1px solid #e7e7e7;
+    //     align-items: center;
+    //     vertical-align: text-top!important;
+    // }
+
+    li.menue-list {
+        margin: 5px 10px 5px 10px;
+        padding: 0px 10px 0px 10px;
+    }
+
+
+
+.otp-container{
+    display: flex;
+    gap: 15px;
+    width: 200px;
+    justify-content: space-around;
+}
+.otp-box{
+    input{
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+        text-align: center;
+        line-height: 50px;
+        border: 1px solid #cccccc;
+        outline: none;
+        border-radius: 4px;
+    }
+    input:focus {
+       border-color: #D32F2F;
+    }
+}
+.red-user-icon{
+    background-color: red !important;
+}
+
+.custom-input-box{
+    display: flex;
+    align-items: center;
+    p{
+        margin: 0;
+        padding: 0;
+        flex: 2;
+    }
+    div{
+        flex: 5;
+    }
+}
+.custom-input{
+    border-radius: 5px !important;
+    outline: none !important;
+    padding: 5px 10px !important;
+    margin: 5px !important;
+    width: 100% !important;
+
+}
+.custom-input:hover{
+    border-color: #EC3539 !important;
+    border-width: 1px;
+}
+.custom-input:focus{
+    border-color: #EC3539 !important;
+    border-width: 1px;
+
+}
+.hot-date-item{
+    display: grid;
+    place-items: center;
+    img{
+        width: 450px;
+    }
+}
+
+// .p-carousel .p-carousel-indicators .p-carousel-indicator button {
+//     background-color: #e9ecef !important;
+//     width: 1rem !important;
+//     height: 1rem !important;
+//     transition: background-color 0.2s, color 0.2s, box-shadow 0.2s !important;
+//     border-radius: 50% !important;
+// }
+
+::ng-deep .p-galleria-indicators {
+    background-color: transparent !important; /* Set the background color to transparent */
+}
+
+::ng-deep .pi-chevron-right {
+    color: red !important; /* Set the desired color (red in this case) */
+}
+::ng-deep .pi-chevron-left {
+    color: red !important; /* Set the desired color (red in this case) */
+}
+
+::ng-deep .p-overlaypanel-close{
+    left: 10px !important;
+}
+
+@media (max-width: 820px) {
+    ::ng-deep .p-galleria-thumbnail-items-container{
+        margin-top: 0px;
+    }
+}

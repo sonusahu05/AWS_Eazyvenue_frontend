@@ -1,0 +1,133 @@
+<div class="p-grid manage-product-section">
+    <div class="p-col-12">
+        <div class="card">
+            <h1 class="page-title">State Management</h1>
+            <p-toolbar styleClass="p-mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Add State" icon="pi pi-plus" class="p-button-success p-mr-2"
+                        (click)="openNew()"></button>
+                    <!--    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger p-mb-2" (click)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length"></button> -->
+                </ng-template>
+                <!-- <ng-template pTemplate="right">               
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help p-mb-2" (click)="dt.exportCSV()"></button>
+                </ng-template> -->
+            </p-toolbar>
+            <div>
+             
+
+
+                <p-table #dt [value]="states" [columns]="cols" [rows]="10" [paginator]="true" [resizableColumns]="true" [rowsPerPageOptions]="paginationOption"
+                    [autoLayout]="true" [globalFilterFields]="['countryname','countrycode','name','state_code','status']"
+                    [rowHover]="true" dataKey="_id" class="p-mb-0" [autoLayout]="true" scrollDirection="both" [rowHover]="true"
+                    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped">
+                    <ng-template pTemplate="caption">
+                        <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-end table-header">
+                            <!-- <h5 class="p-m-0">State List</h5> -->
+                            <span class="p-input-icon-left">
+                                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                    placeholder="Search..." />
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem;text-align: center;">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            <th pSortableColumn="sl">SL <p-sortIcon field="sl"></p-sortIcon>
+                            </th>
+                            <!-- <th pSortableColumn="name">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Country Name
+                                    <p-sortIcon field="countryname"></p-sortIcon>
+                                    <p-columnFilter type="text" field="countryname" display="menu" class="p-ml-auto">
+                                    </p-columnFilter>
+                                </div>
+                            </th>
+                            <th pSortableColumn="countrycode">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Country Code
+                                    <p-sortIcon field="countrycode"></p-sortIcon>
+                                    <p-columnFilter type="text" field="countrycode" display="menu" class="p-ml-auto">
+                                    </p-columnFilter>
+                                </div>
+                            </th> -->
+                            
+                            <th pSortableColumn="name">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    State Name
+                                    <p-sortIcon field="name"></p-sortIcon>
+                                    <p-columnFilter type="text" field="name" display="menu" class="p-ml-auto">
+                                    </p-columnFilter>
+                                </div>
+                            </th>
+                            <th pSortableColumn="name">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    State Code
+                                    <p-sortIcon field="state_code"></p-sortIcon>
+                                    <p-columnFilter type="text" field="state_code" display="menu" class="p-ml-auto">
+                                    </p-columnFilter>
+                                </div>
+                            </th>
+                            <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon>
+                            </th>
+                            <th>Action</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-countrystatecity let-rowIndex="rowIndex">
+                        <tr>
+                            <td class="text-center">
+                                <p-tableCheckbox [value]="countrystatecity"></p-tableCheckbox>
+                            </td>
+                            <td><span class="p-column-title" id="typeName">SL</span>
+                                {{rowIndex+1}}
+                            </td>
+                            <!-- <td><span class="p-column-title" id="styleName">Country</span>
+                                {{countrystatecity.countryname}}
+                            </td>
+                            <td><span class="p-column-title" id="styleName">Country Code</span>
+                                {{countrystatecity.countrycode}}
+                            </td> -->
+                            <td><span class="p-column-title" id="styleName">State</span>
+                                {{countrystatecity.name}}
+                            </td>
+                            <td><span class="p-column-title" id="styleName">City</span>
+                                {{countrystatecity.state_code}}
+                            </td>
+
+                            <td><span class="p-column-title">Status</span>
+                                <!-- <div *ngIf="countrystatecity.status == true; else elsePart">
+                                    Active
+                                </div>
+                                <ng-template #elsePart>
+                                    Inactive
+                                </ng-template> -->
+                                <span *ngIf="countrystatecity.status">
+                                    <p-tag styleClass="mr-2" severity="success" value="Active"></p-tag>
+                                </span>
+                                <span *ngIf="!countrystatecity.status">
+                                    <p-tag styleClass="mr-2" severity="danger" value="In-Active"></p-tag>
+                                  </span>
+                                <p-inputSwitch [(ngModel)]="countrystatecity.status" (onChange)="changeStatus(countrystatecity)"></p-inputSwitch>
+                            </td>
+                            <td><span class="p-column-title">Action</span>
+                                <button pButton pRipple icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-success p-mr-2"
+                                    (click)="onEdit(countrystatecity)" pTooltip="Edit State" tooltipPosition="bottom"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-denger p-mr-2" (click)="onDelete(countrystatecity)" pTooltip="Delete State" tooltipPosition="bottom"></button>
+                                <!--<button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-rounded"></button>-->
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                        <div class="p-d-flex p-ai-center p-jc-between">
+                            In total there are {{totalStates }} States.
+                        </div>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+</div>

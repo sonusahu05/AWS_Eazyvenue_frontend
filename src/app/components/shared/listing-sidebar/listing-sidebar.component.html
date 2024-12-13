@@ -1,0 +1,107 @@
+<div class="sidebar sidebar-left">
+    <div class="sidebar-widget">
+        <div class="acr-collapse-trigger acr-custom-chevron-wrapper">
+            <h5>Filter Weddings</h5>
+            <div class="acr-custom-chevron">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="acr-collapsable">
+            <div class="acr-filter-form">
+                <form>
+                    <div class="acr-custom-select form-group">
+                        <label>Location: </label>
+                        <ng-select2 [data]="select.locationlist" [options]="options">
+                        </ng-select2>
+                    </div>
+                    <div class="acr-custom-select form-group">
+                        <label>Status: </label>
+                        <ng-select2 [data]="select.statuslist" [options]="options">
+                        </ng-select2>
+                    </div>
+                    <div class="acr-custom-select form-group">
+                        <label>Price Range: </label>
+                        <ng-select2 [data]="select.pricerangelist" [options]="options">
+                        </ng-select2>
+                    </div>
+                    <div class="acr-custom-select form-group">
+                        <label>Price: </label>
+                        <ng-select2 [data]="select.price" [options]="options">
+                        </ng-select2>
+                    </div>
+                    <div class="acr-custom-select form-group">
+                        <label>Guest Rooms: </label>
+                        <ng-select2 [data]="select.guestroom" [options]="options">
+                        </ng-select2>
+                    </div>
+                    <div class="acr-custom-select form-group">
+                        <label>Type: </label>
+                        <ng-select2 [data]="select.typelist" [options]="options">
+                        </ng-select2>
+                    </div>
+                    <button type="submit" class="btn-block btn-custom" name="button">Apply filters</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-widget">
+        <div class="acr-collapse-trigger acr-custom-chevron-wrapper">
+            <h5>Recent Weddings</h5>
+            <div class="acr-custom-chevron">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="acr-collapsable">
+            <!-- Listing Start -->
+            <div class="listing listing-list" *ngFor="let item of getRecentListing() | slice:0:4">
+                <div class="listing-thumbnail">
+                    <a routerLink="/listing-details-v1/{{item.id}}"><img [src]="item.gridimg"
+                            [alt]="item.title"></a>
+                </div>
+                <div class="listing-body">
+                    <h6 class="listing-title"> <a routerLink="/listing-details-v1/{{item.id}}"
+                            [title]="item.title">{{item.title}}</a> </h6>
+                    <span class="listing-price">{{item.price / item.emitime | number:'1.2-2'}}$
+                        <span>/Person</span>
+                    </span>
+                </div>
+            </div>
+            <!-- Listing End -->
+        </div>
+    </div>
+    <div class="sidebar-widget">
+        <div class="acr-collapse-trigger acr-custom-chevron-wrapper">
+            <h5>Cost Calculator</h5>
+            <div class="acr-custom-chevron">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="acr-collapsable">
+            <form>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Total Amount" name="total" >
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Down Payment" name="down-p" >
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Interest Rate" name="interest" >
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Loan Term" name="loan-term" >
+                </div>
+                <div class="form-group">
+                    <select class="form-control" name="cycle">
+                        <option value="Daily">Daily</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Yearly">Yearly</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-custom btn-block" name="button">Calculate</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,402 @@
+<!-- <div class="p-grid">
+    <div class="p-col-12">
+        <div class="card">
+            <h5>Calendar View</h5>
+            <div class="card" *ngIf="showViewCalendar">
+                <full-calendar [options]="viewOptions"></full-calendar>
+            </div>
+        </div>
+    </div>
+</div> -->
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="title-area">
+            <h5 class="admin-heading">Slot Availability</h5>
+            <!-- <button pButton pRipple label="Back" icon="pi pi-arrow-left" class="p-button-primary" 
+                (click)="backLink()"></button> -->
+        </div>
+
+        <div class="card">
+                <p-toast key="calendarSearchtoastmsg"></p-toast>
+                <form [formGroup]="calendarSearchForm" *ngIf="this.calendarSearchForm"
+                    (ngSubmit)="loadCalendarOnSubmit()">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col-3">
+                            <label for="startdt">Start Date</label>
+                            <p-calendar monthNavigator="true" yearNavigator="true" formControlName="startDate" yearRange="{{yearRange}}" [minDate]="minDateValue"
+                                [maxDate]="maxDateValue" class="p-calendar" inputId="calendar" dateFormat="dd-mm-yy"
+                                [showIcon]="true" class="p-calendar"
+                                [ngClass]="{ 'is-invalid': submitted && calendarSearchf.startDate.errors}"
+                                (onSelect)="selectStartDate($event)">
+                            </p-calendar>
+                            <div *ngIf="submitted && calendarSearchf.startDate.errors" class="invalid-feedback">
+                                <div *ngIf="calendarSearchf.startDate.errors.startDateError">Please, Select Start Date
+                                    Before End Date</div>
+                                <div *ngIf="calendarSearchf.startDate.errors.required">Please, Enter Start Date</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-3">
+                            <label for="enddt">End Date</label>
+                            <p-calendar monthNavigator="true" yearNavigator="true" yearRange="{{yearRange}}"
+                                [minDate]="minDateValue" [maxDate]="maxDateValue" formControlName="endDate"
+                                class="p-calendar" class="p-calendar" inputId="calendar" dateFormat="dd-mm-yy"
+                                [showIcon]="true"
+                                [ngClass]="{ 'is-invalid': submitted && calendarSearchf.endDate.errors}"
+                                (onSelect)="selectEndDate($event)">
+                            </p-calendar>
+                            <div *ngIf="submitted && calendarSearchf.endDate.errors" class="invalid-feedback">
+                                <div *ngIf="calendarSearchf.endDate.errors.required">Please, Enter Start Date</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-12">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="background-color: #d4d6d9!important;border: 1px solid #bec0c3;">Slots</th>
+                                        <th style="background-color: #d4d6d9!important;border: 1px solid #bec0c3;">Sunday</th>
+                                        <th style="background-color: #d4d6d9!important;border: 1px solid #bec0c3;">Monday</th>
+                                        <th style="background-color: #d4d6d9!important;border: 1px solid #bec0c3;">Tuesday</th>
+                                        <th style="background-color: #d4d6d9!important;border: 1px solid #bec0c3;">Wednesday</th>
+                                        <th style="background-color: #d4d6d9!important;border: 1px solid #bec0c3;">Thursday</th>
+                                        <th style="background-color: #d4d6d9!important;border: 1px solid #bec0c3;">Friday</th>
+                                        <th style="background-color: #d4d6d9!important;border: 1px solid #bec0c3;">Saturday</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                            <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                            style="padding: 10px 10px 10px 0px;justify-content: center;">
+                                                <label for="slot">Slot : {{slot.slot}}&nbsp;&nbsp;</label>
+                                                <p-checkbox formControlName="{{slot.id}}" [binary]="true"
+                                                    (onChange)="onAllSlotSelect(slot, $event, 'All')"
+                                                    inputId="binary">
+                                                </p-checkbox>
+                                            </div>
+                                        </th>
+                                        <th scope="row">
+                                            <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                            style="padding: 10px 10px 10px 0px;justify-content: center;">
+                                                <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                    (onChange)="onSlotSelect(slot, $event, 'Sunday')">
+                                                </p-checkbox>
+                                            </div>
+                                        </th>
+                                        <th scope="row">
+                                            <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                            style="padding: 10px 10px 10px 0px;justify-content: center;">
+                                                <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                    (onChange)="onSlotSelect(slot, $event, 'Monday')">
+                                                </p-checkbox>
+                                            </div>
+                                        </th>
+                                        <th scope="row">
+                                            <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                            style="padding: 10px 10px 10px 0px;justify-content: center;">
+                                                <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                    (onChange)="onSlotSelect(slot, $event, 'Tuesday')">
+                                                </p-checkbox>
+                                            </div>
+                                        </th>
+                                        <th scope="row">
+                                            <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                            style="padding: 10px 10px 10px 0px;justify-content: center;">
+                                                <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                    (onChange)="onSlotSelect(slot, $event, 'Wednesday')">
+                                                </p-checkbox>
+                                            </div>
+                                        </th>
+                                        <th scope="row">
+                                            <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                            style="padding: 10px 10px 10px 0px;justify-content: center;">
+                                                <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                    (onChange)="onSlotSelect(slot, $event, 'Thursday')">
+                                                </p-checkbox>
+                                            </div>
+                                        </th>
+                                        <th scope="row">
+                                            <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                            style="padding: 10px 10px 10px 0px;justify-content: center;">
+                                                <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                    (onChange)="onSlotSelect(slot, $event, 'Friday')">
+                                                </p-checkbox>
+                                            </div>
+                                        </th>
+                                        <th scope="row">
+                                            <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                            style="padding: 10px 10px 10px 0px;justify-content: center;">
+                                                <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                    (onChange)="onSlotSelect(slot, $event, 'Saturday')">
+                                                </p-checkbox>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- <div class="p-fluid p-formgrid p-grid">
+                            <div class="row">
+                                <div class="col-8">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Slots</th>
+                                                <th>Sunday</th>
+                                                <th>Monday</th>
+                                                <th>Tuesday</th>
+                                                <th>Wednesday</th>
+                                                <th>Thursday</th>
+                                                <th>Friday</th>
+                                                <th>Saturday</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">
+                                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                                        <label for="slot">Slot: {{slot.slot}}&nbsp;&nbsp;</label>
+                                                        <p-checkbox formControlName="{{slot.id}}" [binary]="true"
+                                                            (onChange)="onAllSlotSelect(slot, $event, 'All')"
+                                                            inputId="binary">
+                                                        </p-checkbox>
+                                                    </div>
+                                                </th>
+                                                <th scope="row">
+                                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                            (onChange)="onSlotSelect(slot, $event, 'Sunday')">
+                                                        </p-checkbox>
+                                                    </div>
+                                                </th>
+                                                <th scope="row">
+                                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                            (onChange)="onSlotSelect(slot, $event, 'Monday')">
+                                                        </p-checkbox>
+                                                    </div>
+                                                </th>
+                                                <th scope="row">
+                                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                            (onChange)="onSlotSelect(slot, $event, 'Tuesday')">
+                                                        </p-checkbox>
+                                                    </div>
+                                                </th>
+                                                <th scope="row">
+                                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                            (onChange)="onSlotSelect(slot, $event, 'Wednesday')">
+                                                        </p-checkbox>
+                                                    </div>
+                                                </th>
+                                                <th scope="row">
+                                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                            (onChange)="onSlotSelect(slot, $event, 'Thursday')">
+                                                        </p-checkbox>
+                                                    </div>
+                                                </th>
+                                                <th scope="row">
+                                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                            (onChange)="onSlotSelect(slot, $event, 'Friday')">
+                                                        </p-checkbox>
+                                                    </div>
+                                                </th>
+                                                <th scope="row">
+                                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                            (onChange)="onSlotSelect(slot, $event, 'Saturday')">
+                                                        </p-checkbox>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                                   
+
+
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Slots</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <label for="slot">Slot: {{slot.slot}}&nbsp;&nbsp;</label>
+                                        <p-checkbox formControlName="{{slot.id}}" [binary]="true"
+                                            (onChange)="onAllSlotSelect(slot, $event, 'All')" inputId="binary">
+                                        </p-checkbox>
+                                    </div>
+                                </div> 
+
+                                 <div style="padding: 10px;">
+                                    <h1 class="slot-heading">Sunday</h1>
+                                    <div class="col-md-12">
+                                        <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                            style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                            <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                (onChange)="onSlotSelect(slot, $event, 'Sunday')">
+                                            </p-checkbox>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Monday</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                            (onChange)="onSlotSelect(slot, $event, 'Monday')">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Tuesday</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                            (onChange)="onSlotSelect(slot, $event, 'Tuesday')">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Wednesday</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                            (onChange)="onSlotSelect(slot, $event, 'Wednesday')">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Thursday</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                            (onChange)="onSlotSelect(slot, $event, 'Thursday')">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Friday</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                            (onChange)="onSlotSelect(slot, $event, 'Friday')">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Saturday</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                            (onChange)="onSlotSelect(slot, $event, 'Saturday')">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                        </div>
+                    </div> -->
+                    <div class="p-field mb-0">
+                        <button pButton pRipple label="Submit" class="p-button"></button>
+                    </div>
+                </form>
+        </div>
+            <div class="card" *ngIf="showCalendar">
+                <full-calendar [options]="options"></full-calendar>
+            </div>
+
+            <p-dialog [(visible)]="eventDialog" [style]="{width: '32%'}" header="Slot Details" [modal]="true"
+                [closable]="true">
+
+
+                <!-- <div>
+                    <button class="close-btn" pButton pRipple label="" icon="pi pi-times" type="reset"
+                        (click)="closePostAvailabilityForm()"></button>
+                </div> -->
+                <p-toast key="postAvailabilityToastmsg"></p-toast>
+                <ng-template pTemplate="content">
+                    <form [formGroup]="postAvailabilityForm" *ngIf="this.postAvailabilityForm"
+                        (ngSubmit)="onPostAvailabilitySubmit()" class="slot-details-save-btn">
+                        <div class="p-fluid p-formgrid">
+                            <!-- <label for="title">Slot List</label> -->
+                            <div class="p-fluid row">
+                                <!-- <p-multiSelect [options]="slotListArr" formControlName="slot" defaultLabel="Select Slot"
+									optionLabel="slot" display="chip"
+									[ngClass]="{ 'is-invalid': submitted && f.slot.errors }">
+								</p-multiSelect> -->
+                                <div *ngFor="let slot of slotListArr" class="p-field-checkbox col-4">
+                                    <p-checkbox binary="true" formControlName="{{slot.id}}" optionLabel="slot"
+                                        [inputId]="slot.key" value="slot"
+                                        (onChange)="onSlotSelect(slot, $event, 'slot')" [value]="slot"></p-checkbox>
+                                    <label>{{slot.slot }}</label>
+                                    <!-- <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                        (onChange)="onSlotSelect(slot, $event, 'recurring')" inputId="binary">
+                                    </p-checkbox>
+                                    <label for="binary">Recurring slot</label> -->
+                                </div>
+                                <!-- <div *ngIf="submitted && f.slot.errors" class="invalid-feedback">
+									<div *ngIf="f.slot.errors.required">Please, Select Slot</div>
+								</div> -->
+                            </div>
+                            <!-- <div class="p-fluid p-col-4">
+								<p-checkbox formControlName="recurring" [binary]="true"
+									(onChange)="onRecurringSelect($event)" inputId="binary"></p-checkbox>
+								<label for="binary">Recurring slot for all</label>
+							</div> -->
+                            <!-- <div class="p-field p-col-4">
+								<label for="postAvailabilityStatus">Status<span
+										class="mandatory-fields">*</span></label>
+								<p-dropdown inputId="postAvailabilityStatus" [options]="statuses"
+									formControlName="postAvailabilityStatus" placeholder="Select" optionLabel="label"
+									(ngModelChange)="onPostAvailabilityStatusSelect($event)"
+									[ngClass]="{ 'is-invalid': submitted && f.postAvailabilityStatus.errors}">
+								</p-dropdown>
+								<div *ngIf="submitted && f.postAvailabilityStatus.errors" class="invalid-feedback">
+									<div *ngIf="f.postAvailabilityStatus.errors.required">Please, Select Status</div>
+								</div>
+							</div> -->
+                        </div>
+                        <button pButton pRipple label="Save" icon="pi pi-check" class="text-right"></button>
+                        <!-- <button pButton pRipple label="Reset" icon="pi pi-times" type="reset"
+                            (click)="reset()"></button> -->
+                    </form>
+                </ng-template>
+                <div class="button-set back">
+                    <div class="p-fluid p-formgrid">
+                        <p-toast></p-toast>
+                    </div>
+                </div>
+            </p-dialog>
+
+            <p-dialog [(visible)]="deleteEventDialog" [style]="{width: '40%',height:'30%'}" header="Slot Details"
+                [modal]="true" [closable]="true">
+                <p-toast key="postAvailabilityDeleteToastmsg"></p-toast>
+                <ng-template pTemplate="content">
+                    <form [formGroup]="deletePostAvailabilityForm" *ngIf="this.deletePostAvailabilityForm"
+                        (ngSubmit)="onPostAvailabilityDeleteSubmit()">
+                        <label>Are you sure want to delete this slot?</label>
+                        <br>
+                        <input formControlName="disable" type="hidden" value="Yes">
+                        <button pButton pRipple label="Yes" icon="pi pi-check"> </button>
+                        <button pButton pRipple label="Cancel" icon="pi pi-cancel" class="p-button-text" type="reset"
+                            (click)="cancelPostAvailability()"></button>
+                    </form>
+                </ng-template>
+                <div class="button-set back">
+                    <div class="p-fluid p-formgrid">
+                        <p-toast></p-toast>
+                    </div>
+                </div>
+            </p-dialog>
+        </div>
+    </div>
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

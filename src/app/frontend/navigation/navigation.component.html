@@ -1,0 +1,91 @@
+<div class="navigation-search-bar">
+    <div class="container p-formgrid">
+
+        <div class="search-bar-locations p-p-0">
+            <!-- <p class="animation-text-heading">Eaziest Way to discover and book venues&nbsp;</p>
+            <div class="verticalFlip">
+                 <span *ngFor="let category of categoryMenuList">for {{category.name}}</span>
+              </div> -->
+            <div class="row justify-content-center">
+
+                <div class="col-lg-8 col-md-8 col-sm-12 animation-text-one">
+                    <div class="verticalFlip mb-10">
+                        Eaziest Way to discover and book venues&nbsp;
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 animation-text-two">
+                    <div class="verticalFlip mb-10">
+                        <b><span *ngFor="let category of categoryMenuList">for {{category.name}}</span></b>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <p-dialog header="" [(visible)]="numberPopup" [modal]="true" class="offer-popup-login" [modal]="true"
+        [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000" [draggable]="false"
+        [resizable]="false">
+        <div class="login-popup">
+            <h2 class="popup-heading mb-0">Receive<span class="offer-text"> 20%</span> off on our Photography now!</h2>
+            <p class="mobile-num-design">Please provide your contact number to receive the coupon code.</p>
+            <form [formGroup]="mobileForm" (ngSubmit)="onSubmitNumber()">
+                <div class="mb-3 row justify-content-md-center">
+                    <label for="inputPassword" class="col-auto col-form-label">Mobile Number <span
+                            class="mandatory-fields">*</span></label>
+                    <div class="col-lg-7 col-md-8 col-sm-10">
+                        <input type="number" autocomplete="on" formControlName="mobileNumber"
+                            placeholder="Enter Mobile Number" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && h.mobileNumber.errors }">
+                        <div *ngIf="submitted && h.mobileNumber.errors" class="invalid-feedback">
+                            <div *ngIf="h.mobileNumber.errors.required">Mobile number is required
+                            </div>
+                            <div *ngIf="h.mobileNumber.errors.pattern">Invalid Mobile number
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="popup-button mt-2">
+                    <p-button type="submit" label="Get it Now!" class="p-button-text  secondary"></p-button>
+                </div>
+            </form>
+        </div>
+    </p-dialog>
+    <p-dialog [(visible)]="otpPopup" [modal]="true" [modal]="true" [style]="{width: '31vw'}"
+        [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000" [draggable]="false"
+        [resizable]="false">
+        <div class="login-popup">
+            <!-- <h2 class="offer-popup-heading">Receive<span class="offer-popup-heading1"> 20%</span> off on our Photography now!</h2> -->
+            <form (ngSubmit)="otpSubmit()">
+                <div class="form-group mb-0">
+                    <h5 class="otp-head">Please insert OTP sent to your mobile number</h5>
+                    <div class="row justify-content-md-center">
+                        <div class="col col-lg-2 pr-0 mt-10">
+                            <h5 class="otp-head1">Enter OTP</h5>
+                        </div>
+                        <div class="col-md-auto">
+                            <div id="otp" class="inputs d-flex flex-row justify-content-center">
+                                <ng-otp-input #ngOtpInput [config]="config" (onInputChange)="onOtpChange($event)">
+                                </ng-otp-input>
+                            </div>
+                            <div *ngIf="showOtpErrors">
+                                <span style="color: red;">Please enter OTP.</span>
+                            </div>
+                        </div>
+                        <div class="col col-lg-2 pl-0 mt-10">
+                            <h5 class="resend-head" (click)="resendOtp()">Resend OTP</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup-button">
+                    <p-button type="submit" label="Verify OTP" class="p-button-text secondary"></p-button>
+                </div>
+                <h5 class="resend-head" (click)="changeMobileNumber()"> Change mobile number</h5>
+            </form>
+        </div>
+    </p-dialog>
+</div>

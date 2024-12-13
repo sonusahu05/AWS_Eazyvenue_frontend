@@ -1,0 +1,21 @@
+<!-- Icons Start -->
+<div class="section section-padding infographics-3">
+    <div class="container">
+        <div class="section-title-wrap section-header">
+            <h5 class="custom-primary">Our Moto</h5>
+            <h2 class="title">Why Choose Us</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-4" *ngFor="let item of whyus">
+                <div class="acr-infographic-item">
+                    <i [class]="item.icon"></i>
+                    <div class="acr-infographic-item-body">
+                        <h5>{{item.title}}</h5>
+                        <p>{{item.text}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Icons End -->

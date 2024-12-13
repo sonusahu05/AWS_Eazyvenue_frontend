@@ -1,0 +1,41 @@
+<div class="acr-auth-container">
+    <div class="acr-auth-content">
+        <form>
+            <div class="auth-text">
+                <h3>Create An Weddingz Account</h3>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's</p>
+            </div>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" class="form-control form-control-light" placeholder="Username" name="username">
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" class="form-control form-control-light" placeholder="Email Address" name="email">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control form-control-light" placeholder="Password" name="password">
+            </div>
+            <button type="submit" class="btn-custom secondary btn-block">Register</button>
+            <div class="auth-seperator">
+                <span>OR</span>
+            </div>
+            <div class="social-login">
+                <button type="button" class="acr-social-login facebook"><i class="fab fa-facebook-f"></i> Continue with Facebook </button>
+                <button type="button" class="acr-social-login google"><i class="fab fa-google"></i> Continue with Google</button>
+            </div>
+            <p class="text-center mb-0">Already have an account? <a routerLink="/login">Login</a> </p>
+        </form>
+    </div>
+    <div class="acr-auth-bg">
+        <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings" class="acr-auth-bg-slider acr-cs-bg-slider">
+            <div ngxSlickItem class="acr-auth-bg-item bg-cover bg-center" *ngFor="let item of extradata" [style.background-image]="'url('+item.image+')'">
+                <div class="acr-auth-quote">
+                    <h6>{{item.title}}</h6>
+                    <p>{{item.text}}</p>
+                </div>
+            </div>
+        </ngx-slick-carousel>
+    </div>
+</div>

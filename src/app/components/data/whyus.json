@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "icon": "flaticon-like",
+        "title": "We Are Featured",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+        "id": 2,
+        "icon": "flaticon-bride-1",
+        "title": "Unlimited Weddings",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+        "id": 3,
+        "icon": "flaticon-sales-agent",
+        "title": "Great Support",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    }
+]

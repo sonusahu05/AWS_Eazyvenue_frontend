@@ -1,0 +1,28 @@
+.hide-columns{
+    display: none;
+}
+.show-columns{
+    display: block; 
+}
+.col-width{
+    width:170px;
+}
+
+:host ::ng-deep {
+    .p-inputtext, .p-dropdown {
+        margin: 0;
+        width: 100%;
+    }
+	.p-paginator {
+		margin-left: auto;
+        justify-content: center;
+        padding: 1rem;
+	}
+    // .p2-table-columns {
+    //     .p-calendar{
+    //         .p-datepicker{
+    //              width:500px !important;
+    //         }
+    //     }
+    // }
+}

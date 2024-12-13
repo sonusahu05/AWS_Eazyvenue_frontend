@@ -1,0 +1,82 @@
+Desktop Aside bar Start
+<aside class="sigma_aside sigma_aside-desktop" [ngClass]="canvasMethod ? 'aside-right-open' : ''">
+    <app-canvas></app-canvas>
+</aside>
+<div class="sigma_aside-overlay aside-trigger-right" (click)="toggleCanvas()"></div>
+<!-- Aside (Mobile Navigation) -->
+<aside class="sigma_aside" [ngClass]="navmethod ? 'aside-open' : ''">
+    <div class="sigma_close aside-trigger" (click)="toggleNav()">
+        <span></span>
+        <span></span>
+    </div>
+    <app-mobile-menu></app-mobile-menu>
+</aside>
+<!-- <div class="sigma_aside-overlay aside-trigger" (click)="toggleNav()"></div> -->
+<!-- Header Start -->
+<header class="sigma_header style-4 can-sticky" id="can-sticky">
+    <div class="sigma_header-middle">
+        <div class="container-fluid">
+            <div class="navbar">
+                <div class="sigma_header-controls style-2 d-none d-lg-block">
+                    <ul class="sigma_header-controls-inner">
+                        <li class="search-trigger header-controls-item d-none d-sm-block">
+                            <a class="sigma_header-control-search" title="Search" href="javascript:void(0)"
+                                (click)="toggleSearch()">
+                                <i class="flaticon-search"></i>
+                            </a>
+                        </li>
+                        <li class="aside-toggle aside-trigger-right desktop-toggler" (click)="toggleCanvas()">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="sigma_logo-wrapper">
+                    <a class="sigma_logo" routerLink="/">
+                        <img src="assets/img/logo.png" alt="logo">
+                    </a>
+                </div>
+                <div class="sigma_header-controls style-2">
+                    <ul class="sigma_header-controls-inner">
+                        <li class="search-trigger header-controls-item d-block d-lg-none">
+                            <a class="sigma_header-control-search" title="Search" href="javascript:void(0)"
+                                (click)="toggleSearch()">
+                                <i class="flaticon-search"></i>
+                            </a>
+                        </li>
+                        <li class="d-none d-lg-block">
+                            <a routerLink="/submit-listings" class="btn-custom primary">Submit Listing <i
+                                    class="fas fa-plus"></i> </a>
+                        </li>
+                        <li class="aside-toggle aside-trigger" (click)="toggleNav()">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sigma_header-bottom">
+        <div class="container">
+            <div class="sigma_header-bottom-inner">
+                <app-navigation></app-navigation>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Header End -->
+<div class="search-form-wrapper" [ngClass]="searchMethod ? 'open' : ''">
+    <div class="search-trigger sigma_close" (click)="toggleSearch()">
+        <span></span>
+        <span></span>
+    </div>
+    <form class="search-form">
+        <input type="text" placeholder="Search..." required>
+        <button type="submit" class="search-btn">
+            <i class="flaticon-search m-0"></i>
+        </button>
+    </form>
+</div>

@@ -1,0 +1,673 @@
+<div class="p-grid add-section">
+    <div class="p-col-12">
+        <div class="title-area">
+            <h5 class="admin-heading">
+                {{pagetitle}}            </h5>
+            <!-- <button pButton pRipple label="Back" icon="pi pi-arrow-left" class="p-button-primary" 
+                (click)="backLink()"></button> -->
+        </div>
+            <div class="card p-pt-3">
+                <p-toast key="toastmsg" position="top-right"></p-toast>
+                <form [formGroup]="venueForm">
+                    <div class="p-fluid p-formgrid p-grid pare_margin">
+                        <!-- <div class="p-field p-col-10 div-border">
+                            <h5 class="p-mb-3">
+                                Venue Details
+                            </h5>
+                        </div> -->
+                        <div class="p-field p-col-4">
+                            <label for="title">Venue Name <span class="mandatory-fields">*</span></label>
+                            <input formControlName="name" type="text" pInputText class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                            <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                                <div *ngIf="f.name.errors.required">Name is required</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="category">Category <span class="mandatory-fields">*</span></label>
+                            <p-multiSelect inputId="category" [options]="catList" formControlName="category"
+                                placeholder="Select" optionLabel="name"
+                                [ngClass]="{ 'is-invalid': submitted && f.category.errors }"></p-multiSelect>
+                            <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
+                                <div *ngIf="f.category.errors.required">Please select category</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="mobileNumber">Mobile Number <span class="mandatory-fields">*</span></label>
+                            <input formControlName="mobileNumber" minlength="10" maxlength="12" type="text" pInputText
+                                class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mobileNumber.errors }">
+                            <div *ngIf="submitted && f.mobileNumber.errors" class="invalid-feedback">
+                                <div *ngIf="f.mobileNumber.errors.required">Mobile number is required</div>
+                                <div *ngIf="f.mobileNumber.errors">Please check mobile number</div>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-col-4">
+                            <label for="email">Email Id <span class="mandatory-fields">*</span></label>
+                            <input formControlName="email" type="email" pInputText
+                                [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+                            <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                                <div *ngIf="f.email.errors.required">Email is required</div>
+                                <div *ngIf="f.email.errors.email">Enter valid email address</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="textarea">Address</label>
+                            <textarea inputId="textarea" rows="3" cols="30" class="form-control"
+                                formControlName="address" pInputTextarea></textarea>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="country">Country </label>
+                            <input id="country" name="country" value="India" disabled pInputText />
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="state">State <span class="mandatory-fields">*</span></label>
+                            <p-dropdown inputId="state" [options]="statelist" formControlName="state"
+                                placeholder="Select State" [filter]="true" optionLabel="name"
+                                [ngClass]="{ 'is-invalid': submitted && f.state.errors }"
+                                (onChange)="getCities(true,$event)"></p-dropdown>
+                            <div *ngIf="submitted && f.state.errors" class="invalid-feedback">
+                                <div *ngIf="f.state.errors.required">Please select state</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="city">City <span class="mandatory-fields">*</span></label>
+                            <p-dropdown inputId="city" [options]="citylist" formControlName="city"
+                                placeholder="Select City" [filter]="true" optionLabel="name"
+                                [ngClass]="{ 'is-invalid': submitted && f.city.errors }"
+                                (onChange)="onCitySelect($event)"></p-dropdown>
+                            <div *ngIf="submitted && f.city.errors" class="invalid-feedback">
+                                <div *ngIf="f.city.errors.required">Please select city</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="subarea">Subarea <span class="mandatory-fields">*</span></label>
+                            <p-dropdown inputId="subarea" [options]="subarealist" formControlName="subarea"
+                                placeholder="Select Subarea" [filter]="true" optionLabel="name"
+                                [ngClass]="{ 'is-invalid': submitted && f.subarea.errors }"
+                                (onChange)="onSubareaSelect($event)"></p-dropdown>
+                            <div *ngIf="submitted && f.subarea.errors" class="invalid-feedback">
+                                <div *ngIf="f.subarea.errors.required">Please select subarea</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="zipcode">Zipcode <span class="mandatory-fields">*</span></label>
+                            <input formControlName="zipcode" type="text" maxlength="10" pInputText class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.zipcode.errors }">
+                            <div *ngIf="submitted && f.zipcode.errors" class="invalid-feedback">
+                                <div *ngIf="f.zipcode.errors.required">Please enter zipcode</div>
+                                <div *ngIf="f.zipcode.errors">Please check zipcode</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="propertyType">Property Type <span class="mandatory-fields">*</span></label>
+                            <p-multiSelect inputId="propertyType" [options]="propertyList"
+                                formControlName="propertyType" placeholder="Select Property" optionLabel="name"
+                                [ngClass]="{ 'is-invalid': submitted && f.propertyType.errors }"></p-multiSelect>
+                            <div *ngIf="submitted && f.propertyType.errors" class="invalid-feedback">
+                                <div *ngIf="f.propertyType.errors.required">Please select property type</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="foodType">Food Type <span class="mandatory-fields">*</span></label>
+                            <p-multiSelect inputId="foodType" [options]="foodList" formControlName="foodType"
+                                placeholder="Select Food Type" optionLabel="name"
+                                [ngClass]="{ 'is-invalid': submitted && f.foodType.errors }"></p-multiSelect>
+                            <div *ngIf="submitted && f.foodType.errors" class="invalid-feedback">
+                                <div *ngIf="f.foodType.errors.required">Please select food type</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="minRevenue">Minimum Revenue<span class="mandatory-fields">*</span></label>
+                            <p-inputNumber inputId="minRevenue" formControlName="minRevenue"
+                                placeholder="Enter minimum revenue"
+                                [ngClass]="{ 'is-invalid': submitted && f.minRevenue.errors }"> </p-inputNumber>
+                            <div *ngIf="submitted && f.minRevenue.errors" class="invalid-feedback">
+                                <div *ngIf="f.minRevenue.errors.required">Please enter minimum revenue.</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-2">
+                            <label for="googleRating">Google Rating <span class="mandatory-fields">*</span></label>
+                            <p-dropdown inputId="googleRating" [options]="googleRating" formControlName="googleRating"
+                                placeholder="Select Rating" optionLabel="name" (onChange)="onSelectGoogleRating($event)"
+                                [ngClass]="{ 'is-invalid': submitted && f.googleRating.errors }"></p-dropdown>
+                            <div *ngIf="submitted && f.googleRating.errors" class="invalid-feedback">
+                                <div *ngIf="f.googleRating.errors.required">Please select rating</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-2">
+                            <label for="eazyVenueRating">EazyVenue Rating <span
+                                    class="mandatory-fields">*</span></label>
+                            <p-dropdown inputId="eazyVenueRating" [options]="eazyVenueRating"
+                                formControlName="eazyVenueRating" placeholder="Select Eazyvenue rating"
+                                optionLabel="name" (onChange)="onSelectEazyVenueRating($event)"
+                                [ngClass]="{ 'is-invalid': submitted && f.eazyVenueRating.errors }"></p-dropdown>
+                            <div *ngIf="submitted && f.eazyVenueRating.errors" class="invalid-feedback">
+                                <div *ngIf="f.eazyVenueRating.errors.required">Please select rating</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-2">
+                            <label for="peopleBooked">People Booked<span class="mandatory-fields">*</span></label>
+                            <p-inputNumber inputId="peopleBooked" formControlName="peopleBooked"
+                                placeholder="Enter people booked"
+                                [ngClass]="{ 'is-invalid': submitted && f.peopleBooked.errors }"> </p-inputNumber>
+                            <div *ngIf="submitted && f.peopleBooked.errors" class="invalid-feedback">
+                                <div *ngIf="f.peopleBooked.errors.required">Please enter people booked</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-2">
+                            <label for="views">Views<span class="mandatory-fields">*</span></label>
+                            <p-inputNumber inputId="views" formControlName="views" placeholder="Enter views" 
+                                 [ngClass]="{ 'is-invalid': submitted && f.views.errors }">
+                            </p-inputNumber>
+                            <div *ngIf="submitted && f.views.errors" class="invalid-feedback">
+                                <div *ngIf="f.views.errors.required">Please enter views</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="featured">Assured</label>
+                            <p-inputSwitch formControlName="assured"></p-inputSwitch>
+                        </div>
+                    </div>
+                    <div class="p-fluid p-formgrid p-grid pare_margin">
+                        <div class="p-field p-col-12">
+                            <p-fieldset legend="Venue Owner" class="details-heading">
+                                <div class="p-fluid p-formgrid p-grid pare_margin">
+                                    <div class="p-field p-col-4">
+                                        <label for="ownerfirstName">Owner First Name <span
+                                                class="mandatory-fields">*</span></label>
+                                        <input formControlName="ownerfirstName" type="text" pInputText
+                                            class="form-control"
+                                            [ngClass]="{ 'is-invalid': submitted && f.ownerfirstName.errors }">
+                                        <div *ngIf="submitted && f.ownerfirstName.errors" class="invalid-feedback">
+                                            <div *ngIf="f.ownerfirstName.errors.required">Owner first name is required
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-col-4">
+                                        <label for="title">Owner Last Name <span
+                                                class="mandatory-fields">*</span></label>
+                                        <input formControlName="ownerlastName" type="text" pInputText
+                                            class="form-control"
+                                            [ngClass]="{ 'is-invalid': submitted && f.ownerlastName.errors }">
+                                        <div *ngIf="submitted && f.ownerlastName.errors" class="invalid-feedback">
+                                            <div *ngIf="f.ownerlastName.errors.required">Owner last name is required
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-col-4">
+                                        <label for="title">Owner Email Id <span
+                                                class="mandatory-fields">*</span></label>
+                                        <input formControlName="owneremailId" type="text" pInputText
+                                            class="form-control"
+                                            [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                                        <div *ngIf="submitted && f.owneremailId.errors" class="invalid-feedback">
+                                            <div *ngIf="f.owneremailId.errors.required">Owner email id is required</div>
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-col-4">
+                                        <label>Owner Password <span class="mandatory-fields">*</span></label>
+                                        <input type="password" formControlName="password" pInputText
+                                            [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+                                        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                                            <div *ngIf="f.password.errors.required">Owner password is required</div>
+                                            <div *ngIf="f.password.errors.minlength">Owner password must be at least 6
+                                                characters</div>
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-col-4">
+                                        <label for="confirmPassword">Owner Confirm Password <span
+                                                class="mandatory-fields">*</span></label>
+                                        <input type="password" formControlName="confirmPassword" pInputText
+                                            [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }" />
+                                        <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                                            <div *ngIf="f.confirmPassword.errors.required">Owner confirm password is
+                                                required</div>
+                                            <div *ngIf="f.confirmPassword.errors.mustMatch">Owner passwords must match
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-col-4">
+                                        <label for="ownermobileNumber">Owner Mobile Number <span
+                                                class="mandatory-fields">*</span></label>
+                                        <input formControlName="ownermobileNumber" minlength="10" maxlength="12"
+                                            type="text" pInputText class="form-control"
+                                            [ngClass]="{ 'is-invalid': submitted && f.ownermobileNumber.errors }">
+                                        <div *ngIf="submitted && f.ownermobileNumber.errors" class="invalid-feedback">
+                                            <div *ngIf="f.ownermobileNumber.errors.required">Owner mobile number is
+                                                required</div>
+                                            <div *ngIf="f.ownermobileNumber.errors">Please check owner mobile number
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-col-4">
+                                        <label for="textarea">Owner Gender <span
+                                                class="mandatory-fields">*</span></label>
+                                        <p-dropdown inputId="ownergender" [options]="genders"
+                                            formControlName="ownergender" placeholder="Select Owner Gender"
+                                            optionLabel="name" (ngModelChange)="onGenderSelect($event)"
+                                            [ngClass]="{ 'is-invalid': submitted && f.ownergender.errors }"></p-dropdown>
+                                        <div *ngIf="submitted && f.ownergender.errors" class="invalid-feedback">
+                                            <div *ngIf="f.ownergender.errors.required">Please select owner gender</div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="p-field p-col-4">
+                    <label for="portfolioimg">Owner Profile</label>
+                    <p-fileUpload chooseLabel="Upload Owner Profile Photo" uploadLabel="Show data" cancelLabel="Cancel"
+                      accept="image/*" maxFileSize="{{imageSize}}" auto="auto" customUpload="true"
+                      (uploadHandler)="picVenueOwnerUploader($event)">
+                      <ng-template pTemplate="content">
+
+                      </ng-template>
+                    </p-fileUpload>
+                    <div *ngIf="notprofile" class="invalid-feedback">
+                      <div *ngIf="notprofile">Please upload vendor Profile </div>
+                    </div>
+                  </div>
+                  <div class="p-field p-col-4" *ngIf="showUploadedpic">
+                    <img src="{{ imageProfile }}" alt="freya-layout" height="100px" />
+                  </div> -->
+
+                                </div>
+                            </p-fieldset>
+                        </div>
+                    </div>
+                    <div class="p-fluid p-formgrid p-grid pare_margin">
+                        <div class="p-field p-col-4">
+                            <label for="capacity">Hall & Dinning Capacity<span class="mandatory-fields">*</span></label>
+                            <p-inputNumber inputId="capacity" formControlName="capacity"
+                                placeholder="Enter Hall & Dinning Capacity"
+                                [ngClass]="{ 'is-invalid': submitted && f.capacity.errors }"> </p-inputNumber>
+                            <div *ngIf="submitted && f.capacity.errors" class="invalid-feedback">
+                                <div *ngIf="f.capacity.errors.required">Hall & dinning capacity is required</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="area">Area<span class="mandatory-fields">*</span></label>
+                            <p-inputNumber inputId="area" formControlName="area" placeholder="Enter Area in sq. meter"
+                                [ngClass]="{ 'is-invalid': submitted && f.area.errors }"> </p-inputNumber>
+                            <div *ngIf="submitted && f.area.errors" class="invalid-feedback">
+                                <div *ngIf="f.area.errors.required">Area is required</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="roundTable">Round Table<span class="mandatory-fields">*</span></label>
+                            <p-inputNumber inputId="roundTable" formControlName="roundTable"
+                                placeholder="Enter Round Table"
+                                [ngClass]="{ 'is-invalid': submitted && f.roundTable.errors }"> </p-inputNumber>
+                            <div *ngIf="submitted && f.roundTable.errors" class="invalid-feedback">
+                                <div *ngIf="f.roundTable.errors.required">Round table is required</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="theaterSiting">Theater Sitting<span class="mandatory-fields">*</span></label>
+                            <p-inputNumber inputId="theaterSitting" formControlName="theaterSitting"
+                                placeholder="Enter Theater Sitting"
+                                [ngClass]="{ 'is-invalid': submitted && f.theaterSitting.errors }">
+                            </p-inputNumber>
+                            <div *ngIf="submitted && f.theaterSitting.errors" class="invalid-feedback">
+                                <div *ngIf="f.theaterSitting.errors.required">Theater sitting is required</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="capacityDescription">Hall Capacity Description</label>
+                            <input formControlName="capacityDescription" type="text" pInputText class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.capacityDescription.errors }"
+                                placeholder="Please Enter Hall Capacity Description">
+                            <div *ngIf="submitted && f.capacityDescription.errors" class="invalid-feedback">
+                                <div *ngIf="f.capacityDescription.errors.required">Please enter hall capacity
+                                    Description</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="acdetails">A/C</label>
+                            <input formControlName="acdetails" type="text" pInputText class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.acdetails.errors }"
+                                placeholder="Please Enter A/C Description">
+                            <div *ngIf="submitted && f.acdetails.errors" class="invalid-feedback">
+                                <div *ngIf="f.acdetails.errors.required">Please enter ac description</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="parkingdetails">Parking Details</label>
+                            <input formControlName="parkingdetails" type="text" pInputText class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.parkingdetails.errors }"
+                                placeholder="Please Enter Parking Details">
+                            <div *ngIf="submitted && f.parkingdetails.errors" class="invalid-feedback">
+                                <div *ngIf="f.parkingdetails.errors.required">Please enter parking details</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="kitchendetails">Kitchen Details</label>
+                            <input formControlName="kitchendetails" type="text" pInputText class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.kitchendetails.errors }"
+                                placeholder="Please Enter Kitchen Details">
+                            <div *ngIf="submitted && f.kitchendetails.errors" class="invalid-feedback">
+                                <div *ngIf="f.kitchendetails.errors.required">Please enter kitchen details</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="decorationdetails">Decoration Details</label>
+                            <input formControlName="decorationdetails" type="text" pInputText class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.decorationdetails.errors }"
+                                placeholder="Please Enter Decoration Details">
+                            <div *ngIf="submitted && f.decorationdetails.errors" class="invalid-feedback">
+                                <div *ngIf="f.decorationdetails.errors.required">Please enter decoration details</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-4">
+                            <label for="amenities">Amenities</label>
+                            <input formControlName="amenities" type="text" pInputText class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.amenities.errors }"
+                                placeholder="Please Enter Amenities">
+                            <div *ngIf="submitted && f.amenities.errors" class="invalid-feedback">
+                                <div *ngIf="f.amenities.errors.required">Please enter amenities details</div>
+                            </div>
+                        </div>
+                            <div class="p-field p-col-2">
+                                <label for="venuePrice">Venue Price<span class="mandatory-fields">*</span></label>
+                                <p-inputNumber inputId="venuePrice" formControlName="venuePrice"
+                                    placeholder="Enter venue price"
+                                    [ngClass]="{ 'is-invalid': submitted && f.venuePrice.errors }"> </p-inputNumber>
+                                <div *ngIf="submitted && f.venuePrice.errors" class="invalid-feedback">
+                                    <div *ngIf="f.venuePrice.errors.required">Venue price is required</div>
+                                </div>
+                            </div>
+                            <div class="p-field p-col-2">
+                                <label for="decor1Price">Decor One Price<span class="mandatory-fields">*</span></label>
+                                <p-inputNumber inputId="decor1Price" formControlName="decor1Price"
+                                    placeholder="Enter decor one price"
+                                    [ngClass]="{ 'is-invalid': submitted && f.decor1Price.errors }"> </p-inputNumber>
+                                <div *ngIf="submitted && f.decor1Price.errors" class="invalid-feedback">
+                                    <div *ngIf="f.decor1Price.errors.required">Decor one price price is required</div>
+                                </div>
+                        </div>
+                            <div class="p-field p-col-2">
+                                <label for="decor2Price">Decor Two Price<span class="mandatory-fields">*</span></label>
+                                <p-inputNumber inputId="decor2Price" formControlName="decor2Price"
+                                    placeholder="Enter decor two price"
+                                    [ngClass]="{ 'is-invalid': submitted && f.decor1Price.errors }"> </p-inputNumber>
+                                <div *ngIf="submitted && f.decor2Price.errors" class="invalid-feedback">
+                                    <div *ngIf="f.decor2Price.errors.required">decor two price is required</div>
+                                </div>
+                        </div>
+                            <div class="p-field p-col-2">
+                                <label for="decor3Price">Decor Three Price<span
+                                        class="mandatory-fields">*</span></label>
+                                <p-inputNumber inputId="decor3Price" formControlName="decor3Price"
+                                    placeholder="Enter decor three price"
+                                    [ngClass]="{ 'is-invalid': submitted && f.decor3Price.errors }"> </p-inputNumber>
+                                <div *ngIf="submitted && f.decor3Price.errors" class="invalid-feedback">
+                                    <div *ngIf="f.decor3Price.errors.required">Decor three price is required</div>
+                            </div>
+                        </div>
+                        <!-- <div class="p-field p-col-4">
+              <label for="featured">Featured</label>
+              <p-inputSwitch formControlName="featured"></p-inputSwitch>
+            </div> -->
+                      
+                        <div class="p-field p-col-6">
+                            <label for="shortdescription">Short Description</label>
+                            <angular-editor id="shortdescription" formControlName="shortdescription"
+                                [(ngModel)]="shorthtmlContent" [config]="config">
+                            </angular-editor>
+                        </div>
+                        <div class="p-field p-col-6">
+                            <label for="description">Description</label>
+                            <angular-editor id="description" formControlName="description" [(ngModel)]="htmlContent"
+                                [config]="config">
+                            </angular-editor>
+                        </div>
+                    </div>
+
+
+
+
+                    <p-fieldset legend="Venue image & Videos" class="col-md-12 p-mb-4">
+                        <div class="col-md-12 p-p-0 videos-and-image img-vido">
+                            <div class="row">
+                                    <div *ngIf="isAddMode" class="p-field p-col-4 mb-0">
+                                        <label for="venueimg">Venue Images</label>
+                                        <p-fileUpload multiple="multiple" chooseLabel="Upload Venue Images" uploadLabel="Show data"
+                                            cancelLabel="Cancel" accept="image/*" maxFileSize="{{imageSize}}" auto="auto"
+                                            customUpload="true" (uploadHandler)="picUploader($event)">
+                                            <ng-template pTemplate="content" class="image-upload">
+                                                <div class="venue-images">
+            
+                                                </div>
+                                            </ng-template>
+                                        </p-fileUpload>
+                                    </div>
+                                    <div *ngIf="isAddMode == false" class="p-fluid p-formgrid p-grid baner-image-update">
+                                        <div class="p-field p-col-4" *ngIf="showProfile">
+                                            <label for="venueimg">Venue Images</label>
+                                            <p-galleria [(value)]="venueImages" [responsiveOptions]="responsiveOptions"
+                                                [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
+                                                [showItemNavigators]="true" [showThumbnails]="false">
+                                                <ng-template pTemplate="item" let-item>
+                                                    <img [src]="item.venue_image_src" style="width:100%; display: block;" />
+                                                </ng-template>
+                                            </p-galleria>
+                                            <p-fileUpload name="myfiles[]" multiple="multiple" chooseLabel="Upload venue Image"
+                                                uploadLabel="Show data" cancelLabel="Cancel" accept="image/*"
+                                                maxFileSize="{{imageSize}}" auto="auto" customUpload="true"
+                                                (uploadHandler)="picUploader($event)" style="padding-top:20px;display: block;">
+                                                <ng-template pTemplate="content">
+                                                    <div class="venue-images">
+            
+                                                    </div>
+                                                </ng-template>
+                                            </p-fileUpload>
+                                        </div>
+                                        <div class="p-field p-col-4">
+                                            <div class="row">
+                                                <div *ngFor="let item of venueImages; let indexOfElement=index;"
+                                                    class="column banner-images">
+                                                    <button type="button" class="banner_trash-btn" pButton pRipple
+                                                        icon="pi pi-trash" (click)="removeVenueImages(item.venue_image_src)"
+                                                        title="Delete"></button>
+                                                    <input type="text" value="{{item.alt}}">
+                                                    <p-radioButton formControlName="default_name_{{indexOfElement}}"
+                                                        (onClick)=" changeDefault($event, item)" value="">
+                                                    </p-radioButton>
+                                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-col-4 mb-0">
+                                        <label for="venueimg">Venue Video</label>
+                                        <p-fileUpload chooseLabel="Upload Venue Video" uploadLabel="Show data" cancelLabel="Cancel"
+                                            accept=".mp4" maxFileSize="{{videoSize}}" auto="auto" customUpload="true"
+                                            (uploadHandler)="videoUploader($event)">
+                                            <ng-template pTemplate="content">
+            
+                                            </ng-template>
+                                        </p-fileUpload>
+                                    </div>
+                                    <div class="p-field p-col-4 mb-0" *ngIf="showVideo">
+                                        <video class="" width="50%" controls="" loop="">
+                                            <source type="video/mp4" src="{{videoLink}}" />
+                                        </video>
+                                    </div>
+                                  
+                            </div>
+                        </div>
+                    </p-fieldset>
+                    <p-fieldset legend="Decor image" class="col-md-12">
+                        <div class="col-md-12 videos-and-image p-p-0">
+                            <div class=" row">
+                                <div class="col-md-12 d-flex p-p-0">
+                                    <div *ngIf="isAddMode" class="p-field p-col-3">
+                                        <label for="venueimg">Decor 1 Image</label>
+                                        <p-fileUpload multiple="multiple" chooseLabel="Upload Decor 1 Image" uploadLabel="Show data"
+                                            cancelLabel="Cancel" accept="image/*" maxFileSize="{{imageSize}}" auto="auto"
+                                            customUpload="true" (uploadHandler)="picUploader1($event)">
+                                            <ng-template pTemplate="content">
+                                                <div class="decor-one-images">
+            
+                                                </div>
+                                            </ng-template>
+                                        </p-fileUpload>
+                                    </div>
+                                    <div *ngIf="isAddMode == false" class="p-fluid p-formgrid p-grid baner-image-update">
+                                        <div class="p-field p-col-3" *ngIf="showProfile">
+                                            <p-galleria [(value)]="decor1Images" [responsiveOptions]="responsiveOptions"
+                                                [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
+                                                [showItemNavigators]="true" [showThumbnails]="false">
+                                                <ng-template pTemplate="item" let-item>
+                                                    <img [src]="item.venue_image_src" style="width:100%; display: block;" />
+                                                </ng-template>
+                                            </p-galleria>
+                                            <p-fileUpload name="myfiles[]" multiple="multiple" chooseLabel="Upload Decor 1 Image"
+                                                uploadLabel="Show data" cancelLabel="Cancel" accept="image/*"
+                                                maxFileSize="{{imageSize}}" auto="auto" customUpload="true"
+                                                (uploadHandler)="picUploader1($event)" style="padding-top:20px;display: block;">
+                                                <ng-template pTemplate="content">
+                                                    <div class="decor-one-images">
+            
+                                                    </div>
+                                                </ng-template>
+                                            </p-fileUpload>
+                                        </div>
+                                        <div class="p-field p-col-3">
+                                            <div class="row">
+                                                <div *ngFor="let item of decor1Images; let indexOfElement=index;"
+                                                    class="column banner-images">
+                                                    <button type="button" class="banner_trash-btn" pButton pRipple
+                                                        icon="pi pi-trash" (click)="removeDecor1Images(item.venue_image_src)"
+                                                        title="Delete"></button>
+                                                    <input type="text" value="{{item.alt}}">
+                                                    <p-radioButton formControlName="decor_one_default_name_{{indexOfElement}}"
+                                                        (onClick)=" changeDefault($event, item)" value="">
+                                                    </p-radioButton>
+                                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="isAddMode" class="p-field p-col-3">
+                                        <label for="venueimg">Decor 2 Image</label>
+                                        <p-fileUpload multiple="multiple" chooseLabel="Upload Decor 2 Image" uploadLabel="Show data"
+                                            cancelLabel="Cancel" accept="image/*" maxFileSize="{{imageSize}}" auto="auto"
+                                            customUpload="true" (uploadHandler)="picUploader2($event)">
+                                            <ng-template pTemplate="content">
+                                                <div class="decor-two-images">
+            
+                                                </div>
+                                            </ng-template>
+                                        </p-fileUpload>
+                                    </div>
+                                    <div *ngIf="isAddMode == false" class="p-fluid p-formgrid p-grid baner-image-update">
+                                        <div class="p-field p-col-3" *ngIf="showDecor2Profile">
+                                            <p-galleria [(value)]="decor2Images" [responsiveOptions]="responsiveOptions"
+                                                [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
+                                                [showItemNavigators]="true" [showThumbnails]="false">
+                                                <ng-template pTemplate="item" let-item>
+                                                    <img [src]="item.venue_image_src" style="width:100%; display: block;" />
+                                                </ng-template>
+                                            </p-galleria>
+                                            <p-fileUpload name="myfiles[]" multiple="multiple" chooseLabel="Upload Decor 2 Image"
+                                                uploadLabel="Show data" cancelLabel="Cancel" accept="image/*"
+                                                maxFileSize="{{imageSize}}" auto="auto" customUpload="true"
+                                                (uploadHandler)="picUploader2($event)" style="padding-top:20px;display: block;">
+                                                <ng-template pTemplate="content">
+                                                    <div class="decor-two-images">
+            
+                                                    </div>
+                                                </ng-template>
+                                            </p-fileUpload>
+                                        </div>
+                                        <div class="p-field p-col-3">
+                                            <div class="row">
+                                                <div *ngFor="let item of decor2Images; let indexOfElement=index;"
+                                                    class="column banner-images">
+                                                    <button type="button" class="banner_trash-btn" pButton pRipple
+                                                        icon="pi pi-trash" (click)="removeDecor2Images(item.venue_image_src)"
+                                                        title="Delete"></button>
+                                                    <input type="text" value="{{item.alt}}">
+                                                    <p-radioButton formControlName="decor_two_default_name_{{indexOfElement}}"
+                                                        (onClick)=" changeDefault($event, item)" value="">
+                                                    </p-radioButton>
+                                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="isAddMode" class="p-field p-col-3">
+                                        <label for="venueimg">Decor 3 Image</label>
+                                        <p-fileUpload multiple="multiple" chooseLabel="Upload Decor 3 Image" uploadLabel="Show data"
+                                            cancelLabel="Cancel" accept="image/*" maxFileSize="{{imageSize}}" auto="auto"
+                                            customUpload="true" (uploadHandler)="picUploader3($event)">
+                                            <ng-template pTemplate="content">
+                                                <div class="decor-three-images">
+            
+                                                </div>
+                                            </ng-template>
+                                        </p-fileUpload>
+                                    </div>
+                                    <div *ngIf="isAddMode == false" class="p-fluid p-formgrid p-grid baner-image-update">
+                                        <div class="p-field p-col-3" *ngIf="showDecor3Profile">
+                                            <p-galleria [(value)]="decor3Images" [responsiveOptions]="responsiveOptions"
+                                                [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
+                                                [showItemNavigators]="true" [showThumbnails]="false">
+                                                <ng-template pTemplate="item" let-item>
+                                                    <img [src]="item.venue_image_src" style="width:100%; display: block;" />
+                                                </ng-template>
+                                            </p-galleria>
+                                            <p-fileUpload name="myfiles[]" multiple="multiple" chooseLabel="Upload Decor 3 Image"
+                                                uploadLabel="Show data" cancelLabel="Cancel" accept="image/*"
+                                                maxFileSize="{{imageSize}}" auto="auto" customUpload="true"
+                                                (uploadHandler)="picUploader3($event)" style="padding-top:20px;display: block;">
+                                                <ng-template pTemplate="content">
+                                                    <div class="decor-three-images">
+            
+                                                    </div>
+                                                </ng-template>
+                                            </p-fileUpload>
+                                        </div>
+                                        <div class="p-field p-col-3">
+                                            <div class="row">
+                                                <div *ngFor="let item of decor3Images; let indexOfElement=index;"
+                                                    class="column banner-images">
+                                                    <button type="button" class="banner_trash-btn" pButton pRipple
+                                                        icon="pi pi-trash" (click)="removeDecor3Images(item.venue_image_src)"
+                                                        title="Delete"></button>
+                                                    <input type="text" value="{{item.alt}}">
+                                                    <p-radioButton formControlName="decor_three_default_name_{{indexOfElement}}"
+                                                        (onClick)=" changeDefault($event, item)" value="">
+                                                    </p-radioButton>
+                                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p-fieldset>
+
+
+
+
+
+
+                    <div class="button-set p-col-12 d-flex p-fluid p-jc-md-end">
+                        <div class="p-formgrid p-grid">
+                            <p-toast></p-toast>
+                            <button type="text" (click)="onSubmit()" pButton icon="pi pi-check" label="Save"
+                                class="p-button-success save-btn p-mr-2" style="width: auto"></button>
+                            <p-confirmDialog header="Confirmation" key="confirm1" icon="pi pi-exclamation-triangle"
+                                message="Are you sure you want to proceed?" [style]="{width: '425px'}"
+                                acceptButtonStyleClass="p-button-text"
+                                rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+                                <button pButton pRipple label="Reset" icon="pi pi-refresh"  type="reset" (click)="onReset()" class="p-button-info mr-2" style="width: auto"></button>
+                            <button type="text" (click)="cancelvenue()" pButton label="Back"
+                                class="p-button-denger" style="width: auto" icon="pi pi-arrow-left"></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+<p-confirmDialog [style]="{width:'450px'}"></p-confirmDialog>

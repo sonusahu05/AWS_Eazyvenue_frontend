@@ -1,0 +1,18 @@
+<!-- Icons Start -->
+<div class="section section-padding infographics-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4" *ngFor="let item of icons">
+                <div class="acr-infographic-item">
+                    <i [class]="item.icon"></i>
+                    <div class="acr-infographic-item-body">
+                        <h5>{{item.title}}</h5>
+                        <p>{{item.text}}</p>
+                        <a href="#" class="btn-custom secondary btn-sm">{{item.btntext}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Icons End -->

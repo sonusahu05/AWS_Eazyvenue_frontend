@@ -1,0 +1,218 @@
+<section class="banner">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-lg-6">
+        <div class="prof-img">
+          <img src="../assets/img/banner-login.png">
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-6">
+        <div class="banner-txt">
+          <h1><span>Benefits of</span> registration</h1>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+            ea commodo consequat. Lorem ipsum dolor sit quis nostrud exercitation amet,
+            consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et </p>
+          <a href="#" class="btn btn-details">Learn More</a>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</section>
+
+<section class="signup-area">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="login">
+          <div class="title brd">
+            <h2><span>New user</span> Signup Now!</h2>
+          </div>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore etam
+            dolore magna aliqua. </p>
+          <form [formGroup]="signupForm" *ngIf="this.signupForm" (ngSubmit)="onSignupSubmit()">
+            <p-toast key="toastmsg"></p-toast>
+            <div class="row">
+              <div class="col-sm-12 check-row">
+                <!-- <div class="custom-radio form-check-inline" *ngFor="let userType of userTypeListArray">
+                                  <input class="custom-control-input" type="radio" (click)="onUserTypeSelect($event)" id="{{userType.id}}" value="{{userType.type}}">
+                                  <label class="custom-control-label" for="trainer">{{userType.type}}</label>
+                                </div> -->
+                <div class="custom-radio form-check-inline">
+                  <input class="custom-control-input" type="radio" id="trainer" value="trainer"
+                    formControlName="userType">
+                  <label class="custom-control-label" for="doctor">Trainer</label>
+                </div>
+                <div class="custom-radio form-check-inline">
+                  <input class="custom-control-input" type="radio" id="doctor" value="doctor"
+                     formControlName="userType">
+                  <label class="custom-control-label" for="doctor">Doctor</label>
+                </div>
+                <div class="custom-radio form-check-inline">
+                  <input class="custom-control-input" type="radio" id="clinic" value="clinic"
+                     formControlName="userType">
+                  <label class="custom-control-label" for="clinic">Clinic</label>
+                </div>
+                <div class="custom-radio form-check-inline">
+                  <input class="custom-control-input" type="radio" id="institute" value="institute"
+                    formControlName="userType">
+                  <label class="custom-control-label" for="institute">Institute</label>
+                </div>
+                <div class="custom-radio form-check-inline">
+                  <input class="custom-control-input" type="radio" id="user" value="user"
+                     formControlName="userType">
+                  <label class="custom-control-label" for="user">User</label>
+                </div>
+              </div>
+              <div *ngIf="userTypeError" class="invalid-feedback">
+                <div *ngIf="userTypeError">User Type is required</div>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" formControlName="firstName" class="form-control" placeholder="First Name"
+                  [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }">
+                <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
+                  <div *ngIf="f.firstName.errors.required">First Name is required</div>
+                  <div *ngIf="f.firstName.errors">Only Alphabets allowed</div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" formControlName="lastName" class="form-control" placeholder="Last Name"
+                  [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }">
+                <div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">
+                  <div *ngIf="f.lastName.errors.required">Last Name is required</div>
+                  <div *ngIf="f.lastName.errors">Only Alphabets allowed</div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" formControlName="mobileNumber" class="form-control" placeholder="Mobile Number"
+                  [ngClass]="{ 'is-invalid': submitted && f.mobileNumber.errors }">
+                <div *ngIf="submitted && f.mobileNumber.errors" class="invalid-feedback">
+                  <div *ngIf="f.mobileNumber.errors.required">Mobile Number is required</div>
+                  <div *ngIf="f.mobileNumber.errors">Only Numbers allowed</div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" formControlName="email" class="form-control" placeholder="Email"
+                  [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+                <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                  <div *ngIf="f.email.errors.required">Email is required</div>
+                  <div *ngIf="f.email.errors.email">Enter valid email address</div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <input type="password" formControlName="password" class="form-control" placeholder="Password"
+                  [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+                <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                  <div *ngIf="f.password.errors.required">Password is required</div>
+                  <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <input type="password" formControlName="confirmPassword" class="form-control"
+                  placeholder="Confirm Password" [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }">
+                <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                  <div *ngIf="f.confirmPassword.errors.required">Confirm Password is required</div>
+                  <div *ngIf="f.confirmPassword.errors.mustMatch">Passwords must match</div>
+                </div>
+              </div>
+              <div class="col-12 col-md-12">
+                <input type="submit" class="btn" value="SIGNUP NOW" data-toggle="modal" data-target="#contactModal">
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="login">
+          <div class="title brd">
+            <h2><span>Client</span> Login</h2>
+          </div>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore etam
+            dolore magna aliqua. </p>
+          <form [formGroup]="loginforms" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-sm-12 check-row">
+                <div class="custom-radio form-check-inline">
+                  <input class="custom-control-input" type="radio" id="trainer2" value="trainer"
+                    formControlName="usertype">
+                  <label class="custom-control-label" for="trainer2">Trainer</label>
+                </div>
+                <div class="custom-radio form-check-inline">
+                  <input class="custom-control-input" type="radio" id="doctor2" value="doctor"
+                    formControlName="usertype">
+                  <label class="custom-control-label" for="doctor2">Doctor</label>
+                </div>
+                <div class="custom-radio form-check-inline">
+                  <input class="custom-control-input" type="radio" id="clinic2" value="clinic"
+                    formControlName="usertype">
+                  <label class="custom-control-label" for="clinic2">Clinic</label>
+                </div>
+                <div class="custom-radio form-check-inline">
+                  <input class="custom-control-input" type="radio" id="institute2" value="institute"
+                    formControlName="usertype">
+                  <label class="custom-control-label" for="institute2">Institute</label>
+                </div>
+                <div class="custom-radio form-check-inline">
+                  <input class="custom-control-input" type="radio" id="user2" value="user" formControlName="usertype">
+                  <label class="custom-control-label" for="user2">User</label>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <input type="text" class="form-control" placeholder="username" formControlName="email" />
+              </div>
+              <div class="col-sm-12">
+                <input type="password" class="form-control" placeholder="Password" formControlName="password" />
+              </div>
+              <div class="col-sm-12">
+                <div *ngIf="isLoginFailed" class="alert alert-danger" role="alert">
+                  {{errorMessage}}
+                </div>
+                <div class="forgot-password">
+                  <p>Forgot Password? <a href="#"> Click Here!</a></p>
+                </div>
+              </div>
+              <div class="col-12 col-md-12">
+                <!-- <input type="submit" class="btn" value="login" [disabled]="!loginform.valid"> -->
+                <button type="submit" class="btn" label="login" [disabled]="!loginforms.valid">login</button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+<section class="get-in-touch">
+  <div class="container">
+    <div class="text-center title brd">
+      <h2>get in Touch</h2>
+    </div>
+    <div class="get-touch-form">
+      <form>
+        <div class="row">
+          <div class="col-12 col-md-3">
+            <input type="text" class="form-control" placeholder="Your Name">
+          </div>
+          <div class="col-12 col-md-3">
+            <input type="text" class="form-control" placeholder="Your Mobile Number">
+          </div>
+          <div class="col-12 col-md-3">
+            <input type="text" class="form-control" placeholder="Your Email Address">
+          </div>
+          <div class="col-12 col-md-3">
+            <input type="text" class="form-control" placeholder="Your City">
+          </div>
+          <div class="col-12 col-md-12 text-center">
+            <input type="submit" class="btn" value="Submit" data-toggle="modal" data-target="#contactModal">
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,25 @@
+<!-- FAQs Start -->
+<div class="section pt-0" *ngFor="let item of faqs | slice:0:1;let i = index">
+    <div class="container">
+        <div class="section-title-wrap section-header">
+            <h5 class="custom-primary">FAQ</h5>
+            <h2 class="title">FAQ Pricing</h2>
+        </div>
+        <!-- FAQs Start -->
+        <ngb-accordion [closeOthers]="true" activeIds="static-{{item.title}}-1" class="accordion with-gap" id="faqAccordions2">
+            <ngb-panel id="static-{{item.title}}-{{1+i}}" *ngFor="let faq of item.items;let i = index">
+                <ng-template ngbPanelTitle>
+                    {{faq.title}}
+                </ng-template>
+                <ng-template ngbPanelContent>
+                    <p>{{faq.text}}</p>
+                    <ul class="acr-list mb-0">
+                        <li *ngFor="let list of faq.includes"> {{list}}</li>
+                    </ul>
+                </ng-template>
+            </ngb-panel>
+        </ngb-accordion>
+        <!-- FAQs End -->
+    </div>
+</div>
+<!-- FAQs End -->

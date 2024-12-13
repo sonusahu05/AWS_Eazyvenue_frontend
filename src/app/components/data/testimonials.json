@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "title": "Perfect service",
+        "comment": "'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.'",
+        "author": [
+            1
+        ],
+        "rating": 5
+    },
+    {
+        "id": 2,
+        "title": "Competitive prices",
+        "comment": "'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.'",
+        "author": [
+            2
+        ],
+        "rating": 4
+    },
+    {
+        "id": 3,
+        "title": "Great vendors",
+        "comment": "'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.'",
+        "author": [
+            3
+        ],
+        "rating": 4
+    }
+]

@@ -1,0 +1,24 @@
+<div class="sigma_logo-wrapper">
+    <a class="sigma_logo" routerLink="/">
+        <img src="assets/img/logo.png" alt="logo">
+    </a>
+</div>
+<ul class="navbar-nav">
+    <li class="menu-item" [ngClass]="item.child == true ? 'menu-item-has-children' : ''"
+        *ngFor="let item of navigation">
+        <a href="javascript:void(0)" (click)="trigger(item)" *ngIf="item.child">{{item.linkText}}</a>
+        <a routerLink="{{item.link}}" *ngIf="!item.child">{{item.linkText}}</a>
+        <ul class="sub-menu" *ngIf="item.child" [ngClass]="item.open ? 'd-block' : ''">
+            <li class="menu-item" [ngClass]="item.child == true ? 'menu-item-has-children' : ''"
+                *ngFor="let item of item.submenu">
+                <a href="javascript:void(0)" (click)="trigger(item)" *ngIf="item.child">{{item.linkText}}</a>
+                <a routerLink="{{item.link}}" *ngIf="!item.child">{{item.linkText}}</a>
+                <ul class="sub-menu" *ngIf="item.child" [ngClass]="item.open ? 'd-block' : ''">
+                    <li class="menu-item" *ngFor="let item of item.submenu">
+                        <a routerLink="{{item.link}}">{{item.linkText}}</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ul>

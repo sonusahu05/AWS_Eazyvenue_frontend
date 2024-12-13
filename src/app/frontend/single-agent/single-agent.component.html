@@ -1,0 +1,29 @@
+<!-- Single Vendor Start -->
+<div class="section">
+    <div class="container">
+        <div class="acr-single-agent" *ngFor="let item of agentblock | slice:0:1">
+            <div class="acr-single-agent-thumb">
+                <img [src]="item.pngimage" [alt]="item.name">
+                <div class="transparent-square">
+                    <div></div>
+                </div>
+            </div>
+            <div class="acr-single-agent-body">
+                <h3>Vendor Of The Month</h3>
+                <p>{{item.text}}</p>
+                <div class="acr-single-agent-meta">
+                    <h5>{{item.name}}</h5>
+                    <span>{{item.post}}</span>
+                </div>
+                <div class="acr-rating">
+                    <ngb-rating [max]="5" [(rate)]="item.rating" [readonly]="true">
+                        <ng-template let-fill="fill" let-index="index">
+                            <i class="fas fa-star" [class.active]="fill === 100"></i>
+                        </ng-template>
+                    </ngb-rating>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Single Vendor End -->

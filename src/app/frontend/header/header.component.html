@@ -1,0 +1,770 @@
+<header class="sticky sigma_header style-4 can-sticky sticky-top"
+    [ngClass]="isNavbarFixed?'hide-search-menu':'notfixed'" (scroll)="onScroll()">
+
+
+
+    <div class="sigma_header-middle">
+        <div class="container-fluid">
+
+
+            <div class="navbar sticky-top">
+                <!-- <div class="sigma_header-controls style-2 d-none d-lg-block">
+                  <ul class="sigma_header-controls-inner">
+
+                      <li class="aside-toggle aside-trigger-right desktop-toggler">
+                          <span></span>
+                          <span></span>
+                          <span></span>
+                      </li>
+                  </ul>
+              </div> -->
+
+                <div class="sigma_logo-wrapper">
+                    <!-- Navbar -->
+                    <nav class="navbar-expand-lg navbar-light">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <a class="sigma_logo" routerLink="/">
+                                    <img src="assets/images/eazyvneu-logo.svg" alt="logo" width="192px">
+                                </a>
+                            </div>
+                            <!-- <div class="col-auto" style="margin:auto;">
+                                <div class="collapse navbar-collapse" id="navbarNav">
+                                    <ul class="navbar-nav">
+                                        <li class="nav-item active" [routerLinkActive]="['active']"
+                                            [routerLinkActiveOptions]="{exact:true}">
+                                            <a class="nav-link border-end active" routerLink="/">VENUES<span
+                                                    class="sr-only">(current)</span></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link border-end" routerLink="/vendor-list">VENDORS</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#" (click)="showDialogoffer()">COUPLE DATE</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div> -->
+                            <div class="col-auto" style="margin:auto;">
+                                <div class="collapse navbar-collapse" id="navbarNav">
+                                    <ul class="navbar-nav">
+                                        <li class="nav-item" >
+                                            <a class="nav-link border-end" [class.active]="activeRoute === 'venue'" routerLink="/">VENUES</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link border-end" [class.active]="activeRoute === 'vendor'" routerLink="/vendor">VENDORS</a>
+                                        </li>
+                                        <div class="hot-muhurats-container">
+                                            <li class="nav-item">
+                                              <a class="nav-link" (click)="toggleHotMuhurats()">HOT MUHURATS</a>
+                                            </li>
+                                            <app-muhrats [isOpen]="isHotMuhuratsOpen" (closeDrawer)="closeHotMuhurats()"></app-muhrats>
+                                          </div>
+
+                                        <li class="nav-item">
+                                            <!-- <a class="nav-link" href="#" (click)="showDialogoffer()">COUPLE DATE</a> -->
+                                            <!-- <a class="nav-link"  style="color: gray;" pTooltip="Coming Soon" >COUPLE DATE</a> -->
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col text-center topsearch" style="margin:auto;">
+                                <!-- <span class="p-input-icon-left align-items-center">
+                                    <div class="global-search-icon">
+                                        <i class="pi pi-search mt-0" style="color: 'var(--primary-color)'"></i>
+                                    </div>
+
+                                    <p-autoComplete [(ngModel)]="selectedCountries" [suggestions]="filtration"
+                                        (completeMethod)="search($event)" field="name" class="top_search_list"
+                                        placeholder="Search | Coming Soon" pTooltip="Coming Soon" [multiple]="true" [disabled]="true">
+                                    </p-autoComplete>
+
+                                    <div class="global-btn">
+                                        <button pButton pRipple type="button" icon="pi pi-search"
+                                            class="general-search p-button-rounded p-button-danger secondary btn-custom secondary">
+                                        </button>
+                                    </div>
+                                </span> -->
+                            </div>
+                            <div class="col-2 header-login">
+                                <div class="style-2 mr-0">
+                                    <ul class="sigma_header-controls-inner m-0">
+                                        <li class="m-0" *ngIf="!isLoggedIn">
+                                            <div *ngIf="!isLoggedIn" class="sigma_header-controls style-2"
+                                                (click)="showDialogoffer()">
+                                                <div class="text-align-text">
+                                                    <p class="login-text">
+                                                        <a href="javascript:void(0);" style="color: rgb(0, 0, 0);"><i
+                                                                class="user-login-icon pi pi-user-plus"></i><span
+                                                                class="user-login-text">LOGIN</span>
+                                                        </a>
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div class="sigma_header-controls style-2 vendor-login"
+                                                (click)="showDialogvendor()">
+                                                <div class="text-align-text">
+                                                    <p class="vendor-text"><a href="javascript:void(0);"
+                                                            style="color: red;">ARE
+                                                            YOU A
+                                                            VENDOR?</a>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-account m-0" *ngIf="isLoggedIn">
+                                            <div class="bs-example">
+                                                <ul id="nav" class="nav nav-pills userlogin clearfix right"
+                                                    role="tablist" (mouseenter)="op.hide($event)">
+
+
+                                                    <li class="dropdown">
+                                                        <div (mouseenter)="op.toggle($event)">
+                                                        <a href="#" class="list-items" data-toggle="dropdown" style="background-color: #FFF;box-shadow: 0px 0px 6px -3px rgba(0,0,0,0.7); padding: .7rem; border-radius: 50%;">
+                                                            <i class="pi pi-user p-button-rounded p-button-info dropbtn dropdown-toggle" style="color: #FF0000;  font-size: 1rem;"></i>
+                                                        </a>
+                                                        <!-- <-- <a href="#" class="list-items" data-toggle="dropdown">
+
+                                                            <p-button icon="pi pi-user" data-bs-toggle="dropdown"
+                                                                aria-expanded="false"
+                                                                styleClass="p-button-rounded p-button-info dropbtn dropdown-toggle"></p-button>
+                                                        </a> -->
+                                                        <p-overlayPanel #op appendTo="body">
+                                                            <ng-template pTemplate="content">
+                                                                <ul class="clearfix" role="menu">
+                                                                    <li class="menue-list"><a class="menu-list"
+                                                                            href="/my-profile?mode=send_enquires">Availability
+                                                                            Updates</a>
+                                                                    </li>
+                                                                    <!-- <a [routerLink]="[my-profile]"[queryParams]="{mode: send_enquires}"></a> -->
+
+                                                                    <li class="menue-list"><a class="menu-list"
+                                                                            href="#">Schedule
+                                                                            Visit</a></li>
+                                                                    <li class="menue-list"><a class="menu-list"
+                                                                        href="/my-profile?mode=bookings">Bookings</a>
+                                                                    </li>
+                                                                    <li class="menue-list"><a class="menu-list"
+                                                                        href="/my-profile?mode=refer-and-earn">Rewards
+                                                                            N Referrals</a>
+                                                                    </li>
+                                                                    <li class="menue-list"><a class="menu-list"
+                                                                            href="/my-profile?mode=profile-info">Profile</a>
+                                                                    </li>
+                                                                    <li class="menue-list"><a class="menu-list"
+                                                                            [routerLink]="'/my-profile'"
+                                                                            (click)="signOut()">Sign
+                                                                            Out</a></li>
+                                                                </ul>
+                                                            </ng-template>
+                                                        </p-overlayPanel>
+                                                        <!-- <ul id="products-menu" class="dropdown-menu clearfix"
+                                                            role="menu" >
+                                                            <li><a class="menu-list"
+                                                                    [routerLink]="'/my-profile'">Availability
+                                                                    Updates</a>
+                                                            </li>
+                                                            <li><a class="menu-list"
+                                                                    [routerLink]="'/my-profile'">Schedule Visit</a></li>
+                                                            <li><a class="menu-list"
+                                                                    [routerLink]="'/my-profile'">Bookings</a></li>
+                                                            <li><a class="menu-list"
+                                                                    [routerLink]="'/my-profile'">Rewards N Referrals</a>
+                                                            </li>
+                                                            <li><a class="menu-list"
+                                                                    [routerLink]="'/my-profile'">Profile</a></li>
+                                                            <li><a class="menu-list" [routerLink]="'/my-profile'"
+                                                                    (click)="signOut()">Sign
+                                                                    Out</a></li>
+                                                        </ul> -->
+                                                    </div>
+
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <p-button (click)="sidebarVisible = true" icon="navbar-toggler-icon" class="toggle-btn">
+                        </p-button>
+                        <p-sidebar [(visible)]="sidebarVisible">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a class="sigma_logo mobile-view" routerLink="/">
+                                        <img src="assets/images/eazyvneu-logo.svg" class="mobile-view-logo" alt="logo"
+                                            width="192px">
+                                    </a>
+                                </div>
+                            </div>
+                            <a class="nav-link" [class.active]="activeRoute === 'venue'" routerLink="/">Venues<span class="sr-only">(current)</span></a>
+                            <a class="nav-link" [class.active]="activeRoute === 'venodr'" routerLink="/vendor">Vendors</a>
+                            <a class="nav-link" (click)="toggleMuhurat()">Hot Muhurats</a>
+                            <a class="nav-link" style="color: gray;" pTooltip="Coming Soon" >Couple Date</a>
+                            <a class="nav-link" *ngIf="!isLoggedIn" (click)="showDialogoffer()">Login</a>
+
+                            <div class="vendor-reg">
+                                <a class="nav-link" (click)="showDialogvendor()">Are You A Vendor?</a>
+                            </div>
+                            <!-- <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/availability'">Availability
+                                Updates</a>
+                            <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/my-profile'">Schedule
+                                Visit</a>
+                            <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/orders'">Bookings</a>
+                            <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/my-profile'">Rewards N
+                                Referrals</a>
+                            <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/my-profile'">Profile</a>
+                            <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/my-profile'"
+                                (click)="signOut()">Sign Out</a> -->
+
+                            <!-- <ul *ngIf="isLoggedIn" id="products-menu" role="menu">
+                                <li><a class="menu-list nav-link" [routerLink]="'/my-profile'">Availability
+                                        Updates</a>
+                                </li>
+                                <li><a class="menu-list" [routerLink]="'/my-profile'">Schedule Visit</a></li>
+                                <li><a class="menu-list" [routerLink]="'/my-profile'">Bookings</a></li>
+                                <li><a class="menu-list" [routerLink]="'/my-profile'">Rewards N Referrals</a>
+                                </li>
+                                <li><a class="menu-list" [routerLink]="'/my-profile'">Profile</a></li>
+                                <li><a class="menu-list" [routerLink]="'/my-profile'" (click)="signOut()">Sign
+                                        Out</a></li>
+                            </ul> -->
+
+                        </p-sidebar>
+
+                    </nav>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</header>
+<p-dialog [(visible)]="loginRegisterModal" [modal]="true" [breakpoints]="{'960px': '60vw', '640px': '100vw'}"
+    [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <p-toast key="usertoastmsg"></p-toast>
+    <div class="login-popup">
+        <p-tabView [(activeIndex)]="activeIndex">
+            <p-tabPanel header="Login">
+                <div class="forms">
+                    <form [formGroup]="loginForm" *ngIf="this.loginForm" (ngSubmit)="onSubmit()">
+
+                        <div class="form-group">
+                            <label>Email</label><span class="mandatory-fields"> *</span>
+                            <input type="email" formControlName="email" class="form-control form-control-light"
+                                placeholder="Enter your Email" type="text"
+                                [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.email.errors }" required>
+                            <div *ngIf="loginFormSubmitted && loginf.email.errors" class="invalid-feedback">
+                                <div *ngIf="loginf.email.errors.required">Email is required</div>
+                                <div *ngIf="loginf.email.errors.email">Enter valid email address</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label><span class="mandatory-fields"> *</span>
+                            <input formControlName="password" class="form-control form-control-light"
+                                placeholder="Enter your password" type="password"
+                                [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.password.errors }"
+                                autocomplete="on" required>
+                            <div *ngIf="loginFormSubmitted && loginf.password.errors" class="invalid-feedback">
+                                <div *ngIf="loginf.password.errors.required">Password is required</div>
+                                <div *ngIf="loginf.password.errors.minlength">Password must be at least 6
+                                    characters
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="popup-button">
+                            <p-button type="submit" label="Login" class="p-button-text  secondary"></p-button>
+                        </div>
+                    </form>
+                </div>
+
+
+                <div class="forgot-password">
+                    <a (click)="onClickShowForgotPasswordDialog()">Forgot Password?</a>
+                </div>
+            </p-tabPanel>
+
+
+            <p-tabPanel header="Register">
+                <div class="forms">
+                    <form [formGroup]="signUpForm" *ngIf="this.signUpForm" (ngSubmit)="onSignupSubmit()">
+                        <div class="forms">
+                            <div class=" form-group form-row">
+                                <div class="col">
+                                    <label>Name <span class="mandatory-fields"> *</span></label>
+                                    <input type="text" formControlName="name" class="form-control"
+                                        placeholder="Enter your name" value="" required
+                                        [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                                    <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                                        <div *ngIf="f.name.errors.required">Name is required</div>
+                                        <!-- <div *ngIf="f.name.errors">Name is not valid</div> -->
+                                    </div>
+                                </div>
+                                <!-- <div class="col">
+                                        <label>Last Name</label>
+                                        <input type="text" formControlName="lastName" placeholder="Last Name*"
+                                            class="form-control" [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }" required>
+                                            <div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">
+                                            <div *ngIf="f.lastName.errors.required">Last Name is required</div>
+                                            <div *ngIf="f.lastName.errors">Only Alphabets allowed</div>
+                                            </div>
+                                    </div> -->
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col">
+                                    <label>Email<span class="mandatory-fields"> *</span></label>
+                                    <input type="email" autocomplete="on" formControlName="email"
+                                        placeholder="Enter email address" class="form-control"
+                                        [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+                                    <div *ngIf="submitted && f.email.errors" class="mandatory-fields">
+                                        <div *ngIf="f.email.errors.required">Email is required
+                                        </div>
+                                        <div *ngIf="f.email.errors.email">Enter valid email address</div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <label>Mobile Number<span class="mandatory-fields"> *</span></label>
+                                    <input mode="decimal" type="number" inputId="mobileNumber" [useGrouping]="false"
+                                        formControlName="mobileNumber" placeholder="Enter mobile number"
+                                        class="form-control"
+                                        [ngClass]="{ 'is-invalid': submitted && f.mobileNumber.errors }">
+                                    <div *ngIf="submitted && f.mobileNumber.errors" class="invalid-feedback">
+                                        <div *ngIf="f.mobileNumber.errors.required">Mobile number is required
+                                        </div>
+                                        <div *ngIf="f.mobileNumber.errors.pattern">Invalid Mobile number
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="col">
+                                        <label>Mobile Number<span class="mandatory-fields">*</span></label>
+                                        <p-inputNumber mode="decimal" inputId="mobileNumber" [useGrouping]="false"
+                                            formControlName="mobileNumber"
+                                            [ngClass]="{ 'is-invalid': submitted && f.mobileNumber.errors }" required
+                                            placeholder="Enter your mobile number">
+                                        </p-inputNumber>
+                                        <div *ngIf="submitted && f.mobileNumber.errors" class="invalid-feedback">
+                                            <div *ngIf="f.mobileNumber.errors.required">Mobile number is required
+                                            </div>
+                                            <div *ngIf="f.mobileNumber.errors">Invalid Mobile number
+                                            </div>
+                                        </div>
+                                    </div> -->
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col">
+                                    <label>Password<span class="mandatory-fields"> *</span></label>
+                                    <input type="password" formControlName="password" placeholder="Enter your password"
+                                        class="form-control"
+                                        [ngClass]="{ 'is-invalid': submitted && f.password.errors }" value=""
+                                        autocomplete="on" required>
+                                    <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                                        <div *ngIf="f.password.errors.required">Password is required</div>
+                                        <div *ngIf="f.password.errors.pattern">Password should contains at least
+                                            1
+                                            digit, 1
+                                            lowercase, 1 uppercase, 1 symbol.
+                                            Length between 6 to 20.</div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <label>Confirm Password<span class="mandatory-fields"> *</span></label>
+                                    <input type="password" formControlName="confirmPassword"
+                                        placeholder="Confirm password" class="form-control"
+                                        [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }"
+                                        autocomplete="on" required>
+                                    <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                                        <div *ngIf="f.confirmPassword.errors.required">Confirm Password is
+                                            required
+                                        </div>
+                                        <div *ngIf="f.confirmPassword.errors.mustMatch">Passwords must match
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row form-group BirthDate Gender">
+                                <div class="col">
+                                    <label>Birth Date</label>
+                                    <p-calendar appendTo="body" class="form-control" formControlName="dob"
+                                        [showIcon]="true" inputId="icon" placeholder="Select birth date"
+                                        [minDate]="birthMinValue" [maxDate]="birthMaxValue" monthNavigator="true"
+                                        yearNavigator="true" yearRange="{{birthYearRange}}" class="p-calendar"
+                                        inputId="calendar" [defaultDate]="birthYearDefaultDate" dateFormat="dd/mm/yy"
+                                        [showIcon]="true"></p-calendar>
+                                </div>
+                                <!-- <div class="col">
+                                        <label>Gender</label>
+                                        <div *ngFor="let gender of genders" class="">
+                                            <p-radioButton [inputId]="gender.key" formControlName="gender"
+                                                [value]="gender" [(ngModel)]="selectedGender"
+                                                (onClick)="onGenderSelect(gender, $event)">
+                                            </p-radioButton>&nbsp;&nbsp;
+                                            <label [for]="gender.key">{{gender.name}}</label>&nbsp;&nbsp;
+                                        </div>
+                                        <div class="mandatory-feilds" *ngIf="showGenderError">
+                                            Please, Select Gender.
+                                        </div>
+                                    </div> -->
+                            </div>
+
+                        </div>
+                        <div class="popup-button">
+                            <p-button type="submit" label="Register" class="p-button-text"></p-button>
+                        </div>
+                    </form>
+                </div>
+
+
+
+            </p-tabPanel>
+
+        </p-tabView>
+    </div>
+
+</p-dialog>
+<p-dialog [(visible)]="showForgotPasswordDialog" [modal]="true" [breakpoints]="{'960px': '60vw', '640px': '100vw'}"
+    [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+
+    <section class="section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <p class="py-2"></p>
+                    <div class="row main-row tab-content" id="pills-tabContent">
+                        <div class="col-6 my-account-div tab-pane fade show active" id="pills-sign-in" role="tabpanel"
+                            aria-labelledby="pills-sign-in-tab" tabindex="0">
+                            <div class="top-header-heading">
+                                <h4 class="accounts-headings"> <span><img src="/../assets/img/heading-1.png"
+                                            alt=""></span>
+                                    <span> Forgot Password</span>
+                                </h4>
+                            </div>
+                        </div>
+
+                        <p class="py-2"></p>
+                        <form [formGroup]="forgotPassForm">
+                            <div class="row">
+
+                                <div class="col-lg-12">
+                                    <div class="style-form-group">
+                                        <input type="tel" formControlName="email" class="form-control form-input"
+                                            placeholder="Your Email *"
+                                            [ngClass]="{ 'is-invalid': submitted && forgotPassValidation.email.errors }">
+                                        <div *ngIf="submitted && forgotPassValidation.email.errors"
+                                            class="invalid-feedback">
+                                            <div *ngIf="forgotPassValidation.email.errors.required">Email is
+                                                required</div>
+                                            <div *ngIf="forgotPassValidation.email.errors.pattern">Email must be
+                                                a
+                                                valid
+                                                email address</div>
+                                        </div>
+                                        <div *ngIf="successMessage" style="color:green;">
+                                            {{successMessage.message}}
+                                        </div>
+                                        <div *ngIf="errorMessage" style="color:red;">{{errorMessage}}</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="shad-form pt-2 pt-lg-3"><img src="../assets/images/shad-01.png"
+                                            class="img-fluid"></div>
+                                </div>
+                            </div>
+                            <div class="button pt-2 pt-lg-3">
+                                <button class="" pButton (click)="onForgotPassSubmit()">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <p class="py-2"></p>
+        </div>
+    </section>
+</p-dialog>
+
+
+<!-- vendor -->
+<p-dialog [(visible)]="vendorForm" [modal]="true" [style]="{width: '33vw'}"
+    [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <div class="login-popup">
+        <h2 class="vendor-popup-heading">"Grow your Business With Eazy Venue"</h2>
+        <p-tabView [(activeIndex)]="activeIndex">
+
+            <p-tabPanel header="Vendor Login">
+                <div class="forms">
+                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+                        <div class="form-group">
+                            <label>Email<span class="required-color"> *</span></label>
+                            <input autofocus type="email" formControlName="email" class="form-control"
+                                placeholder="Enter your Email" type="text" required
+                                [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.email.errors }">
+                            <div class="invalid-feedback" *ngIf="loginFormSubmitted && loginf.email.errors">
+                                <div *ngIf="loginf.email.errors.required">Email is required</div>
+                                <div *ngIf="looginf.email.errors.pattern">Enter valid email address</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Password <span class="required-color"> *</span></label>
+                            <input formControlName="password" class="form-control" placeholder="Enter your password"
+                                type="password" required
+                                [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.password.errors }">
+                            <div class="invalid-feedback" *ngIf="loginFormSubmitted && loginf.password.errors">
+                                <div *ngIf="loginf.password.errors.required">Password is required</div>
+                                <div *ngIf="loginf.password.errors.minlength">Password must be at least 6
+                                    characters
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="popup-button">
+                            <p-button type="submit" label="Login" class="p-button-text  secondary"></p-button>
+                        </div>
+                    </form>
+                </div>
+
+
+                <div class="forgot-password">
+                    <a href="javascript:void(0);">Forgot Password?</a>
+                </div>
+            </p-tabPanel>
+
+
+            <p-tabPanel header="Vendor Register">
+                <div class="forms">
+                    <form [formGroup]="signUpForm" (ngSubmit)="onSignupSubmit()">
+                        <div class="forms">
+                            <div class=" form-group form-row">
+                                <div class="col">
+                                    <label>Brand Name<span class="mandatory-fields"> *</span></label>
+                                    <input type="text" formControlName="name" class="form-control"
+                                        placeholder="Enter brand name" value=""
+                                        [ngClass]="{'is-invalid': submitted &&  f.name.errors}" required>
+                                    <div class="invalid-feedback" *ngIf="submitted && f.name.errors">
+                                        <div *ngIf="f.name.errors.required">Name is required</div>
+                                        <div *ngIf="f.name.errors.pattern">Name is not valid</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col">
+                                    <label>Vendor Type<span class="mandatory-fields"> *</span></label>
+                                    <p-dropdown class="vendor-drop" [options]="vendorType"
+                                        placeholder="Select vendor type" [editable]="true"
+                                        optionLabel="name"></p-dropdown>
+                                </div>
+                                <div class="col">
+                                    <label>City<span class="mandatory-fields"> *</span></label>
+                                    <p-dropdown class="vendor-drop" [options]="cities" placeholder="Select a City"
+                                        [editable]="true" optionLabel="name"></p-dropdown>
+                                </div>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col">
+                                    <label>Email<span class="mandatory-fields"> *</span></label>
+                                    <input type="email" autocomplete="on" formControlName="email"
+                                        placeholder="Enter email address" class="form-control">
+                                    <div *ngIf="email.errors != null" class="mandatory-fields">
+                                        <div *ngIf="email.errors.email && submitted">Email is required
+                                        </div>
+                                        <div *ngIf=" email.errors.email">Enter valid email address</div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <label>Password <span class="required-color"> *</span></label>
+                                    <input formControlName="password" class="form-control form-control-light"
+                                        placeholder="Enter your password" type="password" required>
+                                    <div class="invalid-feedback">
+                                        <div>Password is required</div>
+                                        <div>Password must be at least 6 characters
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col">
+                                    <label>Mobile Number<span class="mandatory-fields"> *</span></label>
+                                    <input type="number" autocomplete="on" formControlName="mobileNumber"
+                                        placeholder="Enter mobile number" class="form-control">
+                                    <div *ngIf="submitted && f.mobileNumber.errors" class="invalid-feedback">
+                                        <div *ngIf="f.mobileNumber.errors.required">Mobile number is required
+                                        </div>
+                                        <div *ngIf="f.mobileNumber.errors">Invalid Mobile number
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="popup-button">
+                            <p-button type="submit" label="Register" class="p-button-text"></p-button>
+                        </div>
+                    </form>
+                </div>
+
+            </p-tabPanel>
+
+        </p-tabView>
+
+    </div>
+</p-dialog>
+
+
+
+<!-- offer-popup -->
+
+<p-dialog header="" [(visible)]="numberPopup" [modal]="true" class="offer-popup-login" [modal]="true"
+    [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <div class="login-popup">
+        <h3 class="offer-popup-heading mb-0">Receive<span class="offer-text"> 20%</span> off on our Photography
+            now!
+        </h3>
+        <p class="mobile-num-design">Please provide your contact number to receive the coupon code.</p>
+        <form [formGroup]="mobileForm" (ngSubmit)="onSubmitNumber('numberSubmit')">
+            <div class="row justify-content-around">
+                <div class="col-5 text-right">
+                    <label class="mobile-number-text" for="inputPassword">Mobile Number <span
+                            class="mandatory-fields">*</span></label>
+                </div>
+                <div class="col-7 text-left">
+                    <p-inputNumber mode="decimal" inputId="withoutgrouping" [useGrouping]="false" [maxlength]="10"
+                        formControlName="mobileNumber" placeholder="Enter Mobile Number" class="mobile-input"
+                        [ngClass]="{ 'is-invalid': submitted && h.mobileNumber.errors }">
+                    </p-inputNumber>
+                    <div *ngIf="submitted && h.mobileNumber.errors" class="invalid-feedback">
+                        <div *ngIf="h.mobileNumber.errors.required">Mobile number is required
+                        </div>
+                        <div *ngIf="!h.mobileNumber.errors.required">Invalid mobile number
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="popup-button mt-2">
+                <p-button type="submit" label="Get it Now!" class="p-button-text  secondary"></p-button>
+            </div>
+        </form>
+    </div>
+</p-dialog>
+
+<p-dialog [(visible)]="otpPopup" [modal]="true" class="otp-popup-login">
+    <div class="login-popup">
+        <!-- <h2 class="offer-popup-heading">Receive<span class="offer-popup-heading1"> 20%</span> off on our Photography now!</h2> -->
+        <form (ngSubmit)="otpSubmit()">
+
+            <div class="form-group mb-3 p-2">
+                <div *ngIf="oldUser.userType == 'old'"  class="old-user" style="margin-top: -20px; ">
+                    <h3 style="color: #EC3539; font-size: 1rem; text-align: center; margin-top: -20px; margin-bottom: 0px;">Welcome, {{oldUser.firstName}}&nbsp;{{oldUser.lastName}}</h3>
+                    <h5 class="otp-head" style="color:#9e9b9b;font-size: 14px !important;">Please insert OTP sent to your mobile number</h5>
+                </div>
+                <div  *ngIf="oldUser.userType == 'new'" class="new-user" style="margin-top: -20px; ">
+                <!-- <div  class="new-user" style="margin-top: -20px; "> -->
+                    <h3 style="color: #EC3539; font-size: 1rem; text-align: center; margin-top: -20px; margin-bottom: 0px;">Hi there, Enter following details</h3>
+                    <div class="custom-input-box">
+                        <p>First Name: </p>
+                        <div class="">
+                            <input type="text" pInputText [(ngModel)]="userFirstName" class="custom-input" name="userFirstName" (input)="validateFirstName()" #userFirstNameInput="ngModel" placeholder="First name" required minlength="3">
+                            <div *ngIf="firstNameError" style="font-size: 8px; color: red;margin: 0; padding: 0;">First Name is required.</div>
+                        </div>
+
+                    </div>
+                    <div class="custom-input-box">
+                        <p>Last Name: </p>
+                        <div class="">
+                        <input type="text" pInputText [(ngModel)]="userLastName" name="userLastName" class="custom-input"  (input)="validateLastName()"  #userLastNameInput="ngModel" placeholder="Last name" required minlength="3">
+                        <div *ngIf="lastNameError" style="font-size: 8px; color: red;margin: 0; padding: 0;">Last Name is required.</div>
+                        <!-- <div *ngIf="userLastNameInput.invalid && (userLastNameInput.dirty || userLastNameInput.touched)">
+                            <div *ngIf="userLastNameInput.errors.required" style="font-size: 8px; color: red;">Last Name is required.</div>
+                            <div *ngIf="userLastNameInput.errors.minlength" style="font-size: 8px; color: red;">Last Name must be at least 3 characters long.</div>
+                          </div> -->
+                        </div>
+                    </div>
+                    <h5 class="otp-head" style="color:#9e9b9b;font-size: 12px !important; max-width: 550px; line-height: 1.2rem; text-align: center; font-weight: 500; margin-top: 8px !important;">Please insert OTP sent to your mobile number</h5>
+                </div>
+                <div class="row align-items-center">
+                    <!-- <div class="col-1"></div> -->
+                    <div class="col-2 text-center">
+                        <h4 class="otp-head1">OTP</h4>
+                    </div>
+                    <div class="col-8">
+                        <div id="otp" class="inputs d-flex flex-row justify-content-center">
+                            <!-- <ng-otp-input #ngxotp [config]="config" (onInputChange)="onOtpChange($event)">
+                    </ng-otp-input> -->
+                            <!-- <ngx-otp-input #ngxotp [config]="config" (otpChange)="onOtpChange($event)">
+                            </ngx-otp-input>                             -->
+                            <div class="otp-container">
+                                <div class="otp-box">
+                                    <input type="text" #txt1 id="txt1" (input)="pastedEvent($event)" (keyup)="move($event, '', txt1, txt2, 0)">
+                                </div>
+                                <div class="otp-box">
+                                    <input type="text" #txt2 id="txt2" (keyup)="move($event, txt1, txt2, txt3, 1)">
+                                </div>
+                                <div class="otp-box">
+                                    <input type="text" #txt3 id="txt3" (keyup)="move($event, txt2, txt3, txt4, 2)">
+                                </div>
+                                <div class="otp-box">
+                                    <input type="text" #txt4 id="txt4" (keyup)="move($event, txt3, txt4, '', 3)">
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="showOtpErrors">
+                            <span style="color: red;">Please check OTP.</span>
+                        </div>
+                    </div>
+                    <div class="col-2 otp-timer text-center">
+                        <span *ngIf="!showResendButton">{{transform(counter)}}</span>
+                        <span *ngIf="showResendButton">
+                            <a (click)="resendOtp()" style="margin-left: -40px; margin-right: 50px; color:#9e9b9b;">Resend
+                                OTP</a>
+                        </span>
+                    </div>
+                    <!-- <div class="col-1"></div> -->
+                </div>
+                <!-- <div *ngIf="otpError !='undefined'" class="otp_error_msg">
+                    <span class="otoErrormsg"> {{otpError}} </span>
+                </div> -->
+                <!-- <input type="number" autocomplete="on" formControlName="phone"
+            placeholder="Enter otp" class="form-control">-->
+                <!-- <div class="invalid-feedback">
+            <div>Your new OTP has been send to your mobile number
+            </div>
+        </div> -->
+            </div>
+            <div class="popup-button">
+                <p-button type="submit" label="Submit" class="p-button-text secondary"></p-button>
+            </div>
+            <h5 class="resend-head" style="cursor: pointer; font-size: 12px !important;" (click)="changeMobileNumber()"> Change mobile number
+            </h5>
+        </form>
+    </div>
+</p-dialog>
+
+<p-dialog [(visible)]="otpthankyouPopup" class="thankyoupopup" [modal]="true" [modal]="true"
+    [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <div class="login-popup">
+        <!-- <h2 class="offer-popup-heading">Receive<span class="offer-popup-heading1"> 20%</span> off on our Photography now!</h2> -->
+        <h4 class="thankyou-popup" style="font-family: 'Kaushan Script';">Thank you so much!</h4>
+        <h5 class="mobile-num-design">We have shared the
+            coupon code on your registered mobile number.
+        </h5>
+        <div class="popup-button">
+            <p-button type="submit" label="Check Now" routerLink="/venue"
+                class="p-button-text  secondary"></p-button>
+        </div>
+    </div>
+</p-dialog>
+
+
+<p-dialog [(visible)]="regthankyouPopup" class="thankyoupopup" [modal]="true" [modal]="true"
+    [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    <div class="login-popup">
+        <!-- <h2 class="offer-popup-heading">Receive<span class="offer-popup-heading1"> 20%</span> off on our Photography now!</h2> -->
+        <h1 class="thankyou-popup" style="font-family: 'Kaushan Script';">Thank you!</h1>
+        <h5 class="mobile-num-design">Your registeration is complete.
+        </h5>
+    </div>
+</p-dialog>

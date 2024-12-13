@@ -1,0 +1,231 @@
+<div class="tint">
+    <div class="container p-formgrid">
+        <div class="search-bar-locations p-p-0">
+            <!-- <p class="animation-text-heading">Eaziest Way to discover and book venues&nbsp;</p>
+            <div class="verticalFlip">
+                 <span *ngFor="let category of categoryMenuList">for {{category.name}}</span>
+              </div> -->
+            <div class="row justify-content-center">
+
+                <div class="col-lg-8 col-md-8 col-sm-12 animation-text-one">
+                    <div class="verticalFlip mb-10">
+                        Eaziest Way to discover and book venues&nbsp;
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 animation-text-two">
+                    <div class="verticalFlip mb-10">
+                        <b><span *ngFor="let category of categoryMenuList">for {{category.name}}</span></b>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- <div class="row justify-content-center">
+        <div class="col-md-auto p-p-0">
+            <div class="verticalFlip mb-10">
+                Eaziest way to discover and book venues&nbsp;
+                <b>
+                    <span *ngFor="let category of categoryMenuList">for {{category.name}}</span>
+                    
+                </b>
+            </div>
+        </div>
+    </div> -->
+
+
+  
+</div>
+
+<div class="section">
+    <div class="container-fluid">
+        <div class="listing-page">
+            <div class="row heading-text">
+                <div class="col text-start"></div>
+                <div class="col-6 text-center filter-page">Compare</div>
+                <div class="col text-end">
+                    <button pButton pRipple type="button" label="Back" onclick="history.back()"
+                        class="float-end p-button-secondary"></button>
+                </div>
+            </div>
+
+            <section id="cd-table">
+                <div class="row justify-content">
+                    <div class="col-2 compare-menu">
+                        <div class="cd-table-column">
+                            <h2 class="venue-img">
+                                <!-- <img src="https://api.eazyvenue.com/uploads/venuePic/VivetteBanquets3.png" class="com-img"> -->
+                            </h2>
+
+                            <ul class="heading-size">
+                                <li class="venue-heading header-part heading">
+                                    Venue
+                                </li>
+                                <li class="one-list heading budget-section">Budget</li>
+                                <li class="one-list heading">Per Pax Cost</li>
+                                <li class="one-list heading">Rating</li>
+                                <li class="one-list heading">Food</li>
+                                <!-- <li class="one-list">Property Type</li> -->
+                                <li class="one-list heading">Area</li>
+                                <li class="one-list heading">Capacity</li>
+                                <li class="one-list heading">Round Table</li>
+                                <li class="one-list heading">Theater Seats</li>
+                                <li class="li-style">
+                                    <div class="heading"><span>Amenities</span></div>
+                                    <div><span class="ac-size">Free Parking</span></div>
+                                </li>
+                                <li class="amenities-style">Air-conditioned</li>
+                                <li class="amenities-style">Dance Floor</li>
+                                <li class="amenities-style">VIP Section</li>
+                                <li class="amenities-style">Private Parties</li>
+                                <li class="amenities-style">Waiter Service</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-3 compare-options" *ngFor="let venue of venuearraylist">
+                                        <div class="cd-table-column table-width">
+                                            <h2 class="venue-img"><img src="{{venue['venueImage'][0]['venue_image_src']}}"
+                                                    class="com-img"></h2>
+                                            <ul class="compare-list">
+                                                <li class="venue-heading">
+                                                    <span class="venue-name" style="font-size: 12px; min-height: 14px;max-height: 26px;display: inline-block;overflow: hidden;">{{venue.name}}</span>
+                                                    <p class="venue-add">{{venue.cityname}}, {{venue.subarea}}</p>
+                                                </li>
+                                                <li class="li-style">
+                                                    <div><span class="compare-price">{{venue.minVenuePrice|currency:"INR"}}</span></div>
+                                                    <div>
+                                                        <span style="font-size: 12px;">
+                                                            For {{venue.minCapacity}} Guest & {{venue.minFoodType.foodType}}
+                                                            {{venue.minFoodType.slug}} Menu
+                
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                                <li class="li-style">
+                                                    <div class="price-div">
+                                                        <div class="prices">
+                                                            Min {{venue['minPerPax']|currency:"INR"}} <br>
+                                                            Max {{venue['maxPerPax']|currency:"INR"}} 
+                                                        </div>
+                                                        </div>
+                                                
+                                                    
+                                                </li>
+                                                <li>
+                                                    <div class="icon-review price-div"> 
+                                                            <img src="assets/img/svg/google.png" alt="">
+                                                        <i class="pi pi-star-fill" style="font-size: 12px;">
+                                                            <span class="rating-style">
+                                                                <b> {{venue.googleRating}}</b>/5</span>
+                                                        </i><br>
+                                                        <img src="assets/images/logo.png" alt="">
+                                                        <i class="pi pi-star-fill" style="font-size: 12px;">
+                                                            <span class="rating-style">
+                                                                <b> {{venue.eazyVenueRating}}</b>/5
+                                                            </span>
+                                                        </i>
+                                                        <!-- <p-rating [(ngModel)]="val4" readonly="true" [cancel]="false"></p-rating> -->
+                                                    </div>
+                                                   
+                                                </li>
+                                                <li class="one-list">
+                                                    <!-- <div class="food-package-style" *ngFor="let img of venue['foodImagesName']">
+                                                        <img src="{{img['categoryImage']}}" class="food-img" alt="">
+                                                    </div> -->
+                                                    <div *ngFor="let venueFoodType of venue.foodType">
+                                                        <img src="assets/images/food-pacakge/{{venueFoodType.slug}}.png" alt=""
+                                                            class="food-img">
+                                                    </div>
+                                                </li>
+                
+                                                <!-- <li class="one-list">
+                                                    <div class="food-package-style" *ngFor="let type of venue['propertyType']">
+                                                        <ul>
+                                                            <li>{{type.name}}</li>
+                                                        </ul>
+                                                    </div>
+                                                </li> -->
+                                                <li class="one-list">{{venue.area}} Sq. m.</li>
+                                                <li class="one-list">{{venue.capacity}} People</li>
+                                                <li class="one-list">{{venue.roundTable}}</li>
+                                                <li class="one-list">{{venue.theaterSitting}}</li>
+                                                <li class="li-style" >
+                                                    <p class="blank"></p>
+                
+                                                    <p *ngIf="venue.isFreeParking">
+                                                        <img src="assets/images/icons/check.png" class="amenities-icon-img" alt="">
+                                                    </p>
+                                                    <p *ngIf="!venue.isFreeParking">
+                                                        <img src="assets/images/icons/cross.png" class="amenities-icon-img" alt="">
+                                                    </p>
+                                                </li>
+                                                <li class="amenities-style">
+                                                    <span *ngIf="venue.isAirConditioned">
+                                                        <img src="assets/images/icons/check.png" class="amenities-icon-img" alt="">
+                                                    </span>
+                                                    <span *ngIf="!venue.isAirConditioned">
+                                                        <img src="assets/images/icons/cross.png" class="amenities-icon-img" alt="">
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span *ngIf="venue.isDanceFloor">
+                                                        <img src="assets/images/icons/check.png" class="amenities-icon-img" alt="">
+                                                    </span>
+                                                    <span *ngIf="!venue.isDanceFloor">
+                                                        <img src="assets/images/icons/cross.png" class="amenities-icon-img" alt="">
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span *ngIf="venue.isVIPSection">
+                                                        <img src="assets/images/icons/check.png" class="amenities-icon-img" alt="">
+                                                    </span>
+                                                    <span *ngIf="!venue.isVIPSection">
+                                                        <img src="assets/images/icons/cross.png" class="amenities-icon-img" alt="">
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span *ngIf="venue.isPrivateParties">
+                                                        <img src="assets/images/icons/check.png" class="amenities-icon-img" alt="">
+                                                    </span>
+                                                    <span *ngIf="!venue.isPrivateParties">
+                                                        <img src="assets/images/icons/cross.png" class="amenities-icon-img" alt="">
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span *ngIf="venue.isWaiterService">
+                                                        <img src="assets/images/icons/check.png" class="amenities-icon-img" alt="">
+                                                    </span>
+                                                    <span *ngIf="!venue.isWaiterService">
+                                                        <img src="assets/images/icons/cross.png" class="amenities-icon-img" alt="">
+                                                    </span>
+                                                </li>
+                                               
+                
+                                            </ul>
+                                            <div class="submit-btn text-center p-2 border-top">
+                                                <button pButton pRipple type="button" (click)="onClickBookNow(venue.metaUrl)"
+                                                    label="Book Now" class="float-end p-button-secondary"></button>
+                                            </div>
+                
+                                        </div> <!-- cd-table-column -->
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                   
+
+                </div>
+            </section> <!-- cd-table -->
+
+        </div>
+    </div>
+</div>

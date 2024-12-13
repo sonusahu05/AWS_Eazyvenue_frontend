@@ -1,0 +1,69 @@
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="title-area">
+            <h5 class="admin-heading">
+                {{pagetitle}}
+            </h5>
+        </div>
+            <div class="card p-pt-3">
+                <p-toast key="toastmsg"></p-toast>
+                <form [formGroup]="subareaForm">
+                    <div class="p-fluid p-formgrid p-grid pare_margin">                    
+                       
+                        <div class="p-field p-col-3">
+                            <label for="state">State<span class="mandatory-feilds">*</span></label>
+                            <p-dropdown [style]="{ width: '100%' }" inputId="state" [options]="statelist"
+                                formControlName="state" [filter]="true" placeholder="Select" optionLabel="name" (onChange)="getCities(true, $event)"
+                                [ngClass]="{ 'is-invalid': submitted && f.state.errors }">
+                            </p-dropdown>
+                            <div *ngIf="submitted && f.state.errors" class="invalid-feedback">
+                                <div *ngIf="f.state.errors.required">Please select state</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-3">
+                            <label for="city">City<span class="mandatory-feilds">*</span></label>
+                            <p-dropdown [style]="{ width: '100%' }" inputId="city" [options]="citylist"
+                                formControlName="city" [filter]="true" placeholder="Select City" optionLabel="name" 
+                                [ngClass]="{ 'is-invalid': submitted && f.city.errors }" (onChange)="onCitySelect($event)">
+                            </p-dropdown>
+                            <div *ngIf="submitted && f.city.errors" class="invalid-feedback">
+                                <div *ngIf="f.city.errors.required">Please select city</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-3">
+                            <label for="firstname6">Subarea Name<span class="mandatory-feilds">*</span></label>
+                            <input id="name" formControlName="name" type="text" pInputText
+                                placeholder="Enter Subarea Name*"
+                                [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                            <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                                <div *ngIf="f.name.errors.required">
+                                    <h6>Subarea name is required</h6>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-field p-col-1">
+                            <label class="mb-0">Status</label>
+                            <p-inputSwitch class="checkbox-mt-10" formControlName="status" style="display: block;"></p-inputSwitch>
+                        </div>
+                       
+                    </div>
+
+                    <div class="text-right">
+                        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-success mr-2" (click)="onSubmit()"></button>
+                        <p-confirmDialog header="Confirmation" key="confirm1" icon="pi pi-exclamation-triangle"
+                        message="Are you sure you want to proceed?" [style]="{width: '425px'}"
+                        acceptButtonStyleClass="p-button-text" rejectButtonStyleClass="p-button-text">
+                    </p-confirmDialog>
+                        <button pButton pRipple type="button" icon="pi pi-arrow-left" label="Back"  class="p-button-denger" (click)="cancelCountry()"></button>
+                    </div>
+
+
+
+                  
+
+                </form>
+
+            </div>
+    </div>
+    </div>

@@ -1,0 +1,133 @@
+<div class="p-grid">
+  <div class="p-col-12">
+    <div class="">
+      <h5 class="head-page-title">
+        {{pagetitle}}
+      </h5>
+
+      <div class="card p-pt-3">
+        <form [formGroup]="orderreviewForm">
+          <div class="p-fluid p-formgrid p-grid pare_margin">
+            <div class="p-field p-col-10 div-border">
+              <h5 class="p-mb-3">
+                 Order Review Details
+              </h5>
+            </div>
+
+            <div class="p-field p-col-6">
+              <label for="firstname6">Order ID<span class="mandatory-feilds">*</span></label>
+              <input id="orderID" formControlName="orderID" type="text" pInputText
+                [ngClass]="{ 'is-invalid': submitted && f.orderID.errors }">
+              <div *ngIf="submitted && f.orderID.errors" class="invalid-feedback">
+                <div *ngIf="f.orderID.errors.required">
+                  <h6>Order ID is required</h6>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-field p-col-6">
+              <label for="firstname6">Review Heading</label>
+              <input id="reviewHeading" formControlName="reviewHeading" type="text" pInputText>
+            </div>
+            <div class="p-field p-col-6">
+              <label for="firstname6">Review Description</label>
+              <textarea id="reviewDescription" formControlName="reviewDescription" type="text" rows="2"
+                pInputTextarea></textarea>
+            </div>
+            <div class="p-field p-col-6">
+              <label for="firstname6">Customer Name</label>
+              <input id="customerName" formControlName="customerName" type="text" pInputText>
+            </div>
+
+            <div class="p-field p-col-6">
+              <label for="firstname6">Rating</label>
+              <!--  <input id="rating" formControlName="rating" type="text" pInputText> -->
+              <p-dropdown inputId="rating" formControlName="rating" [options]="productRatings"
+                [(ngModel)]="selectedratingValue" placeholder="Select" optionLabel="name" optionValue="value">
+              </p-dropdown>
+            </div>
+            <div class="p-field p-col-6">
+              <label for="firstname6">Email</label>
+              <input id="email" formControlName="email" type="text" pInputText>
+            </div>
+            <div class="p-field p-col-6">
+              <label for="firstname6">Date<span class="mandatory-feilds">*</span></label>
+              <p-calendar [(ngModel)]="date1" formControlName="date" inputId="date"
+                [ngClass]="{ 'is-invalid': submitted && f.date.errors }"></p-calendar>
+              <div *ngIf="submitted && f.date.errors" class="invalid-feedback">
+                <div *ngIf="f.date.errors.required">
+                  <h6>Date is required</h6>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-field p-col-6">
+              <label for="firstname6">Image</label>
+
+
+              <p-fileUpload #fileInput ngDefaultControl formArrayName="reviewImage" multiple="true" accept="image/*"
+                [showUploadButton]="false" [showCancelButton]="false" maxFileSize="300000000" customUpload="false"
+                (uploadHandler)="onUpload($event, 'reportsummary', orderreviewForm)" [auto]="true" chooseLabel="Browse">
+                <ng-template let-file pTemplate="file">
+                </ng-template>
+                <ng-template pTemplate="content">
+                  <div class="ui-fileupload-row" *ngFor="let file of uploadedFiles; let i = index;">
+                    <div class="row">
+                      <div class="col-md-3">
+                        <img src="{{staticPath}}{{file.name}}" width="50" class="img-fluid">
+                      </div>
+                      <div class="col-md-3">
+                        {{file.name}}
+                      </div>
+                      <div class="col-md-3">
+                        <button _ngcontent-uee-c268="" type="button" pbutton="" pripple="" icon="pi pi-trash"
+                          title="Delete" class="banner_trash-btn p-ripple p-button p-component"
+                          ng-reflect-icon="pi pi-trash" (click)="deleteFile(attachments, i)">
+                          <span class="p-button-icon pi pi-trash" aria-hidden="true"></span><span aria-hidden="true"
+                            class="p-button-label">&nbsp;</span><span class="p-ink"></span></button>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </p-fileUpload>
+            </div>
+            <!--
+            <div class="p-field p-col-10">
+              <label for="firstname6">Meta Keyword</label>
+              <input id="productTitle" formControlName="metaKeyword" type="text" pInputText>
+            </div>
+
+            <div class="p-field p-col-10">
+              <label for="firstname6">Meta Description</label>
+              <textarea id="metaDescription" formControlName="metaDescription" type="text" rows="4"
+                pInputTextarea></textarea>
+            </div>  -->
+          </div>
+          <div class="p-field p-col-12">
+            <h6>Status</h6>
+            <p-inputSwitch class="checkbox-mt-10" formControlName="status"></p-inputSwitch>
+          </div>
+
+          <div class="button-set p-col-12 d-flex p-fluid p-jc-md-end">
+            <div class="p-formgrid p-grid">
+              <p-toast></p-toast>
+              <button type="text" (click)="onSubmit()" pButton icon="pi pi-check" label="Save"
+                class="p-button-success save-btn p-mr-3" style="width: auto"></button>
+
+
+              <p-confirmDialog header="Confirmation" key="confirm1" icon="pi pi-exclamation-triangle"
+                message="Are you sure you want to proceed?" [style]="{width: '425px'}"
+                acceptButtonStyleClass="p-button-text" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+              <button type="text" (click)="cancelOrderreview()" pButton icon="pi pi-times" label="Cancel"
+                class="p-button-danger cancel-btn" style="width: auto"></button>
+
+            </div>
+
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,45 @@
+<!-- Banner Start -->
+<div class="banner banner-4 bg-cover bg-center">
+    <div class="container">
+        <div class="banner-item">
+            <div class="banner-inner">
+                <div class="banner-text">
+                    <div class="acr-dots-wrapper">
+                        <div class="acr-dots"></div>
+                    </div>
+                    <h1 class="title">Find Your Ideal Wedding Space</h1>
+                    <p class="subtitle">Thousands of people have their wedding venue up for grabs. Don't miss your chance to grab your dream wedding plan.</p>
+                </div>
+                <div class="banner-newsletter">
+                    <form>
+                        <input type="text" placeholder="Email Address" class="form-control" name="email-newsletter">
+                        <button type="submit" class="btn-custom secondary" name="button">Subscribe</button>
+                    </form>
+                    <span>*We will be sending you two emails per month about offers and exclusive listings</span>
+                </div>
+                <!-- Featured Weddings Start -->
+                <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings" class="acr-featured-listings banner-featured-slider">
+                    <div ngxSlickItem class="acr-featured-listing"  *ngFor="let item of getTrending()">
+                        <div class="featured-listing-thumb">
+                            <a routerLink="/listing-details-v1/{{item.id}}"><img [src]="item.gridimg" [alt]="item.title"></a>
+                            <div class="featured-listing-controls">
+                                <span *ngIf="item.star">Featured</span>
+                                <a href="#"><i class="far fa-heart"></i></a>
+                            </div>
+                        </div>
+                        <div class="featured-listing-content">
+                            <h6>{{item.price / item.emitime | number:'1.2-2'}}$ /person</h6>
+                            <div class="featured-listing-meta">
+                                <p>{{item.vendor}}, {{item.guest}}, {{item.price / item.emitime | number:'1.2-2'}}</p>
+                            </div>
+                            <span><i class="fas fa-map-marker-alt"></i> {{item.location}} </span>
+                        </div>
+                    </div>
+                </ngx-slick-carousel>
+                <!-- Featured Weddings End -->
+            </div>
+        </div>
+    </div>
+    <div class="banner-bg bg-center bg-cover" [style.background-image]="'url(assets/img/banner/4.jpg)'"></div>
+</div>
+<!-- Banner End -->

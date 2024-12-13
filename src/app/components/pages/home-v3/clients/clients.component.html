@@ -1,0 +1,11 @@
+<!-- Clients Start -->
+<div class="section pt-0">
+    <div class="container">
+        <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings" class="clients-slider">
+            <div ngxSlickItem class="acr-client-item text-center" *ngFor="let item of clients">
+                <img [src]="item.image" alt="client">
+            </div>
+        </ngx-slick-carousel>
+    </div>
+</div>
+<!-- Clients End -->

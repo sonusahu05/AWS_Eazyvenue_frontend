@@ -1,0 +1,188 @@
+<div class="p-grid">
+	<div class="p-col-12 banner-main-section manage-product-section ">
+		<div class="card">
+			<p-toolbar styleClass="p-mb-4">
+				<ng-template pTemplate="left">
+					<!-- <button pButton pRipple label="Add Banner" title="Add New Banner" icon="pi pi-plus"
+						class="p-button-success p-mr-2 p-mb-2" (click)="addNewBanner()"></button> -->
+					<button pButton label="Clear Filters" title="Clear Filters" class="p-button-outlined p-mr-2 p-mb-2"
+						icon="pi pi-filter-slash" (click)="clear()"></button>
+					<!--    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger p-mb-2" (click)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length"></button> -->
+				</ng-template>
+
+				<ng-template pTemplate="right">
+					<!-- <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" class="p-mr-2 p-mb-2 p-d-inline-block"></p-fileUpload>
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help p-mb-2" (click)="dt.exportCSV()"></button> -->
+				</ng-template>
+			</p-toolbar>
+
+			<p-table #dt [value]="wishlist" [paginator]="true" [rows]="10" [lazy]="true"
+				(onLazyLoad)="loadWishlist($event)" [totalRecords]="totalRecords" [rowsPerPageOptions]="[5,10,15,20]"
+				styleClass="p-datatable-gridlines p-datatable-striped p-datatable">
+				<!-- <ng-template pTemplate="caption">
+					<div class="p-d-flex p-flex-column p-flex-md-row table-header">						
+						<span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+						    placeholder="Global Search"/>
+                        </span>                        
+					</div>
+				</ng-template> -->
+				<ng-template pTemplate="header" let-columns>
+					<tr>
+					<tr>
+						<th pSortableColumn="venueName">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Venue Name
+								<p-sortIcon field="venueName"></p-sortIcon>
+							</div>
+						</th>
+
+						<th>
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Customer Name
+							</div>
+						</th>
+						<th pSortableColumn="status">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Status
+								<p-sortIcon field="status"></p-sortIcon>
+							</div>
+						</th>
+
+						<th pSortableColumn="created_at">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Date of Creation
+								<p-sortIcon field="created_at"></p-sortIcon>
+								<!-- <p-columnFilter type="date" field="created_at" display="menu" class="p-ml-auto"></p-columnFilter> -->
+							</div>
+						</th>
+						<th pSortableColumn="created_by">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Created By
+								<p-sortIcon field="created_by"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="updated_at">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Modified On
+								<p-sortIcon field="updated_at"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="updated_by">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Modified By
+								<p-sortIcon field="updated_by"></p-sortIcon>
+							</div>
+						</th>
+
+						<th>
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Action
+							</div>
+						</th>
+
+					</tr>
+					<tr>
+						<!-- <th *ngFor="let col of columns" [ngSwitch]="col.field">
+						  <input  pInputText type="text"
+							(input)="dt.filter($event.target.value, col.field, 'contains')" />
+						</th> -->
+						<th [ngSwitch]="venueName">
+							<input pInputText type="text"
+								(keyup.enter)="dt.filter($event.target.value, 'venueName', 'contains')"
+								style="width: 100%;"
+								[value]="dt.filters['venueName'] ? dt.filters['venueName'].value : ''" />
+						</th>
+						<th [ngSwitch]="customerName">
+							<input pInputText type="text"
+								(keyup.enter)="dt.filter($event.target.value, 'customerName', 'contains')"
+								style="width: 100%;"
+								[value]="dt.filters['customerName'] ? dt.filters['customerName'].value : ''" />
+						</th>
+						<th [ngSwitch]="status" class="text-nowrap col-100">
+							<p-dropdown #pDropDownId [options]="statuses" [style]="{'width':'80px'}" appendTo="body"
+								(onChange)="dt.filter($event.value, 'status', 'equals')" styleClass="p-column-filter"
+								placeholder="Select Status" [showClear]="true">
+								<ng-template let-option pTemplate="item">
+									<span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+								</ng-template>
+							</p-dropdown>
+						</th>
+						<th [ngSwitch]="created_at">
+							<p-calendar #pCalendarId class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy"
+								(onSelect)="dt.filter($event,'created_at', 'dateIs')" [showIcon]="true"
+								[(ngModel)]="calvalue"></p-calendar>
+						</th>
+						<th [ngSwitch]="createdby">
+							<input pInputText type="text"
+								(keyup.enter)="dt.filter($event.target.value, 'createdby', 'contains')"
+								style="width: 100%;"
+								[value]="dt.filters['createdby'] ? dt.filters['createdby'].value : ''" />
+						</th>
+						<th [ngSwitch]="updated_at">
+							<p-calendar #pCalendarId class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy"
+								(onSelect)="dt.filter($event,'updated_at', 'dateIs')" [showIcon]="true"
+								[(ngModel)]="ucalvalue"></p-calendar>
+						</th>
+						<th [ngSwitch]="updatedby">
+							<input pInputText type="text"
+								(keyup.enter)="dt.filter($event.target.value, 'updatedby', 'contains')"
+								style="width: 100%;"
+								[value]="dt.filters['updatedby'] ? dt.filters['updatedby'].value : ''" />
+						</th>
+
+						<th>
+						</th>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="body" let-wishlist>
+					<tr class="p-selectable-row">
+						<td>
+							{{wishlist.venueName}}
+						</td>
+						<td>
+							{{wishlist.customerName}}
+						</td>
+						<td>
+							{{wishlist.status}}
+
+						</td>
+						<td>
+							{{wishlist.created_at | date: 'MM/dd/yyyy'}}
+						</td>
+						<td>
+							{{wishlist.createdBy}}
+						</td>
+						<td>
+							<span *ngIf="wishlist.updated_at != 'Invalid Date'">{{wishlist.updated_at |
+								date:'MM/dd/yyyy'}}</span>
+						</td>
+						<td>
+							{{wishlist.updatedBy}}
+						</td>
+
+
+						<td>
+							<!-- <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
+								title="Edit Banner" (click)="editWishlist(wishlist.id)"></button> -->
+							<button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+								title="Delete Banner" (click)="deleteWishlist(wishlist)"></button>
+						</td>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="emptymessage">
+					<tr>
+						<td colspan="12">No Banners found.</td>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="summary">
+					<div class="p-d-flex p-ai-center p-jc-between">
+						In total there are {{totalRecords }} Banners.
+					</div>
+				</ng-template>
+			</p-table>
+		</div>
+		<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+	</div>
+</div>

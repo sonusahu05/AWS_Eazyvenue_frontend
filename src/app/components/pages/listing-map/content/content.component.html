@@ -1,0 +1,180 @@
+<div class="listing-map-wrapper">
+    <!-- Weddings Start -->
+    <div class="listing-main-wrapper">
+        <!-- Filter Start -->
+        <div class="acr-filter-form" [ngClass]="advanceMethod ? '' : 'd-block'">
+            <div class="acr-filter-form-header">
+                <h4>Filter</h4>
+                <div class="close-btn close-dark filter-trigger" (click)="advanceBtn()">
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <form>
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="form-group acr-custom-select">
+                            <label>Location: </label>
+                            <ng-select2 [data]="select.locationlist" [options]="options">
+                            </ng-select2>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="form-group acr-custom-select">
+                            <label>Status: </label>
+                            <ng-select2 [data]="select.statuslist" [options]="options">
+                            </ng-select2>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="form-group acr-custom-select">
+                            <label>Price Range: </label>
+                            <ng-select2 [data]="select.pricerangelist" [options]="options">
+                            </ng-select2>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="acr-custom-select form-group">
+                            <label>Price : </label>
+                            <ng-select2 [data]="select.price" [options]="options">
+                            </ng-select2>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="acr-custom-select form-group">
+                            <label>Guest Room </label>
+                            <ng-select2 [data]="select.guestroom" [options]="options">
+                            </ng-select2>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="acr-custom-select form-group">
+                            <label>Type: </label>
+                            <ng-select2 [data]="select.typelist" [options]="options">
+                            </ng-select2>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="acr-custom-select form-group">
+                            <label>Diameter: </label>
+                            <ng-select2 [data]="select.diameterlist" [options]="options">
+                            </ng-select2>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="acr-custom-select form-group">
+                            <label>Floor: </label>
+                            <ng-select2 [data]="select.floorlist" [options]="options">
+                            </ng-select2>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="acr-custom-select form-group">
+                            <label>Sort by: </label>
+                            <ng-select2 [data]="select.sortbylist" [options]="options">
+                            </ng-select2>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <button type="button" class="filter-trigger btn-custom" name="button">Apply filters</button>
+                </div>
+            </form>
+        </div>
+        <div class="acr-listing-filter-wrapper">
+            <div class="row">
+                <div class="col-lg-6 form-group">
+                    <div class="search-wrapper">
+                        <input type="text" class="form-control" placeholder="Search locations" name="search" >
+                        <button type="submit" class="btn-custom" name="button"><i class="flaticon-search"></i></button>
+                    </div>
+                </div>
+                <div class="col-lg-6 form-group text-right">
+                    <button type="button" class="btn-custom-2 light-grey filter-trigger" name="button" (click)="advanceBtn()">Advanced Search</button>
+                </div>
+            </div>
+        </div>
+        <!-- Filter End -->
+        <div class="row">
+            <!-- Listing Start -->
+            <div class="col-sm-6" *ngFor="let item of listingblock">
+                <div class="listing">
+                    <div class="listing-thumbnail">
+                        <a routerLink="/listing-details-v1/{{item.id}}"><img [src]="item.gridimg"
+                                [alt]="item.title"></a>
+                        <div class="listing-badges">
+                            <span class="listing-badge featured" *ngIf="item.star"><i
+                                    class="fas fa-star"></i></span>
+                            <span class="listing-badge sale" *ngIf="item.sale">On Wedding</span>
+                            <span class="listing-badge pending" *ngIf="item.pending">Pending</span>
+                            <span class="listing-badge rent" *ngIf="item.courtmarriage">Court Marriage</span>
+                        </div>
+                        <div class="listing-controls">
+                            <a href="#" class="favorite"><i class="far fa-heart"></i></a>
+                            <a href="#" class="compare"><i class="fas fa-sync-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="listing-body"> 
+                        <div class="listing-author" *ngFor="let agent of getAgent(item.agent)">
+                            <img [src]="agent.image" [alt]="agent.name">
+                            <div class="listing-author-body">
+                                <p> <a routerLink="/listing/agent/{{agent.id}}">{{agent.name}}</a> </p>
+                                <span class="listing-date">{{item.postdate}}</span>
+                            </div>
+                            <div class="dropdown options-dropdown" ngbDropdown>
+                                <a href="javascript:void(0)" ngbDropdownToggle><i
+                                        class="fas fa-ellipsis-v"></i></a>
+                                <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right">
+                                    <ul>
+                                        <li> <a href="tel:{{agent.phoneno}}"> <i class="fas fa-phone"></i> Call
+                                                Vendor</a> </li>
+                                        <li> <a href="mailto:{{agent.emailid}}"> <i class="fas fa-envelope"></i>
+                                                Send
+                                                Message</a> </li>
+                                        <li> <a routerLink="/listing-details-v1/{{item.id}}"> <i
+                                                    class="fas fa-bookmark"></i> Book Tour</a> </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <h5 class="listing-title"> <a routerLink="/listing-details-v1/{{item.id}}"
+                                [title]="item.title">{{item.title}}</a> </h5>
+        
+                        <span class="listing-price">{{item.price / item.emitime | number:'1.2-2'}}$
+                            <span>/person</span>
+                        </span>
+                        <p class="listing-text">{{item.text | slice:0:75}}</p>
+                        <div class="acr-listing-icons">
+                            <div class="acr-listing-icon" placement="top" ngbTooltip="Price">
+                                <i class="flaticon-price-tags"></i>
+                                <span class="acr-listing-icon-value">{{item.price / item.emitime | number:'1.2-2'}}</span>
+                            </div>
+                            <div class="acr-listing-icon" placement="top" ngbTooltip="Guests">
+                                <i class="flaticon-guest"></i>
+                                <span class="acr-listing-icon-value">{{item.guest}}</span>
+                            </div>
+                            <div class="acr-listing-icon" placement="top" ngbTooltip="Vendor">
+                                <i class="flaticon-seller"></i>
+                                <span class="acr-listing-icon-value">{{item.vendor}}</span>
+                            </div>
+                        </div>
+                        <div class="listing-gallery-wrapper">
+                            <a routerLink="/listing-details-v1/{{item.id}}"
+                                class="btn-custom btn-sm secondary">View
+                                Details</a>
+                            <a href="#" placement="top" ngbTooltip="Gallery" class="listing-gallery"> <i
+                                    class="fas fa-camera"></i> </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Listing End -->
+        </div>
+    </div>
+    <!-- Weddings End -->
+    <!-- Map Start -->
+    <div class="listing-map">
+        <div id="map"></div>
+    </div>
+    <!-- Map End -->
+</div>

@@ -1,0 +1,110 @@
+<div class="p-grid">
+  <div class="p-col-12">
+    <div class="">
+      <div class="card p-pt-3">
+        <p-toast></p-toast>
+        <p-toast key="toastmsg" position="top-right"></p-toast>
+        <form [formGroup]="venueorderForm">
+          <div class="p-fluid p-formgrid p-grid pare_margin">
+            <div class="p-field p-col-10 div-border">
+              <h5 class="p-mb-3">
+                {{pagetitle}}
+              </h5>
+            </div>
+            <p-fieldset legend="Venue Details">
+              <div class="p-fluid p-formgrid p-grid pare_margin">
+                <div class="p-field p-col-3">
+                  <label for="title">Name</label>
+                  <input formControlName="venueName" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">Address</label>
+                  <input formControlName="venueaddress" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">City</label>
+                  <input formControlName="venuecity" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">Zip</label>
+                  <input formControlName="venuezipcode" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">Venue Price</label>
+                  <input formControlName="venueprice" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">Decor1 Price</label>
+                  <input formControlName="decor1price" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">Decor2 Price</label>
+                  <input formControlName="decor2price" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">Decor3 Price</label>
+                  <input formControlName="decor3price" type="text" pInputText class="form-control">
+                </div>
+              </div>
+            </p-fieldset>
+            <p-fieldset legend="Customer Details">
+              <div class="p-fluid p-formgrid p-grid pare_margin">
+                <div class="p-field p-col-3">
+                  <label for="title">Customer Name</label>
+                  <input formControlName="customerName" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">Customer Email</label>
+                  <input formControlName="customeremail" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">Customer Mobile</label>
+                  <input formControlName="customermobileNumber" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">Occasion Date</label>
+                  <input formControlName="occasionDate" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">Decor selected</label>
+                  <input formControlName="customerselecteddecor" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">Selected Vendors</label>
+                  <input formControlName="customerselectedvendorarr" type="text" pInputText class="form-control">
+                </div>
+                <div class="p-field p-col-3">
+                  <label for="title">Selected Food</label>
+                  <input formControlName="customerselectedFoodrarr" type="text" pInputText class="form-control">
+                </div>
+                <!-- <div class="p-field p-col-3">
+                  <label for="title">Selected Food Menu</label>
+                  <input formControlName="customerselectedFoodrarr" type="text" pInputText class="form-control">
+                </div> -->
+              </div>
+            </p-fieldset>
+          </div>
+          <p-fieldset legend="Add Comment">
+            <div class="p-field p-col-4">
+              <label for="textarea">Comment</label>
+              <textarea inputId="textarea" rows="3" cols="30" class="form-control" formControlName="comment"
+                pInputTextarea  [ngClass]="{ 'is-invalid': submitted && f.comment.errors }"></textarea>               
+              <div *ngIf="submitted && f.comment.errors" class="invalid-feedback">
+                <div *ngIf="f.comment.errors.required">Comment is required</div>
+              </div>
+            </div>
+          </p-fieldset>
+          <div class="button-set p-col-12 d-flex p-fluid p-jc-md-end">
+            <div class="p-formgrid p-grid">
+              <button type="text" (click)="addComment()" pButton icon="pi pi-check" label="Save"
+                class="p-button-success save-btn p-mr-3" style="width: auto"></button>              
+              <button type="text" (click)="cancelvenue()" pButton icon="pi pi-times" label="Back to Venue"
+                class="p-button-danger cancel-btn" style="width: auto"></button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<p-confirmDialog [style]="{width:'450px'}"></p-confirmDialog>

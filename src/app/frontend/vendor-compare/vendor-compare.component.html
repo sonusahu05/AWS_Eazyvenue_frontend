@@ -1,0 +1,117 @@
+<div class="tint">
+    <div class="container p-formgrid">
+        <div class="search-bar-locations p-p-0">
+            <div class="row justify-content-center">
+
+                <div class="col-lg-8 col-md-8 col-sm-12 animation-text-one">
+                    <div class="verticalFlip mb-10">
+                        Eaziest Way to discover and book venues&nbsp;
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 animation-text-two">
+                    <div class="verticalFlip mb-10">
+                        <b><span *ngFor="let category of categoryMenuList">for {{category.name}}</span></b>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="container-fluid">
+        <div class="listing-page">
+            <div class="row heading-text">
+                <div class="col text-start"></div>
+                <div class="col-6 text-center filter-page">Vendor Compare</div>
+                <div class="col text-end">
+                    <button pButton pRipple type="button" label="Back" onclick="history.back()"
+                        class="float-end p-button-secondary"></button>
+                </div>
+            </div>
+
+            <section id="cd-table">
+                <div class="row justify-content">
+                    <div class="col-2 compare-menu" style="min-width: 160px;">
+                        <div class="cd-table-column" style="height: 100%;">
+                            <h2 class="venue-img">
+                                <!-- <img src="https://api.eazyvenue.com/uploads/venuePic/VivetteBanquets3.png" class="com-img"> -->
+                            </h2>
+
+                            <ul class="heading-size">
+                                <li class="venue-heading header-part heading">
+                                    Vendor Name
+                                </li>
+                                <li class="one-list heading">Vendor Type</li>
+                                <li class="one-list heading">Rating</li>
+                               
+                                <li class="li-style bottom">
+                                    <div class="heading"><span>Vendor Services</span></div>
+                                 
+                                </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-3 compare-options" *ngFor="let vendor of compareVendorData">
+                                        <div class="cd-table-column table-width">
+                                            <h2 class="venue-img"><img src="{{vendor.image}}" alt="{{vendor.imageAlt}}" 
+                                                    class="com-img"></h2>
+                                            <ul class="compare-list">
+                                                <li class="venue-heading">
+                                                    <span class="venue-name" style="font-size: 12px; min-height: 14px;max-height: 26px;display: inline-block;overflow: hidden;">{{vendor.name}}</span>
+                                                    <p class="venue-add">{{vendor.location}}</p>
+                                                </li>
+                                                <li class="li-style">
+                                                   
+                                                    <div class="one-list"><span class="compare-price">{{vendor.vendorType}}</span></div>
+                                                </li>
+                                               
+                                                <li>
+                                                    <div class="icon-review price-div"> 
+                                                            <img src="assets/img/svg/google.png" alt="">
+                                                        <i class="pi pi-star-fill" style="font-size: 12px;">
+                                                            <span class="rating-style">
+                                                                <b> {{vendor.googleRating}}</b>/5</span>
+                                                        </i><br>
+                                                        <img src="assets/images/logo.png" alt="">
+                                                        <i class="pi pi-star-fill" style="font-size: 12px;">
+                                                            <span class="rating-style">
+                                                                <b> {{vendor.eazyvenueRating}}</b>/5
+                                                            </span>
+                                                        </i>
+                                                        <!-- <p-rating [(ngModel)]="val4" readonly="true" [cancel]="false"></p-rating> -->
+                                                    </div>
+                                                   
+                                                </li>
+                                                <li class="li-style">
+                                                    <p *ngFor="let service of vendor.vendorServices" style="margin: 5px; padding: 5px;">
+                                                        {{service.name}}
+                                                    </p>
+                                                </li>
+                                            </ul>
+                                            <!-- <div class="submit-btn text-center p-2 border-top">
+                                                <button pButton pRipple type="button" (click)="onClickBookNow(venue.id)"
+                                                    label="Book Now" class="float-end p-button-secondary"></button>
+                                            </div> -->
+                
+                                        </div>  
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                   
+
+                </div>
+            </section> <!-- cd-table -->
+
+        </div>
+    </div>
+</div>

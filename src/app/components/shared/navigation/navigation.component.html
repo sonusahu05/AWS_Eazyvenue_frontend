@@ -1,0 +1,75 @@
+<ul class="navbar-nav">
+    <li class="menu-item" [ngClass]="item.child == true ? 'menu-item-has-children' : ''"
+        *ngFor="let item of navigation | slice:0:2">
+        <a href="javascript:void(0)" *ngIf="item.child">{{item.linkText}}</a>
+        <a routerLink="{{item.link}}" *ngIf="!item.child">{{item.linkText}}</a>
+        <ul class="sub-menu" *ngIf="item.child" [ngClass]="item.open ? 'd-block' : ''">
+            <li class="menu-item" [ngClass]="item.child == true ? 'menu-item-has-children' : ''"
+                *ngFor="let item of item.submenu">
+                <a href="javascript:void(0)" *ngIf="item.child">{{item.linkText}}</a>
+                <a routerLink="{{item.link}}" *ngIf="!item.child">{{item.linkText}}</a>
+                <ul class="sub-menu" *ngIf="item.child" [ngClass]="item.open ? 'd-block' : ''">
+                    <li class="menu-item" *ngFor="let item of item.submenu">
+                        <a routerLink="{{item.link}}">{{item.linkText}}</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li class="menu-item menu-item-has-children mega-menu-wrapper">
+        <a href="#">Pages</a>
+        <ul class="sub-menu">
+            <li>
+                <img src="assets/img/megamenu.png" alt="img">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="mega-menu-item">
+                                <h5>Featured Weddings</h5>
+                                <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.</p>
+                                <a routerLink="/listing-grid" class="btn-custom secondary">View All</a>
+                            </div>
+                        </div>
+                        <div class="offset-lg-1 col-lg-3">
+                            <div class="mega-menu-item">
+                                <h5>Pages</h5>
+                                <a routerLink="/about">About Us</a>
+                                <a routerLink="/services">Services</a>
+                                <a routerLink="/faqs">FAQ</a>
+                                <a routerLink="/pricing">Pricing</a>
+                                <a routerLink="/contact">Contact Us</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mega-menu-item">
+                                <h5>Other Pages</h5>
+                                <a routerLink="/coming-soon">Coming Soon</a>
+                                <a routerLink="/error">404 Page</a>
+                                <a routerLink="/login">Login</a>
+                                <a routerLink="/register">Register</a>
+                                <a routerLink="/legal">Legal</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li class="menu-item" [ngClass]="item.child == true ? 'menu-item-has-children' : ''"
+        *ngFor="let item of navigation | slice:3:10">
+        <a href="javascript:void(0)" *ngIf="item.child">{{item.linkText}}</a>
+        <a routerLink="{{item.link}}" *ngIf="!item.child">{{item.linkText}}</a>
+        <ul class="sub-menu" *ngIf="item.child" [ngClass]="item.open ? 'd-block' : ''">
+            <li class="menu-item" [ngClass]="item.child == true ? 'menu-item-has-children' : ''"
+                *ngFor="let item of item.submenu">
+                <a href="javascript:void(0)" *ngIf="item.child">{{item.linkText}}</a>
+                <a routerLink="{{item.link}}" *ngIf="!item.child">{{item.linkText}}</a>
+                <ul class="sub-menu" *ngIf="item.child" [ngClass]="item.open ? 'd-block' : ''">
+                    <li class="menu-item" *ngFor="let item of item.submenu">
+                        <a routerLink="{{item.link}}">{{item.linkText}}</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ul>

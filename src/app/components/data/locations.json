@@ -1,0 +1,32 @@
+[
+    {
+        "id":1,
+        "image":"assets/img/countries/6.jpg",
+        "location":"New Jersey",
+        "price":"128 Weddings starting at 1,999$"
+    },
+    {
+        "id":2,
+        "image":"assets/img/countries/2.jpg",
+        "location":"Canada",
+        "price":"128 Weddings starting at 1,999$"
+    },
+    {
+        "id":3,
+        "image":"assets/img/countries/3.jpg",
+        "location":"Dubai",
+        "price":"128 Weddings starting at 1,999$"
+    },
+    {
+        "id":4,
+        "image":"assets/img/countries/4.jpg",
+        "location":"Saudi Arabia",
+        "price":"128 Weddings starting at 1,999$"
+    },
+    {
+        "id":5,
+        "image":"assets/img/countries/1.jpg",
+        "location":"California",
+        "price":"128 Weddings starting at 1,999$"
+    }
+]

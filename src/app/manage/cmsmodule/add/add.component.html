@@ -1,0 +1,85 @@
+<div class="p-grid">
+  <div class="p-col-12">
+    <h5 class="admin-heading">
+      {{pagetitle}}
+    </h5>
+     
+      <div class="card">
+        <p-toast key="toastmsg" position="top-right"></p-toast>
+        <form [formGroup]="cmsmoduleForm">
+          <div class="p-fluid p-formgrid p-grid ">
+            <!-- <div class="p-field p-col-10 div-border">
+              <h5 class="p-mb-3">
+                Page Details
+              </h5>
+            </div> -->
+            <div class="p-field p-col-6">
+              <label for="firstname6">Title</label>
+              <input id="cmsTitle" formControlName="cmsTitle" class="form-control" type="text" pInputText>
+            </div>
+            <div class="p-field p-col-6">
+              <label class="d-block">Status</label>
+              <p-inputSwitch  formControlName="status"></p-inputSwitch>
+            </div>
+            <div class="p-field p-col-6">
+              <label for="firstname6">Page Title</label>
+              <input id="cmspageTitle" formControlName="cmspageTitle" type="text" pInputText>
+            </div>
+            <div class="p-field p-col-6">
+              <label for="firstname6">Slug</label>
+              <input id="slug" formControlName="slug" type="text" pInputText>
+            </div>
+            <div class="p-field p-col-12">
+              <label for="firstname6">Content</label>
+              <textarea id="cmsContent" rows="3" formControlName="cmsContent" type="text" pInputTextarea></textarea>
+            </div>
+            <div class="p-field p-col-12">
+              <label for="firstname6">Description</label>
+              <angular-editor  formControlName="cmsDescription" [(ngModel)]="htmlContent" [config]="config">
+              </angular-editor>
+            </div>
+            <div class="p-field p-col-6">
+              <label for="firstname6">Meta Keyword</label>
+              <input id="productTitle" formControlName="metaKeyword" type="text" pInputText>
+            </div>
+            <div class="p-field p-col-6">
+              <label for="firstname6">Meta Description</label>
+              <textarea id="metaDescription" rows="3" formControlName="metaDescription" type="text"
+                pInputTextarea></textarea>
+            </div>
+          
+            <div class="p-field p-col-4">
+              <label for="firstname6">Product Image</label>
+              <p-fileUpload name="uploadFiles[]" chooseLabel="Upload Profile Photo" uploadLabel="Show data"
+              cancelLabel="Cancel" accept="image/*" maxFileSize="1000000" auto="auto" customUpload="true"
+              (uploadHandler)="picUploader($event)">
+              <!-- <ng-template pTemplate="toolbar">
+                    <p-button label="Show data" icon="fa fa-upload" iconPos="left" (onClick)="myUploaderEnd($event)"></p-button>
+                </ng-template> -->
+              <!-- <ng-template pTemplate="content">
+
+              </ng-template> -->
+            </p-fileUpload>
+            
+              <div class="p-field p-col-4" *ngIf="showUploadedpic">
+                <img src="{{ imageProfile }}" alt="freya-layout" height="100px" />
+              </div>
+            </div>
+           
+          </div>
+         
+          <div class="button-set p-col-12 d-flex p-fluid p-jc-md-end">
+            <div class="p-formgrid p-grid">
+              <p-toast></p-toast>
+              <button type="text" (click)="onSubmit()" pButton icon="pi pi-check" label="Save" class="p-button-success p-mr-2" style="width: auto"></button>
+              <p-confirmDialog header="Confirmation" key="confirm1" icon="pi pi-exclamation-triangle" message="Are you sure you want to proceed?" [style]="{width: '425px'}"
+              acceptButtonStyleClass="p-button-text" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+              <button pButton pRipple label="Reset" class="p-button-info mr-2" icon="pi pi-refresh" type="reset" (click)="onReset()" style="width: auto"></button>
+           
+              <button type="text" (click)="cancelCmsmodule()" pButton icon="pi pi-arrow-left" label="Back" class="p-button-denger" style="width: auto"></button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "icon": "flaticon-house",
+        "img": "assets/img/categories/1.jpg",
+        "title": "Wedding Venues",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+        "id": 2,
+        "icon": "flaticon-seller",
+        "img": "assets/img/categories/2.jpg",
+        "title": "Wedding Vendors",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+        "id": 3,
+        "icon": "flaticon-bride",
+        "img": "assets/img/categories/3.jpg",
+        "title": "Brides",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+        "id": 4,
+        "icon": "flaticon-groom",
+        "img": "assets/img/categories/4.jpg",
+        "title": "Grooms",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+        "id": 5,
+        "icon": "flaticon-sketch",
+        "img": "assets/img/categories/5.jpg",
+        "title": "Planning Tools",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+        "id": 6,
+        "icon": "flaticon-wedding-invitation",
+        "img": "assets/img/categories/6.jpg",
+        "title": "Wedding Website",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    }
+]

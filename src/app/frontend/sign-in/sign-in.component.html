@@ -1,0 +1,220 @@
+<div class="container">
+    <div class="row">
+        <div class="common_container sign-in-sign-up-page">
+            <!--Top nav bar -->
+            <div class="col-md-12  breadcrum_section">
+                <div class="col-md-12">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#">Home </a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Sign in</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <!--Top nav bar close -->
+            <div class="col-md-12 Sign-in-form">
+                <div class="col-md-12 tab-view-on-mobile">
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-sign-in-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-sign-in" type="button" role="tab" aria-controls="pills-sign-in"
+                                aria-selected="true">sign in</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-sign-up-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-sign-up" type="button" role="tab" aria-controls="pills-sign-up"
+                                aria-selected="false">sign-up</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row main-row tab-content" id="pills-tabContent">
+                    <div class="col-6 my-account-div tab-pane fade show active" id="pills-sign-in" role="tabpanel"
+                        aria-labelledby="pills-sign-in-tab" tabindex="0">
+                        <div class="top-header-heading">
+                            <h4 class="accounts-headings"> <span>
+                                    <!-- <img src="/../assets/img/heading-1.png" alt=""> -->
+                                </span>
+                                <span> My Account</span>
+                            </h4>
+                        </div>
+                        <form class="row g-3" [formGroup]="loginForm" *ngIf="this.loginForm" (ngSubmit)="onSubmit()">
+                            <div class="col-md-12 input-form">
+                                <input type="email" formControlName="email" placeholder="Email Address*"
+                                    class="form-control"
+                                    [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.email.errors }" required>
+                                <div *ngIf="loginFormSubmitted && loginf.email.errors" class="invalid-feedback">
+                                    <div *ngIf="loginf.email.errors.required">Email is required</div>
+                                    <div *ngIf="loginf.email.errors.email">Enter valid email address</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 input-form">
+                                <input type="password" formControlName="password" placeholder="Password*"
+                                    class="form-control"
+                                    [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.password.errors }"
+                                    autocomplete="on" required>
+                                <div *ngIf="loginFormSubmitted && loginf.password.errors" class="invalid-feedback">
+                                    <div *ngIf="loginf.password.errors.required">Password is required</div>
+                                    <div *ngIf="loginf.password.errors.minlength">Password must be at least 6 characters
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 input-form">
+                                <div *ngIf="isLoginFailed" class="alert alert-danger" role="alert">
+                                    {{errorMessage}}
+                                </div>
+                            </div>
+                            <div class="col-12 form-buttons">
+                                <button class="FS_button" type="submit">
+                                    <div class="buttons_border">
+                                        <span>Sign in ></span>
+                                    </div>
+                                </button>
+                                <a href="/forgot-password" class="forgot-btn ">I forgot my password > </a>
+                            </div>
+                        </form>
+                        <div class="border_common">
+                            <!-- <img src="/../assets/img/border.png" alt=""> -->
+                        </div>
+
+                    </div>
+                    <div class="col-6 Create-account-div tab-pane fade show active" id="pills-sign-up" role="tabpanel"
+                        aria-labelledby="pills-sign-up-tab" tabindex="0">
+                        <div class="top-header-heading Create">
+                            <h4 class="accounts-headings Create"> <span>
+                                    <!-- <img src="/../assets/img/heading-2.png" alt=""> -->
+                                </span>
+                                <span>Create Your Account</span>
+                            </h4>
+                        </div>
+                        <form class="row g-3" [formGroup]="signUpForm" *ngIf="this.signUpForm"
+                            (ngSubmit)="onSignupSubmit()">
+                            <div class="col-md-6 input-form">
+                                <input type="text" formControlName="firstName" class="form-control"
+                                    placeholder="First name*" value="" required
+                                    [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }">
+                                <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
+                                    <div *ngIf="f.firstName.errors.required">First Name is required</div>
+                                    <div *ngIf="f.firstName.errors">Only Alphabets allowed</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 input-form">
+                                <input type="text" formControlName="lastName" placeholder="Last Name*"
+                                    class="form-control" [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }"
+                                    required>
+                                <div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">
+                                    <div *ngIf="f.lastName.errors.required">Last Name is required</div>
+                                    <div *ngIf="f.lastName.errors">Only Alphabets allowed</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 input-form">
+                                <input type="email" formControlName="email" placeholder="Email Address*"
+                                    class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+                                <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                                    <div *ngIf="f.email.errors.required">Email is required</div>
+                                    <div *ngIf="f.email.errors.email">Enter valid email address</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 input-form">
+                                <input type="password" formControlName="password" placeholder="Password*"
+                                    class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
+                                    value="" autocomplete="on" required>
+                                <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                                    <div *ngIf="f.password.errors.required">Password is required</div>
+                                    <div *ngIf="f.password.errors">Password should contains at least 1 digit, 1
+                                        lowercase, 1 uppercase, 1 symbol.
+                                        Length between 6 to 20.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 input-form">
+                                <input type="password" formControlName="confirmPassword" placeholder="Confirm Password*"
+                                    class="form-control"
+                                    [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }"
+                                    autocomplete="on" required>
+                                <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                                    <div *ngIf="f.confirmPassword.errors.required">Confirm Password is required</div>
+                                    <div *ngIf="f.confirmPassword.errors.mustMatch">Passwords must match</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 input-form dates">
+                                <span class="outline-element-container">
+                                    <!-- <input id="birthday-date" type="text"
+                                            class="ui-datepicker-trigger openemr-datepicker input-textbox outline-element incorrect"
+                                            placeholder="Birth Date" objtype="7" name="action_element" objindex=""
+                                            aria-label="Select Date"> -->
+                                    <p-calendar formControlName="dob" [showIcon]="true" inputId="icon"
+                                        placeholder="Birth Date" monthNavigator="true" yearNavigator="true"
+                                        yearRange="{{yearRange}}" class="p-calendar" inputId="calendar"
+                                        [defaultDate]="date" dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
+                                </span>
+                            </div>
+                            <!-- <div class="col-md-6 input-form dates">
+                                <span class="outline-element-container">
+                                    <p-calendar formControlName="weddingDate" [showIcon]="true" inputId="icon"
+                                        dateFormat="dd/mm/yy" placeholder="Wedding Date"></p-calendar>
+                                </span>
+                            </div>
+                            <div class="user-note">
+                                <h4>Special discounts given for birthday's and anniversary</h4>
+                            </div> -->
+                            <div class="gender-form">
+                                <div class="form-title">Gender*</div>
+                                <div *ngFor="let gender of genders" class="">
+                                    <p-radioButton [inputId]="gender.key" formControlName="gender" [value]="gender"
+                                        [(ngModel)]="selectedGender" (onClick)="onGenderSelect(gender, $event)">
+                                    </p-radioButton>&nbsp;&nbsp;
+                                    <label [for]="gender.key">{{gender.name}}</label>&nbsp;&nbsp;
+                                </div>
+                                <div class="mandatory-feilds" *ngIf="showGenderError">
+                                    Please, Select Gender.
+                                </div>
+                                <!-- <div *ngFor="gender of genders" class="form-div">
+                                        <ul>
+                                            <li>
+                                            
+                                                <label class="form-check-label" for="male">
+                                                    Male
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                                    id="female" checked>
+                                                <label class="form-check-label" for="female">
+                                                    Female
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div> -->
+                            </div>
+                            <div class="border_common">
+                                <!-- <img src="/../assets/img/border.png" alt=""> -->
+                            </div>
+                            <div class="user-note-bottom">
+                                <p>*By signing up you confirm that you have read the Privacy Policy and agree that your
+                                    email and gender will be collected and used by Fascinating Diamonds® for the
+                                    purposes of sending news, promotions and updates via email. You can withdraw your
+                                    consent at any time by unsubscribing.</p>
+                            </div>
+                            <div class="border_common">
+                                <!-- <img src="/../assets/img/border.png" alt=""> -->
+                            </div>
+                            <div *ngIf="showMessage" class="alert-success" role="">
+                                {{message}}
+                            </div>
+                            <div class="col-12 form-buttons">
+                                <button class="FS_button" type="submit">
+                                    <div class="buttons_border">
+                                        <span>Create new account ></span>
+                                    </div>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!---container row close--->
+    </div>
+</div>

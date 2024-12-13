@@ -1,0 +1,130 @@
+<div class="p-grid">
+    <div class="p-col-12 banner-edit-main-section">
+        <div class="">
+            <h5 class="head-page-title">
+                Edit Banner
+            </h5>
+            <!-- <button pButton pRipple label="Back" icon="pi pi-arrow-left" class="p-button-primary" 
+                (click)="backLink()"></button> -->
+        </div>
+        <div class="card p-pt-3">
+            <p-toast key="toastmsg" position="top-right"></p-toast>
+            <form [formGroup]="bannerForm" *ngIf="this.bannerForm" (ngSubmit)="onSubmit()">
+                <div class="p-fluid p-formgrid p-grid pare_margin">
+                    <div class="p-field p-col-12 div-border">
+                        <h5 class="p-panel-header p-mb-3">Edit Banner Details</h5>
+                    </div>
+                    <div class="p-field p-col-6">
+                        <label for="banner_title">Banner Title<span class="mandatory-feilds">*</span></label>
+                        <input formControlName="banner_title" type="text" placeholder="Enter Banner Title" pInputText
+                            class="form-control" [ngClass]="{ 'is-invalid': submitted && f.banner_title.errors }">
+                        <div *ngIf="submitted && f.banner_title.errors" class="invalid-feedback">
+                            <div *ngIf="f.banner_title.errors.required">Banner Title is required</div>
+                            <div *ngIf="f.banner_title.errors">Only Alphabets Allowed</div>
+                        </div>
+                    </div>
+                    <!-- <div class="p-field p-col-6">
+                        <label for="banner_url">Banner Url<span class="mandatory-feilds">*</span></label>
+                        <input formControlName="banner_url"
+                            placeholder="Enter Banner Url(https://fascinatingdiamonds.com)" type="text" pInputText
+                            class="form-control" [ngClass]="{ 'is-invalid': submitted && f.banner_url.errors }">
+                        <div *ngIf="submitted && f.banner_url.errors" class="invalid-feedback">
+                            <div *ngIf="f.banner_url.errors.required">Banner URL is required</div>
+                            <div *ngIf="f.banner_url.errors">Wrong URL</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-6">
+                        <label for="banner_content">Banner Content</label>
+                        <input formControlName="banner_content" pInputText type="text" class="form-control">
+                    </div> -->
+                    <div class="p-field p-col-6">
+                        <label>Banner Slug</label>
+                        <input placeholder="Enter Banner slug" formControlName="slug" type="text" pInputText
+                            [ngClass]="{ 'is-invalid': submitted && f.slug.errors }">
+                        <div *ngIf="submitted && f.slug.errors" class="invalid-feedback">
+                            <div *ngIf="f.slug.errors.required">Banner Slug is required</div>
+                            <div *ngIf="f.slug.errors">Only Alphabets and _ Allowed</div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="p-fluid p-formgrid p-grid baner-image-update">
+                    <div class="p-field p-col-6" *ngIf="showProfile">
+                        <p-galleria [(value)]="bannerImages" [responsiveOptions]="responsiveOptions"
+                            [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
+                            [showItemNavigators]="true" [showThumbnails]="false">
+                            <ng-template pTemplate="item" let-item>
+                                <img [src]="item.banner_image_src" style="width:100%; display: block;" />
+                            </ng-template>
+                        </p-galleria>
+                        <p-fileUpload name="myfiles[]" multiple="multiple" chooseLabel="Upload Banner Image"
+                            uploadLabel="Show data" cancelLabel="Cancel" accept="image/*" maxFileSize="10000000"
+                            auto="auto" customUpload="true" (uploadHandler)="picUploader($event)"
+                            >
+                            <ng-template pTemplate="content">
+                                <div class="banner-images">
+
+                                </div>
+                            </ng-template>
+                        </p-fileUpload>
+                    </div>
+                    <div class="p-field p-col-6">
+                        <div class="row">
+                            <div *ngFor="let item of bannerImages; let indexOfElement=index;"
+                                class="column banner-images">
+                                <button type="button" class="banner_trash-btn" pButton pRipple icon="pi pi-trash"
+                                    (click)="removeBannerImages(item.banner_image_src)" title="Delete"></button>
+                                <!-- <input type="text" value="{{item.alt}}"> -->
+                                <!-- <div class="" *ngIf="item.default == true"> -->
+                                <!-- <p-radioButton formControlName="default_name_{{indexOfElement}}"
+                                    (onClick)=" changeDefault($event, item)" value="">
+                                </p-radioButton> -->
+                                <!-- </div>
+                                <div class="" *ngIf="item.default == false"> 
+                                    <p-radioButton formControlName="default_name_{{indexOfElement}}"
+                                        (onClick)="changeDefault($event,item)" [value]="item">
+                                    </p-radioButton>
+                                </div>-->
+
+                                <img class="banner-image" [src]="item.banner_image_src" />
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class=" p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-6">
+                        <label for="status" class="p-col-12 p-0">Status<span class="mandatory-feilds">*</span></label>
+                        <p-inputSwitch class="checkbox-mt-10" formControlName="status"
+                            [ngClass]="{ 'is-invalid': submitted && f.status.errors }"></p-inputSwitch>
+                        <div *ngIf="submitted && f.status.errors" class="invalid-feedback">
+                            <div *ngIf="f.status.errors.required">Please Select Status</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="p-field p-col-4">
+                    <p-fileUpload name="myfiles[]" fileLimit="3" multiple="multiple" chooseLabel="Upload Banner Image" uploadLabel="Show data" cancelLabel="Cancel" accept="image/*"
+                    maxFileSize="1000000" auto="auto" customUpload="true" (uploadHandler)="picUploader($event)">
+                        <ng-template pTemplate="content">
+                        </ng-template>
+                    </p-fileUpload>
+                </div> -->
+                <div class="button-set p-col-12 d-flex p-fluid p-jc-md-end">
+                    <div class="p-formgrid p-grid">
+                        <button pButton pRipple label="Update" icon="pi pi-check" class="p-mr-3"
+                            style="width: auto"></button>
+                        <button pButton pRipple type="button" label="Back" class="p-button-info" (click)="backLink()"
+                            style="width: auto"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="button-set back">
+            <div class="p-fluid p-formgrid">
+                <p-toast></p-toast>
+            </div>
+        </div>
+    </div>
+    <p-confirmDialog [style]="{width:'450px'}"></p-confirmDialog>
+</div>

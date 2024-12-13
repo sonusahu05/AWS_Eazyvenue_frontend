@@ -1,0 +1,87 @@
+<div class="section agent-wrapper" *ngFor="let item of agentdetails">
+    <div class="container">
+        <div class="row">
+            <!-- Vendor Sidebar Start -->
+            <div class="col-lg-4">
+                <div class="sidebar sticky-sidebar sidebar-left">
+                    <div class="sidebar-widget sidebar-widget-agent">
+                        <!-- Author Start -->
+                        <div class="media sidebar-author listing-agent">
+                            <img [src]="item.image" [alt]="item.name">
+                            <div class="media-body">
+                                <h6> {{item.name}} </h6>
+                                <span>{{item.post}}</span>
+                            </div>
+                            <div ngbDropdown class="dropdown options-dropdown">
+                                <a href="javascript:void(0)" ngbDropdownToggle><i class="fas fa-ellipsis-v"></i></a>
+                                <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right">
+                                    <ul>
+                                        <li> <a href="tel:{{item.phoneno}}"> <i class="fas fa-phone"></i> Call
+                                                Freddy</a> </li>
+                                        <li> <a href="#"> <i class="fas fa-star"></i> Save Vendor</a> </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Author End -->
+                        <p>{{item.text}}</p>
+                        <!-- Contact Start -->
+                        <form>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Email Address" name="email">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Phone Number" name="phone">
+                            </div>
+                            <div class="form-group">
+                                <textarea name="message" rows="3" placeholder="Enter your message"
+                                    class="form-control"></textarea>
+                            </div>
+                            <button type="submit" class="btn-custom primary light btn-block">Send Message</button>
+                        </form>
+                        <!-- Contact End -->
+                    </div>
+                </div>
+            </div>
+            <!-- Vendor Sidebar End -->
+            <!-- Vendor Weddings Start -->
+            <div class="col-lg-8">
+                <app-listings></app-listings>
+                
+                <!-- Comments Start -->
+                <div class="comment-form section p-0">
+                    <h4>Leave Freddy a Comment</h4>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Full Name</label>
+                                <input type="text" class="form-control" placeholder="Full Name" name="fname">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Email Address</label>
+                                <input type="email" class="form-control" placeholder="Email Address" name="email">
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label>Your Message</label>
+                                <textarea class="form-control" placeholder="Type your comment..." rows="7"></textarea>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="sendNotifications">
+                                    <label class="custom-control-label fw-400" for="sendNotifications">Notify me when I
+                                        receive a reply to my comment</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-custom primary" name="button">Post comment</button>
+                    </form>
+                </div>
+                <!-- Comments End -->
+            </div>
+            <!-- Vendor Weddings End -->
+        </div>
+        <!-- Similar Vendors Start -->
+        <app-agents></app-agents>
+        <!-- Similar Vendors End -->
+    </div>
+</div>

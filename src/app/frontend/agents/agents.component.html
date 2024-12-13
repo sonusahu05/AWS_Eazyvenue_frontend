@@ -1,0 +1,37 @@
+<!-- Vendors Start -->
+<div class="section pt-0 agents">
+    <div class="container">
+        <div class="section-title-wrap section-header flex-header">
+            <div class="section-title-text">
+                <h5 class="custom-primary">Our Back bone</h5>
+                <h2 class="title">Meet Our Vendors</h2>
+            </div>
+            <div class="acr-arrows primary-arrows">
+                <i class="slider-prev fas fa-arrow-left slick-arrow"></i>
+                <i class="slider-next fas fa-arrow-right slick-arrow"></i>
+            </div>
+        </div>
+
+            <!-- Vendor Start -->
+            <div  class="acr-agent" *ngFor="let item of agentblock">
+                <div class="listing-badge featured" *ngIf="item.star">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="acr-dots-wrapper acr-agent-thumb">
+                    <div class="acr-dots"></div>
+                    <a routerLink="/vendor-details/{{item.id}}"> <img [src]="item.image" [alt]="item.name"></a>
+                </div>
+                <div class="acr-agent-body">
+                    <h6> <a routerLink="/vendor-details/{{item.id}}">{{item.name}}</a> </h6>
+                    <span>{{item.post}}</span>
+                    <p>{{item.text | slice:0:150}}</p>
+                    <a routerLink="/vendor-details/{{item.id}}" class="btn-custom secondary btn-sm">View Profile</a>
+
+                 
+                </div>
+            </div>
+            <!-- Vendor End -->
+       
+    </div>
+</div>
+<!-- Vendors End -->

@@ -1,0 +1,214 @@
+<!-- Footer Start -->
+<footer class="style-4 has-bg">
+    <!-- <div class="container">
+        <div class="sigma_footer-top">
+            <div class="sigma_footer-logo">
+                <div class="image">
+                    <img src="assets/layout/images/pages/logo.png" alt="logo" width="160px" height="160">
+                </div>
+                <div class="address">
+                    <p>3010, 1 Aerocity, NIBR Corporate Park, Andheri Kurla Road, Sakinaka, Mumbai - 400072</p>
+                </div>
+                <div class="contact-list">
+                    <ul>
+                        <li>Call : +91 9372091300</li>
+                        <li> Email: <a href="mailto:info@eazyvenue.com">info@eazyvenue.com</a></li>
+
+                    </ul>
+                </div>
+
+            </div>
+            <div class="footer-item">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5 class="widget-title ">Pages</h5>
+                        <ul class=" m-0">
+                            <li>
+                                <a [routerLink]="'/about-us'">About Us</a>
+                            </li>
+                            <li>
+                                <a routerLink="/venue-list">Venue Listing</a>
+                            </li>
+                            <li>
+                                <a href="#">Vendor Listing</a>
+                            </li>
+                            <li>
+                                <a href="#">Caterers</a>
+                            </li>
+                            <li>
+                                <a routerLink="/services">Services</a>
+                            </li>
+                            <li>
+                                <a routerLink="/privacy-policy">Privacy Policy</a>
+                            </li>
+                            <li>
+                                <a href="#">Blogs</a>
+                            </li>
+                            <li>
+                                <a [routerLink]="'/contact-us'">Contact Us</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="widget-title ">Categories</h5>
+                        <ul class=" m-0">
+                            <li>
+                                <a routerLink="/">Banquet</a>
+                            </li>
+                            <li>
+                                <a routerLink="/">Hotel</a>
+                            </li>
+                            <li>
+                                <a routerLink="/">Castles</a>
+                            </li>
+                            <li>
+                                <a routerLink="/">Resort</a>
+                            </li>
+                            <li>
+                                <a routerLink="/">Stately Homes</a>
+                            </li>
+                            <li>
+                                <a routerLink="/">Restaurant</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="widget-title">City</h5>
+                        <ul class=" m-0">
+                            <li>
+                                <a routerLink="/">Mumbai</a>
+                            </li>
+                            <li>
+                                <a routerLink="/">Pune</a>
+                            </li>
+                            <li>
+                                <a routerLink="/">Nashik</a>
+                            </li>
+                            <li>
+                                <a routerLink="/">Kolhapur</a>
+                            </li>
+                            <li>
+                                <a routerLink="/">Aurangabad</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="footer-item-news">
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <div class="sigma_footer-widget">
+                            <h5 class="widget-title "> Newsletter</h5>
+                            <p class="text-center">Subscribe to our newsletter to receive exclusive offers and the
+                                latest news on our products and services .</p>
+                            <form [formGroup]="subscribeForm" (ngSubmit)="onSubmit()">
+                                <div class="input-group">
+                                    <input type="email" class="form-control" name="email" for="email"
+                                        class="email-input form-control" formControlName="email" type="email"
+                                        placeholder="Enter your email"
+                                        [ngClass]="{ 'is-invalid': submitted && f.email.errors }"
+                                        placeholder="Enter your email" required>
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn-custom primary">Submit</button>
+                                    </div>
+                                    <div *ngIf="submitted && f.email.errors" class="invalid-feedback col-md-auto">
+                                        <div *ngIf="f.email.errors.required">Email is required</div>
+                                        <div *ngIf="f.email.errors.email">Enter valid email address</div>
+                                    </div>
+                                    <div *ngIf="showSuccess" class="success-feedback col-md-auto">
+                                        Subscribed Successfully
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div> -->
+    <div class="copyright-area">
+        <div class="container-fluid pl-0 pr-0">
+            <div class="sigma_footer-bottom mt-0">
+                <div class="sigma_footer-copyright">
+                    <div class="row" style="display: none;">
+                        <div class="col-md-12 desktop-view">
+                            <button class="chat-btn btn-custom btn-sm secondary">
+                                <img src="assets/images/category-icons/chat-icon.svg" style="width: 16px;"> Chat with us</button>
+
+                        </div>
+                        <div class="col-md-12 mobile-view">
+                            <button class="chat-btn btn-custom btn-sm secondary">
+                                <img src="assets/images/category-icons/chat-icon.svg" style="width: 20px;"></button>
+                        </div>
+
+
+                    </div>
+            <div class="row footer-size">
+                <div class="col-xl-3 col-lg-4 col-md-5 text-lg-left d-lg-block">
+                    <div class="copyright-text">
+                        <p>&copy; Eazy Venue - 2023, Made With Love</p>
+                    </div>
+                </div>
+                <div class="col-auto d-lg-block text-lg-left">
+                    <div class="footer-menu">
+                        <ul class="mb-0">
+                            <li><a routerLink="/">Home</a></li>
+                            <li><a href="#">.</a></li>
+                            <li><a routerLink="/terms">Terms & Condition</a></li>
+                            <li><a href="#">.</a></li>
+                            <li><a routerLink="/privacy-policy">Privacy & Policy</a></li>
+                            <li><a href="#">.</a></li>
+                            <li><a routerLink="/policy">Teams</a></li>
+                            <li><a href="#">.</a></li>
+                            <li><a [routerLink]="'/contact-us'">Contact <span style="color: #ec3539; font-weight: 600;">: +91 93720 91300</span></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- <div class="col-xl-4 col-lg-4 d-lg-block">
+
+                </div> -->
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- <div class="container-fluid p-0">
+        <div class="sigma_footer-bottom mt-0">
+            <div class="sigma_footer-copyright">
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 text-center text-lg-left">
+                        <div class="copyright-text">
+                            <p>Copyright &copy; Eazy Venue - 2023, Made With Love</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 d-none d-lg-block text-right">
+                        <div class="footer-menu">
+                            <ul>
+                                <li><a href="#">Home</a></li>
+                                <li><a href="#">Terms</a></li>
+                                <li><a href="#">Privacy</a></li>
+                                <li><a href="#">Policy</a></li>
+                                <li><a href="#">Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+</footer>
+
+
+<!-- Footer End -->

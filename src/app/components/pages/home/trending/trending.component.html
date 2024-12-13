@@ -1,0 +1,75 @@
+<!-- Top Weddings Start -->
+<div class="section light-bg">
+    <div class="container top-listings">
+        <div class="acr-arrows">
+            <i class="slider-prev fas fa-arrow-left slick-arrow"></i>
+            <i class="slider-next fas fa-arrow-right slick-arrow"></i>
+        </div>
+        <div class="section-title-wrap section-header">
+            <h5 class="custom-primary">Trending</h5>
+            <h2 class="title">Our Top Weddings</h2>
+        </div>
+        <ngx-slick-carousel #slickModal="slick-carousel" [config]="settings" class="top-listings-slider">
+            <!-- Top Item Start -->
+            <div ngxSlickItem class="acr-top-listing-item bg-cover dark-overlay bg-center"
+                [style.background-image]="'url('+item.gridimg+')'" *ngFor="let item of getTrending()">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="acr-top-listing-body listing">
+                            <div class="listing-body">
+                                <h5 class="listing-title"> <a routerLink="/listing-details-v1/{{item.id}}"
+                                        [title]="item.title" tabindex="0">{{item.title}}</a> </h5>
+                                <div class="listing-author" *ngFor="let agent of getAgent(item.agent)">
+                                    <img [src]="agent.image" [alt]="agent.name">
+                                    <div class="listing-author-body">
+                                        <p> <a routerLink="/listing/agent/{{agent.id}}">{{agent.name}}</a> </p>
+                                        <span class="listing-date">{{item.postdate}}</span>
+                                    </div>
+                                    <div class="dropdown options-dropdown" ngbDropdown>
+                                        <a href="javascript:void(0)" ngbDropdownToggle><i
+                                                class="fas fa-ellipsis-v"></i></a>
+                                        <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right">
+                                            <ul>
+                                                <li> <a href="tel:{{agent.phoneno}}"> <i class="fas fa-phone"></i> Call
+                                                        Vendor</a> </li>
+                                                <li> <a href="mailto:{{agent.emailid}}"> <i class="fas fa-envelope"></i>
+                                                        Send
+                                                        Message</a> </li>
+                                                <li> <a routerLink="/listing-details-v1/{{item.id}}"> <i
+                                                            class="fas fa-bookmark"></i> Book Tour</a> </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="listing-price">{{item.price / item.emitime | number:'1.2-2'}}$ <span>/person</span>
+                                </span>
+                                <p class="listing-text">{{item.text | slice:0:75}}</p>
+                                <div class="acr-listing-icons">
+                                    <div class="acr-listing-icon" placement="top" ngbTooltip="Price">
+                                        <i class="flaticon-price-tags"></i>
+                                        <span class="acr-listing-icon-value">{{item.price / item.emitime | number:'1.2-2'}}</span>
+                                    </div>
+                                    <div class="acr-listing-icon" placement="top" ngbTooltip="Guests">
+                                        <i class="flaticon-guest"></i>
+                                        <span class="acr-listing-icon-value">{{item.guest}}</span>
+                                    </div>
+                                    <div class="acr-listing-icon" placement="top" ngbTooltip="Vendor">
+                                        <i class="flaticon-seller"></i>
+                                        <span class="acr-listing-icon-value">{{item.vendor}}</span>
+                                    </div>
+                                </div>
+                                <div class="listing-gallery-wrapper">
+                                    <a routerLink="/listing-details-v1/{{item.id}}" class="btn-custom btn-sm secondary"
+                                        tabindex="0">View Details</a>
+                                    <a href="#" placement="top" ngbTooltip="Gallery" class="listing-gallery"> <i class="fas fa-camera"></i> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Top Item End -->
+        </ngx-slick-carousel>
+    </div>
+</div>
+<!-- Top Weddings End -->

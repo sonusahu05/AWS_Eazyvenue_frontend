@@ -1,0 +1,80 @@
+.hide-columns {
+    display: none;
+}
+
+.show-columns {
+    display: block;
+}
+
+.col-width {
+    width: 200px;
+}
+
+.add-slot-button-div {
+    align-items: left;
+}
+
+.mandatory-fields {
+    color: #FF0000;
+}
+
+.close-btn {
+    text-align: right;
+    position: absolute;
+    margin-top: -50px;
+    font-size: 5px !important;
+    margin-left: 90%;
+    border-radius: 180px;
+    color: gray;
+    background: transparent;
+    border: none;
+}
+
+.close-btn:hover {
+    color: #83888F;
+    border: 0 none;
+    background: transparent;
+    border-radius: 50%;
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.fc-h-event {
+    /* allowed to be top-level */
+    display: block;
+    height: 70px !important;
+    border: 2px solid #3788d8;
+    border: 2px solid var(--fc-event-border-color, #3788d8);
+    background-color: #3788d8;
+    background-color: var(--fc-event-bg-color, #3788d8)
+}
+
+h1.slot-heading {
+    font-size: 16px;
+    text-align: center;
+    color: #515156;
+}
+
+.p-field-checkbox > label, .p-field-radiobutton > label {
+    margin-left: 0.5rem;
+    line-height: 1;
+    width: 115px;
+    text-align: left;
+}
+h5.admin-heading {
+    color: #eb3438;
+    font-size: 16px;
+}
+.fc .fc-toolbar-title {
+    font-size: 20px;
+    margin: 0;
+}
+
+.table.table-bordered th {
+    background-color: #ffffff!important;
+    color: #565161;
+    text-align: center;
+}
+form.slot-details-save-btn.ng-untouched.ng-pristine.ng-valid {
+    text-align: end;
+    margin-top: 10px;
+}

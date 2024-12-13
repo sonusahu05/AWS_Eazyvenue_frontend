@@ -1,0 +1,21 @@
+<!-- Categories Start -->
+<div class="section pt-0">
+    <div class="container">
+        <div class="section-title-wrap section-header">
+            <h5 class="custom-primary">Categories</h5>
+            <h2 class="title">Browse By Category</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-6" *ngFor="let item of category">
+                <a routerLink="/listing/cat/{{item.id}}" class="acr-category category-2">
+                    <i [class]="item.icon"></i>
+                    <div class="acr-category-body">
+                        <h5> {{item.title}} </h5>
+                        <span>{{item.count}} Weddings</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Categories End -->

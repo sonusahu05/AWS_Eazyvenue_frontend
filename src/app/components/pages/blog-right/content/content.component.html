@@ -1,0 +1,66 @@
+<!-- Blog Posts Start -->
+<div class="section posts">
+    <div class="container">
+        <div class="row">
+            <!-- Posts Start -->
+            <div class="col-lg-8">
+                <ng-masonry-grid [masonryOptions]="{ transitionDuration: '0.8s', percentPosition: true }"
+                    [useAnimation]="true" [useImagesLoaded]="true" class="row masonry">
+                    <!-- Post Start -->
+                    <ng-masonry-grid-item class="col-md-6 masonry-item"
+                        *ngFor="let item of blogpost | paginate: { itemsPerPage: 4, currentPage: page }">
+                        <article class="post">
+                            <div class="post-thumbnail">
+                                <a routerLink="/blog-details/{{item.id}}"><img [src]="item.gridimg"
+                                        [alt]="item.title"></a>
+                            </div>
+                            <div class="post-body">
+                                <div class="post-author" *ngFor="let author of getAuthor(item.author)">
+                                    <img [src]="author.image" [alt]="author.name">
+                                    <div class="post-author-body">
+                                        <p> <a routerLink="/blog/author/{{author.id}}">{{author.name}}</a> </p>
+                                        <span class="post-date">{{item.postdate}}</span>
+                                    </div>
+                                </div>
+                                <h5 class="post-title"> <a routerLink="/blog-details/{{item.id}}">{{item.title}}</a>
+                                </h5>
+                                <p class="post-text">{{item.text | slice:0:75}}</p>
+                                <div class="post-controls">
+                                    <a routerLink="/blog-details/{{item.id}}" class="btn-custom secondary btn-sm">Read
+                                        More</a>
+                                    <div class="post-comment-authors" *ngIf="item.reviews > '0'">
+                                        <span>Comments by: </span>
+                                        <div class="post-comment-authors-img">
+                                            <a routerLink="/blog-details/{{item.id}}"
+                                                *ngFor="let reviews of item.reviews">
+                                                <img [src]="user.image" [alt]="user.name"
+                                                    *ngFor="let user of getAuthor(reviews.user) | slice:0:2">
+                                            </a>
+                                            <a routerLink="/blog-details/{{item.id}}"> +{{item.reviews.length - 2}} </a>
+                                        </div>
+                                    </div>
+                                    <div class="post-comment-authors" *ngIf="item.reviews < '0'">
+                                        <span>0 Comments</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </ng-masonry-grid-item>
+                    <!-- Post End -->
+                </ng-masonry-grid>
+                <!-- Pagination Start -->
+                <div class="pagination">
+                    <pagination-controls (pageChange)="page = $event"></pagination-controls>
+                </div>
+                <!-- Pagination End -->
+            </div>
+            <!-- Posts End -->
+            <!-- Sidebar Start -->
+            <div class="col-lg-4">
+                <app-blog-sidebar></app-blog-sidebar>
+            </div>
+            <!-- Sidebar End -->
+        </div>
+    </div>
+</div>
+<!-- Blog Posts End -->

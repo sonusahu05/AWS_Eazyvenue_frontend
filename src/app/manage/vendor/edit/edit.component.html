@@ -1,0 +1,245 @@
+<div class="p-grid">
+    <div class="p-col-12">
+
+        <div class="card p-pt-3">
+            <p-toast key="toastmsg" position="top-right"></p-toast>
+            <form [formGroup]="userForm" *ngIf="this.userForm">
+                <div class="p-fluid p-formgrid p-grid pare_margin">
+                    <div class="p-field p-col-10 div-border">
+                        <h5 class="head-page-title">
+                            {{pagetitle}}
+                        </h5>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="firstName">First Name <span class="mandatory-fields">*</span></label>
+                        <input formControlName="firstName" type="text" pInputText class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }">
+                        <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
+                            <div *ngIf="f.firstName.errors.required">First Name is required</div>
+                            <div *ngIf="f.firstName.errors">Only Alphabets Allowed</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="lastName">Last Name <span class="mandatory-fields">*</span></label>
+                        <input formControlName="lastName" type="text" pInputText class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }">
+                        <div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">
+                            <div *ngIf="f.lastName.errors.required">Last Name is required</div>
+                            <div *ngIf="f.lastName.errors">Only Alphabets Allowed</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="email">Email Id <span class="mandatory-fields">*</span></label>
+                        <input formControlName="email" type="email" pInputText
+                            [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+                        <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                            <div *ngIf="f.email.errors.required">Email is required</div>
+                            <div *ngIf="f.email.errors.email">Enter Valid Email Address</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4">
+                        <label for="textarea">Current Password</label>
+                        <input formControlName="currentPassword" (keypress)="newPasswordValidation($event)"
+                            placeholder="Enter Current Password" minlength="5" maxlength="12" type="password" pInputText
+                            class="form-control">
+                        <div class="form-group col-md-12">
+                            <div *ngIf="cpassword" class="invalid-feedback">
+                                <div *ngIf="cpassword">Current Password required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label>Password <span class="mandatory-fields">*</span></label>
+                        <input type="password" formControlName="password" pInputText
+                            [ngClass]="{ 'is-invalid': submitted && f.password.errors }" (keypress)="newPassword($event)"  />
+                        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                            <div *ngIf="f.password.errors">Password should contains at least 1 digit, 1
+                                lowercase, 1 uppercase, 1 symbol.
+                                Length between 6 to 20.</div>
+                        </div>
+                        <div *ngIf="newPasswordCheck" class="invalid-feedback">
+                            <div *ngIf="newPasswordCheck"> Password is required</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="confirmPassword">Re-enter new password </label>
+                            <div class="form-inline">
+                                <input type="password" class="form-control" [style]="{'width':'100%'}"
+                                    formControlName="confirmPassword" pInputText placeholder="Re-Enter New Password"
+                                    [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }" (keypress)="newRePassword($event)" />
+                                <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                                    <div *ngIf="f.confirmPassword.errors.mustMatch">Passwords must match</div>
+                                </div>
+                            </div>
+                            <div *ngIf="renewPasswordCheck" class="invalid-feedback">
+                                <div *ngIf="renewPasswordCheck"> Re-enter Password is required</div>
+                            </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="mobileNumber">Mobile Number <span class="mandatory-fields">*</span></label>
+                        <input formControlName="mobileNumber" minlength="10" maxlength="12" type="text" pInputText
+                            class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mobileNumber.errors }">
+                        <div *ngIf="submitted && f.mobileNumber.errors" class="invalid-feedback">
+                            <div *ngIf="f.mobileNumber.errors.required">Mobile Number is required</div>
+                            <div *ngIf="f.mobileNumber.errors">Please Check Mobile Number</div>
+                        </div>
+                    </div>
+                    <input formControlName="disable" type="hidden" value="No">
+                </div>
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4">
+                        <label for="country">Country <span class="mandatory-fields">*</span></label>
+                        <input id="country" name="country" value="India" disabled pInputText />
+                        <!-- <p-dropdown inputId="country" [options]="countrylist" formControlName="country" [filter]="true"
+                            (onChange)="getStates($event)" placeholder="Select Country" optionLabel="name"
+                            [ngClass]="{ 'is-invalid': submitted && f.country.errors }"></p-dropdown>
+                        <div *ngIf="submitted && f.country.errors" class="invalid-feedback">
+                            <div *ngIf="f.country.errors.required">Please Select Country</div>
+                        </div> -->
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="state">State <span class="mandatory-fields">*</span></label>
+                        <p-dropdown inputId="state" [options]="statelist" formControlName="state" [filter]="true"
+                            (onChange)="getCities(true, $event)" placeholder="Select State" optionLabel="name"
+                            [ngClass]="{ 'is-invalid': submitted && f.state.errors }"></p-dropdown>
+                        <div *ngIf="submitted && f.state.errors" class="invalid-feedback">
+                            <div *ngIf="f.state.errors.required">Please Select State</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="city">City <span class="mandatory-fields">*</span></label>
+                        <p-dropdown inputId="city" [options]="citylist" formControlName="city" [filter]="true"
+                            placeholder="Select City" optionLabel="name" (onChange)="onCitySelect($event)"
+                            [ngClass]="{ 'is-invalid': submitted && f.city.errors }"></p-dropdown>
+                        <div *ngIf="submitted && f.city.errors" class="invalid-feedback">
+                            <div *ngIf="f.city.errors.required">Please Select City</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4">
+                        <label for="textarea">Address <span class="mandatory-fields">*</span></label>
+                        <textarea inputId="textarea" rows="3" cols="30" class="form-control" formControlName="address"
+                            pInputTextarea [ngClass]="{ 'is-invalid': submitted && f.address.errors }"></textarea>
+                        <div *ngIf="submitted && f.address.errors" class="invalid-feedback">
+                            <div *ngIf="f.address.errors.required">Please Enter Address</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="zipcode">Zipcode <span class="mandatory-fields">*</span></label>
+                        <input formControlName="zipcode" type="text" maxlength="10" pInputText class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f.zipcode.errors }">
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="status">Status</label>
+                        <p-dropdown inputId="status" [options]="statuses" formControlName="status" placeholder="Select"
+                            optionLabel="label" (ngModelChange)="onStatusSelect($event)"
+                            ></p-dropdown>
+                        <div *ngIf="submitted && f.status.errors" class="invalid-feedback">
+                            <div *ngIf="f.status.errors.required">Please Select Status</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4">
+                        <label for="category">Category <span class="mandatory-fields">*</span></label>
+                        <p-dropdown inputId="category" [options]="catList" formControlName="category"
+                            placeholder="Select Category" optionLabel="name" [filter]="true"
+                            [ngClass]="{ 'is-invalid': submitted && f.category.errors }"
+                            (onChange)="onCategorySelect($event)"></p-dropdown>
+                        <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
+                            <div *ngIf="f.category.errors.required">Please, Select Category</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="textarea">Gender <span class="mandatory-fields">*</span></label>
+                        <p-dropdown inputId="gender" [options]="genders" formControlName="gender"
+                            placeholder="Select Gender" optionLabel="name" (ngModelChange)="onGenderSelect($event)"
+                            [ngClass]="{ 'is-invalid': submitted && f.gender.errors }"></p-dropdown>
+                        <div *ngIf="submitted && f.gender.errors" class="invalid-feedback">
+                            <div *ngIf="f.gender.errors.required">Please Select Gender</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="dob">DOB <span class="mandatory-fields">*</span></label>
+                        <p-calendar monthNavigator="true" yearNavigator="true" yearRange="{{yearRange}}"
+                            formControlName="dob" class="p-calendar" inputId="calendar" [defaultDate]="defaultDate"
+                            dateFormat="dd/mm/yy" [showIcon]="true"
+                            [ngClass]="{ 'is-invalid': submitted && f.dob.errors }"></p-calendar>
+                        <div *ngIf="submitted && f.dob.errors" class="invalid-feedback">
+                            <div *ngIf="f.dob.errors.required">Please Enter DOB</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-4">
+                        <label for="portfolioimg">Vendor Profile</label>
+                        <p-fileUpload chooseLabel="Upload Vendor Profile Photo" uploadLabel="Show data"
+                            cancelLabel="Cancel" accept="image/*" maxFileSize="{{imageSize}}" auto="auto"
+                            customUpload="true" (uploadHandler)="picUploader($event)">
+                            <ng-template pTemplate="content">
+
+                            </ng-template>
+                        </p-fileUpload>
+                    </div>
+                    <div class="p-field p-col-4" *ngIf="showUploadedpic">
+                        <img src="{{ imageProfile }}" alt="freya-layout" height="100px" />
+                    </div>
+                </div>
+
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col-6">
+                        <label for="portfolioimg">Portfolio</label>
+                        <p-galleria [(value)]="portfolioImages" [responsiveOptions]="responsiveOptions"
+                            [containerStyle]="{'max-width': '50%;'}" [numVisible]="5" [circular]="true"
+                            [showItemNavigators]="true" [showThumbnails]="false">
+                            <ng-template pTemplate="item" let-item>
+                                <img [src]="item.venue_image_src" style="width:100%; display: block;" />
+                            </ng-template>
+                        </p-galleria>
+                        <p-fileUpload name="myfiles[]" multiple="multiple" chooseLabel="Upload Vendor Portfolio Images"
+                            uploadLabel="Show data" cancelLabel="Cancel" accept="image/*" maxFileSize="{{imageSize}}"
+                            auto="auto" customUpload="true" (uploadHandler)="portfolioPicUploader($event)"
+                            style="padding-top:20px;display: block;">
+                            <ng-template pTemplate="content">
+                                <div class="portfolio-images">
+
+                                </div>
+                            </ng-template>
+                        </p-fileUpload>
+                    </div>
+                    <div class="p-field p-col-6">
+                        <div class="row">
+                            <div *ngFor="let item of portfolioImages; let indexOfElement=index;"
+                                class="column banner-images">
+                                <div class="p-field p-col-6">
+                                    <button type="button" class="banner_trash-btn" pButton pRipple icon="pi pi-trash"
+                                        (click)="removeportfolioPicImages(item.venue_image_src)"
+                                        title="Delete"></button>
+                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-set p-col-12 d-flex p-fluid p-jc-md-end">
+                    <div class="p-formgrid p-grid">
+                        <p-toast></p-toast>
+                        <button type="text" (click)="onSubmit()" pButton icon="pi pi-check" label="Save"
+                            class="p-button-success save-btn p-mr-3" style="width: auto"></button>
+                        <button type="text" (click)="backLink()" pButton icon="pi pi-times" label="Cancel"
+                            class="p-button-danger cancel-btn" style="width: auto"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="button-set back">
+            <div class="p-fluid p-formgrid">
+                <p-toast></p-toast>
+            </div>
+        </div>
+        <p-confirmDialog [style]="{width:'450px'}"></p-confirmDialog>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+<!-- Pricing Start -->
+<div class="section section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4" *ngFor="let item of pricing">
+                <div class="acr-pricing" [ngClass]="item.id === 2 ? 'hot-plan' : ''">
+                    <div class="acr-pricing-header">
+                        <h4>{{item.title}}</h4>
+                        <p>{{item.subtext}}</p>
+                    </div>
+                    <div class="acr-pricing-body">
+                        <div class="acr-pricing-feature" *ngFor="let data of item.includes">
+                            <h6>{{data.lable}}: <i placement="top" ngbTooltip="{{data.tipdata}}" class="fas fa-question-circle"></i></h6>
+                            <span>{{data.text}}</span>
+                        </div>
+                    </div>
+                    <div class="acr-pricing-footer">
+                        <a routerLink="/contact" class="btn-custom-2" [ngClass]="item.id === 2 ? 'light' : 'grey'">Get Package</a>
+                        <h4 class="custom-primary">{{item.price | number:'1.2-2'}}$ <span>/{{item.period}}</span> </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Pricing End -->

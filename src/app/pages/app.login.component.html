@@ -1,0 +1,28 @@
+<app-loader></app-loader>
+<form [formGroup]="loginform" (ngSubmit)="onSubmit()">
+    <div class="login-body">
+        <div class="login-wrapper">
+            <div class="login-panel">
+                <a [routerLink]="['/']" class="p-3">
+                    <img src="assets/images/logo.png" alt="Eazy Venue" height="100px" width="100px" />
+                </a>
+                <div class="form-group">
+                    <div class="alert alert-danger" role="alert" *ngIf="isLoginFailed">
+                        Login failed: {{ errorMessage }}
+                    </div>
+                </div>
+
+                <input pInputText id="email" formControlName="email" placeholder="Email" />
+                <input pPassword id="password" type="password" formControlName="password" placeholder="Password" />
+
+                <button pButton type="submit" label="LOGIN" [disabled]="!loginform.valid"></button>
+                <!-- <a href="#">forgot password?</a>
+                <p>Don’t you have an account, <a href="#">sign up</a></p> -->
+            </div>
+            <!-- <div class="login-footer">
+                <h4>freya</h4>
+                <h6>Copyright Ⓒ PrimeTek Informatics</h6>
+            </div> -->
+        </div>
+    </div>
+</form>

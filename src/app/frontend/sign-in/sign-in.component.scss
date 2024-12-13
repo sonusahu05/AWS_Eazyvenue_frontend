@@ -1,0 +1,780 @@
+// .container {
+//     max-width: 90%;
+//     margin: auto;
+// }
+
+.border_common {
+    margin: 30px 0px;
+}
+
+.border_common img {
+    width: 100%;
+}
+
+/*heading*/
+.accounts-headings {
+    font-size: 20px;
+    margin-bottom: 0px;
+    font-family:'Quattrocento Sans', sans-serif;
+
+    color: #7f7f7f;
+    text-transform: uppercase;
+}
+
+.top-header-heading::after {
+    content: '';
+    display: block;
+    position: relative;
+    height: 2px;
+    width: 10%;
+    background: #bf343e;
+    margin: 15px 0px;
+}
+
+.accounts-headings span {
+    margin-right: 10px;
+    font-family:'Quattrocento Sans', sans-serif;
+
+}
+
+.col-md-12.input-form,
+.col-md-6.input-form {
+    margin: 10px 0px;
+}
+
+.col-md-12.input-form input,
+.col-md-6.input-form input {
+    height: 45px;
+    border-radius: 0px;
+    border: 1px solid #7f7f7f;
+    font-size: 14px;
+    color: #7f7f7f;
+}
+
+.col-12.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    align-items: center;
+}
+
+.col-12.form-buttons .FS_button {
+    height: 45px;
+    width: 220px;
+}
+
+.col-12.form-buttons .FS_button .buttons_border span {
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.forgot-btn {
+    color: #be343e !important;
+    font-size: 14px;
+    font-family:'Quattrocento Sans', sans-serif;
+;
+    background: transparent;
+    border: none;
+}
+
+.Benefits-body .subheadings h4 {
+    font-size: 15px;
+    color: #be343e;
+    font-family:'Quattrocento Sans', sans-serif;
+
+    margin-bottom: 0px;
+}
+
+.Benefits-body .subheadings {
+    margin: 30px 0px;
+}
+
+.Benefits-list ul li {
+    margin-bottom: 20px;
+}
+
+.Benefits-list ul li .media {
+    display: flex;
+    align-items: center;
+}
+
+.Benefits-list ul li .media .icon {
+    margin-right: 20px;
+}
+
+.Benefits-list ul li .media .note p {
+    margin-bottom: 0px;
+    font-size: 15px;
+    font-family:'Quattrocento Sans', sans-serif;
+;
+    color: #7f7f7f;
+}
+
+.col-md-12.Sign-in-form .row .col-6 {
+    width: calc(50% - 15px);
+}
+
+.row.main-row {
+    justify-content: space-between;
+}
+
+.accounts-headings {
+    display: flex;
+    align-items: center;
+}
+
+.accounts-headings.Create {
+    color: #be343e;
+}
+
+.col-md-12.Sign-in-form .row .col-6 {
+    padding: 25px;
+    border-radius: 6px;
+}
+
+.col-6.Create-account-div {
+    background: #f7f7f7;
+}
+
+.outline-element-container img {
+    cursor: pointer;
+}
+
+/*calendar Start* /
+
+    /* datepicker css */
+.ui-datepicker {
+    text-align: center;
+}
+
+.ui-datepicker-trigger {
+    margin: 0 0 0 0px;
+    vertical-align: text-top;
+}
+
+.ui-datepicker {
+    font-family:'Quattrocento Sans', sans-serif;
+;
+    margin-top: 2px;
+    padding: 0 !important;
+    border-color: #c9f0f5 !important;
+}
+
+.ui-datepicker {
+    width: 256px;
+}
+
+.openemr-calendar .ui-datepicker {
+    width: 191px;
+}
+
+.ui-datepicker table {
+    width: 256px;
+    table-layout: fixed;
+    background: #fff;
+}
+
+.openemr-calendar .ui-datepicker table {
+    width: 191px;
+    table-layout: fixed;
+}
+
+.ui-datepicker-header {
+    background-color: #bf343e !important;
+    background-image: none !important;
+    border-radius: 0;
+}
+
+.openemr-calendar .ui-datepicker-header {
+    background-color: #e6f7f9 !important;
+    border-width: 1px;
+    border-color: #c9f0f5;
+    border-style: solid;
+}
+
+.ui-datepicker-title {
+    line-height: 35px !important;
+    margin: 0 10px !important;
+}
+
+.openemr-calendar .ui-datepicker-title {
+    line-height: 20px !important;
+}
+
+.ui-datepicker-prev span {
+    display: none !important;
+}
+
+.ui-datepicker-next {
+    text-align: center;
+}
+
+.ui-datepicker-next span {
+    display: none !important;
+}
+
+.ui-datepicker-prev {
+    background-color: transparent !important;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAMCAYAAACulacQAAAAUklEQVQYlXWPwQnAMAwDj9IBOlpH8CjdJLNksuujFIJjC/w6WUioFBcqJ7sGEAD5Y/hpqLRghRv4YQlUjqXI3Kql2MixraGbEhVcDXcFUR/1egEHNuTBpFW0NgAAAABJRU5ErkJggg==') !important;
+    height: 12px !important;
+    width: 7px !important;
+    margin: 14px 12px;
+    display: inline-block;
+    left: 0 !important;
+    top: 0 !important;
+}
+
+.openemr-calendar .ui-datepicker-prev {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAOCAYAAAD9lDaoAAAAuUlEQVQokXXRsUtCYRAA8J8pDQ1CVIgIgtBU2NDiZIuDS4uLf6WDS1O0tLREEE8icBNKS3lTs8/B78XHw3dwcHA/juOuqjzucYJVrQQMcYctvo4OgEFIeMK6iPphCjzjEWLUC3vACx7yRo5uMUIFr5gii1EL41AvMIkBVPGH04DrSLEsIvjEOZq4wi9+iijDR0ANXOMbmxjlcIY2LtANO6YxymGCDs5wg/ciYv+KBJeY4+2A+Y9j4Y47RtUkrNXeDxUAAAAASUVORK5CYII=') !important;
+    height: 14px !important;
+    width: 9px !important;
+    margin: 5px !important;
+}
+
+.ui-datepicker-next {
+    cursor: pointer;
+}
+
+.ui-datepicker-prev {
+    cursor: pointer;
+    position: absolute;
+}
+
+.ui-datepicker-next {
+    background-color: transparent !important;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAMCAYAAABfnvydAAAAVUlEQVQYlXWQ0Q3AIAhEL07gKI7kKN2kI3Wk1w9to3KQEELucQEECOizhhTQGHFnwOdgobWx0GkZILfYBhXl0STVbPoBarbkL7ozN/F8VBBXh8uJgF5r2hrI4GHUkAAAAABJRU5ErkJggg==') !important;
+    height: 12px !important;
+    width: 8px !important;
+    margin: 14px 12px;
+    display: inline-block;
+    right: 0 !important;
+    top: 0 !important;
+    position: absolute;
+}
+
+.openemr-calendar .ui-datepicker-next {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAOCAYAAAASVl2WAAAAtElEQVQYlXXQsUpCcRQH4I97EQyHa1pgIEE0hBGYL+BjNLRFjxXh4rM4F21BS4S4FAgqQioOngt/RM/6+zi/w4EanlA4MDkecYsO3vG/D8a4Rx03eMMqBQt8oodTXAdalwBm+IpNDVxG3aYEMMU3ujjDBT5SAH9R2cE58mwPFOgneJSCGp7RjLoXTEtQjbCFOV7xCxkqdp9sYxnhpFyb4QFXdh8c4Cc9Ko++OwzjFwfn5FiwBVeuI/K2UCkSAAAAAElFTkSuQmCC') !important;
+    height: 14px !important;
+    width: 8px !important;
+    margin: 5px;
+}
+
+.ui-datepicker-month {
+    border-radius: 2px;
+    background-color: #bf343e;
+    width: 110px !important;
+    height: 22px;
+    font-family:'Quattrocento Sans', sans-serif;
+
+    color: #fff;
+    font-size: 14px !important;
+    font-weight: 600;
+    text-align: left;
+    border: none !important;
+    margin-right: 17px !important;
+    vertical-align: text-top;
+}
+
+.openemr-calendar .ui-datepicker-month {
+    font-family:'Quattrocento Sans', sans-serif;
+    color: rgba(34, 34, 34, 0.87);
+    font-size: 12px !important;
+    font-weight: 700;
+    text-align: center;
+    transform: scaleX(1.0029)
+}
+
+.ui-datepicker-year {
+    border-radius: 2px;
+    background-color: #bf343e;
+    width: 61px !important;
+    height: 22px;
+    border: none !important;
+    font-family:'Quattrocento Sans', sans-serif;
+    color: #fff;
+    font-size: 14px !important;
+    font-weight: 600;
+    text-align: left;
+    vertical-align: text-top;
+}
+
+.openemr-calendar .ui-datepicker-year {
+    font-family:'Quattrocento Sans', sans-serif;
+    color: rgba(34, 34, 34, 0.87);
+    font-size: 12px !important;
+    font-weight: 700;
+    text-align: center;
+    transform: scaleX(1.0029)
+}
+
+.ui-datepicker-month option,
+.ui-datepicker-year option {
+    color: #bf343e !important;
+    background-color: #fff !important;
+    font-family:'Quattrocento Sans', sans-serif;
+    font-size: 14px !important;
+    font-weight: 600;
+}
+
+.ui-datepicker-month option[selected],
+.ui-datepicker-year option[selected] {
+    background-color: #e5edf0 !important;
+}
+
+.ui-datepicker .ui-state-hover {
+    /*background: none !important;*/
+    border: 0 !important;
+}
+
+.ui-datepicker td {
+    vertical-align: top;
+}
+
+.ui-datepicker .ui-state-default {
+    border-radius: 2px;
+    border-color: #edebeb !important;
+    background: white !important;
+    width: 24px;
+    height: 24px;
+    padding: 0px !important;
+    line-height: 24px;
+    text-align: center !important;
+    font-family:'Quattrocento Sans', sans-serif;
+    color: #707070;
+    font-size: 13px;
+    font-weight: 400 !important;
+    margin: 0px;
+    display: inline-block;
+}
+
+.ui-datepicker .ui-state-default.ui-state-highlight {
+    border-color: #dcdcdc;
+    background-color: #bf343e !important;
+    color: #fff !important;
+}
+
+.openemr-calendar .ui-state-default {
+    font-size: 10px;
+    margin: 0;
+}
+
+.ui-datepicker td {
+    width: 33px;
+}
+
+.openemr-calendar .ui-datepicker td {
+    width: 26px;
+}
+
+.openemr-calendar .ui-state-default {
+    width: 26px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.ui-state-default.ui-state-hover {
+    border-color: #dcdcdc;
+    background-color: #bf343e !important;
+    color: #fff;
+}
+
+.ui-datepicker .ui-state-active {
+    border-color: #dcdcdc;
+    background-color: #bf343e !important;
+    color: #ffffff !important;
+}
+
+.ui-datepicker-calendar thead tr th {
+    font-family:'Quattrocento Sans', sans-serif;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 400;
+    padding: 0.45em 0.3em !important;
+    /*   width: 15px !important; */
+}
+
+.openemr-calendar .ui-datepicker-calendar thead tr th {
+    font-size: 10px;
+}
+
+.ui-datepicker-close {
+    display: none !important;
+}
+
+.ui-datepicker thead {
+    background-color: #7f7f7f;
+}
+
+.openemr-calendar .ui-datepicker thead {
+    background: none;
+}
+
+.ui-state-default.ui-datepicker-current {
+    float: none !important;
+    font-family:'Quattrocento Sans', sans-serif;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: left;
+    border-width: 0 !important;
+    border: none;
+    vertical-align: top;
+    margin: 0 !important;
+    background-color: transparent !important;
+}
+
+.ui-datepicker-buttonpane.ui-widget-content {
+    text-align: center;
+    background-color: #bf343e;
+    margin: 0 !important;
+    height: 28px;
+    padding: 0 !important;
+}
+
+.outline-element-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    // height: 100%;
+    // background: red;
+}
+
+
+.outline-element-container input,
+.outline-element-container .p-calendar {
+    width: 100%;
+    padding: .375rem .75rem !important;
+}
+
+.outline-element-container img {
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.col-6.Create-account-div form .col-md-6 {
+    width: calc(50% - 15px);
+}
+
+.col-6.Create-account-div form {
+    justify-content: space-between;
+}
+
+.Create-account-div .col-12.form-buttons .FS_button {
+    width: 250px;
+}
+
+.user-note h4 {
+    font-family:'Quattrocento Sans', sans-serif;
+
+    font-size: 15px;
+    color: #7f7f7f;
+}
+
+.gender-form {
+    display: flex;
+    margin: 20px 0px;
+}
+
+
+.gender-form .form-title {
+    font-weight: bold;
+    margin-right: 15px;
+    font-size: 14px;
+    color: #7f7f7f;
+    font-family:'Quattrocento Sans', sans-serif;
+}
+
+.gender-form .form-check {
+    display: inline-block;
+}
+
+.gender-form .form-div ul {
+    display: flex;
+    align-content: center;
+    align-items: center;
+}
+
+.gender-form .form-div ul li {
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.gender-form .form-div ul li input {
+    width: 20px;
+    height: 20px;
+}
+
+.gender-form .form-div ul li label {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #7f7f7f;
+    cursor: pointer;
+}
+
+.gender-form .form-div ul li input:checked {
+    background-color: #bf343e;
+    border-color: #bf343e;
+}
+
+.col-6.Create-account-div .border_common {
+    margin: 5px 0px !important;
+}
+
+.user-note-bottom p {
+    color: #8a8a8a;
+    margin-bottom: 0px;
+    font-size: 12px;
+}
+
+/*calendar close */
+.col-md-12.Sign-in-form {
+    margin: 30px 0px 50px 0px;
+}
+
+.sign-in-sign-up-page #pills-sign-up .alert-success {
+    font-weight: 800;
+    color: #0f5132;
+    // background-color: #ffffff;
+    border-color: #0f5132;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 550px;
+    text-align: center;
+    align-items: center;
+    vertical-align: middle;
+    height: 59px;
+    line-height: 30px;
+    right: auto;
+    transform: translate(-58%, -512%);
+    transition: 0.5s ease-in;
+}
+
+@media (max-width:767px) {
+  
+    .col-6.Create-account-div {
+        background-color: transparent;
+    }
+    .user-note h4{
+        font-size: 14px;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+    .col-md-12.Sign-in-form .row .col-6 {
+        width: 100%;
+        padding: 15px 5px;
+        margin-top: 25px;
+    }
+
+    .col-6.Create-account-div form .col-md-6 {
+        width: 100%;
+    }
+    
+    .accounts-headings {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .sign-in-sign-up-page .forgot-btn {
+        margin-top: 10px;
+    }
+
+    .Benefits-body .subheadings h4 {
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .Benefits-list ul li{
+        margin-bottom: 15px;
+    }
+
+    .Benefits-body .subheadings {
+        margin: 15px 0px;
+    }
+
+    .Benefits-list ul li .media .note p {
+        font-size: 12px;
+    }
+  
+    .col-md-12.Sign-in-form {
+        margin: 30px 0px 0px 0px;
+    }
+
+    .border_common {
+        margin-bottom: 15px;
+    }
+
+    .col-6.Create-account-div form .col-md-6.dates {
+        // width: calc(50% - 10px) !important;
+        width: 100% !important;
+        // margin-bottom: 42px;
+    }
+
+    .p-calendar .p-datepicker {
+        left: 45px !important;
+    }
+
+    .user-note h4 {
+        font-size: 13px;
+        margin-top: 10px;
+    }
+    
+    .common_container.sign-in-sign-up-page {
+        width: 100%!important;
+    }
+
+    .col-md-12.Sign-in-form {
+        margin-top: 0px;
+    }
+
+    .col-md-12.Sign-in-form .col-md-12.tab-view-on-mobile ul li {
+        width: 50%;
+        border: 1px solid #be343e;
+    }
+
+    .col-md-12.Sign-in-form .col-md-12.tab-view-on-mobile ul li button {
+        width: 100%;
+        border-radius: 0px;
+    }
+
+    .col-md-12.Sign-in-form .col-md-12.tab-view-on-mobile ul li .nav-link.active {
+        background-color: #be343e;
+        color: #fff;
+    }
+
+    .col-md-12.Sign-in-form .col-md-12.tab-view-on-mobile ul li .nav-link {
+        color: #bf343e;
+        text-transform: capitalize;
+        font-family:'Quattrocento Sans', sans-serif;
+    }
+
+
+    .col-md-12.tab-view-on-mobile {
+        padding: 0px 5px;
+    }
+
+    .col-md-12.tab-view-on-mobile ul {
+        margin-bottom: 0px !important;
+    }
+
+    .col-12.form-buttons {
+        flex-flow: column;
+    }
+
+    .col-12.form-buttons .FS_button {
+        width: 80%;
+        margin-bottom: 15px;
+    }
+
+    .col-md-12.input-form,
+    .col-md-6.input-form {
+        margin: 10px 0px;
+    }
+    .col-md-12.Sign-in-form .col-md-12.tab-view-on-mobile ul li .nav-link{
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .col-md-12.Sign-in-form .row .col-6{
+        padding-top: 0px;
+
+    }
+
+    .accounts-headings span{
+        font-weight: bold;
+        font-size: 16px; 
+    }
+    
+    
+}
+
+
+@media (min-width:768px) {
+    .col-md-12.tab-view-on-mobile {
+        display: none;
+    }
+
+    .col-md-12.Sign-in-form .tab-content>.tab-pane {
+        display: block;
+    }
+
+    .col-md-12.Sign-in-form .fade:not(.show) {
+        opacity: 1;
+    }
+}
+
+@media (min-width:320px) and (max-width:757px) {
+    .sign-in-sign-up-page #pills-sign-up .alert-success {
+        width: 400px;
+        transform: translate(-50%, -574%);
+    }
+
+}
+
+@media (min-width:768px) and (max-width:1024px) {
+    .sign-in-sign-up-page .col-md-12.Sign-in-form .row .col-6 {
+        padding: 15px;
+    }
+
+    .sign-in-sign-up-page .col-md-12.Sign-in-form {
+        margin: 0px 0px 30px 0px;
+    }
+
+    .col-12.form-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+        align-content: space-between;
+    }
+
+    .forgot-btn {
+        margin-top: 10px;
+    }
+
+    .border_common {
+        margin: 20px 0;
+    }
+
+    .accounts-headings {
+        font-size: 15px;
+    }
+
+    .Benefits-list ul li .media .note p {
+        font-size: 13px;
+    }
+
+    .col-6.Create-account-div form .col-md-6 {
+        width: calc(100%);
+    }
+
+    .col-12.form-buttons {
+        justify-content: center;
+    }
+
+    #pills-sign-up .col-12.form-buttons {
+        justify-content: center;
+    }
+
+    .col-12.form-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+        align-content: space-between;
+    }
+}
+.mandatory-feilds{
+    color:#FF0000;
+}
+
+

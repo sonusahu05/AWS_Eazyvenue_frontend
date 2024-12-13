@@ -1,0 +1,82 @@
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="">
+            <h5 class="head-page-title">
+                {{pagetitle}}
+            </h5>
+
+            <div class="card p-pt-3">
+                <p-toast key="toastmsg"></p-toast>
+                <form [formGroup]="countryForm">
+                    <div class="p-fluid p-formgrid p-grid pare_margin">                    
+                        <div class="p-field p-col-10 div-border">
+                          <h5 class="p-mb-3">
+                              Country Details 
+                          </h5>
+                        </div>
+                        <div class="p-field p-col-3">
+                            <label for="firstname6">Country<span class="mandatory-feilds">*</span></label>
+                            <input id="name" formControlName="name" type="text" pInputText
+                                placeholder="Enter Country Name*"
+                                [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                            <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                                <div *ngIf="f.name.errors.required">
+                                    <h6>Country Name is required</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-3">
+                            <label for="firstname6">Country Code<span class="mandatory-feilds">*</span></label>
+                            <input id="name" formControlName="iso2" type="text" pInputText
+                                placeholder="Enter Country Code*"
+                                [ngClass]="{ 'is-invalid': submitted && f.iso2.errors }">
+                            <div *ngIf="submitted && f.iso2.errors" class="invalid-feedback">
+                                <div *ngIf="f.iso2.errors.required">
+                                    <h6>Country Code is required</h6>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div class="p-field p-col-3">
+                            <h6>Status</h6>
+                            <p-inputSwitch class="checkbox-mt-10" formControlName="status"></p-inputSwitch>
+                        </div>
+                        <div class="button-set p-col-3 d-flex p-fluid p-jc-md-end p-pt-5">
+                            <div class="">
+                                <p-toast></p-toast>
+                                <button type="text" (click)="onSubmit()" pButton icon="pi pi-check" label="Save"
+                                    class="p-button-success save-btn p-mr-3" style="width: auto"></button>
+                                <p-confirmDialog header="Confirmation" key="confirm1" icon="pi pi-exclamation-triangle"
+                                    message="Are you sure you want to proceed?" [style]="{width: '425px'}"
+                                    acceptButtonStyleClass="p-button-text" rejectButtonStyleClass="p-button-text">
+                                </p-confirmDialog>
+    
+                                <button type="text" (click)="cancelCountry()" pButton icon="pi pi-times" label="Cancel"
+                                    class="p-button-danger cancel-btn" style="width: auto"></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- <div class="button-set p-col-12 d-flex p-fluid p-jc-md-end">
+                        <div class="p-formgrid p-grid">
+                            <p-toast></p-toast>
+                            <button type="text" (click)="onSubmit()" pButton icon="pi pi-check" label="Save"
+                                class="p-button-success save-btn p-mr-3" style="width: auto"></button>
+
+
+                            <p-confirmDialog header="Confirmation" key="confirm1" icon="pi pi-exclamation-triangle"
+                                message="Are you sure you want to proceed?" [style]="{width: '425px'}"
+                                acceptButtonStyleClass="p-button-text" rejectButtonStyleClass="p-button-text">
+                            </p-confirmDialog>
+
+                            <button type="text" (click)="cancelCountry()" pButton icon="pi pi-times" label="Cancel"
+                                class="p-button-danger cancel-btn" style="width: auto"></button>
+                        </div>
+                    </div> -->
+
+                </form>
+
+            </div>
+        </div>
+    </div>

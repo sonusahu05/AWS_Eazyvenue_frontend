@@ -1,0 +1,195 @@
+.tint {
+    background: linear-gradient(rgba(36 36 36 / 60%), rgb(0 0 0 / 33%)), url("../../../assets/img/banner/banner-img1.jpeg") 70% / cover;
+    height: 196px;
+    padding: 1.5em;
+    margin-top: 67px;
+    background-position: left;
+    display: grid;
+    place-items: center;
+}
+
+/*Vertical Flip*/
+.verticalFlip {
+    display: inline;
+    margin-bottom: 30px;
+
+}
+
+.verticalFlip span {
+    animation: vertical 30s linear infinite 0s;
+    /*total animation duration */
+    -ms-animation: vertical 30s linear infinite 0s;
+    -webkit-animation: vertical 30s linear infinite 0s;
+    color: #ffffff;
+    opacity: 0;
+    overflow: visible;
+    position: absolute;
+}
+
+/* Add this with added number of options */
+.verticalFlip span:nth-child(2) {
+    animation-delay: 2.5s;
+    -ms-animation-delay: 2.5s;
+    -webkit-animation-delay: 2.5s;
+}
+
+.verticalFlip span:nth-child(3) {
+    animation-delay: 5s;
+    -ms-animation-delay: 5s;
+    -webkit-animation-delay: 5s;
+}
+
+.verticalFlip span:nth-child(4) {
+    animation-delay: 7.5s;
+    -ms-animation-delay: 7.5s;
+    -webkit-animation-delay: 7.5s;
+}
+
+.verticalFlip span:nth-child(5) {
+    animation-delay: 10s;
+    -ms-animation-delay: 10s;
+    -webkit-animation-delay: 10s;
+}
+
+.verticalFlip span:nth-child(6) {
+    animation-delay: 12.5s;
+    -ms-animation-delay: 12.5s;
+    -webkit-animation-delay: 12.5s;
+}
+
+.verticalFlip span:nth-child(7) {
+    animation-delay: 15s;
+    -ms-animation-delay: 15s;
+    -webkit-animation-delay: 15s;
+}
+
+.verticalFlip span:nth-child(8) {
+    animation-delay: 17.5s;
+    -ms-animation-delay: 17.5s;
+    -webkit-animation-delay: 17.5s;
+}
+
+.verticalFlip span:nth-child(9) {
+    animation-delay: 20s;
+    -ms-animation-delay: 20s;
+    -webkit-animation-delay: 20s;
+}
+
+.verticalFlip span:nth-child(10) {
+    animation-delay: 22.5s;
+    -ms-animation-delay: 22.5s;
+    -webkit-animation-delay: 22.5s;
+}
+
+.verticalFlip span:nth-child(11) {
+    animation-delay: 25s;
+    -ms-animation-delay: 25s;
+    -webkit-animation-delay: 25s;
+}
+
+.verticalFlip span:nth-child(12) {
+    animation-delay: 27.5s;
+    -ms-animation-delay: 27.5s;
+    -webkit-animation-delay: 27.5s;
+}
+
+.listing-page {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border-radius: 15px;
+    padding: 23px 23px 23px 23px;
+}
+
+section {
+    padding-top: 1rem;
+}
+
+.header-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-bottom: 1px solid #d5d5d5
+}
+
+.centered-text {
+    text-align: center;
+}
+
+.back-button {
+    position: absolute;
+    right: 20px;
+    background-color: #ec3539;
+    color: #fff;
+    padding: 0px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.compare-container{
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+.compare-headers{
+    flex: 1;
+    box-shadow: 1px 4px 6px rgb(121 121 121 / 16%), 0 6px 6px rgb(138 138 138 / 23%);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    max-width: 300px;
+}
+.compare-data{
+    flex: 1;
+    box-shadow: 1px 4px 6px rgb(121 121 121 / 16%), 0 6px 6px rgb(138 138 138 / 23%);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    max-width: 300px;
+}
+.compare-box{
+    max-height: 58px;
+    min-height: 58px;
+    display: grid;
+    place-items: center;
+    border-bottom: 1px solid #e6e7f1;
+    overflow-y: scroll;
+    p{
+        font-size: 1rem;
+        font-family: sans-serif;
+        color: #787a8d;
+        margin: 0; 
+    }
+    .image{
+        width: 100%;
+    }
+}
+.compare-headers{
+    .compare-box{
+        p{
+            font-weight: bold;
+        }
+    }
+}
+.compare-box.header{
+    max-height: 180px;
+    min-height: 180px;
+    overflow: hidden;
+    border-bottom: none;
+}
+.compare-box.header img {
+    max-height: 100%;
+    width: auto;
+}
+.compare-box.bottom{
+    // height: 500px;
+    max-height: max-content;
+    border-bottom: none;
+}
+/* Additional styles for header and bottom compare boxes */
+.compare-box.header, .compare-box.bottom {
+    overflow: hidden; /* Hide overflow for header and bottom compare boxes */
+}
+
+.compare-box.header img {
+    max-height: 100%;
+    width: auto;
+}

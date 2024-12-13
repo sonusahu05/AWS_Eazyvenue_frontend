@@ -1,0 +1,30 @@
+[
+    {
+        "id":1,
+        "city":"New York",
+        "country":"USA",
+        "address":"Cecilia Chapman 711-2880 Nulla St.",
+        "contactno":"(478) 339 120"
+    },
+    {
+        "id":2,
+        "city":"Tbilsi",
+        "country":"Georgia",
+        "address":"Aaron Hawkins 5587 Nunc. Avenue",
+        "contactno":"(134) 984 438"
+    },
+    {
+        "id":3,
+        "city":"Moscow",
+        "country":"Russia",
+        "address":"Lawrence Moreno 935-9940 Tortor. Street",
+        "contactno":"(443) 893 109"
+    },
+    {
+        "id":4,
+        "city":"Cairo",
+        "country":"Egypt",
+        "address":"Aaron Hawkins 5587 Nunc. Avenue",
+        "contactno":"(009) 338 148"
+    }
+]

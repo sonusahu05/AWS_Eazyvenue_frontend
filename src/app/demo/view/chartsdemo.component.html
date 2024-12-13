@@ -1,0 +1,43 @@
+<div class="p-grid p-fluid">
+    <div class="p-col-12 p-lg-6">
+        <div class="card">
+            <h5 class="centerText">Linear Chart</h5>
+            <p-chart type="line" [data]="lineData" [options]="lineOptions"></p-chart>
+        </div>
+
+        <div class="card">
+            <h5 class="centerText">Pie Chart</h5>
+            <div class="p-d-flex p-justify-center">
+                <p-chart type="pie" [data]="pieData" [options]="pieOptions" [style]="{'width': '50%'}"></p-chart>
+            </div>
+        </div>
+
+        <div class="card">
+            <h5 class="centerText">Polar Area Chart</h5>
+            <div class="p-d-flex p-justify-center">
+                <p-chart type="polarArea" [data]="polarData" [options]="polarOptions"
+                         [style]="{'width': '50%'}"></p-chart>
+            </div>
+        </div>
+    </div>
+    <div class="p-col-12 p-lg-6">
+        <div class="card">
+            <h5 class="centerText">Bar Chart</h5>
+            <p-chart type="bar" [data]="barData" [options]="barOptions"></p-chart>
+        </div>
+
+        <div class="card">
+            <h5 class="centerText">Doughnut Chart</h5>
+            <div class="p-d-flex p-justify-center">
+                <p-chart type="doughnut" [data]="pieData" [options]="pieOptions" [style]="{'width': '50%'}"></p-chart>
+            </div>
+        </div>
+
+        <div class="card">
+            <h5 class="centerText">Radar Chart</h5>
+            <div class="p-d-flex p-justify-center">
+                <p-chart type="radar" [data]="radarData" [options]="radarOptions" [style]="{'width': '50%'}"></p-chart>
+            </div>
+        </div>
+    </div>
+</div>

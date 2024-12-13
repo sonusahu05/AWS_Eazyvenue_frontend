@@ -1,0 +1,82 @@
+<!-- Listings Slider Start -->
+<div class="section section-padding sigma_header listings">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 venue_listing">
+                
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let item of listingblock">
+                            <div class="listing">
+                                <div class="listing-thumbnail">
+                                    <a routerLink="#"><img [src]="item.gridimg" [alt]="item.title"></a>
+                                    <div class="listing-badges">
+                                        <!-- <span class="listing-badge featured" *ngIf="item.star"> <i class="pi pi-star"></i>
+                                        </span> -->
+                                        <span class="listing-badge sale" *ngIf="item.sale">Feature</span>
+                                        <!-- <span class="listing-badge pending" *ngIf="item.pending">Pending</span>
+                                        <span class="listing-badge rent" *ngIf="item.courtmarriage">Court Marriage</span> -->
+                                    </div>
+                                    <div class="listing-controls">
+                                        <a href="#" class="favorite"><i class="pi pi-heart"></i></a>
+                                        <!-- <a href="#" class="compare"><i class="fas fa-sync-alt"></i></a> -->
+                                    </div>
+                                </div>
+                                <div class="listing-body">
+                                    <h5 class="listing-title"> <a routerLink="/listing-details-v1/{{item.id}}"
+                                        [title]="item.title">{{item.title}}</a> </h5>
+    
+                                        <p class="listing-text">{{item.text | slice:0:75}}</p>
+                                  <div class="price-icons">
+                                    <div class="price-div">
+                                        <div class="acr-listing-icons">
+                                            <div class="acr-listing-icon" placement="top" ngbTooltip="Price">
+                                                <i class="flaticon-price-tags"></i>
+                                                <span class="acr-listing-icon-value" tooltipPosition="top"  pTooltip="Price">₹{{item.price / item.emitime | number:'1.2-2'}}</span>
+                                            </div>
+                                            <div class="acr-listing-icon" tooltipPosition="top"  pTooltip="Guests">
+                                                <i class="pi pi-users"></i>
+                                                <span class="acr-listing-icon-value">{{item.guest}}</span>
+                                            </div>
+                                          
+                                        </div>
+                                    </div>
+                                    <div class="category-icon">
+                                        <!-- <p-avatarGroup label="P">
+                                            <p-avatar image="assets/demo/images/venue/wedding.png" shape="circle"  tooltipPosition="top"  pTooltip="Wedding"></p-avatar>
+                                            <p-avatar image="assets/demo/images/venue/eng.png" shape="circle" tooltipPosition="top"  pTooltip="Reception"></p-avatar>
+                                            <p-avatar image="assets/demo/images/venue/reception.png" shape="circle"  tooltipPosition="top"  pTooltip="Engagement"></p-avatar>
+                                            <p-avatar label="+2" shape="circle"></p-avatar>
+                                        </p-avatarGroup> -->
+                                    </div>
+                                  </div>
+                                   
+    
+                                       
+                                        <div class="listing-gallery-wrapper">
+                                            <a routerLink="/listing-details-v1/{{item.id}}" class="btn-custom btn-sm secondary">View
+                                                Details</a>
+
+                                             <div class="icon-review"> <img src="assets/img/svg/google.png" alt=""> <p-rating [(ngModel)]="val4"  readonly="true" [cancel]="false" ></p-rating> </div>  
+                                              
+                                        </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 text-center">
+                <p-paginator [rows]="10" [totalRecords]="120" ></p-paginator>
+            </div>
+        </div>
+     
+        
+          
+            
+            
+            
+    </div>
+</div>
+<!-- Listings Slider End -->

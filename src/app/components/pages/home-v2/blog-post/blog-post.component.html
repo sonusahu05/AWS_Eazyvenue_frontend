@@ -1,0 +1,50 @@
+<!-- Blog Start -->
+<div class="section section-padding">
+    <div class="container">
+        <div class="section-title-wrap section-header flex-header">
+            <div class="section-title-text">
+                <h5 class="custom-primary">Latest News</h5>
+                <h2 class="title">From Our Blog</h2>
+            </div>
+            <a routerLink="/blog-grid" class="btn-custom">View All</a>
+        </div>
+        <div class="row masonry">
+            <!-- Post Start -->
+            <div class="col-lg-4 masonry-item" *ngFor="let item of getRecentPost()">
+                <article class="post single">
+                    <div class="post-thumbnail">
+                        <a routerLink="/blog-details/{{item.id}}"><img [src]="item.gridimg" [alt]="item.title"></a>
+                    </div>
+                    <div class="post-body">
+                        <div class="post-author" *ngFor="let author of getAuthor(item.author)">
+                            <img [src]="author.image" [alt]="author.name">
+                            <div class="post-author-body">
+                                <p> <a routerLink="/blog/author/{{author.id}}">{{author.name}}</a> </p>
+                                <span class="post-date">{{item.postdate}}</span>
+                            </div>
+                        </div>
+                        <h5 class="post-title"> <a routerLink="/blog-details/{{item.id}}">{{item.title}}</a> </h5>
+                        <p class="post-text">{{item.text | slice:0:75}}</p>
+                        <div class="post-controls">
+                            <a routerLink="/blog-details/{{item.id}}" class="btn-custom secondary btn-sm">Read More</a>
+                            <div class="post-comment-authors" *ngIf="item.reviews > '0'">
+                                <span>Comments by: </span>
+                                <div class="post-comment-authors-img">
+                                    <a routerLink="/blog-details/{{item.id}}" *ngFor="let reviews of item.reviews"> 
+                                        <img [src]="user.image" [alt]="user.name" *ngFor="let user of getAuthor(reviews.user) | slice:0:2"> 
+                                    </a>
+                                    <a routerLink="/blog-details/{{item.id}}"> +{{item.reviews.length - 2}} </a>
+                                </div>
+                            </div>
+                            <div class="post-comment-authors" *ngIf="item.reviews < '0'">
+                                <span>0 Comments</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <!-- Post End -->
+        </div>
+    </div>
+</div>
+<!-- Blog End -->

@@ -1,0 +1,225 @@
+[
+    {
+        "id": 1,
+        "linkText": "Home Pages",
+        "child": true,
+        "submenu": [
+            {
+                "id": 1.1,
+                "link": "/",
+                "linkText": "Home v1"
+            },
+            {
+                "id": 1.2,
+                "link": "/home-v2",
+                "linkText": "Home v2"
+            },
+            {
+                "id": 1.3,
+                "link": "/home-v3",
+                "linkText": "Home v3"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "linkText": "Blog",
+        "child": true,
+        "submenu": [
+            {
+                "id": 2.1,
+                "child": true,
+                "linkText": "Blog Archive",
+                "submenu": [
+                    {
+                        "id": 2.11,
+                        "link": "/blog-grid",
+                        "linkText": "Grid View"
+                    },
+                    {
+                        "id": 2.12,
+                        "link": "/blog-list",
+                        "linkText": "List View"
+                    },
+                    {
+                        "id": 2.13,
+                        "link": "/blog-left",
+                        "linkText": "Left Sidebar"
+                    },
+                    {
+                        "id": 2.14,
+                        "link": "/blog-right",
+                        "linkText": "Right Sidebar"
+                    }
+                ]
+            },
+            {
+                "id": 2.2,
+                "link": "/blog-details/1",
+                "linkText": "Blog Details"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "linkText": "Pages",
+        "child": true,
+        "submenu": [
+            {
+                "id": 3.1,
+                "link": "/about",
+                "linkText": "About Us"
+            },
+            {
+                "id": 3.2,
+                "link": "/services",
+                "linkText": "Services"
+            },
+            {
+                "id": 3.3,
+                "link": "/faqs",
+                "linkText": "FAQ"
+            },
+            {
+                "id": 3.4,
+                "link": "/pricing",
+                "linkText": "Pricing"
+            },
+            {
+                "id": 3.5,
+                "link": "/contact",
+                "linkText": "Contact Us"
+            },
+            {
+                "id": 3.6,
+                "link": "/coming-soon",
+                "linkText": "Coming Soon"
+            },
+            {
+                "id": 3.7,
+                "link": "/error-404",
+                "linkText": "404 Page"
+            },
+            {
+                "id": 3.8,
+                "link": "/login",
+                "linkText": "Login"
+            },
+            {
+                "id": 3.9,
+                "link": "/register",
+                "linkText": "Register"
+            },
+            {
+                "id": 3.10,
+                "link": "/legal",
+                "linkText": "Legal"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "linkText": "Weddings",
+        "child": true,
+        "submenu": [
+            {
+                "id": 4.1,
+                "child": true,
+                "linkText": "Weddings Archive",
+                "submenu": [
+                    {
+                        "id": 4.11,
+                        "link": "/listing-grid",
+                        "linkText": "Grid View"
+                    },
+                    {
+                        "id": 4.12,
+                        "link": "/listing-list",
+                        "linkText": "List View"
+                    },
+                    {
+                        "id": 4.13,
+                        "link": "/listing-map",
+                        "linkText": "Map View"
+                    }
+                ]
+            },
+            {
+                "id": 4.2,
+                "child": true,
+                "linkText": "Weddings Details",
+                "submenu": [
+                    {
+                        "id": 4.21,
+                        "link": "/listing-details-v1/1",
+                        "linkText": "Weddings Details v1"
+                    },
+                    {
+                        "id": 4.22,
+                        "link": "/listing-details-v2/1",
+                        "linkText": "Weddings Details v2"
+                    },
+                    {
+                        "id": 4.23,
+                        "link": "/listing-details-v3/1",
+                        "linkText": "Weddings Details v3"
+                    }
+                ]
+            },
+            {
+                "id": 4.3,
+                "link": "/submit-listings",
+                "linkText": "Submit Weddings"
+            },
+            {
+                "id": 4.4,
+                "link": "/compare",
+                "linkText": "Compare Weddings"
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "linkText": "Vendor",
+        "child": true,
+        "submenu": [
+            {
+                "id": 5.1,
+                "link": "/vendor-archive",
+                "linkText": "Vendor Archive"
+            },
+            {
+                "id": 5.2,
+                "link": "/vendor-details/1",
+                "linkText": "Vendor Details"
+            },
+            {
+                "id": 5.3,
+                "child": true,
+                "linkText": "Vendor Profile",
+                "submenu": [
+                    {
+                        "id": 5.31,
+                        "link": "/profile",
+                        "linkText": "My Account"
+                    },
+                    {
+                        "id": 5.32,
+                        "link": "/profile-listing",
+                        "linkText": "My Weddings"
+                    },
+                    {
+                        "id": 5.33,
+                        "link": "/profile-saved",
+                        "linkText": "Saved Weddings"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "link": "/contact",
+        "linkText": "Contact Us"
+    }
+]

@@ -1,0 +1,1150 @@
+<p-toast key="toastmsg"></p-toast>
+<div class="container">
+    <div class="tint-search detail-page-search" style="width: 70%; background-color: white;">
+        <div class="row justify-content-center search-bar search_bar_listing_page"  style="margin-left: 50px;">
+            <div class="city-field col-md-3 p-p-0">
+                <span class="p-fluid">
+                    <label for="" class="icons-image">
+                        <img src="assets/images/category-icons/celebration.svg">
+                    </label>
+                    <p-dropdown [showClear]="true" [options]="vendorCategoryList" [filter]="true"
+                        [(ngModel)]="selectedVendorCategory" placeholder="Vendor" optionLabel="name" optionValue="id"
+                        (onChange)="onClickCategory($event.value)"></p-dropdown>
+                    <!-- <p-dropdown [options]="occasion" [(ngModel)]="selectedOccasion1" placeholder="Occasion"
+                        optionLabel="name" [showClear]="true" class="occasion-drop"></p-dropdown> -->
+                </span>
+            </div>
+            <div class="serch-bar-field col-3 p-p-0">
+                <span class="p-fluid">
+                    <label for="" class="icons-image search-icon"> <img src="assets/images/category-icons/search.png"
+                            class="search-icon"> </label>
+                    <p-autoComplete [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedLocationFilter"
+                        [suggestions]="locationList" (completeMethod)="onLocationSearch($event)"
+                        (onSelect)="onSelectLocationSearch($event)" (onUnselect)="onClearResetAllData($event)"
+                        field="name" placeholder="City/Area" [multiple]="true">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center">
+                                {{ item.name }}
+                                <span *ngIf="item.mode=='subarea'">
+                                    <span *ngIf="item.city">, {{item.city.name}}</span>
+                                    <span *ngIf="item.statename">, {{item.statename}}</span>
+                                </span>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                </span>
+            </div>
+
+            <div class="col-md-auto calendar-div p-p-0">
+                <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg"></label>
+                <p-calendar #searchCalendar dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
+                    appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
+                    [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
+
+                </p-calendar>
+                <!-- <p-calendar [(ngModel)]="rangeDates" placeholder="Date" selectionMode="range" [readonlyInput]="true"
+                    inputId="range" [numberOfMonths]="1"></p-calendar> -->
+                <button (click)="onClickSearch()" pButton pRipple type="button" icon="pi pi-search"
+                    class="p-button-rounded p-button-danger secondary btn-custom secondary"></button>
+            </div>
+        </div>
+    </div>
+</div>
+<p-button class="detailsfilter" (click)="onVendorBookingFilter()"> Book Now</p-button>
+
+
+
+
+<div class="section-venuelisting-details" *ngIf="vendorDetails">
+    <div class="section listing-wrapper">
+        <div class="container-fluid">
+            <div class="top-link">
+                <div class="row">
+                    <div class="col-8">
+
+                        <div class="BreadCrumbs regular" style="line-height: normal;">
+                            <span class="crumb">
+                                <a href="/" class="display-name text-tertiary">Home</a>
+                            </span>
+                            <span class="crumb">
+                                <a class="display-name text-tertiary" href="/vendor">Vendor</a>
+                            </span>
+                            <span>
+                                <a class="display-name text-tertiary active">Vendor Detail</a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-4 detail-page-top-buttons">
+                        <div class="row">
+
+                            <div class="col-6 pl-0 text-right">
+                                <p-button *ngIf="!showAvailabilityMessage" class="venuedetailbook"
+                                    (click)="onVendorDetailsUpdated()"> Book Now</p-button>
+                                <p-button *ngIf="showAvailabilityMessage" class="venuedetailbook"
+                                    (click)="onVendorDetailsUpdated()"> Send Enquiries</p-button>
+                            </div>
+                            <div class="col-6 text-left">
+                                <p-button class="venuedetailfilter" (click)="showVendorDetailsFilter()">
+                                    Search</p-button>
+                            </div>
+                        </div>
+
+                        <!-- <p-button class="venuedetailbook" (click)="venueDetailfilter()"> Book Now</p-button> -->
+
+                    </div>
+                </div>
+            </div>
+            <div class="heading">
+                <h1 *ngIf="vendorDetails" style="font-weight: 600;" class="venuename">{{vendorDetails.name}} - {{vendorDetails.subarea.name}}, {{vendorDetails.city?.name}}</h1>
+            </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="listing-content">
+                        <div class="left-bar-top-header">
+                            <div class="heading-and-title">
+
+                                <div class="header-details-top">
+                                    <div class="address-and-review">
+                                        <div class="address-list">
+                                            <ul>
+                                                <li>
+                                                    <div class="location details">
+                                                        <div class="icon">
+                                                            <img src="assets/images/icons/location-icon.png" alt="">
+                                                        </div>
+                                                        <div class="location-title">
+                                                            <!-- <h5 class="address-title">{{vendorDetails.cityname}}</h5> -->
+                                                            <h5 class="mb-0 subarea-title" style="font-weight: 400;">
+                                                                {{vendorDetails.subarea.name}}<span
+                                                                    *ngIf="vendorDetails.subarea.name">,
+                                                                </span>{{vendorDetails.city?.name}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="google-review">
+                                                    <div class="row review-details">
+                                                        <div class="vl"></div>
+
+                                                        <div class="col rating-list-1">
+                                                            <div class="location details">
+                                                                <div class="icon">
+                                                                    <img src="assets/img/svg/google.png" alt="">
+                                                                </div>
+                                                                <div class=" star">
+                                                                    <span>
+                                                                        <i class="pi pi-star-fill"></i>
+                                                                    </span>
+                                                                    <span style="font-size: 14px;color: black;"
+                                                                        *ngIf="vendorDetails"><b>
+                                                                            {{vendorDetails.googleRating}}</b>/5</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="vl"></div>
+                                                        <div class="col rating-list-1">
+                                                            <div class="location details">
+                                                                <div class="icon">
+                                                                    <img src="assets/layout/images/pages/logo.png"
+                                                                        alt="">
+                                                                </div>
+                                                                <div class=" star">
+                                                                    <span>
+                                                                        <i class="pi pi-star-fill"></i>
+                                                                    </span>
+                                                                    <span style="font-size: 14px;color: black;"
+                                                                        *ngIf="vendorDetails"><b>
+                                                                            {{vendorDetails.eazyvenueRating}}</b>/5</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="booked-people">
+                                <ul class="d-flex justify-content-end icons-view">
+                                    <li>
+                                        <div class="media">
+                                            <div class="icon">
+                                                <img class="mr-3" src="assets/img/svg/user-check.svg">
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="mt-0">People Booked :
+                                                    <span
+                                                        class="peoples-number">{{vendorDetails?.totalPeopleBooked}}</span>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="media">
+                                            <div class="icon">
+                                                <img class="mr-3" src="assets/img/svg/eye.svg">
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="mt-0">Views : <span
+                                                        class="peoples-number">{{vendorDetails?.currentViews}}</span>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- <div class="category">
+                                <p-avatarGroup styleClass="mb-3">
+                                    <p-avatar *ngFor="let occasion of occasionArray" image="{{occasion.categoryImage}}"
+                                        size="large" shape="circle" pTooltip="{{occasion.name}}" tooltipPosition="top"
+                                        [style]="{'width':'50px', 'height':'50px','color': '#ffffff', 'background-color':'#fff' , 'box-shadow' : 'inset 0px 1px 2px #00000029, 0px 3px 6px #00000029'}"></p-avatar>
+                                </p-avatarGroup>
+                            </div> -->
+                        </div>
+
+                        <div class="left-side-body">
+                            <p-galleria id="venue-images-gallery" [(value)]="vendorDetails.vendorImage"
+                                [responsiveOptions]="responsiveOptions" [containerStyle]="{'max-width': '100%;'}"
+                                [numVisible]="8" [circular]="true" [showItemNavigators]="true" [showThumbnails]="true"
+                                [showIndicators]="false" [showItemNavigatorsOnHover]="true"
+                                [showIndicatorsOnHover]="true" thumbnailsPosition="bottom">
+                                <ng-template pTemplate="item" let-item>
+                                    <img [src]="item.vendor_image_src" style="width:100%; display: block;" 
+                                    [alt]="vendorDetails.name"
+                                    />
+                                </ng-template>
+                                <!-- <ng-template pTemplate="caption" let-item>
+                                    <h4 style="margin-bottom: .5rem; color: #ffffff;">test</h4>
+                                    <p></p>
+                                </ng-template> -->
+                                <ng-template pTemplate="thumbnail" let-item>
+                                    <div class="p-grid p-nogutter p-justify-center p-galleria-thumbnail-wrapper"
+                                        style="padding:10px;">
+                                        <img [src]=" item.vendor_image_src" style="display: block;"
+                                        [alt]="vendorDetails.name" />
+                                    </div>
+                                </ng-template>
+                            </p-galleria>
+                        </div>
+
+                        <div class="about-section">
+                            <div *ngIf="vendorDetails" class="col-md-12">
+                                <div class="row justify-content-between">
+                                    <div class="col-12">
+                                        <div class="div-left">
+                                            <div class="about-venues-occassion">
+                                                <h2 class="head-about">About Vendor</h2>
+                                                <div class="category">
+
+                                                    <!-- <p-avatarGroup styleClass="mb-3">
+                                                        <p-avatar *ngFor="let occasion of occasionArray"
+                                                            class="about-us-icons" image="{{occasion.image_src}}"
+                                                            size="large" shape="circle" pTooltip="{{occasion.name}}"
+                                                            tooltipPosition="top"
+                                                            [ngClass]="occasion.selected ? 'occasion-active-top' : ''"
+                                                            [style]="{'width':'40px', 'padding':'4px','height':'40px','color': '#ffffff', 'background-color':'#fff' , 'box-shadow' : 'inset 0px 1px 2px #00000029, 0px 3px 6px #00000029'}"></p-avatar>
+                                                    </p-avatarGroup> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="about-venue">
+                                            <span [innerHTML]="vendorDetails.shortDescription"></span>
+                                        </p>
+                                    </div>
+
+                                </div>
+                                <hr class="border-top-first mt-4 mb-2">
+                                <div class="row services-section">
+                                    <div class="col-lg-4 col-md-4 col-sm-6 amenities_1">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <div class="icon area-size">
+                                                    <img src="assets/images/category-icons/package.png">
+                                                </div>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="amenities-size">Package Deal</h4>
+                                                <h5>{{vendorDetails.deal}}</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-lg-3 col-md-3 col-sm-6 amenities_1">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <div class="icon capacity-size">
+                                                    <img src="assets/images/category-icons/slot.png">
+                                                </div>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="amenities-size">Slots in</h4>
+                                                <h5>{{vendorDetails.slots}}</h5>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <div class="col-lg-4 col-md-4 col-sm-6 amenities_1">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <div class="icon round-table-size">
+                                                    <img src="assets/images/category-icons/round-table.svg">
+                                                </div>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="amenities-size">Response Time</h4>
+                                                <h5>{{vendorDetails.responseTime}}</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-6 amenities_1">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <div class="icon theater-seats-size">
+                                                    <img class="theater-seats-icon"
+                                                        src="assets/images/category-icons/theater-seats.svg">
+                                                </div>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="amenities-size">Experience</h4>
+                                                <h5>{{vendorDetails.workExperience}}</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="mt-2 mb-2">
+                                <div class="div facility-text"  style="text-align: justify;">
+                                    <span class="facility-title" [innerHTML]="vendorDetails.longDescription"></span>
+                                </div>
+                                <hr class="mb-2">
+                                <div class="div">
+                                    <h2>Amenities</h2>
+                                    <div class="row services-section">
+                                        <div *ngFor="let service of vendorDetails.services"
+                                            class="col-lg-4 col-md-4 col-sm-12">
+                                            <div style="display: flex; align-items:center;margin-top: 1rem; ">
+                                                <p-checkbox [(ngModel)]="checked" [inputId]="service.id" binary="true"
+                                                    disabled></p-checkbox>
+                                                <label style="font-size: 1rem; font-weight: 600;"
+                                                    class="ml-1">{{service.name}}</label>
+                                            </div>
+                                            <!-- <div class="media">
+                                                <div class="media-left">
+                                                    <div class="icon ac-icon">
+                                                        <img src="{{facilities.icon}}">
+                                                    </div>
+                                                </div>
+                                                <div class="media-body">
+                                                    <h4 class="amenities-size">{{facilities.title}}</h4>
+                                                </div>
+                                            </div> -->
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div *ngIf="vendorDetails.venueVideo">
+                                    <h2>Videos</h2>
+                                    <video class="video-back" width="100%" controls="" loop="">
+                                        <!-- <source type="video/mp4" src="https://www.w3schools.com/html/mov_bbb.mp4" /> -->
+                                        <source type="video/mp4" src="{{vendorDetails.venueVideo}}" />
+                                    </video>
+                                </div>
+                                <hr class="mb-2">
+                                <!---Review Section-->
+                                <div class="review-section-Bottom">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <!-- <div class="col-md-12">
+                                                <div class="pull-right">
+                                                    <select class="reviews-fillter" name="">
+                                                        <option value="">Top reviews</option>
+                                                        <option value="">Most recent</option>
+                                                    </select>
+                                                </div>
+                                            </div> -->
+                                            <div class="col-md-12 reiew-top-right-side">
+                                                <div class="row">
+                                                    <div class="col-md-12 headign-revies-section-k">
+                                                        <h3 style="font-weight: 600;">Reviews</h3>
+                                                    </div>
+                                                    <div class="col-md-3 mg-auto rTig">
+                                                        <div class="col-md-12 review-main-p">
+                                                            <div class="review-div" style="padding-top: 25px;">
+                                                                <div class="Ratings-point col-md-12">
+                                                                    <h1 class="review-number">4.5</h1>
+                                                                </div>
+                                                                <div class="rateing-star col-md-12">
+                                                                    <ul>
+                                                                        <li>
+                                                                            <span><i class="pi pi-star-fill"></i></span>
+                                                                        </li>
+                                                                        <li>
+                                                                            <span><i class="pi pi-star-fill"></i></span>
+                                                                        </li>
+                                                                        <li>
+                                                                            <span><i class="pi pi-star-fill"></i></span>
+                                                                        </li>
+                                                                        <li>
+                                                                            <span><i class="pi pi-star"></i></span>
+                                                                        </li>
+                                                                        <li>
+                                                                            <span><i class="pi pi-star"></i></span>
+                                                                        </li>
+                                                                    </ul>
+                                                                    <div class="review-counting col-md-12">
+                                                                        <h2 class="reviews-number">(65 Reviews)</h2>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 progress-rating P-ratr">
+                                                        <ul>
+                                                            <li>
+                                                                <div class="media">
+                                                                    <div class="media-left">
+                                                                        <span>5</span>
+                                                                    </div>
+                                                                    <div class="media-body">
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar" role="progressbar"
+                                                                                aria-valuenow="40" aria-valuemin="0"
+                                                                                aria-valuemax="100"
+                                                                                style="max-width: 40%">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="media">
+                                                                    <div class="media-left">
+                                                                        <span>4</span>
+                                                                    </div>
+                                                                    <div class="media-body">
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar" role="progressbar"
+                                                                                aria-valuenow="80" aria-valuemin="0"
+                                                                                aria-valuemax="100"
+                                                                                style="max-width: 80%">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="media">
+                                                                    <div class="media-left">
+                                                                        <span>3</span>
+                                                                    </div>
+                                                                    <div class="media-body">
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar" role="progressbar"
+                                                                                aria-valuenow="30" aria-valuemin="0"
+                                                                                aria-valuemax="100"
+                                                                                style="max-width: 30%">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="media">
+                                                                    <div class="media-left">
+                                                                        <span>2</span>
+                                                                    </div>
+                                                                    <div class="media-body">
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar" role="progressbar"
+                                                                                aria-valuenow="20" aria-valuemin="0"
+                                                                                aria-valuemax="100"
+                                                                                style="max-width: 20%">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="media">
+                                                                    <div class="media-left">
+                                                                        <span>1</span>
+                                                                    </div>
+                                                                    <div class="media-body">
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar" role="progressbar"
+                                                                                aria-valuenow="50" aria-valuemin="0"
+                                                                                aria-valuemax="100"
+                                                                                style="max-width: 50%">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-4 rate-this-item">
+                                                        <h5 class="rate-style">Rate this items</h5>
+                                                        <p>Share your opinon with other users </p>
+                                                        <p class="reviw-button-text">
+                                                            <a href="#" class="write-button-review" data-toggle="modal"
+                                                                data-target="#review-popup">Write review and rate</a>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--rihgt-sidee section-->
+                                            <div class="col-md-12 mian-li-review-details">
+                                                <h3 style="font-weight: 600;font-size: 16px;">Reviews</h3>
+                                                <!--Mian review list -->
+                                                <ul>
+                                                    <li class="reviw-user-main">
+                                                        <div class="review-comment-show">
+                                                            <div class="media">
+                                                                <img class="align-self-center mr-3"
+                                                                    src="assets/images/category-icons/user-icon.svg"
+                                                                    alt="customer-profile">
+                                                                <div class="media-body reviews-comment">
+                                                                    <div class="customer-name">
+                                                                        <h4>Ivonne Andrea</h4>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="rateing-star-customer">
+                                                                <ul>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <!--Customer-text-review-->
+                                                            <div class="customer-comment">
+                                                                <h5 class="reviews-heading">The Best!</h5>
+                                                                <p>Hello everyone. I just want to tell you that so far
+                                                                    it has
+                                                                    been an excellent experience for me. The best online
+                                                                    venues booking website without hesitation.</p>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="reviw-user-main">
+                                                        <div class="review-comment-show">
+                                                            <div class="media">
+                                                                <img class="align-self-center mr-3"
+                                                                    src="assets/images/category-icons/user-icon.svg"
+                                                                    alt="customer-profile">
+                                                                <div class="media-body reviews-comment">
+                                                                    <div class="customer-name">
+                                                                        <h4>Ivonne Andrea</h4>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="rateing-star-customer">
+                                                                <ul>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <!--Customer-text-review-->
+                                                            <div class="customer-comment">
+                                                                <h5 class="reviews-heading">The Best!</h5>
+                                                                <p>Hello everyone. I just want to tell you that so far
+                                                                    it has
+                                                                    been an excellent experience for me. The best online
+                                                                    venues booking website without hesitation.</p>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="reviw-user-main">
+                                                        <div class="review-comment-show">
+                                                            <div class="media">
+                                                                <img class="align-self-center mr-3"
+                                                                    src="assets/images/category-icons/user-icon.svg"
+                                                                    alt="customer-profile">
+                                                                <div class="media-body reviews-comment">
+                                                                    <div class="customer-name">
+                                                                        <h4>Ivonne Andrea</h4>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="rateing-star-customer">
+                                                                <ul>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <!--Customer-text-review-->
+                                                            <div class="customer-comment">
+                                                                <h5 class="reviews-heading">The Best!</h5>
+                                                                <p>Hello everyone. I just want to tell you that so far
+                                                                    it has
+                                                                    been an excellent experience for me. The best online
+                                                                    venues booking website without hesitation.</p>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="reviw-user-main">
+                                                        <div class="review-comment-show">
+                                                            <div class="media">
+                                                                <img class="align-self-center mr-3"
+                                                                    src="assets/images/category-icons/user-icon.svg"
+                                                                    alt="customer-profile">
+                                                                <div class="media-body reviews-comment">
+                                                                    <div class="customer-name">
+                                                                        <h4>Ivonne Andrea</h4>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="rateing-star-customer">
+                                                                <ul>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                    <li>
+                                                                        <span><i class="pi pi-star-fill"></i></span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <!--Customer-text-review-->
+                                                            <div class="customer-comment">
+                                                                <h5 class="reviews-heading">The Best!</h5>
+                                                                <p>Hello everyone. I just want to tell you that so far
+                                                                    it has
+                                                                    been an excellent experience for me. The best online
+                                                                    venues booking website without hesitation.</p>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                <!--Mian review list close -->
+                                                <button type="button" name="button" class="reviw-more-button">See All
+                                                    Review</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 sidebar-right">
+                    <p-toast key="toastMsg"></p-toast>
+                    <div class="top-button">
+                        <button pButton class="btn btn-custom">Check Availability</button>
+                    </div>
+                    <div class="sidebar sticky-sidebar">
+                        <div class="sidebar-widget">
+
+                            <div class="col-md-12 right-collapsed-form filter-div">
+                                <p-accordion [multiple]="true">
+                                    <p-accordionTab header="Occasion" class="occasion-tab">
+                                        <ng-template pTemplate="header">
+                                            <!-- <div class="selected-list col-md-12 p-0"> -->
+                                                <div *ngIf="selectedOccasion"
+                                                class="div selected-list">
+                                                <span> : {{selectedOccasion.name}}</span>
+                                            </div>
+                                            <!-- </div> -->
+                                        </ng-template>
+                                        <div class="occasion-list">
+                                            <div class="col-md-12 p-0">
+                                                <div *ngIf="categoryMenuList.length > 0" class="div">
+                                                    <p-carousel [value]="categoryMenuList" styleClass="custom-carousel"
+                                                        [numVisible]="4" [numScroll]="4" [circular]="true" [responsiveOptions]="occasionResponsiveOptions">
+                                                        <ng-template let-occasion pTemplate="item">
+                                                            <div (click)="onClickOccasion(occasion)"
+                                                                class="product-item">
+                                                                <div [ngClass]="occasion.selected ? 'occasion-active-bottom' : ''"
+                                                                    class="occasion-icon-top">
+                                                                    <p-avatarGroup styleClass="mb-4">
+                                                                        <p-avatar class="no-circle"
+                                                                            image="{{occasion.categoryImage}}" size=" large"
+                                                                            pTooltip={{occasion.name}}
+                                                                            tooltipPosition="top"
+                                                                            [style]="{'width':'37px', 'height':'37px','color': '#ffffff'}"></p-avatar>
+                                                                    </p-avatarGroup>
+                                                                    <div class="div-title">
+                                                                        <h5>{{occasion.name}}</h5>
+                                                                    </div>
+                                                                    <!-- assets/images/category-icons/{{occasion.categoryImage}}.svg -->
+                                                                </div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-carousel>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="categoryMenuList.length == 0" class="div">
+                                                Facilities at banquet not available.
+                                            </div>
+                                        </div>
+                                    </p-accordionTab>
+                                    <p-accordionTab header="Occasion Date">
+                                        <div class="col-md-auto calendar-div p-p-0 pl-2">
+                                            <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg"></label>
+                                            <p-calendar #searchCalendar dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
+                                                appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
+                                                [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
+                            
+                                            </p-calendar>
+                                            <!-- <p-calendar [(ngModel)]="rangeDates" placeholder="Date" selectionMode="range" [readonlyInput]="true"
+                                                inputId="range" [numberOfMonths]="1"></p-calendar> -->
+                                        </div>
+                                    </p-accordionTab>
+                                    <p-accordionTab header="Time Slot" class="time-slot-tab">
+                                        <ng-template pTemplate="header">
+                                            <span class="selected-list">{{startDate | date:'dd/MM/yyyy'}}</span>
+                                            <span class="selected-list pl-0 pr-0" *ngIf="endDate">-</span>
+                                            <span class="selected-list" *ngIf="endDate">{{endDate | date:'dd/MM/yyyy'}}
+                                            </span>
+                                            <span class="selected-list">{{selectedSlot.name}}</span>
+                        
+                                        </ng-template>
+
+                                        <p-tabView *ngIf="slotList.length>0" header="Time Slot">
+                                            <div class="row text-center">
+                                                <div class="col text-center" *ngFor="let slot of slotList">
+                                                    <h5 class="decor-name pb-1 slot-name">{{slot.name}}</h5>
+                                                    <p-radioButton [value]="slot" [(ngModel)]="selectedSlot"
+                                                        (click)="onSlotClick(slot)" [checked]="slot.selected">
+                                                    </p-radioButton>
+                                                </div>
+
+                                            </div>
+                                        </p-tabView>
+                                        <!-- <p-tabView *ngIf="showAvailabilityMessage" header="Time Slot">
+                                                No slots available on this selected date range. You can request for
+                                                enquiries.
+                                            </p-tabView> -->
+                                    </p-accordionTab>
+                                    <p-accordionTab *ngIf="categoryHeader == 'Decoration'" header="{{categoryHeader}} Types">
+                                        <ng-template pTemplate="header">
+                                            <div *ngFor="let selectedVendorService of selectedVendorServices" class="p-0">
+                                                <span class="selected-list"> : {{selectedVendorService.name}}</span>
+                                            </div>
+                                        </ng-template>
+                                        <div class="flex justify-content-center">
+                                            <div class="row food-style">
+                                                <div *ngFor="let vendorService of vendorDetails.services"
+                                                class="col-6 food-type-section">
+                                                <p-radioButton [value]="vendorService" [disabled]="vendorService.disable"
+                                                [(ngModel)]="selectedDecorationService"
+                                                (onClick)="onClickDecorationService(vendorService)">
+                                                </p-radioButton>
+                                                <label
+                                                    [ngClass]="vendorService.disable ? 'foodtype-disabled ml-2 food-type-text' : 'ml-2 food-type-text'">
+                                                    <!-- <img src="assets/images/food-pacakge/{{vendorService.slug}}.png"
+                                                        class="food-img"> -->
+                                                    {{vendorService.name}}
+                                                </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="showDecorationServicesList"  class="foodtypemenutext">
+                                            <p-accordionTab header="{{selectedVendorServices[0].name}}" [selected]="true"  class="foodtypemenutext">
+                                                <div class="flex justify-content-center">
+                                                    <div class="row row-cols-5">
+                                                        <div *ngFor="let dService of decorationServicesTypes"
+                                                            class="col-4 per-plate-price">
+                                                            <div class="package-box"
+                                                                [ngClass]="dService.selected ? 'menulist' : ''">
+                                                                <h5 class="plate-size">{{dService.name}}</h5>
+                                                                <img src="assets/images/category-icons/plate.svg" class="food-img">
+                                                            </div>
+                                                            <div class="price-list">
+                                                                <h5 class="plate-price"
+                                                                    [ngClass]="dService.selected ? 'menulistprice' : ''">
+                                                                    {{dService.value|currency:'INR'}}
+                                                                </h5>
+                                                                <p-radioButton [value]="dService"
+                                                                    (click)="onClickDecorationServiceType(dService, $event)"
+                                                                    [(ngModel)]="selectedDecorationServicesTypes">
+                                                                </p-radioButton>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p-accordionTab>
+                                        </div>
+                                    </p-accordionTab>
+                                    <p-accordionTab *ngIf="categoryHeader != 'Decoration'" header="{{categoryHeader}} Types">
+                                        <ng-template pTemplate="header">
+                                            <!-- <div *ngFor="let selectedVendorService of selectedVendorServices" class="p-0">
+                                                <span class="selected-list"> : {{selectedVendorService.name}}</span>
+                                            </div> -->
+                                          <!-- <div *ngIf="selectedVendorService != undefined" class="selected-list p-0">
+                                                <span>{{selectedVendorService.slug}}</span>
+                                            </div> -->
+                                        </ng-template>
+                                        <div class="flex justify-content-center">
+                                            <div class="row food-style">
+                                                <div *ngFor="let vendorService of vendorDetails.services"
+                                                    class="col-6 food-type-section">
+                                                    <div
+                                                        style="display: flex; align-items:center;margin-top: 0.5rem; gap:10px; ">
+                                                        <p-checkbox (onChange)="onVendorServiceClick(vendorService,$event)"
+                                                            [inputId]="vendorService.id" binary="true"
+                                                            [(ngModel)]="vendorService.selected"
+                                                            [disabled]="vendorService.disable"></p-checkbox>
+                                                        <div [for]="vendorService.id">
+                                                            <label
+                                                                style="font-weight: 600; margin: 0;padding: 0;color: gray; line-height: 12px; font-size: 12px;">
+                                                                {{vendorService.name}}
+
+                                                            </label>
+                                                            <p
+                                                                style="font-size: 12px; margin: 0;padding: 0; color: gray; line-height: 12px;">
+                                                                ₹{{vendorService.price}}</p>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </p-accordionTab>
+                                </p-accordion>
+                            </div>
+
+                            <div class=" col-md-12 total-amount-div">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="total-amt-heading">
+                                            <h4>Total Amount <span>{{totalAmount|currency:"INR"}}</span></h4>
+                                            <span>exclusive of Taxes</span>
+                                        </div>
+                                        <!-- <span *ngIf="isLoggedIn">{{totalVenuePrice|currency:'INR'}}</span> -->
+                                    </div>
+                                    <div class="col">
+                                        <div *ngIf="venueDetails" class="price">
+                                            <h4 *ngIf="selectedVenueCapacity>0" class="total-price">
+                                                {{totalVenuePrice|currency:'INR'}}</h4>
+                                            <!-- <span class="real-price">₹ 3,00,000</span> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=" col-md-12 coupon-code">
+                                <span class="p-input-icon-left">
+                                    <i class="coupon-icon"><img src="assets/images/icons/coupon.png"
+                                            class="icon-size"></i>
+                                    <input class="coupon-input coupon-box" placeholder="Enter Coupon Code" type="text"
+                                        pInputText [(ngModel)]="value" />
+                                </span>
+                                <!-- <input pInputText type="text" placeholder="Enter Coupon Code" class="coupon-input" [(ngModel)]="value2" /> -->
+                            </div>
+                            <!-- <div class="col-md-12 list-checkbox">
+                                <ul>
+                                    <li *ngFor="let feature of featureArray">
+                                        <div [ngClass]="feature.status ? '' : 'disable'" class="p-field-radiobutton">
+                                            <p-radioButton (onClick)="onFeatureClick(feature)"
+                                                [(ngModel)]="selectedFeature" [value]="feature"></p-radioButton>
+                                            <label for="feature">{{feature.label}}</label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="p-field-radiobutton">
+                                            <p-radioButton name="Book" value="Book" [(ngModel)]="city"
+                                                inputId="Book"></p-radioButton>
+                                            <label for="Book">Book Visit (Before Booking The Venue)</label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="p-field-radiobutton">
+                                            <p-radioButton name="city" value="Chicago" [(ngModel)]="city"
+                                                inputId="BookNow"></p-radioButton>
+                                            <label for="BookNow">Book Now</label>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div> -->
+                            <div class="col-md-12 Send-btn">
+                                <button *ngIf="!showAvailabilityMessage" (click)="onVendorBookingFilter('book_now')"
+                                    pButton class="btn btn-custom w-100 price-btn">Book Now @5000
+                                    <!-- {{bookingPrice|currency:'INR'}} -->
+                                </button>
+                                <button *ngIf="showAvailabilityMessage" (click)="onClickSendEnquiries('send_enquires')"
+                                    pButton class="btn btn-custom w-100 price-btn">Send Enquiries
+                                    <!-- {{bookingPrice|currency:'INR'}} -->
+                                </button>
+                            </div>
+                            <div class="col-md-12 advantages">
+                                <h5 class="heading-ad">UNLOCKED AFTER BOOKING:</h5>
+                                <ul class="advantages-list">
+                                    <li class="adv-list">30% ADVANCED AND 70% AFTER SHOOT</li>
+                                    <li class="adv-list">ALL THE COMMUNICATION SHOULD BE IN WRITTING</li>
+
+                                </ul>
+                                <h5 class="booking-ad mb-2">*Booking Amount Refundable Upto 7 Days</h5>
+                                <h5 class="refund_part">
+                                    <a class="refund_policy" href="javajavascript:void(0);"
+                                        (click)="showDialog()">CANCELLATION & REFUND POLICY DETAILS</a>
+                                </h5>
+                                <!-- <p-button (click)="showRefund()" label="CANCELATION & REFUND POLICY DETAILS" styleClass="p-button-text"></p-button> -->
+                            </div>
+                            <!-- <p-button (click)="schedulevisit()" icon="pi pi-external-link" label="Show"></p-button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p-dialog [(visible)]="isPaymentSuccess" [modal]="true"
+[draggable]="false" [resizable]="false" [showHeader]="false">
+    <div class="success-modal">
+        <div class="headers">
+            <h1>Thank You</h1>
+            <h1>For Booking With Us!</h1>
+        </div>
+        <div class="body">
+            <p>We're dedicated to giving you the best experience possible</p>
+            <p>If you have any questions, feel free to get in touch.</p>
+        </div>
+        <div class="buttons">
+            <button (click)="onCheckAnotherVendor()"
+            pButton class="btn btn-custom price-btn">Check Another Vendor</button>
+            <button (click)="onGoToMyBookings()"
+            pButton class="btn btn-custom price-btn">Go to my bookings</button>
+        </div>
+    </div>
+</p-dialog>
+<p-dialog header="Vendor Booking Summary" [(visible)]="isBookingFilter" [modal]="true" class="booking-modal"
+[draggable]="false" [resizable]="false">
+<div class="popupfilter sidebar Filter-siderbar sidebar-left popupfilter">
+    <div class="sidebar-widget">
+        <p-accordion [multiple]="true">
+            <p-accordionTab header="Occasion" class="occasion-tab" [selected]="true">
+                <ng-template pTemplate="header">
+                    <!-- <div class="selected-list col-md-12 p-0"> -->
+                    <div *ngIf="selectedOccasion"
+                        class="div selected-list">
+                        <span> : {{selectedOccasion.name}}</span>
+                    </div>
+                    <!-- </div> -->
+                </ng-template>
+                <div class="occasion-list">
+                    <div class="col-md-12 p-0">
+                        <div *ngIf="categoryMenuList.length > 0" class="div">
+                            <p-carousel [value]="categoryMenuList" styleClass="custom-carousel"
+                                [numVisible]="4" [numScroll]="4" [circular]="true" [responsiveOptions]="occasionResponsiveOptions">
+                                <ng-template let-occasion pTemplate="item">
+                                    <div (click)="onClickOccasion(occasion)"
+                                        class="product-item">
+                                        <div [ngClass]="occasion.selected ? 'occasion-active-bottom' : ''"
+                                            class="occasion-icon-top">
+                                            <p-avatarGroup styleClass="mb-4">
+                                                <p-avatar class="no-circle"
+                                                    image="{{occasion.categoryImage}}" size=" large"
+                                                    pTooltip={{occasion.name}}
+                                                    tooltipPosition="top"
+                                                    [style]="{'width':'37px', 'height':'37px','color': '#ffffff'}"></p-avatar>
+                                            </p-avatarGroup>
+                                            <div class="div-title">
+                                                <h5>{{occasion.name}}</h5>
+                                            </div>
+                                            <!-- assets/images/category-icons/{{occasion.categoryImage}}.svg -->
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </p-carousel>
+                        </div>
+                    </div>
+                    <div *ngIf="categoryMenuList.length == 0" class="div">
+                        Facilities at banquet not available.
+                    </div>
+                </div>
+            </p-accordionTab>
+            <p-accordionTab [selected]="true" header="Occasion Date">
+                <div class="col-md-auto calendar-div p-p-0 pl-2">
+                    <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg"></label>
+                    <p-calendar #searchCalendar dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
+                        appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
+                        [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
+    
+                    </p-calendar>
+                    <!-- <p-calendar [(ngModel)]="rangeDates" placeholder="Date" selectionMode="range" [readonlyInput]="true"
+                        inputId="range" [numberOfMonths]="1"></p-calendar> -->
+                </div>
+            </p-accordionTab>
+            <p-accordionTab header="Time Slot" class="time-slot-tab" [selected]="true">
+                <ng-template pTemplate="header">
+                    <span class="selected-list">{{startDate | date:'dd/MM/yyyy'}}</span>
+                    <span class="selected-list pl-0 pr-0" *ngIf="endDate">-</span>
+                    <span class="selected-list" *ngIf="endDate">{{endDate | date:'dd/MM/yyyy'}}
+                    </span>
+                    <span class="selected-list">{{selectedSlot.name}}</span>
+
+                </ng-template>
+
+                <p-tabView *ngIf="slotList.length>0" header="Time Slot">
+                    <div class="row text-center">
+                        <div class="col text-center" *ngFor="let slot of slotList">
+                            <h5 class="decor-name pb-1 slot-name">{{slot.name}}</h5>
+                            <p-radioButton [value]="slot" [(ngModel)]="selectedSlot"
+                                (click)="onSlotClick(slot)" [checked]="slot.selected">
+                            </p-radioButton>
+                        </div>
+
+                    </div>
+                </p-tabView>
+                <!-- <p-tabView *ngIf="showAvailabilityMessage" header="Time Slot">
+                        No slots available on this selected date range. You can request for
+                        enquiries.
+                    </p-tabView> -->
+            </p-accordionTab>
+            <p-accordionTab *ngIf="categoryHeader == 'Decoration'" header="{{categoryHeader}} Types" [selected]="true">
+                <ng-template pTemplate="header">
+                    <div *ngFor="let selectedVendorService of selectedVendorServices" class="p-0">
+                        <span class="selected-list"> : {{selectedVendorService.name}}</span>
+                    </div>
+                </ng-template>
+                <div class="flex justify-content-center">
+                    <div class="row food-style">
+                        <div *ngFor="let vendorService of vendorDetails.services"
+                        class="col-6 food-type-section">
+                        <p-radioButton [value]="vendorService" [disabled]="vendorService.disable"
+                        [(ngModel)]="selectedDecorationService"
+                        (onClick)="onClickDecorationService(vendorService)">
+                        </p-radioButton>
+                        <label
+                            [ngClass]="vendorService.disable ? 'foodtype-disabled ml-2 food-type-text' : 'ml-2 food-type-text'">
+                            <!-- <img src="assets/images/food-pacakge/{{vendorService.slug}}.png"
+                                class="food-img"> -->
+                            {{vendorService.name}}
+                        </label>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="showDecorationServicesList"  class="foodtypemenutext">
+                    <p-accordionTab header="{{selectedVendorServices[0].name}}" [selected]="true"  class="foodtypemenutext">
+                        <div class="flex justify-content-center">
+                            <div class="row row-cols-5">
+                                <div *ngFor="let dService of decorationServicesTypes"
+                                    class="col-4 per-plate-price">
+                                    <div class="package-box"
+                                        [ngClass]="dService.selected ? 'menulist' : ''">
+                                        <h5 class="plate-size">{{dService.name}}</h5>
+                                        <img src="assets/images/category-icons/plate.svg" class="food-img">
+                                    </div>
+                                    <div class="price-list">
+                                        <h5 class="plate-price"
+                                            [ngClass]="dService.selected ? 'menulistprice' : ''">
+                                            {{dService.value|currency:'INR'}}
+                                        </h5>
+                                        <p-radioButton [value]="dService"
+                                            (click)="onClickDecorationServiceType(dService, $event)"
+                                            [(ngModel)]="selectedDecorationServicesTypes">
+                                        </p-radioButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p-accordionTab>
+                </div>
+            </p-accordionTab>
+            <p-accordionTab *ngIf="categoryHeader != 'Decoration'" header="{{categoryHeader}} Types" [selected]="true">
+                <ng-template pTemplate="header">
+                    <!-- <div *ngFor="let selectedVendorService of selectedVendorServices" class="p-0">
+                        <span class="selected-list"> : {{selectedVendorService.name}}</span>
+                    </div> -->
+                  <!-- <div *ngIf="selectedVendorService != undefined" class="selected-list p-0">
+                        <span>{{selectedVendorService.slug}}</span>
+                    </div> -->
+                </ng-template>
+                <div class="flex justify-content-center">
+                    <div class="row food-style">
+                        <div *ngFor="let vendorService of vendorDetails.services" class="col-12 col-lg-6 col-md-6 food-type-section">
+                            <div
+                                style="display: flex; align-items:center;margin-top: 0.5rem; gap:10px; ">
+                                <p-checkbox (onChange)="onVendorServiceClick(vendorService,$event)"
+                                    [inputId]="vendorService.id" binary="true"
+                                    [(ngModel)]="vendorService.selected"
+                                    [disabled]="vendorService.disable"></p-checkbox>
+                                <div [for]="vendorService.id">
+                                    <label
+                                        style="font-weight: 600; margin: 0;padding: 0;color: gray; line-height: 12px; font-size: 12px;">
+                                        {{vendorService.name}}
+
+                                    </label>
+                                    <p
+                                        style="font-size: 12px; margin: 0;padding: 0; color: gray; line-height: 12px;">
+                                        ₹{{vendorService.price}}</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </p-accordionTab>
+        </p-accordion>
+        <div class=" col-md-12 total-amount-div">
+            <div class="row">
+                <div class="col">
+                    <div class="total-amt-heading">
+                        <h4>Total Amount <span>{{totalAmount|currency:"INR"}}</span></h4>
+                        <span>exclusive of Taxes</span>
+                    </div>
+                    <!-- <span *ngIf="isLoggedIn">{{totalVenuePrice|currency:'INR'}}</span> -->
+                </div>
+            </div>
+        </div>
+        <button *ngIf="!showAvailabilityMessage" (click)="onClickSendEnquiries('book_now')"
+        pButton class="btn btn-custom w-100 price-btn">Book Now @5000
+        <!-- {{bookingPrice|currency:'INR'}} -->
+    </button>
+    </div>
+</div>
+</p-dialog>

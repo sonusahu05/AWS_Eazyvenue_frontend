@@ -1,0 +1,109 @@
+<div class="p-grid manage-product-section">
+  <div class="p-col-12">
+    <div class="card">
+      <h1 class="page-title">Contact Us</h1>
+      <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="right">
+          <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-secondary"
+            (click)="dt.exportCSV()"></button>
+        </ng-template>
+      </p-toolbar>
+      <p-table #dt [value]="contactUsList" [columns]="cols" [rows]="10" [paginator]="true" [resizableColumns]="true" [rowsPerPageOptions]="paginationOption"
+        [autoLayout]="true" [globalFilterFields]="['name', 'email', 'message', 'phoneNumber', 'created_at', 'status']"
+        [rowHover]="true" dataKey="id" styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped">
+        <ng-template pTemplate="caption">
+          <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-end table-header">
+            <!-- <h5 class="p-m-0">Contact Us</h5> -->
+            <span class="p-input-icon-left">
+              <!-- <i class="pi pi-search"></i> -->
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                placeholder="Search..." />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <!-- <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th> -->
+            <th pSortableColumn="sl">SL <p-sortIcon field="sl"></p-sortIcon>
+            </th>
+            <th pSortableColumn="name">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Name
+                <p-sortIcon field="name"></p-sortIcon>
+                <p-columnFilter type="text" field="name" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+
+            <th pSortableColumn="email">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Email
+                <p-sortIcon field="email"></p-sortIcon>
+                <p-columnFilter type="text" field="email" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="message">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Message
+                <p-sortIcon field="message"></p-sortIcon>
+                <p-columnFilter type="text" field="message" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="phoneNumber">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Phone No
+                <p-sortIcon field="phoneNumber"></p-sortIcon>
+                <p-columnFilter type="text" field="phoneNumber" display="menu" class="p-ml-auto"></p-columnFilter>
+              </div>
+            </th>
+            <th pSortableColumn="created_at">
+              <div class="p-d-flex p-jc-between p-ai-center">
+                Date
+                <!-- <p-sortIcon field="created_at"></p-sortIcon> -->
+                <!-- <p-columnFilter type="text" field="created_at" display="menu" class="p-ml-auto"></p-columnFilter> -->
+              </div>
+            </th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-contactUs let-rowIndex="rowIndex">
+          <tr>
+            <!-- <td>
+              <p-tableCheckbox [value]="contactUs"></p-tableCheckbox>
+            </td> -->
+            <td><span class="p-column-title" id="typeName">SR</span>
+              {{rowIndex+1}}
+            </td>
+            <td><span class="p-column-title" id="name">First Name</span>
+              {{contactUs.name}}
+            </td>
+            <td><span class="p-column-title" id="name">Email</span>
+              {{contactUs.email}}
+            </td>
+            <td><span class="p-column-title" id="name">Last Name</span>
+              {{contactUs.message}}
+            </td>
+            <td><span class="p-column-title" id="name">Last Name</span>
+              {{contactUs.phoneNumber}}
+            </td>
+            <td><span class="p-column-title" id="name">Created at</span>
+              {{contactUs.created_at | date:'d/M/yyyy h:mm a'}}
+            </td>
+            <td><span class="p-column-title">Action</span>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-denger p-mr-2"
+                (click)="onDelete(contactUs)" pTooltip="Delete Contact" tooltipPosition="bottom"></button>
+              <!--<button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-rounded"></button>-->
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+          <div class="p-d-flex p-ai-center p-jc-between">
+            In total there are {{contactUsList ? contactUsList.length : 0 }} Contact Details.
+          </div>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+</div>

@@ -1,0 +1,277 @@
+<div class="sigma_header-bottom">
+
+
+    <div class="sigma_header-bottom-inner">
+        <app-navigation></app-navigation>
+    </div>
+</div>
+<p-toast key="event_planer_msg"></p-toast>
+<div class="col-md-12 p-0 banner-section banner-img">
+    <img src="https://api.eazyvenue.com/uploads/bannerimage/bannerimage2.jpeg" alt="">
+    <!-- <p-carousel [value]="bannerImageList" [numVisible]="1" [numScroll]="1" [circular]="true" [showIndicators]="false"
+        [responsiveOptions]="carouselResponsiveOptions">
+        <ng-template let-banner pTemplate="item">
+            <div class="product-item">
+                <div class="product-item-content">
+
+                    <div class="p-mb-1 banner-item-main">
+                        <img [src]="banner.banner_image_src" class="product-image" />
+                        <div class="banner-details">
+                             <div class="details-heading">
+                                <h4 class="p-mb-1">Wedding venue Title</h4>
+                            </div>
+                            <div class="details-description">
+                                <p class="p-mb-1">Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat enim, id sit quaerat voluptate perspiciatis nobis nisi ullam esse animi recusandae, vitae fuga iusto.</p>
+                            </div>
+                            <div class="details-description">
+                                <button class="btn"> Book banquet now</button>
+                            </div>
+                           </div> -->
+                    <!-- </div>
+                </div>
+            </div>
+        </ng-template>
+    </p-carousel> -->
+</div>
+<!-- {{listingblock|json}} -->
+<app-venue-list> </app-venue-list>
+<!-- Single Vendor Start -->
+<app-category></app-category>
+<!-- <div class="section  vendor-section pb-0">
+    <div class="container-fluid">
+        <div class="acr-single-agent">
+            <div class="acr-single-agent-thumb">
+                <img src="assets/demo/images/venue/person.png">
+            </div>
+            <div class="acr-single-agent-body">
+                <h2 class="mb-6">I’m a personalised <br> <b>Event Planner</b></h2>
+                <button pButton (click)="onClickLetsConnect()">LET’S CONNECT</button>
+            </div>
+            <div class="planer-image-right">
+                <img src="assets/img/planer.png" alt="">
+            </div>
+        </div>
+    </div>
+</div> -->
+<!-- Single Vendor End -->
+
+<p-dialog header="Event Planner" [(visible)]="showEventPlannerDialog" [modal]="true" class="planner-popup "
+    [style]="{width: '38vw', overflow: 'hidden' }" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+
+    <div class="login-popup">
+        <p-toast key="usertoastmsg"></p-toast>
+
+        <div class="forms">
+            <form [formGroup]="eventPlannerForm" *ngIf="this.eventPlannerForm" (ngSubmit)="onSubmit()">
+                <div class="forms">
+                    <div class=" form-group form-row">
+                        <div class="col">
+                            <label>Name</label>
+                            <input type="text" formControlName="name" class="form-control" placeholder="Name*" value=""
+                                required [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                            <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                                <div *ngIf="f.name.errors.required">Name is required</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label>Email</label>
+                            <input type="email" formControlName="email" placeholder="Email Address*"
+                                class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+                            <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                                <div *ngIf="f.email.errors.required">Email is required</div>
+                                <div *ngIf="f.email.errors.email">Enter valid email address</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row form-group">
+                        <div class="col">
+                            <label>Mobile Number</label>
+                            <input formControlName="mobileNumber" class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.mobileNumber.errors }" autocomplete="on"
+                                required type="number" class="form-control" placeholder="Enter your mobile number">
+                            <div *ngIf="submitted && f.mobileNumber.errors" class="invalid-feedback">
+                                <div *ngIf="f.mobileNumber.errors.required">Mobile number is required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label class="w-100">Event Date</label>
+                            <div class="col-md-12 p-p-0 planner-date">
+                                <p-calendar [contentStyle]=" {'height': '200px' }" appendTo="body"
+                                    class="form-control w-100" formControlName="eventdate" [showIcon]="true"
+                                    inputId="icon" placeholder="Event Date" class=" p-calendar" inputId="calendar"
+                                    [defaultDate]="date" dateFormat="dd/mm/yy" [showIcon]="true"
+                                    [ngClass]="{ 'is-invalid': submitted && f.eventdate.errors }"></p-calendar>
+                                <div *ngIf="submitted && f.eventdate.errors" class="invalid-feedback">
+                                    <div *ngIf="f.eventdate.errors.required">Event Date is required
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-row form-group">
+
+                        <div class="col">
+                            <div class="col-md-12 p-p-0 planner-Capacity">
+                                <label class="w-100">Capacity</label>
+                                <p-dropdown formControlName="capacity" class="" [options]="filterCapacityArray"
+                                    appendTo="body" placeholder="Select Guest Count" optionLabel="label"
+                                    (onChange)="onCapacitySelect($event)"
+                                    [ngClass]="{ 'is-invalid': submitted && f.capacity.errors }"></p-dropdown>
+                                <div *ngIf="submitted && f.capacity.errors" class="invalid-feedback">
+                                    <div *ngIf="f.capacity.errors.required">Capacity is required
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+                <div class="popup-button">
+                    <p-button type="submit" label="Submit" class="p-button-text"></p-button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</p-dialog>
+
+
+
+
+
+<div class="col-md-12 text-center">
+    <button type="button" (click)="sidebarVisible4 = true" class="offer-btn btn-custom btn-sm secondary">
+        Receive 20% off on our Photography now!</button>
+</div>
+
+<p-sidebar [(visible)]="sidebarVisible4" position="bottom" class="offer-popup">
+    <div class="row justify-content-center">
+        <div class="col col-lg-2">
+            <img src="assets/images/offer-images/offers-1.jpg" class="offe-img">
+        </div>
+        <div class="col col-lg-2">
+            <img src="assets/images/offer-images/offers-2.jpg" class="offe-img">
+        </div>
+        <div class="col col-lg-2">
+            <img src="assets/images/offer-images/offers-3.jpg" class="offe-img">
+        </div>
+        <div class="col col-lg-2">
+            <img src="assets/images/offer-images/offers-4.jpg" class="offe-img">
+        </div>
+      </div>
+      <!-- <p-button
+        type="button"
+        (click)="close()"
+        label="OK"
+        styleClass="p-button-danger">
+    </p-button> -->
+    <!-- <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-2">
+
+        </div>
+        <div class="col-md-2">
+
+        </div>
+        <div class="col-md-2">
+
+        </div>
+        <div class="col-md-2">
+            <img src="assets/images/offer-images/offers-4.jpg" class="offe-img">
+        </div>
+        <div class="col-md-2">
+        </div>
+    </div>     -->
+    </p-sidebar>
+    <p-dialog header="Event Planner" [(visible)]="showModalOffer" [modal]="true" class="planner-popup"
+    [style]="{width: '38vw', overflow: 'hidden' }" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+
+    <div class="login-popup">
+        <p-toast key="usertoastmsg"></p-toast>
+
+        <div class="forms">
+            <form [formGroup]="eventPlannerForm" *ngIf="this.eventPlannerForm" (ngSubmit)="onSubmit()">
+                <div class="forms">
+                    <div class=" form-group form-row">
+                        <div class="col">
+                            <label>Name</label>
+                            <input type="text" formControlName="name" class="form-control" placeholder="Name*" value=""
+                                required [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                            <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                                <div *ngIf="f.name.errors.required">Name is required</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label>Email</label>
+                            <input type="email" formControlName="email" placeholder="Email Address*"
+                                class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+                            <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                                <div *ngIf="f.email.errors.required">Email is required</div>
+                                <div *ngIf="f.email.errors.email">Enter valid email address</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row form-group">
+                        <div class="col">
+                            <label>Mobile Number</label>
+                            <input formControlName="mobileNumber" class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.mobileNumber.errors }" autocomplete="on"
+                                required type="number" class="form-control" placeholder="Enter your mobile number">
+                            <div *ngIf="submitted && f.mobileNumber.errors" class="invalid-feedback">
+                                <div *ngIf="f.mobileNumber.errors.required">Mobile number is required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label class="w-100">Event Date</label>
+                            <div class="col-md-12 p-p-0 planner-date">
+                                <p-calendar [contentStyle]=" {'height': '200px' }" appendTo="body"
+                                    class="form-control w-100" formControlName="eventdate" [showIcon]="true"
+                                    inputId="icon" placeholder="Event Date" class=" p-calendar" inputId="calendar"
+                                    [defaultDate]="date" dateFormat="dd/mm/yy" [showIcon]="true"
+                                    [ngClass]="{ 'is-invalid': submitted && f.eventdate.errors }"></p-calendar>
+                                <div *ngIf="submitted && f.eventdate.errors" class="invalid-feedback">
+                                    <div *ngIf="f.eventdate.errors.required">Event Date is required
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-row form-group">
+
+                        <div class="col">
+                            <div class="col-md-12 p-p-0 planner-Capacity">
+                                <label class="w-100">Capacity</label>
+                                <p-dropdown formControlName="capacity" class="" [options]="filterCapacityArray"
+                                    appendTo="body" placeholder="Select Guest Count" optionLabel="label"
+                                    (onChange)="onCapacitySelect($event)"
+                                    [ngClass]="{ 'is-invalid': submitted && f.capacity.errors }"></p-dropdown>
+                                <div *ngIf="submitted && f.capacity.errors" class="invalid-feedback">
+                                    <div *ngIf="f.capacity.errors.required">Capacity is required
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+                <div class="popup-button">
+                    <p-button type="submit" label="Submit" class="p-button-text"></p-button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</p-dialog>

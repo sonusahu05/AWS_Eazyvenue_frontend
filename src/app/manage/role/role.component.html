@@ -1,0 +1,191 @@
+<div class="p-grid table-demo">
+	<div class="p-col-12">
+		<div class="card">
+			<p-toast key="toastmsg"></p-toast>
+			<h1 class="page-title">Role Management</h1>
+			<div class="card mb-3">
+				<div class="d-flex justify-content-between">
+					<div class="col-example d-flex">
+						<button pButton pRipple label="Add Role" icon="pi pi-plus" class="p-button-success p-mr-2 p-button"
+						(click)="addNewRole()"></button>
+						<button pButton pRipple class="p-mr-2 p-button p-button-outlined" icon="pi pi-filter-slash"
+						 label="Clear Filter" (click)="clear()"></button>
+					</div>
+					<div class="col-example">
+						<button pButton pRipple label="Export" icon="pi pi-file-excel" (click)="exportExcel()"
+							class="p-button p-button-secondary" 
+							tooltipPosition="bottom"></button>
+					</div>
+				</div>
+			</div>
+			<div class="card pt-3 pl-3 pr-3 pb-0 mb-3">
+				<div class="d-flex justify-content-between">
+					<div class="col-example">
+						<div class="row p-fluid p-formgrid p-grid align-items-end">
+							<div class="p-field col-3">
+								<label for="searchfield">Select Field</label>
+								<p-dropdown inputId="searchfield" [options]="searchBy" [(ngModel)]="searchby"
+									placeholder="Select Field" optionLabel="label"></p-dropdown>
+							</div>
+							<div class="p-field col-3">
+								<label for="startdt">From Date</label>
+								<p-calendar monthNavigator="true" class="mb-2" readonlyInput="true" yearNavigator="true"
+								yearRange="{{yearRange}}" [(ngModel)]="startDate" class="p-calendar" inputId="calendar"
+									placeholder="DD/MM/YYYY" dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
+							</div>
+							<div class="p-field col-3">
+								<label for="enddt">To Date</label>
+								<p-calendar monthNavigator="true" class="mb-2" readonlyInput="true" yearNavigator="true"
+								yearRange="{{yearRange}}" [(ngModel)]="endDate" class="p-calendar" inputId="calendar"
+									placeholder="DD/MM/YYYY" dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
+							</div>
+							<div class="p-field col-2">
+								<button pButton pRipple label="Search" icon="pi pi-search"
+									class="p-button p-button-denger" 
+									(click)="loadRoles($event)"></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<p-table class="p1-table-columns p-datatable-customers p-datatable-gridlines p-datatable-striped p-datatable p-component 
+			p-datatable-hoverable-rows p-datatable-auto-layout p-datatable-resizable p-datatable-resizable-fit 
+				p-datatable-responsive-stack" #dt [value]="rolelist" [paginator]="true" [rows]="10" [lazy]="true"
+				(onLazyLoad)="loadRoles($event)" [totalRecords]="totalRecords" [loading]="loading"
+				[rowsPerPageOptions]="paginationOption" paginatorPosition="bottom">
+				<ng-template pTemplate="header" let-columns>
+					<tr>
+						<th pSortableColumn="user_role_name" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Name
+								<p-sortIcon field="user_role_name"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="createdBy" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Created By
+								<p-sortIcon field="createdBy"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="created_at" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Date of Creation
+								<p-sortIcon field="created_at" appendTo="body"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="updatedby" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Modified By
+								<p-sortIcon field="updatedby"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="updated_at" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Last Modified On
+								<p-sortIcon field="updated_at"></p-sortIcon>
+							</div>
+						</th>
+						<th pSortableColumn="status" class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Status
+								<p-sortIcon field="status" appendTo="body"></p-sortIcon>
+							</div>
+						</th>
+						<th class="col-width text-nowrap">
+							<div class="p-d-flex p-jc-between p-ai-center">
+								Action
+							</div>
+						</th>
+					</tr>
+					<tr>
+						<th [ngSwitch]="user_role_name">
+							<input class="p-inputtext p-component p-element form-control" pInputText type="text"
+								(keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'user_role_name', 'contains')"
+								[value]="dt.filters['user_role_name'] ? dt.filters['user_role_name'].value : ''" />
+						</th>
+						<th [ngSwitch]="createdBy">
+							<input class="p-inputtext p-component p-element form-control" pInputText type="text"
+								(keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'createdBy', 'contains')"
+								[value]="dt.filters['createdBy'] ? dt.filters['createdBy'].value : ''" />
+						</th>
+						<th [ngSwitch]="created_at" class="col-width">
+							<p-calendar #pCalendarId class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy"
+								monthNavigator="true" class="mb-2" readonlyInput="true" yearNavigator="true"
+								yearRange="{{yearRange}}" placeholder="DD/MM/YYYY"
+								(onSelect)="setDownloadFlag(); dt.filter($event,'created_at', 'dateIs')"
+								[showIcon]="true" [(ngModel)]="calvalue" appendTo="body"></p-calendar>
+						</th>
+						<th [ngSwitch]="updatedby">
+							<input class="p-inputtext p-component p-element form-control" pInputText type="text"
+								(keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'updatedby', 'contains')"
+								[value]="dt.filters['updatedby'] ? dt.filters['updatedby'].value : ''" />
+						</th>
+						<th [ngSwitch]="updated_at" class="col-width">
+							<p-calendar #pCalendarId class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy"
+							monthNavigator="true" class="mb-2" readonlyInput="true" yearNavigator="true"
+							yearRange="{{yearRange}}" placeholder="DD/MM/YYYY"
+								(onSelect)="setDownloadFlag(); dt.filter($event,'updated_at', 'dateIs')"
+								[showIcon]="true" [(ngModel)]="calvalue1" appendTo="body"></p-calendar>
+						</th>
+						<th [ngSwitch]="status" class="col-width">
+							<p-dropdown #pDropDownId [options]="statuses"
+								(onChange)="setDownloadFlag(); dt.filter($event.value, 'status', 'equals')"
+								styleClass="p-column-filter" placeholder="Select Status" [showClear]="true" appendTo="body">
+								<ng-template let-option pTemplate="item">
+									<span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+								</ng-template>
+							</p-dropdown>
+						</th>
+						<th>
+						</th>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="body" let-role>
+					<tr class="p-selectable-row">
+						<td>
+							{{role.user_role_name | titlecase}}
+						</td>
+						<td>
+							{{role.createdBy}}
+						</td>
+						<td>
+							{{role.created_at | date: 'MM/dd/yyyy'}}
+						</td>
+						<td>
+							{{role.updatedBy}}
+						</td>
+						<td>
+							{{role.updated_at | date: 'MM/dd/yyyy'}}
+						</td>
+						<td class="col-width">
+							<span *ngIf="role.status">
+								<p-tag styleClass="mr-2" severity="success" value="Active"></p-tag>
+							</span>
+							<span *ngIf="!role.status">
+								<p-tag severity="danger" value="In-Active"></p-tag>
+							</span>
+							<p-inputSwitch [(ngModel)]="role.status" (onChange)="changeStatus(role)"></p-inputSwitch>
+						</td>
+						<td>
+							<button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
+								(click)="editRole(role.id)" pTooltip="Edit Role" tooltipPosition="bottom"></button>
+							<button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-denger"
+								(click)="deleteRole(role)" pTooltip="Delete Role" tooltipPosition="bottom"></button>
+						</td>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="emptymessage">
+					<tr>
+						<td colspan="7">No Roles found.</td>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="summary">
+					<div class="p-d-flex p-ai-center p-jc-between">
+						In total there are {{totalRecords }} Roles.
+					</div>
+				</ng-template>
+			</p-table>
+		</div>
+		<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+	</div>
+</div>

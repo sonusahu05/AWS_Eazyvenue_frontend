@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "icon": "flaticon-house",
+        "img": "assets/img/categories/1.jpg",
+        "title": "Decoration",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+        "id": 2,
+        "icon": "flaticon-seller",
+        "img": "assets/img/categories/2.jpg",
+        "title": "Photoghrapher",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+        "id": 3,
+        "icon": "flaticon-bride",
+        "img": "assets/img/categories/3.jpg",
+        "title": "Florist",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+        "id": 4,
+        "icon": "flaticon-groom",
+        "img": "assets/img/categories/4.jpg",
+        "title": "Hair & Makeup",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+        "id": 5,
+        "icon": "flaticon-sketch",
+        "img": "assets/img/categories/5.jpg",
+        "title": "Caterers",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    },
+    {
+        "id": 6,
+        "icon": "flaticon-wedding-invitation",
+        "img": "assets/img/categories/6.jpg",
+        "title": "videographer",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+    }
+]

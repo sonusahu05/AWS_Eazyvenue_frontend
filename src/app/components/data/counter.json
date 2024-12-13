@@ -1,0 +1,26 @@
+[
+    {
+        "id":1,
+        "icon":"flaticon-bride",
+        "title":"Weddings",
+        "value":24934
+    },
+    {
+        "id":2,
+        "icon":"flaticon-sales-agent",
+        "title":"Vendors",
+        "value":65317
+    },
+    {
+        "id":3,
+        "icon":"flaticon-group",
+        "title":"Agencies",
+        "value":4658
+    },
+    {
+        "id":4,
+        "icon":"flaticon-seller",
+        "title":"Weddings Sold",
+        "value":67335
+    }
+]

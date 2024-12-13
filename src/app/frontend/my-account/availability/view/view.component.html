@@ -1,0 +1,125 @@
+<div class="card m-5">
+  <p-toast></p-toast>
+  <p-toast key="toastmsg" position="top-right"></p-toast>
+  <div class="p-fluid p-formgrid p-grid pare_margin">
+    <div class="p-field p-col-10 div-border">
+      <h5 class="p-mb-3">
+        {{pagetitle}}
+      </h5>
+    </div>
+    <p-fieldset legend="Venue Details">
+      <div class="p-fluid p-formgrid p-grid pare_margin">
+        <div class="p-field p-col-3">
+          <label for="title">Name:</label>
+          {{venueorder['venueName']}}
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">Address:</label>
+          {{venueorder['venueaddress']}}
+
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">City:</label>
+          {{venueorder['venuecity']}}
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">Zip:</label>
+          {{venueorder['venuezipcode']}}
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">Venue Price:</label>
+          {{venueorder['venuePrice']|currency:'INR'}}
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">Decor One Price:</label>
+          {{venueorder['venuedecor1Price']|currency:'INR'}}
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">Decor Two Price:</label>
+          {{venueorder['venuedecor2Price']|currency:'INR'}}
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">Decor Three Price:</label>
+          {{venueorder['venuedecor3Price']|currency:'INR'}}
+        </div>
+      </div>
+    </p-fieldset>
+    <p-fieldset legend="Customer Details">
+      <div class="p-fluid p-formgrid p-grid pare_margin">
+        <div class="p-field p-col-3">
+          <label for="title">Customer Name:</label>
+          {{venueorder['customerName']}}
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">Customer Email:</label>
+          {{venueorder['customeremail']}}
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">Customer Mobile:</label>
+          {{venueorder['customermobileNumber']}}
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">Occasion:</label>
+          {{categoryName}}
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">Occasion Date:</label>
+          {{OccasionDate}}
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">Decor selected:</label>
+          {{venueorder['customerselecteddecor']|currency:'INR'}}
+        </div>
+        <div class="p-field p-col-3">
+          <label for="title">Selected Vendors:</label>
+          {{vendorName}}
+        </div>
+
+        <!-- <div class="p-field p-col-3">
+            <label for="title">Selected Food Menu</label>
+            <input formControlName="customerselectedFoodrarr" type="text" pInputText class="form-control">
+          </div> -->
+      </div>
+      <p-fieldset legend="Selected Food">
+        <div class="p-field p-col-4">
+          <div class="p-fluid p-formgrid p-grid p-mb-3">
+            <div class="p-fluid p-col-4">Food:</div>
+            <div class="p-fluid p-col-4">
+              {{foodType}}
+            </div>
+          </div>
+          <div>
+
+            <div class="p-fluid p-formgrid p-grid p-mb-3">
+              <div class="p-fluid p-col-4">Food Menu:</div>
+              <div class="p-fluid p-col-4">
+                {{foodMenuTypeList}}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </p-fieldset>
+      <p-fieldset legend="Comments">
+        <div class="p-field p-col-4">
+          {{venueorder['comment']}}
+        </div>
+      </p-fieldset>
+      <div class="p-field p-col-3">
+        <label for="title">Total Price:</label>
+        {{price|currency:'INR'}}
+      </div>
+    </p-fieldset>
+  </div>
+
+  <div class="button-set p-col-12 d-flex p-fluid p-jc-md-end">
+    <div class="p-formgrid p-grid">
+      <!-- <button type="text" (click)="addComment()" pButton icon="pi pi-check" label="Save"
+          class="p-button-success save-btn p-mr-3" style="width: auto"></button> -->
+      <button type="text" (click)="cancelvenue()" pButton icon="pi pi-times" label="Back"
+        class="p-button-danger cancel-btn" style="width: auto"></button>
+    </div>
+  </div>
+
+</div>
+<p-confirmDialog [style]="{width:'450px'}"></p-confirmDialog>

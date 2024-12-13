@@ -1,0 +1,453 @@
+<div class="tint">
+    <div class="container p-formgrid">
+        <div class="search-bar-locations p-p-0">
+            <!-- <p class="animation-text-heading">Eaziest Way to discover and book venues&nbsp;</p>
+            <div class="verticalFlip">
+                 <span *ngFor="let category of categoryMenuList">for {{category.name}}</span>
+              </div> -->
+            <div class="row justify-content-center">
+
+                <div class="col-lg-7 col-md-8 col-sm-12  animation-text-one">
+                    <div class="verticalFlip mb-10 float-lg-right">
+                        Eaziest Way to discover and book venues&nbsp;
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-4 col-sm-12 animation-text-two">
+                    <div class="verticalFlip mb-10">
+                        <b><span *ngFor="let category of categoryMenuList">for {{category.name}}</span></b>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="card main">
+        <div class="row">
+            <div class="col-lg-2 col-md-4">
+                <nav class="navbar navbar-vertical navbar-expand-lg">
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical"
+                        [style]="{'width':'100%'}">
+                        <a [ngClass]="availabilityTab?'nav-link active':'nav-link'" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home"
+                            role="tab" aria-controls="v-pills-home"> <span class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25.259" height="25.593"
+                                    viewBox="0 0 25.259 25.593">
+                                    <path id="Icon_material-dashboard" data-name="Icon material-dashboard"
+                                        d="M4.5,18.718H15.726V4.5H4.5Zm0,11.375H15.726V21.562H4.5Zm14.033,0H29.759V15.875H18.533Zm0-25.593v8.531H29.759V4.5Z"
+                                        transform="translate(-4.5 -4.5)" fill="#000000" />
+                                </svg>
+                            </span>Availability Updates</a>
+                        <a [ngClass]="bookingTab?'nav-link active':'nav-link'"  id="v-pills-orders-tab" data-toggle="pill" href="#v-pills-orders" role="tab"
+                            aria-controls="v-pills-orders" aria-selected="false"> <span class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="23.268" height="26.592"
+                                    viewBox="0 0 23.268 26.592">
+                                    <path id="Icon_open-document" data-name="Icon open-document"
+                                        d="M0,0V26.592H23.268V13.3H9.972V0ZM13.3,0V9.972h9.972ZM3.324,6.648H6.648V9.972H3.324Zm0,6.648H6.648V16.62H3.324Zm0,6.648h13.3v3.324H3.324Z"
+                                        fill="#000000" />
+                                </svg>
+                            </span>Bookings</a>
+                        <!-- <a class="nav-link" id="v-pills-payment-tab" data-toggle="pill" href="#v-pills-payment" role="tab"
+                        aria-controls="v-pills-payment" aria-selected="false"> <span class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="29.609" height="24" viewBox="0 0 29.609 24">
+                                <path id="Icon_material-payment" data-name="Icon material-payment"
+                                    d="M29.648,6H5.961A2.958,2.958,0,0,0,3.015,9L3,27a2.97,2.97,0,0,0,2.961,3H29.648a2.97,2.97,0,0,0,2.961-3V9A2.97,2.97,0,0,0,29.648,6Zm0,21H5.961V18H29.648Zm0-15H5.961V9H29.648Z"
+                                    transform="translate(-3 -6)" />
+                            </svg>
+                        </span>Payment Status</a> -->
+                        <a [ngClass]="referAndEarnTab?'nav-link active':'nav-link'" id="v-pills-todoList-tab" data-toggle="pill" href="#v-pills-todoList"
+                            role="tab" aria-controls="v-pills-todoList" aria-selected="false"> <span class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="29.609" height="24"
+                                    viewBox="0 0 29.609 24">
+                                    <path id="Icon_material-payment" data-name="Icon material-payment"
+                                        d="M29.648,6H5.961A2.958,2.958,0,0,0,3.015,9L3,27a2.97,2.97,0,0,0,2.961,3H29.648a2.97,2.97,0,0,0,2.961-3V9A2.97,2.97,0,0,0,29.648,6Zm0,21H5.961V18H29.648Zm0-15H5.961V9H29.648Z"
+                                        transform="translate(-3 -6)" />
+                                </svg>
+
+                            </span>Rewards N Referrals</a>
+                        <a [ngClass]="profileInfoTab?'nav-link active':'nav-link'" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile"
+                            (click)="onTabClick('profile_information')" role="tab" aria-controls="v-pills-profile"
+                            aria-selected="false"> <span class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="26.64" height="20.244"
+                                    viewBox="0 0 26.64 20.244">
+                                    <path id="Icon_metro-profile" data-name="Icon metro-profile"
+                                        d="M29.236,10.6H27.373V7.772l-3.846-.06.02,2.892H11.991l.079-2.892L8.3,7.772v2.892L6.4,10.6a1.916,1.916,0,0,0-1.9,1.928v13.5a1.916,1.916,0,0,0,1.9,1.928H29.236a1.916,1.916,0,0,0,1.9-1.928v-13.5A1.916,1.916,0,0,0,29.236,10.6ZM24.479,8.676h1.9v3.856h-1.9ZM12.11,15.243c1.149,0,2.082,1.241,2.082,2.772s-.932,2.772-2.082,2.772-2.082-1.241-2.082-2.772.932-2.772,2.082-2.772ZM9.256,8.676h1.9v3.856h-1.9ZM7.988,24.05s.225-1.834.738-2.18a7.223,7.223,0,0,1,1.989-.576s.957,1.036,1.364,1.036,1.363-1.036,1.363-1.036a7.2,7.2,0,0,1,1.989.576c.6.407.753,2.18.753,2.18h-8.2Zm19.346-.914H18.77v-.964h8.563Zm0-1.928H18.77v-.964h8.563Zm0-1.928H18.77v-.964h8.563Zm0-1.928H18.77v-.964h8.563Z"
+                                        transform="translate(-4.499 -7.712)" />
+                                </svg>
+                            </span>Profile Information</a>
+
+                        <a class="nav-link" id="v-pills-logout-tab" data-toggle="pill" href="#v-pills-logout" role="tab"
+                            aria-controls="v-pills-logout" (click)="onTabClick('logout')" aria-selected="false"> <span
+                                class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25.259" height="25.593"
+                                    viewBox="0 0 25.259 25.593">
+                                    <path id="Icon_material-dashboard" data-name="Icon material-dashboard"
+                                        d="M4.5,18.718H15.726V4.5H4.5Zm0,11.375H15.726V21.562H4.5Zm14.033,0H29.759V15.875H18.533Zm0-25.593v8.531H29.759V4.5Z"
+                                        transform="translate(-4.5 -4.5)" fill="#000000" />
+                                </svg>
+                            </span>Logout</a>
+                    </div>
+                </nav>
+            </div>
+            <div class="col-lg-10 col-md-8">
+                <div class="pt-0 flex-grow-1">
+                    <div class="tab-content col mt-0 p-0" id="v-pills-tabContent">
+                        <div [ngClass]="availabilityTab?'tab-pane fade show active':'tab-pane fade show'" id="v-pills-home" role="tabpanel"
+                            aria-labelledby="v-pills-home-tab">
+                            <app-availability></app-availability>
+                            <!-- <h1 class="mt-0 mb-0 page-title">Welcome to Eazy Venue</h1>
+                        <p>You can check and manage your Orders, Wishlist , Account Manage, Meeting Schedule .</p> -->
+                            <!-- TAB 1 content wrapper-->
+                            <!-- <div class="row">
+                            <div class="col-sm-4">
+                                <div class="card p-0 mb-4">
+                                    <div class="card-header bg-white">
+                                        <h5 class="card-title mb-0"><i class="pi pi-briefcase text-danger"></i> Bookings
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-auto pr-1">
+                                                <h3 class="mb-0 text-danger">6</h3>
+                                            </div>
+                                            <div class="col pl-1">
+                                                <div class="pt-2">Orders Completed</div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-auto pr-1">
+                                                <h5 class="mb-0 text-success">10</h5>
+                                            </div>
+                                            <div class="col pl-1">Venues in a Wish List</div>
+                                        </div>
+
+                                    </div>
+                                    <div class="card-footer text-center bg-white"><a href="#"
+                                            class="btn btn-sm btn-danger">View More</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="card p-0 mb-4">
+                                    <div class="card-header bg-white">
+                                        <h5 class="card-title mb-0"><i class="pi pi-money-bill text-danger"></i> Payment
+                                            Status</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-auto pr-1">
+                                                <h3 class="mb-0 text-danger">₹70,000</h3>
+                                            </div>
+                                            <div class="col pl-1">
+                                                <div class="pt-2">Pending</div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-auto pr-1">
+                                                <h5 class="mb-0 text-success">₹30,000</h5>
+                                            </div>
+                                            <div class="col pl-1">Paid till date</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer text-center bg-white"><a href="#"
+                                            class="btn btn-sm btn-danger">View More</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="card p-0 mb-4">
+                                    <div class="card-header bg-white">
+                                        <h5 class="card-title mb-0"><i class="pi pi-check-square text-danger"></i> To Do
+                                            List</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-auto pr-1">
+                                                <h3 class="mb-0 text-danger">10</h3>
+                                            </div>
+                                            <div class="col pl-1">
+                                                <div class="pt-2">Tasks Completed</div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-auto pr-1">
+                                                <h5 class="mb-0 text-success">20</h5>
+                                            </div>
+                                            <div class="col pl-1">Tasks Listed</div>
+                                        </div>
+
+                                    </div>
+                                    <div class="card-footer text-center bg-white"><a href="#"
+                                            class="btn btn-sm btn-danger">View More</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                            <!--End TAB 1 content wrapper-->
+                        </div>
+                        <div  [ngClass]="bookingTab?'tab-pane fade show active':'tab-pane fade show'"  id="v-pills-orders" role="tabpanel"
+                            aria-labelledby="v-pills-orders-tab">
+                            <!-- <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on
+                larger screens.</p> -->
+                            <!-- TAB 2 content wrapper-->
+                            <app-orders></app-orders>
+                            <!-- END TAB 2 content wrapper-->
+                        </div>
+                        <!-- <div class="tab-pane fade" id="v-pills-payment" role="tabpanel" aria-labelledby="v-pills-payment-tab">
+                        <h1 class="mt-0 mb-0 page-title">Payment Status</h1>
+                        <p>The starting state of the menu will appear collapsed on smaller screens, and will appear
+                            non-collapsed on
+                            larger screens.</p>
+                    </div> -->
+                        <div [ngClass]="referAndEarnTab?'tab-pane fade show active':'tab-pane fade show'" id="v-pills-todoList" role="tabpanel"
+                            aria-labelledby="v-pills-todoList-tab">
+                            <!-- <h1 class="mt-0 mb-0 page-title">Rewards N Referrals</h1> -->
+                            <!-- <p>The starting state of the menu will appear collapsed on smaller screens, and will appear
+                            non-collapsed on
+                            larger screens.</p> -->
+                            <!-- TAB 4 content wrapper-->
+                            <div class="row">
+                                <div class="col-lg-8 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="card">
+                                                <div class="row">
+                                                    <div class="col-8 align-items-center d-flex">
+                                                        <h3 class="mb-0 heading">Reward Points</h3>
+                                                    </div>
+                                                    <div class="col-4 align-items-center">
+                                                        <div class="text-right">
+                                                            <h3 class="mb-0 points-text">100</h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="card mt-3">
+                                                <div class="col-md-12 advantages pl-0">
+                                                    <h3 class="mb-0 heading">Offers on your next booking</h3>
+                                                    <ul class="offers-list">
+                                                        <li class="adv-list offers-text">Receive 20% off on our
+                                                            photography</li>
+                                                        <li class="adv-list offers-text">Get 12% discount on next venue
+                                                            booking</li>
+                                                        <li class="adv-list offers-text">Add pool party and get 10% off
+                                                        </li>
+                                                        <li class="adv-list offers-text">5% Discount in Venue Decoration
+                                                        </li>
+                                                    </ul>
+
+                                                    <!-- <p-button (click)="showRefund()" label="CANCELATION & REFUND POLICY DETAILS" styleClass="p-button-text"></p-button> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="card">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="align-items-center">
+                                                    <div class="text-center">
+                                                        <h3 class="mb-0 heading">Referral Code</h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12 text-center">
+                                                <img src="assets/images/offer-images/qr-code.png" class="offe-img">
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END TAB 4 content wrapper-->
+                        </div>
+                        <div  [ngClass]="profileInfoTab?'tab-pane fade show active':'tab-pane fade show'"  id="v-pills-profile" role="tabpanel"
+                            aria-labelledby="v-pills-profile-tab">
+
+                            <!-- <h1 class="mt-0 mb-0 page-title">Profile Information</h1> -->
+                            <!-- TAB 5 content wrapper-->
+                            <div>
+                                <app-user-profile-edit></app-user-profile-edit>
+                                <!-- <div class="row">
+                  <label>First Name</label>
+                  <span>{{profileDetails.firstName}}</span>
+                </div>
+                <div class="row">
+                  <label>Last Name</label>
+                  <span>{{profileDetails.lastName}}</span>
+                </div>
+                <div class="row">
+                  <label>Mobile Number</label>
+                  <span>{{profileDetails.mobileNumber}}</span>
+                </div>
+                <div class="row">
+                  <label>Profile Picture</label>
+                  <img src="{{profileDetails.profilepic}}">
+                </div>
+                <div class=" row">
+                  <label>Birth Date</label>
+                  <span>{{profileDetails.dob|date:"dd/MM/YYY"}}</span>
+                </div>
+                <div class="row">
+                  <label>Gender</label>
+                  <span>{{profileDetails.gender}}</span>
+                </div> -->
+                            </div>
+                            <!-- END TAB 5 content wrapper-->
+                        </div>
+                        <div class="tab-pane fade mt-0" id="v-pills-settings" role="tabpanel"
+                            aria-labelledby="v-pills-settings-tab">
+                            <h1 class="mt-0 mb-0 page-title">Account Settings</h1>
+                            <p>The starting state of the menu will appear collapsed on smaller screens, and will appear
+                                non-collapsed on
+                                larger screens.</p>
+                            <!-- TAB 6 content wrapper-->
+                            <div class="card">
+                                <div class="card-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="first">First Name</label>
+                                                    <input type="text" class="form-control" placeholder="" id="first">
+                                                </div>
+                                            </div>
+                                            <!--  col-md-6   -->
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="last">Last Name</label>
+                                                    <input type="text" class="form-control" placeholder="" id="last">
+                                                </div>
+                                            </div>
+                                            <!--  col-md-6   -->
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="company">Company</label>
+                                                    <input type="text" class="form-control" placeholder="" id="company">
+                                                </div>
+
+
+                                            </div>
+                                            <!--  col-md-6   -->
+
+                                            <div class="col-md-6">
+
+                                                <div class="form-group">
+                                                    <label for="phone">Phone Number</label>
+                                                    <input type="tel" class="form-control" id="phone"
+                                                        placeholder="phone">
+                                                </div>
+                                            </div>
+                                            <!--  col-md-6   -->
+                                        </div>
+                                        <!--  row   -->
+
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+
+                                                <div class="form-group">
+                                                    <label for="email">Email address</label>
+                                                    <input type="email" class="form-control" id="email"
+                                                        placeholder="email">
+                                                </div>
+                                            </div>
+                                            <!--  col-md-6   -->
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="url">Your Website <small>Please include
+                                                            http://</small></label>
+                                                    <input type="url" class="form-control" id="url" placeholder="url">
+                                                </div>
+
+                                            </div>
+                                            <!--  col-md-6   -->
+                                        </div>
+                                        <!--  row   -->
+
+
+                                        <label for="contact-preference">When is the best time of day to reach
+                                            you?</label>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="contact-preference" id="contact-preference"
+                                                    value="am" checked>Morning
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="contact-preference" id="contact-preference"
+                                                    value="pm" checked>Evening
+                                            </label>
+                                        </div>
+
+                                        <label for="newsletter">Would you like to recieve our email newsletter?</label>
+                                        <div class="checkbox">
+
+                                            <label>
+                                                <input type="checkbox" value="Sure!" id="newsletter"> Sure!
+                                            </label>
+                                        </div>
+
+
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- END TAB 6 content wrapper-->
+                        </div>
+                        <div class="tab-pane fade mt-0" id="v-pills-logout" role="tabpanel"
+                            aria-labelledby="v-pills-logout-tab">
+                            <h1 class="mt-0 mb-0 page-title">Logout!</h1>
+                            <p>The starting state of the menu will appear collapsed on smaller screens, and will appear
+                                non-collapsed on
+                                larger screens.</p>
+                            <!-- TAB 7 content wrapper-->
+
+                            <!-- END TAB 7 content wrapper-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="section-account bg-white p-t-0">
+    <div class="d-flex p-4">
+        <div class="p-2 bg-white">
+            <div class="navbar-header mb-3">
+                <div *ngIf="profileDetails" class="row">
+                    <div class="col-auto pr-0">
+                        <div class="profile-userpic">
+                            <img src="{{profileDetails.profilepic}}" class="image-cover" alt="">
+                        </div>
+                    </div>
+                    <div class="col text-left">
+                        <h5 *ngIf="profileDetails.fullName !== 'undefined undefined'" class="mt-3 mb-0  pl-2 user-name-title">{{profileDetails.fullName}}</h5>
+                        <button (click)="editProfile()" class="btn btn-sm btn-white pl-2 editbutton"><i
+                class="pi pi-fw pi-pencil"></i> Edit
+              Profile</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div> -->
+    </div>
+</div>

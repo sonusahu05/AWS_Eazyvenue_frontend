@@ -1,0 +1,21 @@
+<div class="menu-wrapper" [ngClass]="{'layout-sidebar-active': appMain.sidebarActive}"
+     (click)="appMain.onSidebarClick($event)" (mouseover)="appMain.onSidebarMouseOver($event)" (mouseleave)="appMain.onSidebarMouseLeave($event)">
+
+
+    <!--div class="sidebar-logo"-->
+        <div class="">
+        <a [routerLink]="['/']">
+           <div class="p-2"> <img src="assets/images/logo.png" style="padding: 6px 10px; height: 58px;" alt="APC" /></div>
+        </a>
+        <a href="#" class="sidebar-pin" (click)="appMain.onToggleMenu($event)">
+            <span class="pin"></span>
+        </a>
+    </div>
+    <div class="layout-menu-container">
+        <ul  [style.background]="isActiveCss? myRoleStyle :''" class="layout-menu offRolecss" [class.myRolecss] ='isActiveCss'>
+
+        <!-- <ul class="offRolecss" [style.background]="isActiveCss? myRoleStyle :'red'" class="layout-menu"> -->
+            <li app-menuitem *ngFor="let item of model; let i = index;" [item]="item" [index]="i" [root]="true"></li>
+        </ul>
+    </div>
+</div>

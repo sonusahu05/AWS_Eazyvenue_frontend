@@ -1,0 +1,34 @@
+<div class="sidebar">
+    <div class="sidebar-widget">
+        <form>
+            <h5>Search Posts</h5>
+            <form class="search-wrapper" (ngSubmit)="onSubmit()" method="GET">
+                <input type="text" class="form-control" name="searchText" [(ngModel)]="searchText" placeholder="Search Posts" required>
+                <button type="submit" class="btn-custom"><i class="flaticon-search"></i></button>
+            </form>
+        </form>
+    </div>
+    <div class="sidebar-widget">
+        <h5>Recent Posts</h5>
+        <article class="media" *ngFor="let item of getRecentPost()">
+            <a routerLink="/blog-details/{{item.id}}"><img [src]="item.gridimg"
+                [alt]="item.title"></a>
+            <div class="media-body">
+                <h6> <a routerLink="/blog-details/{{item.id}}">{{item.title}}</a> </h6>
+                <span>{{item.postdate}}</span>
+            </div>
+        </article>
+    </div>
+    <div class="sidebar-widget sidebar-list">
+        <h5>Popular Categories</h5>
+        <ul>
+            <li *ngFor="let item of category"> 
+                <a routerLink="/blog/cat/{{item.id}}">{{item.title}}<span>({{item.count}})</span> <i class="fas fa-chevron-right"></i> </a> 
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar-widget tags">
+        <h5>Popular Tags</h5>
+        <a routerLink="/blog/tag/{{item.id}}" *ngFor="let item of tags">{{item.title}}</a>
+    </div>
+</div>

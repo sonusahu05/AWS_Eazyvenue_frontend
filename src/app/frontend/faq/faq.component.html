@@ -1,0 +1,86 @@
+<section class="section">
+    <div class="description-section" *ngIf="fullDescription">
+        <h2 class="summary-title">Summary</h2>
+        <div [innerHTML]="isFullDescriptionVisible ? fullDescription : initialDescription"></div>
+        <a href="#" class="read-more" (click)="toggleFullDescription($event)" *ngIf="fullDescription !== initialDescription">
+          {{ isFullDescriptionVisible ? 'Read Less' : 'Read More' }}
+        </a>
+      </div>
+
+    <div class="container">
+      <h2 class="title text-center text-uppercase pb-1">Frequently Asked Questions</h2>
+      <p class="py-2"></p>
+
+      <!-- FAQ Section -->
+<div class="faq-section text-center">
+    <!-- Display the first 4 FAQs initially -->
+    <div *ngFor="let faq of faqs.slice(0, 4); let i = index" [class.accordion-active]="activeIndex === i">
+      <h3 (click)="toggleAccordion(i)">
+        {{ faq.question }}
+        <span *ngIf="activeIndex !== i">&#9662;</span>
+        <span *ngIf="activeIndex === i">&#9652;</span>
+      </h3>
+      <div *ngIf="activeIndex === i">
+        <p>{{ faq.answer }}</p>
+      </div>
+    </div>
+
+    <!-- Show More Button -->
+    <button *ngIf="!showMore" (click)="toggleShowMore()">Show More</button>
+
+    <!-- Display additional FAQs when "Show More" is clicked -->
+    <div *ngIf="showMore">
+      <div *ngFor="let faq of faqs.slice(4); let i = index" [class.accordion-active]="activeIndex === i + 4">
+        <h3 (click)="toggleAccordion(i + 4)">
+          {{ faq.question }}
+          <span *ngIf="activeIndex !== i + 4">&#9662;</span>
+          <span *ngIf="activeIndex === i + 4">&#9652;</span>
+        </h3>
+        <div *ngIf="activeIndex === i + 4">
+          <p>{{ faq.answer }}</p>
+        </div>
+      </div>
+
+      <!-- Show Less Button -->
+      <button (click)="toggleShowMore()">Show Less</button>
+    </div>
+  </div>
+
+
+      <!-- Display Search Results -->
+      <div class="search-results">
+        <h2>Frequent Searches Leading To This Page</h2>
+        <div class="search-list">
+            <a *ngFor="let search of frequentSearches" href="javascript:void(0);" (click)="onSearchClick()" class="search-link">{{ search }}</a>
+          </div>
+
+        <!-- <h2>Similar Near Me Searches</h2>
+        <div class="search-list">
+          <span *ngFor="let search of nearMeSearches">{{ search }}</span>
+        </div> -->
+
+          <h2>Find Banquet Halls in the Following Subareas</h2>
+          <div class="search-list">
+              <a href="banquet-halls/wedding/mumbai/andheri">Banquet halls in Andheri</a>
+              <a href="banquet-halls/wedding/mumbai/andheri-west">Banquet halls in Andheri West</a>
+              <a href="banquet-halls/wedding/mumbai/andheri-east">Banquet halls in Andheri East</a>
+              <a href="banquet-halls/wedding/mumbai/powai">Banquet halls in Powai</a>
+              <a href="banquet-halls/wedding/mumbai/juhu">Banquet halls in Juhu</a>
+              <a href="banquet-halls/wedding/mumbai/malad">Banquet halls in Malad</a>
+              <a href="banquet-halls/wedding/mumbai/mulund">Banquet halls in Mulund</a>
+              <a href="banquet-halls/wedding/mumbai/thane-west">Banquet halls in Thane West</a>
+              <a href="banquet-halls/wedding/mumbai/ghatkopar-east">Banquet halls in Ghatkopar-East</a>
+              <a href="banquet-halls/wedding/mumbai/ghatkopar-west">Banquet halls in Ghatkopar-West</a>
+              <a href="banquet-halls/wedding/mumbai/dadar">Banquet halls in Dadar</a>
+              <a href="banquet-halls/wedding/mumbai/south-mumbai">Banquet halls in South Mumbai</a>
+              <a href="banquet-halls/wedding/mumbai/bhandup">Banquet halls in Bhandup</a>
+              <a href="banquet-halls/wedding/mumbai/navi mumbai">Banquet halls in Navi Mumbai</a>
+              <a href="banquet-halls/wedding/mumbai/vashi">Banquet halls in Vashi</a>
+              <a href="banquet-halls/wedding/mumbai/panvel">Banquet halls in Panvel</a>
+              <a href="banquet-halls/wedding/mumbai/ulwe">Banquet halls in Ulwe</a>
+              <a href="banquet-halls/wedding/mumbai/kalyan">Banquet halls in Kalyan</a>
+              <a href="banquet-halls/wedding/mumbai/dombivili">Banquet halls in Dombivili</a>
+          </div>
+      </div>
+    </div>
+  </section>

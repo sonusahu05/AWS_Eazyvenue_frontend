@@ -1,0 +1,740 @@
+<div class="p-grid manage-product-section">
+    <div class="p-col-12">
+        <div class="card">
+            <p-toast key="toastmsg"></p-toast>
+            <h1 class="page-title">Venue List</h1>
+            <div class="card mb-3">
+                <div class="d-flex justify-content-between">
+                    <div class="col-example d-flex">
+                        <button
+                            pButton
+                            pRipple
+                            label="Add Venue"
+                            icon="pi pi-plus"
+                            class="p-button-success p-mr-2 p-button"
+                            (click)="openNew()"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            class="p-button p-button-outlined"
+                            icon="pi pi-filter-slash"
+                            label="Clear Filter"
+                            (click)="clear()"
+                        ></button>
+                        <!-- <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2 p-mb-2" (click)="addNewCategory()"></button>	 -->
+                    </div>
+                    <div class="col-example">
+                        <button
+                            (click)="showUploadModal()"
+                            tooltipPosition="bottom"
+                            class="p-element p-button-success p-button-outlined p-button p-mr-2 p-button"
+                            label="Upload Data"
+                            pButton
+                            icon="pi pi-upload"
+                        ></button>
+                        <p-dialog
+                            [(visible)]="showFileUploadModal"
+                            [modal]="true"
+                            [style]="{ width: '30vw' }"
+                            header="Upload File"
+                            [breakpoints]="{
+                                '960px': '60vw',
+                                '640px': '100vw'
+                            }"
+                            [baseZIndex]="10000"
+                            [draggable]="false"
+                            [resizable]="false"
+                        >
+                            <p-fileUpload
+                                class="file-upload custom-fileupload text-center"
+                                chooseLabel="Upload CSV File"
+                                uploadLabel="Show data"
+                                cancelLabel="Cancel"
+                                [showCancelButton]="false"
+                                accept=".csv"
+                                maxFileSize="10000000"
+                                auto="auto"
+                                customUpload="true"
+                                (uploadHandler)="fileUploader($event)"
+                            >
+                            </p-fileUpload>
+                            <div
+                                class="col-md-12 p-mt-3 submit-round-btn text-center p-mt-3 p-p-0"
+                            >
+                                <hr class="m-2" />
+                                <button (click)="onFileUploadSubmit()" pButton>
+                                    Submit
+                                </button>
+                            </div>
+                        </p-dialog>
+
+                        <button
+                            pButton
+                            pRipple
+                            label="Export"
+                            icon="pi pi-file-excel"
+                            (click)="exportExcel()"
+                            class="p-button p-button-secondary"
+                            tooltipPosition="bottom"
+                        ></button>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="d-flex justify-content-between">
+                    <div class="col-example">
+                        <div
+                            class="row p-fluid p-formgrid p-grid align-items-end"
+                        >
+                            <div class="p-field col-3">
+                                <label for="searchfield">Select Field</label>
+                                <p-dropdown
+                                    inputId="searchfield"
+                                    [options]="searchBy"
+                                    [(ngModel)]="searchby"
+                                    placeholder="Select Field"
+                                    optionLabel="label"
+                                ></p-dropdown>
+                                <!-- <p-dropdown inputId="searchfield" [options]="searchBy" [(ngModel)]="searchby" placeholder="Select Field" optionLabel="label"></p-dropdown> -->
+                            </div>
+                            <div class="p-field col-3">
+                                <label for="startdt">From Date</label>
+                                <p-calendar
+                                    monthNavigator="true"
+                                    class="p-calendar"
+                                    readonlyInput="true"
+                                    yearNavigator="true"
+                                    yearRange="{{ yearRange }}"
+                                    [(ngModel)]="startDate"
+                                    class="p-calendar"
+                                    inputId="calendar"
+                                    placeholder="DD-MM-YYYY"
+                                    dateFormat="dd-mm-yy"
+                                    [showIcon]="true"
+                                >
+                                </p-calendar>
+                                <!-- <p-calendar  monthNavigator="true" yearNavigator="true" yearRange="2022:2050"  [(ngModel)]="startDate" class="p-calendar"
+								inputId="calendar" dateFormat="dd/mm/yy" [showIcon]="true" ></p-calendar> -->
+                            </div>
+                            <div class="p-field col-3">
+                                <label for="enddt">To Date</label>
+                                <p-calendar
+                                    monthNavigator="true"
+                                    readonlyInput="true"
+                                    yearNavigator="true"
+                                    yearRange="{{ yearRange }}"
+                                    [(ngModel)]="endDate"
+                                    class="p-calendar"
+                                    inputId="calendar"
+                                    placeholder="DD-MM-YYYY"
+                                    dateFormat="dd-mm-yy"
+                                    [showIcon]="true"
+                                >
+                                </p-calendar>
+                                <!-- <p-calendar  monthNavigator="true" yearNavigator="true" yearRange="2022:2050"  [(ngModel)]="endDate" class="p-calendar" inputId="calendar"  dateFormat="dd/mm/yy" [showIcon]="true" ></p-calendar> -->
+                            </div>
+                            <div class="p-field col-2">
+                                <!-- <label><span class="invisible">Search</span></label> -->
+                                <button
+                                    pButton
+                                    pRipple
+                                    class="p-button p-button-denger"
+                                    icon="pi pi-search"
+                                    label="Search"
+                                    tooltipPosition="bottom"
+                                    (click)="refreshVenueList($event)"
+                                ></button>
+                                <!-- <button pButton pRipple icon="pi pi-search" class="p-button-rounded p-button" pTooltip="Search" (click)="loadCategory($event)"></button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="graybox">
+                <p-table
+                    #dt
+                    [value]="venueList"
+                    [columns]="cols"
+                    [rows]="10"
+                    [paginator]="true"
+                    [resizableColumns]="true"
+                    class="p-mb-0"
+                    [autoLayout]="true"
+                    scrollDirection="both"
+                    [rowHover]="true"
+                    dataKey="_id"
+                    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped"
+                    [rowsPerPageOptions]="rowsPerPageOptions"
+                    [lazy]="true"
+                    (onLazyLoad)="refreshVenueList($event)"
+                    [totalRecords]="totalRecords"
+                    [loading]="loading"
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th
+                                pSortableColumn="name"
+                                class="p-element p-frozen-column col-80 text-nowrap"
+                                style="left: 0px"
+                            >
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Name
+                                    <p-sortIcon field="name"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th
+                                pSortableColumn="email"
+                                class="text-nowrap col-100"
+                            >
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Email Id
+                                    <p-sortIcon field="email"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th
+                                pSortableColumn="cityname"
+                                class="text-nowrap col-100"
+                            >
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    City
+                                    <p-sortIcon field="cityname"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th
+                                pSortableColumn="statename"
+                                class="text-nowrap col-100"
+                            >
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    State
+                                    <p-sortIcon field="statename"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th
+                                pSortableColumn="zipcode"
+                                class="text-nowrap col-100"
+                            >
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Zipcode
+                                    <p-sortIcon field="zipcode"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th
+                                pSortableColumn="status"
+                                class="text-nowrap col-100"
+                            >
+                                Status <p-sortIcon field="status"></p-sortIcon>
+                            </th>
+                            <th
+                                pSortableColumn="assured"
+                                class="text-nowrap col-100"
+                            >
+                                Assured
+                                <p-sortIcon field="assured"></p-sortIcon>
+                            </th>
+                            <!-- <th pSortableColumn="created_at" [ngClass]="showColumns ? 'hide-col text-nowrap col-100' : 'show-col text-nowrap col-100'">
+                <div class="p-d-flex p-jc-between p-ai-center">
+                  Date of Creation
+                  <p-sortIcon field="created_at"></p-sortIcon>
+                </div>
+              </th>
+              <th pSortableColumn="created_by" [ngClass]="showColumns ? 'hide-col text-nowrap col-100 ' : 'show-col text-nowrap col-100'">
+                <div class="p-d-flex p-jc-between p-ai-center">
+                  Created By
+                  <p-sortIcon field="created_by"></p-sortIcon>
+                </div>
+              </th>
+              <th pSortableColumn="updated_at" [ngClass]="showColumns ? 'hide-col text-nowrap col-100 ' : 'show-col text-nowrap col-100'">
+                <div class="p-d-flex p-jc-between p-ai-center">
+                  Last Modified On
+                  <p-sortIcon field="updated_at"></p-sortIcon>
+                </div>
+              </th>
+              <th pSortableColumn="updated_by" [ngClass]="showColumns ? 'hide-col text-nowrap col-100 ' : 'show-col text-nowrap col-100'">
+                <div class="p-d-flex p-jc-between p-ai-center">
+                  Modified By
+                  <p-sortIcon field="updated_by"></p-sortIcon>
+                </div>
+              </th> -->
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <th
+                                [ngSwitch]="name"
+                                class="p-element p-frozen-column cole-80 text-nowrap"
+                                style="left: 0px"
+                            >
+                                <input
+                                    pInputText
+                                    class="form-control"
+                                    type="text"
+                                    (keyup.enter)="
+                                        setDownloadFlag();
+                                        dt.filter(
+                                            $event.target.value,
+                                            'name',
+                                            'contains'
+                                        )
+                                    "
+                                    [value]="
+                                        dt.filters['name']
+                                            ? dt.filters['name'].value
+                                            : ''
+                                    "
+                                    class="w-100"
+                                />
+                            </th>
+                            <th [ngSwitch]="email" class="text-nowrap col-100">
+                                <input
+                                    pInputText
+                                    class="form-control"
+                                    type="text"
+                                    (keyup.enter)="
+                                        setDownloadFlag();
+                                        dt.filter(
+                                            $event.target.value,
+                                            'email',
+                                            'contains'
+                                        )
+                                    "
+                                    [value]="
+                                        dt.filters['email']
+                                            ? dt.filters['email'].value
+                                            : ''
+                                    "
+                                    class="w-100"
+                                />
+                            </th>
+                            <th
+                                [ngSwitch]="cityname"
+                                class="text-nowrap col-100"
+                            >
+                                <input
+                                    pInputText
+                                    class="form-control"
+                                    type="text"
+                                    (keyup.enter)="
+                                        setDownloadFlag();
+                                        dt.filter(
+                                            $event.target.value,
+                                            'cityname',
+                                            'contains'
+                                        )
+                                    "
+                                    [value]="
+                                        dt.filters['cityname']
+                                            ? dt.filters['cityname'].value
+                                            : ''
+                                    "
+                                    class="w-100"
+                                />
+                            </th>
+                            <th
+                                [ngSwitch]="statename"
+                                class="text-nowrap col-100"
+                            >
+                                <input
+                                    pInputText
+                                    class="form-control"
+                                    type="text"
+                                    (keyup.enter)="
+                                        setDownloadFlag();
+                                        dt.filter(
+                                            $event.target.value,
+                                            'statename',
+                                            'contains'
+                                        )
+                                    "
+                                    [value]="
+                                        dt.filters['statename']
+                                            ? dt.filters['statename'].value
+                                            : ''
+                                    "
+                                    class="w-100"
+                                />
+                            </th>
+                            <th
+                                [ngSwitch]="zipcode"
+                                class="text-nowrap col-100"
+                            >
+                                <input
+                                    pInputText
+                                    class="form-control"
+                                    type="text"
+                                    (keyup.enter)="
+                                        setDownloadFlag();
+                                        dt.filter(
+                                            $event.target.value,
+                                            'zipcode',
+                                            'contains'
+                                        )
+                                    "
+                                    [value]="
+                                        dt.filters['zipcode']
+                                            ? dt.filters['zipcode'].value
+                                            : ''
+                                    "
+                                    class="w-100"
+                                />
+                            </th>
+                            <th [ngSwitch]="status" class="text-nowrap col-100">
+                                <p-dropdown
+                                    #pDropDownId
+                                    [options]="statuses"
+                                    [style]="{ width: '80px' }"
+                                    appendTo="body"
+                                    (onChange)="
+                                        setDownloadFlag();
+                                        dt.filter(
+                                            $event.value,
+                                            'status',
+                                            'equals'
+                                        )
+                                    "
+                                    styleClass="p-column-filter"
+                                    placeholder="Select Status"
+                                    [showClear]="true"
+                                >
+                                    <ng-template let-option pTemplate="item">
+                                        <span
+                                            [class]="
+                                                'customer-badge status-' +
+                                                option.value
+                                            "
+                                            >{{ option.label }}</span
+                                        >
+                                    </ng-template>
+                                </p-dropdown>
+                            </th>
+                            <th
+                                [ngSwitch]="assured"
+                                class="text-nowrap col-100"
+                            >
+                                <p-dropdown
+                                    #pDropDownId
+                                    [options]="assuredlist"
+                                    [style]="{ width: '80px' }"
+                                    appendTo="body"
+                                    (onChange)="
+                                        setDownloadFlag();
+                                        dt.filter(
+                                            $event.value,
+                                            'assured',
+                                            'equals'
+                                        )
+                                    "
+                                    styleClass="p-column-filter"
+                                    placeholder="Select Assured"
+                                    [showClear]="true"
+                                >
+                                    <ng-template let-option pTemplate="item">
+                                        <span
+                                            [class]="
+                                                'customer-badge status-' +
+                                                option.value
+                                            "
+                                            >{{ option.label }}</span
+                                        >
+                                    </ng-template>
+                                </p-dropdown>
+                            </th>
+                            <!-- <th [ngSwitch]="created_at" [ngClass]="showColumns ? 'hide-col text-nowrap col-100' : 'show-col text-nowrap col-100'">
+              </th>
+              <th [ngSwitch]="createdby" [ngClass]="showColumns ? 'hide-col text-nowrap col-100' : 'show-col text-nowrap col-100'">
+                <input  pInputText type="text" (keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'createdby', 'contains')" style="width: 90px;" [value]="dt.filters['createdby'] ? dt.filters['createdby'].value : ''" />
+              </th>
+              <th [ngSwitch]="updated_at"[ngClass]="showColumns ? 'hide-col text-nowrap col-100' : 'show-col text-nowrap col-100'">
+              </th>
+              <th [ngSwitch]="updatedby" [ngClass]="showColumns ? 'hide-col text-nowrap col-100' : 'show-col text-nowrap col-100'">
+                <input  pInputText type="text" (keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'updatedby', 'contains')" style="width: 90px;" [value]="dt.filters['updatedby'] ? dt.filters['updatedby'].value : ''" />
+              </th> -->
+                            <th
+                                class="p-element p-frozen-column"
+                                alignfrozen="right"
+                                style="width: 140px; right: 0px"
+                            >
+                                <!-- <button pButton pRipple label="Columns" icon="pi pi-plus"
+                  [ngClass]="showColumns ? 'show-col p-button p-button-secondary p-button-rounded ' : 'hide-col p-button-secondary p-button-rounded'"
+                  (click)="setDownloadFlag(); addColumns()"></button>
+                <button pButton pRipple label="Columns" icon="pi pi-minus"
+                  [ngClass]="showColumns ? 'hide-col p-button p-button-rounded' : 'show-col p-button p-button-rounded'"
+                  (click)="setDownloadFlag(); removeColumns()"></button> -->
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template
+                        pTemplate="body"
+                        let-venue
+                        let-rowIndex="rowIndex"
+                    >
+                        <tr>
+                            <td
+                                class="p-element p-frozen-column cole-80 text-nowrap"
+                            >
+                                {{ venue.name }}
+                            </td>
+                            <td class="text-nowrap col-100">
+                                {{ venue.email }}
+                            </td>
+                            <td class="text-nowrap col-100">
+                                {{ venue.cityname }}
+                            </td>
+                            <td class="text-nowrap col-100">
+                                {{ venue.statename }}
+                            </td>
+                            <td class="text-nowrap col-100">
+                                {{ venue.zipcode }}
+                            </td>
+                            <td>
+                                <span class="p-column-title">Status</span>
+                                <span *ngIf="venue.status">
+                                    <p-tag styleClass="mr-2" severity="success" value="Active"></p-tag>
+                                </span>
+                                <span *ngIf="!venue.status">
+                                    <p-tag severity="danger" value="In-Active"></p-tag>
+                                </span>
+                                <p-inputSwitch [(ngModel)]="venue.status" (onChange)="changeStatus(venue)"></p-inputSwitch>
+                            </td>
+                            <td>
+                                <span class="p-column-title">Assured</span>
+                                <span *ngIf="venue.assured">
+                                    <p-tag styleClass="mr-2" severity="success" value="Assured"></p-tag>
+                                </span>
+                                <span *ngIf="!venue.assured">
+                                    <p-tag styleClass="mr-2" severity="danger" value="Not Assured"></p-tag>
+                                </span>
+                                <p-inputSwitch [(ngModel)]="venue.assured" (onChange)="changeAssured(venue)"></p-inputSwitch>
+                            </td>
+                            <td>
+                                <span class="p-column-title">Action</span>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-eye"
+                                    class="p-button-rounded p-button-warning p-mr-2"
+                                    pTooltip="Venue Order"
+                                    tooltipPosition="bottom"
+                                    (click)="viewOrder(venue)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-success p-mr-2"
+                                    pTooltip="Edit Venue"
+                                    tooltipPosition="bottom"
+                                    (click)="onEdit(venue)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-trash"
+                                    class="p-button-rounded p-button-denger p-mr-2"
+                                    pTooltip="Delete Venue"
+                                    tooltipPosition="bottom"
+                                    (click)="onDelete(venue)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-clock"
+                                    class="p-button-rounded p-button-secondary p-mr-2"
+                                    pTooltip="Slot Availability"
+                                    tooltipPosition="bottom"
+                                    (click)="addSlotAvailability(venue)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-home"
+                                    class="p-button-rounded p-button-info p-mr-2"
+                                    pTooltip="Add Room"
+                                    tooltipPosition="bottom"
+                                    (click)="addRoom(venue)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-briefcase"
+                                    class="p-button-rounded p-button-help p-mr-2"
+                                    pTooltip="Add Menu"
+                                    tooltipPosition="bottom"
+                                    (click)="addMenu(venue)"
+                                ></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                        <div class="p-d-flex p-ai-center p-jc-between">
+                            In total there are {{ totalRecords }} Venues.
+                        </div>
+                    </ng-template>
+                </p-table>
+            </div>
+            <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+            <p-dialog
+                header="Room Management {{ venueName }}"
+                [(visible)]="roomMangement"
+                [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
+                [style]="{
+                    width: '35vw',
+                    'overflow-y': 'auto',
+                    'overflow-x': 'hidden'
+                }"
+                modal="true"
+                (onHide)="cancelRoomModal()"
+                class="Image-Management-dialog"
+                [draggable]="false"
+            >
+                <!-- <ng-template pTemplate="header">
+          <h5 class="text-center">Room Management {{venueName}}</h5>
+        </ng-template> -->
+                <ng-template pTemplate="content">
+                    <form [formGroup]="venueroomForm">
+                        <div
+                            class="p-fluid p-formgrid p-grid p-mb-3 justify-content-center"
+                        >
+                            <div class="p-fluid p-col-4 text-center">
+                                Room Name
+                            </div>
+                            <div class="p-fluid p-col-4 text-center">
+                                No of Room
+                            </div>
+                            <div class="p-fluid p-col-4 text-center">Price</div>
+                        </div>
+                        <div *ngFor="let roomtype of roomtypeList">
+                            <div
+                                class="p-fluid p-formgrid p-grid p-mb-3 justify-content-center"
+                            >
+                                <div
+                                    class="p-fluid p-col-4 justify-content-center"
+                                >
+                                    <label for="name">{{
+                                        roomtype.name
+                                    }}</label>
+                                </div>
+                                <div
+                                    class="p-fluid p-col-4 justify-content-center"
+                                >
+                                    <p-inputNumber
+                                        inputId="{{ roomtype.slug }}room"
+                                        min="0"
+                                        step="1"
+                                        [showButtons]="true"
+                                        formControlName="{{
+                                            roomtype.slug
+                                        }}room"
+                                        placeholder="Enter Room"
+                                    >
+                                    </p-inputNumber>
+                                </div>
+                                <div
+                                    class="p-fluid p-col-4 justify-content-center"
+                                >
+                                    <p-inputNumber
+                                        inputId="{{ roomtype.slug }}price"
+                                        min="0"
+                                        step="1"
+                                        [showButtons]="true"
+                                        formControlName="{{
+                                            roomtype.slug
+                                        }}price"
+                                        placeholder="Enter Room Price"
+                                    >
+                                    </p-inputNumber>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-fluid p-col-12" style="text-align: end">
+                            <button
+                                type="text"
+                                (click)="onRoomSubmit()"
+                                pButton
+                                icon="pi pi-check"
+                                label="Save"
+                                class="p-button-success save-btn"
+                                style="width: auto"
+                            ></button>
+                        </div>
+                    </form>
+                </ng-template>
+            </p-dialog>
+
+            <p-dialog
+                header="Food Management: {{ venueName }}"
+                [(visible)]="menutypeMangement"
+                [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
+                [style]="{
+                    width: '45vw',
+                    'overflow-y': 'auto',
+                    'overflow-x': 'hidden'
+                }"
+                modal="true"
+                (onHide)="cancelMenutypeModal()"
+                class="Image-Management-dialog"
+                [draggable]="false"
+            >
+                <!-- <ng-template pTemplate="header">
+          <h5><b>Food Management: {{venueName}}</b></h5>
+        </ng-template> -->
+                <ng-template pTemplate="content">
+                    <form [formGroup]="menutypeForm">
+                        <div
+                            class="p-fluid p-formgrid p-grid p-mb-3 justify-content-center"
+                        >
+                            <div class="p-fluid p-col-3 text-center">
+                                Food Menu
+                            </div>
+                            <div
+                                class="p-fluid p-col-3 text-center"
+                                *ngFor="let foodtype of foodtypeList"
+                            >
+                                {{ foodtype.name }} Price
+                            </div>
+                        </div>
+                        <div *ngFor="let foodmenutype of foodmenutypeList">
+                            <div class="p-fluid p-formgrid p-grid p-mb-3">
+                                <div class="p-fluid p-col-3 text-center">
+                                    <label for="name">{{
+                                        foodmenutype.name
+                                    }}</label>
+                                </div>
+                                <div
+                                    class="p-fluid p-col-3 text-center"
+                                    *ngFor="let foodtype of foodtypeList"
+                                >
+                                    <p-inputNumber
+                                        inputId="{{ foodtype.slug }}{{
+                                            foodmenutype.slug
+                                        }}price"
+                                        min="0"
+                                        step="1"
+                                        [showButtons]="true"
+                                        formControlName="{{ foodtype.slug }}{{
+                                            foodmenutype.slug
+                                        }}price"
+                                        placeholder="Enter Price"
+                                    >
+                                    </p-inputNumber>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-fluid p-col-12" style="text-align: end">
+                            <button
+                                type="text"
+                                (click)="onMenutypeSubmit()"
+                                pButton
+                                icon="pi pi-check"
+                                label="Save"
+                                class="p-button-success save-btn"
+                                style="width: auto; text-align: end"
+                            ></button>
+                        </div>
+                    </form>
+                </ng-template>
+            </p-dialog>
+        </div>
+    </div>
+</div>

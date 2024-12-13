@@ -1,0 +1,1609 @@
+[
+    {
+        "id": 1,
+        "gridimg": "assets/img/listings/1.jpg",
+        "listimg": "assets/img/listings-list/1.jpg",
+        "image": [
+            "assets/img/listing-single/1.jpg",
+            "assets/img/listing-single/2.jpg",
+            "assets/img/listing-single/3.jpg",
+            "assets/img/listing-single/4.jpg",
+            "assets/img/listing-single/5.jpg",
+            "assets/img/listing-single/6.jpg"
+        ],
+        "title": "The Muse Sarovar Portico",
+        "location": "Iris Watson P.O. Box 283 8562 Fusce Rd. Frederick Nebraska 20620",
+        "agent": [
+            1
+        ],
+        "category": [
+            3,
+            4
+        ],
+        "postdate": "June 3, 2021",
+        "price": 738000,
+        "emitime": 60,
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.",
+        "htmltext": "<h4>Wedding Overview</h4><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p><div class='row'><div class='col-md-6'> <a href='assets/img/listing-single/2.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/2.jpg' alt='post'> </a></div><div class='col-md-6'> <a href='assets/img/listing-single/3.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/3.jpg' alt='post'> </a></div> <a href='assets/img/listing-single/4.jpg' class='gallery-thumb'></a> <a href='assets/img/listing-single/5.jpg' class='gallery-thumb'></a></div><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. <a routerLink='/'>Lorem Ipsum has been the industry's</a> standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>",
+        "model": 2499,
+        "guest": 200,
+        "vendor": 1,
+        "star": true,
+        "sale": false,
+        "pending": true,
+        "courtmarriage": false,
+        "recent": true,
+        "features": [
+            {
+                "icon": "flaticon-guest",
+                "label": "Propery Type",
+                "value": "Party Launge"
+            },
+            {
+                "icon": "flaticon-pet-house",
+                "label": "Pet Friendly",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-chair",
+                "label": "Seating",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-plan",
+                "label": "Cooling",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "Property Id",
+                "value": "BPFXQEI"
+            },
+            {
+                "icon": "flaticon-parking",
+                "label": "Parking",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-guest",
+                "label": "Year Built",
+                "value": 2021
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "In Budget",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-sketch",
+                "label": "Wedding Planning",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-mailbox",
+                "label": "Mail box",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Vendor",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-new",
+                "label": "Condition",
+                "value": "New"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Lot Size",
+                "value": "89 Weddingz"
+            },
+            {
+                "icon": "flaticon-visibility",
+                "label": "View",
+                "value": "City View"
+            }
+        ],
+        "nearby": [
+            {
+                "name": "Restaurants",
+                "parentcls": "custom-success",
+                "icon": "fas fa-utensils",
+                "list": [
+                    {
+                        "title": "The One",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Elephant",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Jorgie and Clyne",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Education",
+                "parentcls": "custom-danger",
+                "icon": "fas fa-graduation-cap",
+                "list": [
+                    {
+                        "title": "Greater Moscow Liberty School",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Chandler Highschool",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Insitution of Science and Technology",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Essentials",
+                "parentcls": "custom-warning",
+                "icon": "fas fa-shopping-basket",
+                "list": [
+                    {
+                        "title": "Joe's 24/7 Groceries",
+                        "radius": "0.6 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Frank and Joe",
+                        "radius": "0.9 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "All United Store",
+                        "radius": "1.2 km",
+                        "rating": 5
+                    }
+                ]
+            }
+        ],
+        "history": [
+            {
+                "title": "1979 - 1999",
+                "image": "assets/img/listing-single/history-1.jpg",
+                "description": "<h5>The Beginning</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS."
+            },
+            {
+                "title": "2000 - 2012",
+                "image": "assets/img/listing-single/history-2.jpg",
+                "description": "<h5>The Rebuilding Phase</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            },
+            {
+                "title": "2013 - Till date",
+                "image": "assets/img/listing-single/history-3.jpg",
+                "description": "<h5>Modernization</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            }
+        ],
+        "video": {
+            "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap",
+            "url": "https://www.youtube.com/embed/KH1pcNUTa6U"
+        },
+        "coordinates": [
+            38.931567,
+            -77.038659
+        ]
+    },
+    {
+        "id": 2,
+        "gridimg": "assets/img/listings/2.jpg",
+        "listimg": "assets/img/listings-list/2.jpg",
+        "image": [
+            "assets/img/listing-single/1.jpg",
+            "assets/img/listing-single/2.jpg",
+            "assets/img/listing-single/3.jpg",
+            "assets/img/listing-single/4.jpg",
+            "assets/img/listing-single/5.jpg",
+            "assets/img/listing-single/6.jpg"
+        ],
+        "title": "Theodore Lowe, Azusa New York",
+        "location": "Theodore Lowe P.O. Box 283 8562 Fusce Rd. Azusa New York 39531",
+        "agent": [
+            2
+        ],
+        "category": [
+            1,
+            3,
+            4,
+            6
+        ],
+        "postdate": "June 3, 2021",
+        "price": 986000,
+        "emitime": 60,
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.",
+        "htmltext": "<h4>Wedding Overview</h4><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p><div class='row'><div class='col-md-6'> <a href='assets/img/listing-single/2.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/2.jpg' alt='post'> </a></div><div class='col-md-6'> <a href='assets/img/listing-single/3.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/3.jpg' alt='post'> </a></div> <a href='assets/img/listing-single/4.jpg' class='gallery-thumb'></a> <a href='assets/img/listing-single/5.jpg' class='gallery-thumb'></a></div><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. <a routerLink='/'>Lorem Ipsum has been the industry's</a> standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>",
+        "model": 2499,
+        "guest": 200,
+        "vendor": 1,
+        "star": true,
+        "sale": true,
+        "pending": false,
+        "courtmarriage": false,
+        "recent": true,
+        "features": [
+            {
+                "icon": "flaticon-guest",
+                "label": "Propery Type",
+                "value": "Party Launge"
+            },
+            {
+                "icon": "flaticon-pet-house",
+                "label": "Pet Friendly",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-chair",
+                "label": "Seating",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-plan",
+                "label": "Cooling",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "Property Id",
+                "value": "BPFXQEI"
+            },
+            {
+                "icon": "flaticon-parking",
+                "label": "Parking",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-guest",
+                "label": "Year Built",
+                "value": 2021
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "In Budget",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-sketch",
+                "label": "Wedding Planning",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-mailbox",
+                "label": "Mail box",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Vendor",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-new",
+                "label": "Condition",
+                "value": "New"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Lot Size",
+                "value": "89 Weddingz"
+            },
+            {
+                "icon": "flaticon-visibility",
+                "label": "View",
+                "value": "City View"
+            }
+        ],
+        "nearby": [
+            {
+                "name": "Restaurants",
+                "parentcls": "custom-success",
+                "icon": "fas fa-utensils",
+                "list": [
+                    {
+                        "title": "The One",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Elephant",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Jorgie and Clyne",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Education",
+                "parentcls": "custom-danger",
+                "icon": "fas fa-graduation-cap",
+                "list": [
+                    {
+                        "title": "Greater Moscow Liberty School",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Chandler Highschool",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Insitution of Science and Technology",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Essentials",
+                "parentcls": "custom-warning",
+                "icon": "fas fa-shopping-basket",
+                "list": [
+                    {
+                        "title": "Joe's 24/7 Groceries",
+                        "radius": "0.6 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Frank and Joe",
+                        "radius": "0.9 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "All United Store",
+                        "radius": "1.2 km",
+                        "rating": 5
+                    }
+                ]
+            }
+        ],
+        "history": [
+            {
+                "title": "1979 - 1999",
+                "image": "assets/img/listing-single/history-1.jpg",
+                "description": "<h5>The Beginning</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS."
+            },
+            {
+                "title": "2000 - 2012",
+                "image": "assets/img/listing-single/history-2.jpg",
+                "description": "<h5>The Rebuilding Phase</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            },
+            {
+                "title": "2013 - Till date",
+                "image": "assets/img/listing-single/history-3.jpg",
+                "description": "<h5>Modernization</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            }
+        ],
+        "video": {
+            "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap",
+            "url": "https://www.youtube.com/embed/KH1pcNUTa6U"
+        },
+        "coordinates": [
+            38.894651,
+            -77.003168
+        ]
+    },
+    {
+        "id": 3,
+        "gridimg": "assets/img/listings/3.jpg",
+        "listimg": "assets/img/listings-list/3.jpg",
+        "image": [
+            "assets/img/listing-single/1.jpg",
+            "assets/img/listing-single/2.jpg",
+            "assets/img/listing-single/3.jpg",
+            "assets/img/listing-single/4.jpg",
+            "assets/img/listing-single/5.jpg",
+            "assets/img/listing-single/6.jpg"
+        ],
+        "title": "The Muse Sarovar Portico",
+        "location": "Iris Watson P.O. Box 283 8562 Fusce Rd. Frederick Nebraska 20620",
+        "agent": [
+            3
+        ],
+        "category": [
+            5,
+            3,
+            4
+        ],
+        "postdate": "June 3, 2021",
+        "price": 562000,
+        "emitime": 60,
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.",
+        "htmltext": "<h4>Wedding Overview</h4><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p><div class='row'><div class='col-md-6'> <a href='assets/img/listing-single/2.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/2.jpg' alt='post'> </a></div><div class='col-md-6'> <a href='assets/img/listing-single/3.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/3.jpg' alt='post'> </a></div> <a href='assets/img/listing-single/4.jpg' class='gallery-thumb'></a> <a href='assets/img/listing-single/5.jpg' class='gallery-thumb'></a></div><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. <a routerLink='/'>Lorem Ipsum has been the industry's</a> standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>",
+        "model": 2499,
+        "guest": 200,
+        "vendor": 1,
+        "star": false,
+        "sale": false,
+        "pending": true,
+        "courtmarriage": false,
+        "recent": true,
+        "features": [
+            {
+                "icon": "flaticon-guest",
+                "label": "Propery Type",
+                "value": "Party Launge"
+            },
+            {
+                "icon": "flaticon-pet-house",
+                "label": "Pet Friendly",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-chair",
+                "label": "Seating",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-plan",
+                "label": "Cooling",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "Property Id",
+                "value": "BPFXQEI"
+            },
+            {
+                "icon": "flaticon-parking",
+                "label": "Parking",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-guest",
+                "label": "Year Built",
+                "value": 2021
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "In Budget",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-sketch",
+                "label": "Wedding Planning",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-mailbox",
+                "label": "Mail box",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Vendor",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-new",
+                "label": "Condition",
+                "value": "New"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Lot Size",
+                "value": "89 Weddingz"
+            },
+            {
+                "icon": "flaticon-visibility",
+                "label": "View",
+                "value": "City View"
+            }
+        ],
+        "nearby": [
+            {
+                "name": "Restaurants",
+                "parentcls": "custom-success",
+                "icon": "fas fa-utensils",
+                "list": [
+                    {
+                        "title": "The One",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Elephant",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Jorgie and Clyne",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Education",
+                "parentcls": "custom-danger",
+                "icon": "fas fa-graduation-cap",
+                "list": [
+                    {
+                        "title": "Greater Moscow Liberty School",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Chandler Highschool",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Insitution of Science and Technology",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Essentials",
+                "parentcls": "custom-warning",
+                "icon": "fas fa-shopping-basket",
+                "list": [
+                    {
+                        "title": "Joe's 24/7 Groceries",
+                        "radius": "0.6 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Frank and Joe",
+                        "radius": "0.9 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "All United Store",
+                        "radius": "1.2 km",
+                        "rating": 5
+                    }
+                ]
+            }
+        ],
+        "history": [
+            {
+                "title": "1979 - 1999",
+                "image": "assets/img/listing-single/history-1.jpg",
+                "description": "<h5>The Beginning</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS."
+            },
+            {
+                "title": "2000 - 2012",
+                "image": "assets/img/listing-single/history-2.jpg",
+                "description": "<h5>The Rebuilding Phase</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            },
+            {
+                "title": "2013 - Till date",
+                "image": "assets/img/listing-single/history-3.jpg",
+                "description": "<h5>Modernization</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            }
+        ],
+        "video": {
+            "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap",
+            "url": "https://www.youtube.com/embed/KH1pcNUTa6U"
+        },
+        "coordinates": [
+            38.881189,
+            -77.090372
+        ]
+    },
+    {
+        "id": 4,
+        "gridimg": "assets/img/listings/4.jpg",
+        "listimg": "assets/img/listings-list/4.jpg",
+        "image": [
+            "assets/img/listing-single/1.jpg",
+            "assets/img/listing-single/2.jpg",
+            "assets/img/listing-single/3.jpg",
+            "assets/img/listing-single/4.jpg",
+            "assets/img/listing-single/5.jpg",
+            "assets/img/listing-single/6.jpg"
+        ],
+        "title": "The Muse Sarovar Portico",
+        "location": "Iris Watson P.O. Box 283 8562 Fusce Rd. Frederick Nebraska 20620",
+        "agent": [
+            4
+        ],
+        "category": [
+            4,
+            3,
+            1
+        ],
+        "postdate": "June 3, 2021",
+        "price": 1034000,
+        "emitime": 60,
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.",
+        "htmltext": "<h4>Wedding Overview</h4><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p><div class='row'><div class='col-md-6'> <a href='assets/img/listing-single/2.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/2.jpg' alt='post'> </a></div><div class='col-md-6'> <a href='assets/img/listing-single/3.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/3.jpg' alt='post'> </a></div> <a href='assets/img/listing-single/4.jpg' class='gallery-thumb'></a> <a href='assets/img/listing-single/5.jpg' class='gallery-thumb'></a></div><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. <a routerLink='/'>Lorem Ipsum has been the industry's</a> standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>",
+        "model": 2499,
+        "guest": 200,
+        "vendor": 1,
+        "star": false,
+        "sale": true,
+        "pending": false,
+        "courtmarriage": false,
+        "recent": true,
+        "features": [
+            {
+                "icon": "flaticon-guest",
+                "label": "Propery Type",
+                "value": "Party Launge"
+            },
+            {
+                "icon": "flaticon-pet-house",
+                "label": "Pet Friendly",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-chair",
+                "label": "Seating",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-plan",
+                "label": "Cooling",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "Property Id",
+                "value": "BPFXQEI"
+            },
+            {
+                "icon": "flaticon-parking",
+                "label": "Parking",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-guest",
+                "label": "Year Built",
+                "value": 2021
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "In Budget",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-sketch",
+                "label": "Wedding Planning",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-mailbox",
+                "label": "Mail box",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Vendor",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-new",
+                "label": "Condition",
+                "value": "New"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Lot Size",
+                "value": "89 Weddingz"
+            },
+            {
+                "icon": "flaticon-visibility",
+                "label": "View",
+                "value": "City View"
+            }
+        ],
+        "nearby": [
+            {
+                "name": "Restaurants",
+                "parentcls": "custom-success",
+                "icon": "fas fa-utensils",
+                "list": [
+                    {
+                        "title": "The One",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Elephant",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Jorgie and Clyne",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Education",
+                "parentcls": "custom-danger",
+                "icon": "fas fa-graduation-cap",
+                "list": [
+                    {
+                        "title": "Greater Moscow Liberty School",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Chandler Highschool",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Insitution of Science and Technology",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Essentials",
+                "parentcls": "custom-warning",
+                "icon": "fas fa-shopping-basket",
+                "list": [
+                    {
+                        "title": "Joe's 24/7 Groceries",
+                        "radius": "0.6 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Frank and Joe",
+                        "radius": "0.9 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "All United Store",
+                        "radius": "1.2 km",
+                        "rating": 5
+                    }
+                ]
+            }
+        ],
+        "history": [
+            {
+                "title": "1979 - 1999",
+                "image": "assets/img/listing-single/history-1.jpg",
+                "description": "<h5>The Beginning</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS."
+            },
+            {
+                "title": "2000 - 2012",
+                "image": "assets/img/listing-single/history-2.jpg",
+                "description": "<h5>The Rebuilding Phase</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            },
+            {
+                "title": "2013 - Till date",
+                "image": "assets/img/listing-single/history-3.jpg",
+                "description": "<h5>Modernization</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            }
+        ],
+        "video": {
+            "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap",
+            "url": "https://www.youtube.com/embed/KH1pcNUTa6U"
+        },
+        "coordinates": [
+            38.882342,
+            -77.111561
+        ]
+    },
+    {
+        "id": 5,
+        "gridimg": "assets/img/listings/5.jpg",
+        "listimg": "assets/img/listings-list/5.jpg",
+        "image": [
+            "assets/img/listing-single/1.jpg",
+            "assets/img/listing-single/2.jpg",
+            "assets/img/listing-single/3.jpg",
+            "assets/img/listing-single/4.jpg",
+            "assets/img/listing-single/5.jpg",
+            "assets/img/listing-single/6.jpg"
+        ],
+        "title": "The Muse Sarovar Portico",
+        "location": "Iris Watson P.O. Box 283 8562 Fusce Rd. Frederick Nebraska 20620",
+        "agent": [
+            1
+        ],
+        "category": [
+            2,
+            5,
+            6
+        ],
+        "postdate": "June 3, 2021",
+        "price": 649000,
+        "emitime": 60,
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.",
+        "htmltext": "<h4>Wedding Overview</h4><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p><div class='row'><div class='col-md-6'> <a href='assets/img/listing-single/2.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/2.jpg' alt='post'> </a></div><div class='col-md-6'> <a href='assets/img/listing-single/3.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/3.jpg' alt='post'> </a></div> <a href='assets/img/listing-single/4.jpg' class='gallery-thumb'></a> <a href='assets/img/listing-single/5.jpg' class='gallery-thumb'></a></div><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. <a routerLink='/'>Lorem Ipsum has been the industry's</a> standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>",
+        "model": 2499,
+        "guest": 200,
+        "vendor": 1,
+        "star": false,
+        "sale": true,
+        "pending": false,
+        "courtmarriage": false,
+        "recent": false,
+        "features": [
+            {
+                "icon": "flaticon-guest",
+                "label": "Propery Type",
+                "value": "Party Launge"
+            },
+            {
+                "icon": "flaticon-pet-house",
+                "label": "Pet Friendly",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-chair",
+                "label": "Seating",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-plan",
+                "label": "Cooling",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "Property Id",
+                "value": "BPFXQEI"
+            },
+            {
+                "icon": "flaticon-parking",
+                "label": "Parking",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-guest",
+                "label": "Year Built",
+                "value": 2021
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "In Budget",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-sketch",
+                "label": "Wedding Planning",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-mailbox",
+                "label": "Mail box",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Vendor",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-new",
+                "label": "Condition",
+                "value": "New"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Lot Size",
+                "value": "89 Weddingz"
+            },
+            {
+                "icon": "flaticon-visibility",
+                "label": "View",
+                "value": "City View"
+            }
+        ],
+        "nearby": [
+            {
+                "name": "Restaurants",
+                "parentcls": "custom-success",
+                "icon": "fas fa-utensils",
+                "list": [
+                    {
+                        "title": "The One",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Elephant",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Jorgie and Clyne",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Education",
+                "parentcls": "custom-danger",
+                "icon": "fas fa-graduation-cap",
+                "list": [
+                    {
+                        "title": "Greater Moscow Liberty School",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Chandler Highschool",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Insitution of Science and Technology",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Essentials",
+                "parentcls": "custom-warning",
+                "icon": "fas fa-shopping-basket",
+                "list": [
+                    {
+                        "title": "Joe's 24/7 Groceries",
+                        "radius": "0.6 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Frank and Joe",
+                        "radius": "0.9 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "All United Store",
+                        "radius": "1.2 km",
+                        "rating": 5
+                    }
+                ]
+            }
+        ],
+        "history": [
+            {
+                "title": "1979 - 1999",
+                "image": "assets/img/listing-single/history-1.jpg",
+                "description": "<h5>The Beginning</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS."
+            },
+            {
+                "title": "2000 - 2012",
+                "image": "assets/img/listing-single/history-2.jpg",
+                "description": "<h5>The Rebuilding Phase</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            },
+            {
+                "title": "2013 - Till date",
+                "image": "assets/img/listing-single/history-3.jpg",
+                "description": "<h5>Modernization</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            }
+        ],
+        "video": {
+            "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap",
+            "url": "https://www.youtube.com/embed/KH1pcNUTa6U"
+        },
+        "coordinates": [
+            38.943951,
+            -77.052477
+        ]
+    },
+    {
+        "id": 6,
+        "gridimg": "assets/img/listings/1.jpg",
+        "listimg": "assets/img/listings-list/6.jpg",
+        "image": [
+            "assets/img/listing-single/1.jpg",
+            "assets/img/listing-single/2.jpg",
+            "assets/img/listing-single/3.jpg",
+            "assets/img/listing-single/4.jpg",
+            "assets/img/listing-single/5.jpg",
+            "assets/img/listing-single/6.jpg"
+        ],
+        "title": "The Muse Sarovar Portico",
+        "location": "Iris Watson P.O. Box 283 8562 Fusce Rd. Frederick Nebraska 20620",
+        "agent": [
+            2
+        ],
+        "category": [
+            2,
+            6
+        ],
+        "postdate": "June 3, 2021",
+        "price": 792000,
+        "emitime": 60,
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.",
+        "htmltext": "<h4>Wedding Overview</h4><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p><div class='row'><div class='col-md-6'> <a href='assets/img/listing-single/2.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/2.jpg' alt='post'> </a></div><div class='col-md-6'> <a href='assets/img/listing-single/3.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/3.jpg' alt='post'> </a></div> <a href='assets/img/listing-single/4.jpg' class='gallery-thumb'></a> <a href='assets/img/listing-single/5.jpg' class='gallery-thumb'></a></div><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. <a routerLink='/'>Lorem Ipsum has been the industry's</a> standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>",
+        "model": 2499,
+        "guest": 200,
+        "vendor": 1,
+        "star": false,
+        "sale": false,
+        "pending": false,
+        "courtmarriage": true,
+        "recent": false,
+        "features": [
+            {
+                "icon": "flaticon-guest",
+                "label": "Propery Type",
+                "value": "Party Launge"
+            },
+            {
+                "icon": "flaticon-pet-house",
+                "label": "Pet Friendly",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-chair",
+                "label": "Seating",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-plan",
+                "label": "Cooling",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "Property Id",
+                "value": "BPFXQEI"
+            },
+            {
+                "icon": "flaticon-parking",
+                "label": "Parking",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-guest",
+                "label": "Year Built",
+                "value": 2021
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "In Budget",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-sketch",
+                "label": "Wedding Planning",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-mailbox",
+                "label": "Mail box",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Vendor",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-new",
+                "label": "Condition",
+                "value": "New"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Lot Size",
+                "value": "89 Weddingz"
+            },
+            {
+                "icon": "flaticon-visibility",
+                "label": "View",
+                "value": "City View"
+            }
+        ],
+        "nearby": [
+            {
+                "name": "Restaurants",
+                "parentcls": "custom-success",
+                "icon": "fas fa-utensils",
+                "list": [
+                    {
+                        "title": "The One",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Elephant",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Jorgie and Clyne",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Education",
+                "parentcls": "custom-danger",
+                "icon": "fas fa-graduation-cap",
+                "list": [
+                    {
+                        "title": "Greater Moscow Liberty School",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Chandler Highschool",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Insitution of Science and Technology",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Essentials",
+                "parentcls": "custom-warning",
+                "icon": "fas fa-shopping-basket",
+                "list": [
+                    {
+                        "title": "Joe's 24/7 Groceries",
+                        "radius": "0.6 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Frank and Joe",
+                        "radius": "0.9 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "All United Store",
+                        "radius": "1.2 km",
+                        "rating": 5
+                    }
+                ]
+            }
+        ],
+        "history": [
+            {
+                "title": "1979 - 1999",
+                "image": "assets/img/listing-single/history-1.jpg",
+                "description": "<h5>The Beginning</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS."
+            },
+            {
+                "title": "2000 - 2012",
+                "image": "assets/img/listing-single/history-2.jpg",
+                "description": "<h5>The Rebuilding Phase</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            },
+            {
+                "title": "2013 - Till date",
+                "image": "assets/img/listing-single/history-3.jpg",
+                "description": "<h5>Modernization</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            }
+        ],
+        "video": {
+            "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap",
+            "url": "https://www.youtube.com/embed/KH1pcNUTa6U"
+        },
+        "coordinates": [
+            38.909664,
+            -77.043444
+        ]
+    },
+    {
+        "id": 7,
+        "gridimg": "assets/img/listings/6.jpg",
+        "listimg": "assets/img/listings-list/7.jpg",
+        "image": [
+            "assets/img/listing-single/1.jpg",
+            "assets/img/listing-single/2.jpg",
+            "assets/img/listing-single/3.jpg",
+            "assets/img/listing-single/4.jpg",
+            "assets/img/listing-single/5.jpg",
+            "assets/img/listing-single/6.jpg"
+        ],
+        "title": "The Muse Sarovar Portico",
+        "location": "Iris Watson P.O. Box 283 8562 Fusce Rd. Frederick Nebraska 20620",
+        "agent": [
+            3
+        ],
+        "category": [
+            1,
+            3,
+            6
+        ],
+        "postdate": "June 3, 2021",
+        "price": 468000,
+        "emitime": 60,
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.",
+        "htmltext": "<h4>Wedding Overview</h4><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p><div class='row'><div class='col-md-6'> <a href='assets/img/listing-single/2.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/2.jpg' alt='post'> </a></div><div class='col-md-6'> <a href='assets/img/listing-single/3.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/3.jpg' alt='post'> </a></div> <a href='assets/img/listing-single/4.jpg' class='gallery-thumb'></a> <a href='assets/img/listing-single/5.jpg' class='gallery-thumb'></a></div><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. <a routerLink='/'>Lorem Ipsum has been the industry's</a> standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>",
+        "model": 2499,
+        "guest": 200,
+        "vendor": 1,
+        "star": true,
+        "sale": false,
+        "pending": true,
+        "courtmarriage": false,
+        "recent": false,
+        "features": [
+            {
+                "icon": "flaticon-guest",
+                "label": "Propery Type",
+                "value": "Party Launge"
+            },
+            {
+                "icon": "flaticon-pet-house",
+                "label": "Pet Friendly",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-chair",
+                "label": "Seating",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-plan",
+                "label": "Cooling",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "Property Id",
+                "value": "BPFXQEI"
+            },
+            {
+                "icon": "flaticon-parking",
+                "label": "Parking",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-guest",
+                "label": "Year Built",
+                "value": 2021
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "In Budget",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-sketch",
+                "label": "Wedding Planning",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-mailbox",
+                "label": "Mail box",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Vendor",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-new",
+                "label": "Condition",
+                "value": "New"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Lot Size",
+                "value": "89 Weddingz"
+            },
+            {
+                "icon": "flaticon-visibility",
+                "label": "View",
+                "value": "City View"
+            }
+        ],
+        "nearby": [
+            {
+                "name": "Restaurants",
+                "parentcls": "custom-success",
+                "icon": "fas fa-utensils",
+                "list": [
+                    {
+                        "title": "The One",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Elephant",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Jorgie and Clyne",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Education",
+                "parentcls": "custom-danger",
+                "icon": "fas fa-graduation-cap",
+                "list": [
+                    {
+                        "title": "Greater Moscow Liberty School",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Chandler Highschool",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Insitution of Science and Technology",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Essentials",
+                "parentcls": "custom-warning",
+                "icon": "fas fa-shopping-basket",
+                "list": [
+                    {
+                        "title": "Joe's 24/7 Groceries",
+                        "radius": "0.6 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Frank and Joe",
+                        "radius": "0.9 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "All United Store",
+                        "radius": "1.2 km",
+                        "rating": 5
+                    }
+                ]
+            }
+        ],
+        "history": [
+            {
+                "title": "1979 - 1999",
+                "image": "assets/img/listing-single/history-1.jpg",
+                "description": "<h5>The Beginning</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS."
+            },
+            {
+                "title": "2000 - 2012",
+                "image": "assets/img/listing-single/history-2.jpg",
+                "description": "<h5>The Rebuilding Phase</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            },
+            {
+                "title": "2013 - Till date",
+                "image": "assets/img/listing-single/history-3.jpg",
+                "description": "<h5>Modernization</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            }
+        ],
+        "video": {
+            "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap",
+            "url": "https://www.youtube.com/embed/KH1pcNUTa6U"
+        },
+        "coordinates": [
+            38.914581,
+            -77.031706
+        ]
+    },
+    {
+        "id": 8,
+        "gridimg": "assets/img/listings/7.jpg",
+        "listimg": "assets/img/listings-list/8.jpg",
+        "image": [
+            "assets/img/listing-single/1.jpg",
+            "assets/img/listing-single/2.jpg",
+            "assets/img/listing-single/3.jpg",
+            "assets/img/listing-single/4.jpg",
+            "assets/img/listing-single/5.jpg",
+            "assets/img/listing-single/6.jpg"
+        ],
+        "title": "The Muse Sarovar Portico",
+        "location": "Theodore Lowe P.O. Box 283 8562 Fusce Rd. Azusa New York 39531",
+        "agent": [
+            4
+        ],
+        "category": [
+            2,
+            3,
+            6
+        ],
+        "postdate": "June 3, 2021",
+        "price": 891000,
+        "emitime": 60,
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.",
+        "htmltext": "<h4>Wedding Overview</h4><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p><div class='row'><div class='col-md-6'> <a href='assets/img/listing-single/2.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/2.jpg' alt='post'> </a></div><div class='col-md-6'> <a href='assets/img/listing-single/3.jpg' class='gallery-thumb'> <img src='assets/img/listing-single/3.jpg' alt='post'> </a></div> <a href='assets/img/listing-single/4.jpg' class='gallery-thumb'></a> <a href='assets/img/listing-single/5.jpg' class='gallery-thumb'></a></div><p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. <a routerLink='/'>Lorem Ipsum has been the industry's</a> standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>",
+        "model": 2499,
+        "guest": 200,
+        "vendor": 1,
+        "star": true,
+        "sale": true,
+        "pending": false,
+        "courtmarriage": false,
+        "recent": false,
+        "features": [
+            {
+                "icon": "flaticon-guest",
+                "label": "Propery Type",
+                "value": "Party Launge"
+            },
+            {
+                "icon": "flaticon-pet-house",
+                "label": "Pet Friendly",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-chair",
+                "label": "Seating",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-plan",
+                "label": "Cooling",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "Property Id",
+                "value": "BPFXQEI"
+            },
+            {
+                "icon": "flaticon-parking",
+                "label": "Parking",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-guest",
+                "label": "Year Built",
+                "value": 2021
+            },
+            {
+                "icon": "flaticon-price-tags",
+                "label": "In Budget",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-sketch",
+                "label": "Wedding Planning",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-mailbox",
+                "label": "Mail box",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Vendor",
+                "value": "Yes"
+            },
+            {
+                "icon": "flaticon-new",
+                "label": "Condition",
+                "value": "New"
+            },
+            {
+                "icon": "flaticon-seller",
+                "label": "Lot Size",
+                "value": "89 Weddingz"
+            },
+            {
+                "icon": "flaticon-visibility",
+                "label": "View",
+                "value": "City View"
+            }
+        ],
+        "nearby": [
+            {
+                "name": "Restaurants",
+                "parentcls": "custom-success",
+                "icon": "fas fa-utensils",
+                "list": [
+                    {
+                        "title": "The One",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Elephant",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Jorgie and Clyne",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Education",
+                "parentcls": "custom-danger",
+                "icon": "fas fa-graduation-cap",
+                "list": [
+                    {
+                        "title": "Greater Moscow Liberty School",
+                        "radius": "1.3 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Chandler Highschool",
+                        "radius": "0.2 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "Insitution of Science and Technology",
+                        "radius": "3.2 km",
+                        "rating": 4
+                    }
+                ]
+            },
+            {
+                "name": "Essentials",
+                "parentcls": "custom-warning",
+                "icon": "fas fa-shopping-basket",
+                "list": [
+                    {
+                        "title": "Joe's 24/7 Groceries",
+                        "radius": "0.6 km",
+                        "rating": 4
+                    },
+                    {
+                        "title": "Frank and Joe",
+                        "radius": "0.9 km",
+                        "rating": 5
+                    },
+                    {
+                        "title": "All United Store",
+                        "radius": "1.2 km",
+                        "rating": 5
+                    }
+                ]
+            }
+        ],
+        "history": [
+            {
+                "title": "1979 - 1999",
+                "image": "assets/img/listing-single/history-1.jpg",
+                "description": "<h5>The Beginning</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS."
+            },
+            {
+                "title": "2000 - 2012",
+                "image": "assets/img/listing-single/history-2.jpg",
+                "description": "<h5>The Rebuilding Phase</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            },
+            {
+                "title": "2013 - Till date",
+                "image": "assets/img/listing-single/history-3.jpg",
+                "description": "<h5>Modernization</h5> Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,"
+            }
+        ],
+        "video": {
+            "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap",
+            "url": "https://www.youtube.com/embed/KH1pcNUTa6U"
+        },
+        "coordinates": [
+            38.878241,
+            -77.020945
+        ]
+    }
+]

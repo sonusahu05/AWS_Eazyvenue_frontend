@@ -1,0 +1,62 @@
+[
+    {
+        "id":1,
+        "title":"Free",
+        "subtext":"Package Includes",
+        "price":10,
+        "period":"Month",
+        "image":"assets/img/pricing2/1.jpg",
+        "includes":[
+            {
+                "lable":"Listing Submission",
+                "text":"Up to 2 Weddings",
+                "tipdata":"Allowed Weddings Per Month"
+            },
+            {
+                "lable":"Vendor Consultation",
+                "text":"Not Available",
+                "tipdata":"Monthly Vendor Reports"
+            }
+        ]
+    },
+    {
+        "id":2,
+        "title":"Basic",
+        "subtext":"Package Includes",
+        "price":12.99,
+        "period":"Month",
+        "image":"assets/img/pricing2/1.jpg",
+        "includes":[
+            {
+                "lable":"Listing Submission",
+                "text":"Up to 5 Weddings",
+                "tipdata":"Allowed Weddings Per Month"
+            },
+            {
+                "lable":"Vendor Consultation",
+                "text":"Not Available",
+                "tipdata":"Monthly Vendor Reports"
+            }
+        ]
+    },
+    {
+        "id":3,
+        "title":"Wedding Venues",
+        "subtext":"Package Includes",
+        "price":39.99,
+        "period":"Month",
+        "image":"assets/img/pricing2/1.jpg",
+        "includes":[
+            {
+                "lable":"Listing Submission",
+                "text":"Up to 20 Weddings",
+                "tipdata":"Allowed Weddings Per Month"
+            },
+            {
+                "lable":"Vendor Consultation",
+                "text":"Monthly Consultation",
+                "tipdata":"Monthly Vendor Reports"
+            }
+        ]
+    }
+]

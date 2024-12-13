@@ -1,0 +1,20 @@
+[
+    {
+        "id":1,
+        "image":"assets/img/coming-soon/1.jpg",
+        "title":"Quote of the day",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    },
+    {
+        "id":2,
+        "image":"assets/img/coming-soon/2.jpg",
+        "title":"Quote of the day",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    },
+    {
+        "id":3,
+        "image":"assets/img/coming-soon/3.jpg",
+        "title":"Quote of the day",
+        "text":"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+    }
+]

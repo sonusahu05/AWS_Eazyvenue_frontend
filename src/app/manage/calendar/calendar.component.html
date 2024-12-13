@@ -1,0 +1,613 @@
+<div class="p-grid">
+    <h5>Post Availability</h5>
+    <div class="p-col-12">
+        <div class="card">
+            <div class="p-fluid p-formgrid p-grid">
+                <div class="p-field p-col-4">
+                    <label for="trainer">Venue List<span class="mandatory-fields">*</span></label>
+                    <p-dropdown inputId="trainer" [filter]="true" [options]="trainerList" [(ngModel)]="selectedTrainer"
+                        (onChange)="onTrainerSelect($event)" placeholder="Select" optionLabel="name"
+                        [ngClass]="{ 'is-invalid': submitted && f.trainer.errors }"></p-dropdown>
+                    <div *ngIf="submitted && f.trainer.errors" class="invalid-feedback">
+                        <div *ngIf="f.trainer.errors.required">Please, Select Trainer</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <full-calendar [options]="options"></full-calendar> -->
+    </div>
+</div>
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="card">
+            <h5>Calendar View</h5>
+            <div class="card" *ngIf="showViewCalendar">
+                <full-calendar [options]="viewOptions"></full-calendar>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="card">
+            <h5>Add Slot</h5>
+            <p-dialog [(visible)]="addSloteventDialog" [style]="{width: '40%',height:'30%'}" header="Slot Details"
+                [modal]="true" [closable]="true">
+                <p-toast key="addSlotToastmsg"></p-toast>
+                <ng-template pTemplate="content">
+                    <form [formGroup]="addSlotForm" *ngIf="this.addSlotForm" (ngSubmit)="onSlotSubmit()">
+                        <div class="p-fluid p-formgrid p-grid">
+                        </div>
+                        <div class="p-fluid p-formgrid p-grid">
+                            <div class="p-fluid p-col-4">
+                                <label for="binary">Start Time</label>
+                                <p-calendar [timeOnly]="true" [stepMinute]="15" formControlName="startTime"
+                                    [defaultDate]="minDuration" [readonlyInput]="true" placeholder="hh:mm"
+                                    [ngClass]="{ 'is-invalid': submitted && slotf.startTime.errors}">
+                                </p-calendar>
+                                <div *ngIf="submitted && slotf.startTime.errors" class="invalid-feedback">
+                                    <div *ngIf="slotf.startTime.errors.required">Please, Select Start Time</div>
+                                    <div *ngIf="slotf.startTime.errors.startTimeError">Please, Select Start Time Before
+                                        End Time</div>
+                                </div>
+                            </div>
+                            <div class="p-fluid p-col-4">
+                                <label for="binary">End Time</label>
+                                <p-calendar [timeOnly]="true" [minHour]="minTime" [stepMinute]="15"
+                                    formControlName="endTime" [defaultDate]="minDuration" [readonlyInput]="true"
+                                    placeholder="hh:mm" [ngClass]="{ 'is-invalid': submitted && slotf.endTime.errors}">
+                                </p-calendar>
+                                <div *ngIf="submitted && slotf.endTime.errors" class="invalid-feedback">
+                                    <div *ngIf="slotf.endTime.errors.required">Please, Select End Time</div>
+                                </div>
+                            </div>
+                            <div class="p-field p-col-4">
+                                <label for="status">Status<span class="mandatory-fields">*</span></label>
+                                <p-dropdown inputId="status" [options]="statuses" formControlName="status"
+                                    placeholder="Select" optionLabel="label" (ngModelChange)="onStatusSelect($event)"
+                                    [ngClass]="{ 'is-invalid': submitted && slotf.status.errors}">
+                                </p-dropdown>
+                                <div *ngIf="submitted && slotf.status.errors" class="invalid-feedback">
+                                    <div *ngIf="slotf.status.errors.required">Please, Select Status</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button pButton label="Save" icon="pi pi-check" class="p-button-text"></button>
+                        <button pButton label="Reset" icon="pi pi-refresh" class="p-button-text"
+                            (click)="resetAddSlotForm()"></button>
+                    </form>
+                </ng-template>
+                <div class="button-set back">
+                    <div class="p-fluid p-formgrid">
+                        <p-toast></p-toast>
+                    </div>
+                </div>
+            </p-dialog>
+            <div class="col-md-12">
+                <!-- <div class="card"> -->
+                <p-toast key="toastmsg"></p-toast>
+                <h5>Slot Management</h5>
+                <p-toolbar styleClass="p-mb-4">
+                    <ng-template pTemplate="left">
+                        <button pButton label="Add Slot" (click)="onAddSlotClick()"></button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button pButton label="Clear Filters" class="p-button-outlined p-mr-2 p-mb-2"
+                            icon="pi pi-filter-slash" (click)="clear()
+							"></button>
+                    </ng-template>
+                    <ng-template pTemplate="right">
+                        <!-- <button pButton pRipple label="Export" icon="pi pi-file-excel" (click)="exportExcel()"
+                            class="p-button-help mr-2" pTooltip="XLS" tooltipPosition="bottom"></button> -->
+                        <!-- <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning mr-2" pTooltip="PDF" tooltipPosition="bottom"></button> -->
+                    </ng-template>
+                </p-toolbar>
+                <!-- <div class="card">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col-2">
+                            <label for="searchfield">Select Field</label>
+                            <p-dropdown inputId="searchfield" [options]="searchBy" [(ngModel)]="searchby"
+                                placeholder="Select Field" optionLabel="label"></p-dropdown>
+                        </div>
+                        <div class="p-field p-col-3">
+                            <label for="startdt">Start Date</label>
+                            <p-calendar monthNavigator="true" yearNavigator="true" yearRange="2022:2050"
+                                [(ngModel)]="startDate" class="p-calendar" inputId="calendar" dateFormat="dd/mm/yy"
+                                [showIcon]="true"></p-calendar>
+                        </div>
+                        <div class="p-field p-col-3">
+                            <label for="enddt">End Date</label>
+                            <p-calendar monthNavigator="true" yearNavigator="true" yearRange="2022:2050"
+                                [(ngModel)]="endDate" class="p-calendar" inputId="calendar" dateFormat="dd/mm/yy"
+                                [showIcon]="true"></p-calendar>
+                        </div>
+                        <div class="p-field p-col-3">
+                            <button pButton pRipple label="Search" class="p-button p-mr-1 p-mb-2"
+                                (click)="getSlotsList($event)"></button>
+                        </div>
+                    </div>
+                </div> -->
+                <p-table class="p1-table-columns hide-columns" [scrollable]="true" scrollHeight="auto"
+                    scrollDirection="both" #dt [value]="slotList" [paginator]="true" [rows]="10" [lazy]="true"
+                    [totalRecords]="totalRecords" [loading]="loading" [rowsPerPageOptions]="paginationOption"
+                    paginatorPosition="top" (onLazyLoad)="getSlotsList($event)">
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    SR. NO.
+                                </div>
+                            </th>
+                            <th class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Start Time
+                                </div>
+                            </th>
+                            <th class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    End Time
+                                </div>
+                            </th>
+                            <th pSortableColumn="created_at" class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Created On
+                                    <p-sortIcon field="created_at"></p-sortIcon>
+                                </div>
+                            </th>
+
+                            <th pSortableColumn="updated_at" class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Last Modified On
+                                    <p-sortIcon field="updated_at"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th pSortableColumn="status" class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Status
+                                    <p-sortIcon field="status"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Action
+                                </div>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="col-width">
+                            </th>
+                            <th class="col-width">
+                                <!-- <input pInputText type="text"
+                                    (keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'startTime', 'contains')"
+                                    style="width: 90px;"
+                                    [value]="dt.filters['startTime'] ? dt.filters['startTime'].value : ''" /> -->
+                            </th>
+                            <th class="col-width">
+                                <!-- <input pInputText type="text"
+                                    (keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'endTime', 'contains')"
+                                    style="width: 90px;"
+                                    [value]="dt.filters['endTime'] ? dt.filters['endTime'].value : ''" /> -->
+                            </th>
+                            <th [ngSwitch]="created_at" class="col-width">
+                                <p-calendar #pCalendarId class="p-column-filter" inputId="calendar"
+                                    dateFormat="dd/mm/yy"
+                                    (onSelect)="setDownloadFlag(); dt.filter($event,'created_at', 'dateIs')"
+                                    [showIcon]="true" [(ngModel)]="calvalue"></p-calendar>
+                            </th>
+                            <th [ngSwitch]="updated_at" class="col-width">
+                                <p-calendar #pCalendarId class="p-column-filter" inputId="calendar"
+                                    dateFormat="dd/mm/yy"
+                                    (onSelect)="setDownloadFlag(); dt.filter($event,'updated_at', 'dateIs')"
+                                    [showIcon]="true" [(ngModel)]="ucalvalue"></p-calendar>
+                            </th>
+                            <th [ngSwitch]="status" class="col-width">
+                                <p-dropdown #pDropDownId2 [options]="statuses" [style]="{'width':'80px'}"
+                                    (onChange)="setDownloadFlag(); dt.filter($event.value, 'status', 'equals')"
+                                    styleClass="p-column-filter" placeholder="Select Status" [showClear]="true">
+                                    <ng-template let-option pTemplate="item">
+                                        <span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+                                    </ng-template>
+                                </p-dropdown>
+                            </th>
+                            <th class="col-width">
+                                <button pButton [style]="{'margin-left':'20px'}" icon="pi pi-minus"
+                                    class="p-button-rounded" (click)="removeColumns()"></button>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-slot let-rowIndex="rowIndex">
+                        <tr class="p-selectable-row">
+                            <td class="col-width">
+                                {{rowIndex + 1}}
+                            </td>
+                            <td class="col-width">
+                                {{slot.startTime.hours}}:{{slot.startTime.minutes}}
+                            </td>
+                            <td class="col-width">
+                                {{slot.endTime.hours}}:{{slot.endTime.minutes}}
+                            </td>
+                            <td class="col-width">
+                                {{slot.created_at}}
+                            </td>
+                            <td class="col-width">
+                                {{slot.updated_at}}
+                            </td>
+                            <td class="col-width">
+                                <span *ngIf="slot.status">
+                                    <p-tag styleClass="mr-2" severity="success" value="Active"></p-tag>
+                                </span>
+                                <span *ngIf="!slot.status">
+                                    <p-tag severity="danger" value="In-Active"></p-tag>
+                                </span>
+                                <p-inputSwitch [(ngModel)]="slot.status" (onChange)="changeStatus(slot)">
+                                </p-inputSwitch>
+                            </td>
+                            <td class="col-width">
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                    (click)="deleteSlot(slot)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="12">No Slots found.</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                        <div class="p-d-flex p-ai-center p-jc-between">
+                            In total there are {{totalRecords }} Slots.
+                        </div>
+                    </ng-template>
+                </p-table>
+                <p-table class="p2-table-columns show-columns" #dt [value]="slotList" [paginator]="true" [rows]="10"
+                    [lazy]="true" [totalRecords]="totalRecords" [loading]="loading"
+                    [rowsPerPageOptions]="paginationOption" [totalRecords]="totalRecords" [loading]="loading"
+                    paginatorPosition="top" (onLazyLoad)="getSlotsList($event)">
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    SR. NO.
+                                </div>
+                            </th>
+                            <th class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Start Time
+                                </div>
+                            </th>
+                            <th class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    End Time
+                                </div>
+                            </th>
+                            <th pSortableColumn="created_at" class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Created On
+                                    <p-sortIcon field="created_at"></p-sortIcon>
+                                </div>
+                            </th>
+
+                            <th pSortableColumn="updated_at" class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Last Modified On
+                                    <p-sortIcon field="updated_at"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th pSortableColumn="status" class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Status
+                                    <p-sortIcon field="status"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th class="col-width">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Action
+                                </div>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+
+                            </th>
+                            <th [ngSwitch]="startTime">
+                                <!-- <input pInputText type="text"
+                                    (keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'startTime', 'contains')"
+                                    style="width: 90px;"
+                                    [value]="dt.filters['startTime'] ? dt.filters['startTime'].value : ''" /> -->
+                            </th>
+                            <th [ngSwitch]="endTime">
+                                <!-- <input pInputText type="text"
+                                    (keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'endTime', 'contains')"
+                                    style="width: 90px;"
+                                    [value]="dt.filters['endTime'] ? dt.filters['endTime'].value : ''" /> -->
+                            </th>
+                            <th [ngSwitch]="created_at" class="col-width">
+                                <p-calendar #pCalendarId class="p-column-filter" inputId="calendar"
+                                    dateFormat="dd/mm/yy"
+                                    (onSelect)="setDownloadFlag(); dt.filter($event,'created_at', 'dateIs')"
+                                    [showIcon]="true" [(ngModel)]="calvalue"></p-calendar>
+                            </th>
+
+                            <th [ngSwitch]="updated_at" class="col-width">
+                                <p-calendar #pCalendarId class="p-column-filter" inputId="calendar"
+                                    dateFormat="dd/mm/yy"
+                                    (onSelect)="setDownloadFlag(); dt.filter($event,'updated_at', 'dateIs')"
+                                    [showIcon]="true" [(ngModel)]="ucalvalue"></p-calendar>
+                            </th>
+                            <th [ngSwitch]="status" class="col-width">
+                                <p-dropdown #pDropDownId2 [options]="statuses" [style]="{'width':'80px'}"
+                                    (onChange)="setDownloadFlag(); dt.filter($event.value, 'status', 'equals')"
+                                    styleClass="p-column-filter" placeholder="Select Status" [showClear]="true">
+                                    <ng-template let-option pTemplate="item">
+                                        <span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+                                    </ng-template>
+                                </p-dropdown>
+                            </th>
+                            <th>
+                                <button pButton [style]="{'margin-left':'20px'}" icon="pi pi-plus"
+                                    class="p-button-rounded" (click)="setDownloadFlag(); addColumns()"></button>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-slot let-rowIndex="rowIndex">
+                        <tr class="p-selectable-row">
+                            <td>
+                                {{rowIndex + 1}}
+                            </td>
+                            <td>
+                                {{slot.startTime.hours}}:{{slot.startTime.minutes}}
+                            </td>
+                            <td>
+                                {{slot.endTime.hours}}:{{slot.endTime.minutes}}
+                            </td>
+                            <td>
+                                {{slot.created_at}}
+                            </td>
+                            <td>
+                                {{slot.updated_at}}
+                            </td>
+                            <td>
+                                <span *ngIf="slot.status">
+                                    <p-tag styleClass="mr-2" severity="success" value="Active"></p-tag>
+                                </span>
+                                <span *ngIf="!slot.status">
+                                    <p-tag severity="danger" value="In-Active"></p-tag>
+                                </span>
+                                <p-inputSwitch [(ngModel)]="slot.status" (onChange)="changeStatus(slot)">
+                                </p-inputSwitch>
+                            </td>
+                            <td>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                    (click)="deleteSlot(slot)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="10">No Slots found.</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                        <div class="p-d-flex p-ai-center p-jc-between">
+                            In total there are {{totalRecords }} Slots.
+                        </div>
+                    </ng-template>
+                </p-table>
+                <!-- </div> -->
+
+                <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+            </div>
+        </div>
+    </div>
+    <div class="p-col-12">
+        <div class="card">
+            <h5>Add Availability</h5>
+            <div class="card">
+                <p-toast key="calendarSearchtoastmsg"></p-toast>
+                <form [formGroup]="calendarSearchForm" *ngIf="this.calendarSearchForm"
+                    (ngSubmit)="loadCalendarOnSubmit()">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col-3">
+                            <label for="startdt">Start Date</label>
+                            <p-calendar formControlName="startDate" [defaultDate]="defaultDate"
+                                yearRange="{{yearRange}}" [minDate]="minDateValue" [maxDate]="maxDateValue"
+                                class="p-calendar" inputId="calendar" dateFormat="dd-mm-yy" [showIcon]="true"
+                                [ngClass]="{ 'is-invalid': submitted && calendarSearchf.startDate.errors}"
+                                (onSelect)="selectStartDate($event)">
+                            </p-calendar>
+                            <div *ngIf="submitted && calendarSearchf.startDate.errors" class="invalid-feedback">
+                                <div *ngIf="calendarSearchf.startDate.errors.startDateError">Please, Select Start Date
+                                    Before End Date</div>
+                                <div *ngIf="calendarSearchf.startDate.errors.required">Please, Enter Start Date</div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col-3">
+                            <label for="enddt">End Date</label>
+                            <p-calendar monthNavigator="true" yearNavigator="true" yearRange="{{yearRange}}"
+                                [minDate]="minDateValue" [maxDate]="maxDateValue" formControlName="endDate"
+                                class="p-calendar" inputId="calendar" dateFormat="dd-mm-yy" [showIcon]="true"
+                                [ngClass]="{ 'is-invalid': submitted && calendarSearchf.endDate.errors}"
+                                (onSelect)="selectEndDate($event)">
+                            </p-calendar>
+                            <div *ngIf="submitted && calendarSearchf.endDate.errors" class="invalid-feedback">
+                                <div *ngIf="calendarSearchf.endDate.errors.required">Please, Enter Start Date</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="grid">
+
+                            <div class="row">
+
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Slots</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <label for="slot">Slot: {{slot.slot}}&nbsp;&nbsp;</label>
+                                        <p-checkbox formControlName="{{slot.id}}" [binary]="true"
+                                            (onChange)="onAllSlotSelect(slot, $event, 'All')" inputId="binary">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+
+                                <div style="padding: 10px;">
+                                    <h1 class="slot-heading">Sunday</h1>
+                                    <div class="col-md-12">
+                                        <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                            style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                            <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                                (onChange)="onSlotSelect(slot, $event, 'Sunday')">
+                                            </p-checkbox>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Monday</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                            (onChange)="onSlotSelect(slot, $event, 'Monday')">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Tuesday</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                            (onChange)="onSlotSelect(slot, $event, 'Tuesday')">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Wednesday</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                            (onChange)="onSlotSelect(slot, $event, 'Wednesday')">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Thursday</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                            (onChange)="onSlotSelect(slot, $event, 'Thursday')">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Friday</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                            (onChange)="onSlotSelect(slot, $event, 'Friday')">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px">
+                                    <h1 class="slot-heading">Saturday</h1>
+                                    <div *ngFor="let slot of slotListArr" class="p-field-checkbox"
+                                        style="padding: 10px; display: flex; justify-content: center; align-items: center;">
+                                        <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                            (onChange)="onSlotSelect(slot, $event, 'Saturday')">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-field">
+                        <button pButton pRipple label="Submit" class="p-button p-mr-1 p-mb-2"></button>
+                    </div>
+                </form>
+            </div>
+            <div class="card" *ngIf="showCalendar">
+                <full-calendar [options]="options"></full-calendar>
+            </div>
+
+            <p-dialog [(visible)]="eventDialog" [style]="{width: '40%'}" header="Slot Details" [modal]="true"
+                [closable]="false">
+
+
+                <div>
+                    <button class="close-btn" pButton pRipple label="" icon="pi pi-times" type="reset"
+                        (click)="closePostAvailabilityForm()"></button>
+                </div>
+                <p-toast key="postAvailabilityToastmsg"></p-toast>
+                <ng-template pTemplate="content">
+                    <form [formGroup]="postAvailabilityForm" *ngIf="this.postAvailabilityForm"
+                        (ngSubmit)="onPostAvailabilitySubmit()">
+                        <div class="p-fluid p-formgrid p-grid">
+                            <div class="p-fluid p-col-4">
+                                <label for="title">Slot List</label>
+                                <!-- <p-multiSelect [options]="slotListArr" formControlName="slot" defaultLabel="Select Slot"
+									optionLabel="slot" display="chip"
+									[ngClass]="{ 'is-invalid': submitted && f.slot.errors }">
+								</p-multiSelect> -->
+                                <div *ngFor="let slot of slotListArr" class="p-field-checkbox">
+                                    <p-checkbox binary="true" formControlName="{{slot.id}}" optionLabel="slot"
+                                        [inputId]="slot.key" value="slot"
+                                        (onChange)="onSlotSelect(slot, $event, 'slot')" [value]="slot"></p-checkbox>
+                                    <label>{{slot.slot }}</label>
+                                    <!-- <p-checkbox formControlName="{{slot.slot}}" [binary]="true"
+                                        (onChange)="onSlotSelect(slot, $event, 'recurring')" inputId="binary">
+                                    </p-checkbox>
+                                    <label for="binary">Recurring slot</label> -->
+                                </div>
+                                <!-- <div *ngIf="submitted && f.slot.errors" class="invalid-feedback">
+									<div *ngIf="f.slot.errors.required">Please, Select Slot</div>
+								</div> -->
+                            </div>
+                            <!-- <div class="p-fluid p-col-4">
+								<p-checkbox formControlName="recurring" [binary]="true"
+									(onChange)="onRecurringSelect($event)" inputId="binary"></p-checkbox>
+								<label for="binary">Recurring slot for all</label>
+							</div> -->
+                            <!-- <div class="p-field p-col-4">
+								<label for="postAvailabilityStatus">Status<span
+										class="mandatory-fields">*</span></label>
+								<p-dropdown inputId="postAvailabilityStatus" [options]="statuses"
+									formControlName="postAvailabilityStatus" placeholder="Select" optionLabel="label"
+									(ngModelChange)="onPostAvailabilityStatusSelect($event)"
+									[ngClass]="{ 'is-invalid': submitted && f.postAvailabilityStatus.errors}">
+								</p-dropdown>
+								<div *ngIf="submitted && f.postAvailabilityStatus.errors" class="invalid-feedback">
+									<div *ngIf="f.postAvailabilityStatus.errors.required">Please, Select Status</div>
+								</div>
+							</div> -->
+                        </div>
+                        <button pButton pRipple label="Save" icon="pi pi-check"></button>
+                        <!-- <button pButton pRipple label="Reset" icon="pi pi-times" type="reset"
+                            (click)="reset()"></button> -->
+                    </form>
+                </ng-template>
+                <div class="button-set back">
+                    <div class="p-fluid p-formgrid">
+                        <p-toast></p-toast>
+                    </div>
+                </div>
+            </p-dialog>
+
+            <p-dialog [(visible)]="deleteEventDialog" [style]="{width: '40%',height:'30%'}" header="Slot Details"
+                [modal]="true" [closable]="true">
+                <p-toast key="postAvailabilityDeleteToastmsg"></p-toast>
+                <ng-template pTemplate="content">
+                    <form [formGroup]="deletePostAvailabilityForm" *ngIf="this.deletePostAvailabilityForm"
+                        (ngSubmit)="onPostAvailabilityDeleteSubmit()">
+                        <label>Are you sure want to delete this slot?</label>
+                        <br>
+                        <input formControlName="disable" type="hidden" value="Yes">
+                        <button pButton pRipple label="Yes" icon="pi pi-check"> </button>
+                        <button pButton pRipple label="Cancel" icon="pi pi-cancel" class="p-button-text" type="reset"
+                            (click)="cancelPostAvailability()"></button>
+                    </form>
+                </ng-template>
+                <div class="button-set back">
+                    <div class="p-fluid p-formgrid">
+                        <p-toast></p-toast>
+                    </div>
+                </div>
+            </p-dialog>
+        </div>
+    </div>
+</div>

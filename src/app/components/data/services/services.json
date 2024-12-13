@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "icon": "flaticon-sketch",
+        "title": "Wedding Tools Services",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        "image":"assets/img/service2/1.jpg"
+    },
+    {
+        "id": 2,
+        "icon": "flaticon-house",
+        "title": "Wedding Venue Services",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        "image":"assets/img/service2/2.jpg"
+    },
+    {
+        "id": 3,
+        "icon": "flaticon-bride-1",
+        "title": "Wedding Vendors Services",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        "image":"assets/img/service2/3.jpg"
+    },
+    {
+        "id": 4,
+        "icon": "flaticon-dollar-tag",
+        "title": "Cost Calculation",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        "image":"assets/img/service2/4.jpg"
+    },
+    {
+        "id": 5,
+        "icon": "flaticon-sales-agent",
+        "title": "Consultation Services",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        "image":"assets/img/service2/5.jpg"
+    },
+    {
+        "id": 6,
+        "icon": "flaticon-user",
+        "title": "Services for Individuals",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        "image":"assets/img/service2/6.jpg"
+    }
+]

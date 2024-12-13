@@ -1,0 +1,821 @@
+.sigma_header-bottom-inner app-navigation .navigation-search-bar .p-fluid .top-search-bar-fillter .row .col-md-4 .p-element .p-multiselect {
+    border-radius: 33px 0px 0px 33px !important;
+}
+
+
+
+.filter-slider .product-item.active {
+    position: relative;
+}
+
+.filter-slider .product-item.active h4 {
+    color: red !important;
+}
+
+.filter-slider .product-item.active::after {
+    content: '';
+    display: block;
+    position: absolute;
+    // bottom: -10px;
+    width: 100%;
+    height: 2px;
+    background: red;
+
+}
+
+.filter_icon img {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+}
+
+.filter_icon {
+    display: contents;
+}
+
+.filter_icon .dir-ltr {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    padding: 15px;
+}
+
+.filter-slider .product-item.active {
+    position: relative;
+}
+
+.filter-slider .product-item.active h4 {
+    color: red !important;
+}
+
+.filter-slider .product-item.active::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: -10px;
+    width: 100%;
+    height: 2px;
+    background: red;
+}
+
+.col-md-11 p-carousel h4 {
+    line-height: initial !important;
+}
+
+.user_btn {
+    box-shadow: var(--shadow);
+    display: flex;
+    margin: 0px 0px 0px auto;
+    width: 100%;
+    height: 60px;
+    border-radius: 33px;
+    justify-content: space-around;
+    align-items: center;
+    border: 1px solid var(--grey-color);
+    background-color: #fff;
+    padding: 15px;
+}
+
+.container-fluid {
+    padding-left: 45px;
+    padding-right: 45px;
+}
+
+.filter-slider {
+    flex: 0 0 calc(100% - 200px);
+    max-width: calc(100% - 200px);
+}
+
+.venue-categories-icons p-carousel img {
+    height: 30px;
+}
+
+.venue-categories-icons p-carousel h4 {
+    font-size: 11px;
+    font-weight: 500;
+    margin-bottom: 0px !important;
+    line-height: initial;
+    white-space: nowrap;
+    padding: 0px 5px;
+}
+
+.venue-categories-icons p-carousel .product-item-content {
+    text-align: center;
+}
+
+
+
+.filter-icon-section {
+    display: flex;
+    align-items: center;
+}
+
+.sigma_header-bottom.filter-div {
+    display: block;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    top: 66px;
+    height: 69px;
+    z-index: 1;
+    background: linear-gradient(360deg, #ffffff, #ffffff, #83888f00);
+    box-shadow: 5px 5px 5px #00000026, -5px -5px 5px #00000000;
+}
+
+.latestVenue_listing .col-md-12 .col-xl-3 {
+    flex: 0 0 20%;
+    max-width: 20%;
+}
+
+
+
+@media (max-width: 992px) {
+    .container-fluid {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+
+}
+
+@media (max-width: 1337px) {
+    .container-fluid {
+        padding-left: 40px !important;
+        padding-right: 40px !important;
+    }
+}
+
+@media (max-width: 1310px) {
+    .latestVenue_listing .col-md-12 .col-xl-3 {
+        flex: 0 0 33.33% !important;
+        max-width: 33.33% !important;
+    }
+
+}
+
+// @media (min-width: 991px) and (max-width: 1281px) {
+//     .search-bar {
+//         display: none;
+//     }
+// }
+
+// @media (max-width: 991px) {
+@media (max-width: 1024px) {
+    .latestVenue_listing .col-md-12 .col-xl-3 {
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
+
+    .navigation-search-bar .col-md-2 .p-button span {
+        display: none;
+    }
+
+    img.assured-img {
+        height: 300px !important;
+    }
+
+    .search-bar {
+        display: none;
+    }
+
+}
+
+@media (max-width: 768px) {
+    .venue-categories-icons p-carousel h4 {
+        font-size: 11px;
+        font-weight: 500;
+        margin-bottom: 0px !important;
+        line-height: initial;
+        white-space: nowrap;
+        padding: 0px 0px;
+    }
+
+    .container-fluid {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+
+    .Assured-Venues .col-md-12.venue_listing {
+        padding: 0px !important;
+    }
+
+    .section.vendor-section .container-fluid {
+        padding: 0px !important;
+    }
+
+    .p-1.occasion-icons {
+        margin-top: 0px !important;
+    }
+
+    .search_bar_listing_page {
+        position: absolute;
+        top: 250px !important;
+        left: 0;
+        z-index: 1;
+        justify-content: center;
+        display: flex;
+        width: 100%;
+        padding: 14px !important;
+    }
+}
+
+.wishlist-fill {
+    background-color: #fff;
+    border-radius: 8px;
+    height: 34px;
+    width: 34px;
+    color: #515151;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color .3s ease 0s, color .3s ease 0s, opacity .3s ease 0s, transform .3s ease 0s;
+    margin-bottom: 5px;
+    opacity: 0;
+    transform: translateX(10px);
+}
+
+@media (max-width: 625px) {
+    .latestVenue_listing .col-md-12 .col-xl-3 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+
+
+
+    .section {
+        padding: 30px 0px !important;
+    }
+
+}
+
+/* for-rating */
+.rating-style {
+    font-size: 14px;
+    color: black;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.acr-listing-icons {
+    color: black;
+}
+
+.icon-head-text {
+    white-space: nowrap;
+    font-size: 16px;
+    color: red;
+    margin: 0;
+    font-weight: 400;
+}
+
+span.p-carousel-prev-icon.pi.pi-chevron-left {
+    font-size: 14px !important;
+}
+
+button.load-mo-btn.btn-custom.btn-sm.secondary {
+    background-color: white;
+    color: #ec3539;
+    box-shadow: 0 2px 9px 0px rgba(34, 12, 43, 0.1);
+    font-size: 15px;
+}
+
+.occasion-name {
+    text-align: center;
+}
+
+label.icons-image {
+    width: 23px;
+    height: 23px;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    z-index: 2;
+    transform: translateY(-50%);
+    display: flex;
+}
+
+.search_bar_listing_page {
+    position: absolute;
+    top: 320px;
+    left: 0;
+    z-index: 1;
+    justify-content: center;
+    display: flex;
+    width: 100%;
+}
+
+button.p-element.p-ripple.p-button-rounded.p-button-danger.secondary.btn-custom.p-button.p-component.p-button-icon-only {
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 48px;
+    width: 48px;
+    display: flex;
+    align-items: center;
+}
+
+.login-popup.ng-tns-c91-10 {
+    padding: 50px 15px 15px 15px;
+}
+
+.p-element.ng-trigger.ng-trigger-animation.ng-tns-c91-5.p-dialog.p-component.p-dialog-draggable.p-dialog-resizable {
+    width: 31vw !important;
+}
+
+.p-dialog-header.ng-tns-c91-4 {
+    position: absolute;
+    z-index: 3;
+    right: -10px !important;
+    top: -14px !important;
+}
+
+.popup-heading {
+    font-size: 21px;
+    text-align: center;
+    color: #ec3539;
+    margin-bottom: 0px;
+}
+
+.offer-text {
+    font-size: 23px;
+}
+
+.mobile-num-design {
+    text-align: center;
+    font-size: 14px;
+}
+
+.login-popup h2 {
+    font-size: 16px;
+}
+
+h5.otp-head {
+    font-size: 16px !important;
+    text-align: center;
+    color: #ec3539;
+    margin-bottom: 10px;
+    margin-top: 10px;
+
+}
+
+h5.resend-head {
+    font-size: 14px !important;
+    text-decoration: underline;
+    text-align: center;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    color: #69707A;
+    font-weight: 400;
+}
+
+.otp-head1 {
+    color: #333;
+    font-size: 20px;
+    margin: 0px;
+}
+
+.errorshow {
+    color: #ec3539;
+}
+
+span.mandatory-fields {
+    color: #ec3539;
+    font-size: 80%;
+}
+
+@media (min-width:961px) {
+
+    .icon-head-text {
+        white-space: nowrap;
+        font-size: 14px;
+        color: red;
+        margin: 0;
+        font-weight: 400;
+    }
+
+    .venue-categories-icons p-carousel h4 {
+        font-size: 11px;
+        font-weight: 400;
+        margin-bottom: 0px !important;
+        line-height: initial;
+
+    }
+
+    .col-md-12.p-0.banner-section.banner-img {
+        position: relative;
+        top: 65px !important;
+        height: 360px !important;
+    }
+
+}
+
+.otp-timer {
+    text-align: center;
+}
+
+label.icons-image.search-icon {
+    z-index: 1 !important;
+    background-color: white;
+    width: 40px;
+    margin-left: -14px;
+    position: absolute;
+    height: 40px;
+    border-radius: 0px 0px 0px 0px;
+}
+
+img.search-icon {
+    height: 18px;
+    position: absolute;
+    top: 26%;
+    display: block;
+    margin-left: 10px;
+    margin-right: auto;
+    width: 50%;
+}
+
+span.acr-listing-icon-value {
+    padding-left: 5px;
+}
+
+.filter-slider .product-item .active h4 {
+    color: #ec3539 !important;
+}
+
+// .venue-categories-icons .product-item .category-menu h4 {
+//     color: red !important;
+// }
+
+input .p-autocomplete-input.p-inputtext.p-component.p-autocomplete-dd-input {
+    border-radius: 33px 0px 0px 33px !important;
+}
+
+:host ::ng-deep .custom-spinner .p-progress-spinner-circle {
+    animation: custom-progress-spinner-dash 1.5s ease-in-out infinite, custom-progress-spinner-color 6s ease-in-out infinite;
+}
+
+@keyframes custom-progress-spinner-color {
+
+    100%,
+    0% {
+        stroke: #16697A;
+    }
+
+    40% {
+        stroke: #489FB5;
+    }
+
+    66% {
+        stroke: #82C0CC;
+    }
+
+    80%,
+    90% {
+        stroke: #FFA62B;
+    }
+}
+
+@keyframes custom-progress-spinner-dash {
+    0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+    }
+
+    50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35px;
+    }
+
+    100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124px;
+    }
+}
+
+.review-list {
+    display: flex;
+}
+
+.icon-review.google-ratings {
+    padding-right: 5px;
+}
+
+.icon-review.eazy-venue-ratings {
+    padding-left: 5px;
+}
+
+.right-brder-line {
+    color: #bdbdbe;
+    line-height: 16px;
+}
+
+.p-inputtext:enabled:hover {
+    border-color: #ffffff !important;
+}
+
+.location {
+    padding-top: 3px;
+}
+
+.vl {
+    border-left: 1px solid #d4d4d4;
+    height: 20px;
+    left: 50%;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+
+
+@media (min-width:1024px) {
+    .search-bar {
+        display: inline-flex;
+        width: 100%;
+        justify-content: center;
+    }
+
+    div#Find-Venue {
+        display: none;
+    }
+}
+// @media (min-width:1281px) {
+//     .search-bar {
+//         display: inline-flex;
+//         width: 100%;
+//         justify-content: center;
+//     }
+
+//     div#Find-Venue {
+//         display: none;
+//     }
+// }
+
+
+//   .search_bar_listing_page {
+//     position: absolute;
+//     top: 290px;
+//     left: 15px;
+//     z-index: 1;
+//     justify-content: center;
+//     display: flex;
+//     width: 100%;
+// }
+
+.tab-content {
+    overflow: auto;
+}
+
+label.col-5.pr-9 {
+    text-align: right;
+    font-size: 14px;
+}
+
+
+.cat-city-filter .vendor-text {
+    width: 100%;
+    border-radius: 0 2px 2px 0;
+}
+
+.padding-h-10 {
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 9px 0px rgba(34, 12, 43, 0.1);
+}
+
+span.venue-search {
+    color: #8c8c8c;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+span.find-venue-icon.pi.pi-arrow-right {
+    position: absolute;
+    right: 30px;
+    top: 33px;
+    font-size: 16px;
+    color: #eb3438;
+}
+
+i.find-venue-search-icon.pi.pi-search {
+    /* position: absolute; */
+    padding: 0px 10px 0px 5px;
+    font-size: 16px;
+    color: #eb3438;
+}
+
+.p-1.occasion-icons {
+    margin-top: 6px;
+}
+
+button.p-ripple.p-element.p-galleria-thumbnail-prev.p-link {
+    width: 20px;
+    position: absolute;
+    left: 0px;
+}
+
+button.p-ripple.p-element.p-galleria-thumbnail-next.p-link {
+    width: 20px;
+    position: absolute;
+    right: 0px;
+}
+
+span.find-venue-icon {
+    position: absolute;
+    right: 32px;
+    color: #eb3438;
+}
+
+.p-galleria .p-galleria-thumbnail-container {
+    background: rgb(255 255 255 / 90%) !important;
+    padding: 0px !important;
+}
+
+.row.justify-content-center.search-bar.search_bar_listing_page.search-bar-popup {
+    position: absolute;
+    top: 28px !important;
+}
+
+button.p-element.p-ripple.p-button-rounded.p-button-danger.secondary.btn-custom.search-popup-mobile.p-button.p-component.p-button-icon-only {
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    transform: none;
+    /* height: 100%; */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border-radius: 2rem;
+}
+
+h3.home-search-popup-heading {
+    font-size: 18px;
+    color: #ec3539;
+    text-align: center;
+}
+
+// .home-search-popup .occasion-list .p-autocomplete-dd .p-autocomplete-dropdown {
+//     border-radius: 0px 33px 33px 0px!important;
+// }
+button.p-element.p-ripple.p-button-rounded.p-button-danger.secondary.btn-custom.search-popup-mobile.p-button.p-component {
+    width: 100% !important;
+}
+
+@media only screen and (min-width: 1920px) {
+
+    .mobile-view-gallery {
+        display: none !important;
+    }
+}
+
+@media only screen and (min-width: 360px) and (max-width: 740px) {
+    .listing .listing-thumbnail img {
+        // width: 325px!important;
+        // height: 260px;
+        object-fit: cover;
+    }
+
+    .desktop-view-gallery {
+        display: none !important;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .listing .listing-thumbnail img {
+        // width: 324px!important;
+        // height: 256px;
+        object-fit: cover;
+    }
+
+    .desktop-view-gallery {
+        display: none !important;
+    }
+
+    .padding-h-10 {
+        padding: 10px;
+        border-radius: 12px;
+        box-shadow: 0 2px 9px 0px rgba(34, 12, 43, 0.1);
+        margin: 10px !important;
+    }
+
+    .row.justify-content-center.search-bar.search_bar_listing_page.search-bar-popup {
+        position: absolute;
+        top: 28px !important;
+        padding: 20px !important;
+    }
+
+    .search_bar_listing_page {
+        position: absolute;
+        /* top: 320px!important; */
+        left: 0;
+        z-index: 1;
+        justify-content: center;
+        display: flex;
+        width: 100%;
+        top: 250px !important;
+        padding: 20px !important;
+    }
+
+    .verticalFlip {
+        font-size: 30px;
+        color: white;
+        font-weight: 300;
+        //   padding-right: 168px;
+    }
+
+}
+
+@media (min-width: 820px) and (max-width: 1180px) {
+    .listing .listing-thumbnail img {
+        width: 100% !important;
+        height: 260px;
+        object-fit: cover;
+    }
+
+    .p-1.occasion-icons {
+        margin-top: 10px;
+    }
+
+    .desktop-view-gallery {
+        display: none !important;
+    }
+}
+
+@media (min-width: 900px) and (max-width: 1440px) {
+    .listing .listing-thumbnail img {
+        // width: 100%!important;
+        // height: 260px;
+        object-fit: cover;
+    }
+
+    .p-1.occasion-icons {
+        margin-top: 10px;
+    }
+
+
+    .col-lg-4.col-md-4.col-sm-12.animation-text-two {
+        text-align: left;
+        padding-left: 0px;
+    }
+}
+
+label.mobile-number-text {
+    font-size: 15px;
+}
+
+// html:has(dialog[open]:modal) {
+//     overflow: hidden!important;
+//   }
+
+.otp-container{
+    display: flex;
+    gap: 15px;
+    width: 200px;
+    justify-content: space-around;
+}
+.otp-box{
+    input{
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+        text-align: center;
+        line-height: 50px;
+        border: 1px solid #cccccc;
+        outline: none;
+        border-radius: 4px;
+    }
+    input:focus {
+       border-color: #D32F2F;
+    }
+}
+
+
+.custom-input-box{
+    display: flex;
+    align-items: center;
+    p{
+        margin: 0;
+        padding: 0;
+        flex: 2;
+    }
+    div{
+        flex: 5; 
+    }
+}
+.custom-input{
+    border-radius: 5px !important;
+    outline: none !important;
+    padding: 5px 10px !important;
+    margin: 5px !important;
+    width: 100% !important;
+    
+}
+.custom-input:hover{
+    border-color: #EC3539 !important;
+    border-width: 1px;
+}
+.custom-input:focus{
+    border-color: #EC3539 !important;
+    border-width: 1px;
+
+}

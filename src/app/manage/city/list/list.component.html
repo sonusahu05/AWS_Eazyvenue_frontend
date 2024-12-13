@@ -1,0 +1,175 @@
+<div class="p-grid manage-product-section">
+    <div class="p-col-12">
+        <div class="card">
+            <h1 class="page-title">City Management</h1>
+            <p-toolbar styleClass="p-mb-4">
+                <ng-template pTemplate="left">
+                    <button pButton pRipple label="Add City" icon="pi pi-plus" class="p-button-success p-mr-2"
+                        (click)="openNew()"></button>
+                    <!--    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger p-mb-2" (click)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length"></button> -->
+                    
+                        <button pButton pRipple class="p-button-outlined"  (click)="clear()"><i class="pi pi-filter-slash p-mr-2"></i> Clear Filters</button>
+                    
+                </ng-template>
+                <!-- <ng-template pTemplate="right">
+               
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help p-mb-2" (click)="dt.exportCSV()"></button>
+                </ng-template> -->
+            </p-toolbar>
+            <div>
+                <!-- <p-table #dt [value]="cities" [columns]="cols" [rows]="10" [paginator]="true" [resizableColumns]="true"
+                    [autoLayout]="true" [globalFilterFields]="['countryname','name','state_code','status']"
+                    [rowHover]="true" dataKey="_id"
+                    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    [showCurrentPageReport]="true"> -->
+                    <!-- <p-table #dt [value]="bannerlist" [columns]="cols" [paginator]="true" [rows]="10" [lazy]="true" 
+                    [resizableColumns]="true"
+                    class="p-mb-0" [autoLayout]="true" scrollDirection="both" [rowHover]="true" dataKey="_id" 
+                    (onLazyLoad)="loadBanners($event)" 
+                    [totalRecords]="totalRecords"  [rowsPerPageOptions]="[5,10,15,20]" 
+                    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped"> -->
+
+
+                    <p-table #dt [value]="cities"  [paginator]="true" [rows]="10" [lazy]="true"  
+                    [resizableColumns]="true"  [rowHover]="true" dataKey="_id"  class="p-mb-0" [autoLayout]="true"
+                    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped" [rowsPerPageOptions]="paginationOption" [lazy]="true" (onLazyLoad)="refreshCityList($event)" [totalRecords]="totalRecords" [loading]="loading" >
+                    <!-- <ng-template pTemplate="caption">
+                        <div class="p-d-flex p-flex-column p-flex-md-row p-jc-md-between table-header">
+                            <h5 class="p-m-0">City List</h5>
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                    placeholder="Search..." />
+                            </span>
+                        </div>
+                    </ng-template> -->
+                    <ng-template pTemplate="header">
+                        <tr>                            
+                            <th pSortableColumn="sl">SL <p-sortIcon field="sl"></p-sortIcon>
+                            </th>
+                            <!-- <th pSortableColumn="countryname">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Country Name
+                                    <p-sortIcon field="countryname"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th pSortableColumn="country_code">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    Country Code
+                                    <p-sortIcon field="country_code"></p-sortIcon>
+                                </div>
+                            </th> -->
+                            <th pSortableColumn="statename">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    State Name
+                                    <p-sortIcon field="statename"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th pSortableColumn="state_code">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    State Code
+                                    <p-sortIcon field="state_code"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th pSortableColumn="name">
+                                <div class="p-d-flex p-jc-between p-ai-center">
+                                    City Name
+                                    <p-sortIcon field="name"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon>
+                            </th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>                            
+                            <th>
+
+                            </th>
+                            <!-- <th [ngSwitch]="countryname" pfrozencolumn="" class="p-element p-frozen-column col-80 text-nowrap" style="left: 0px;">
+                                <input  pInputText type="text" (keyup.enter)=" dt.filter($event.target.value, 'countryname', 'contains')"  [value]="dt.filters['countryname'] ? dt.filters['countryname'].value : ''" />
+                            </th>
+                            <th [ngSwitch]="countrycode" pfrozencolumn="" class="p-element p-frozen-column col-80 text-nowrap" style="left: 0px;">
+                                <input  pInputText type="text" (keyup.enter)=" dt.filter($event.target.value, 'countrycode', 'contains')"  [value]="dt.filters['countrycode'] ? dt.filters['countrycode'].value : ''" />
+                            </th> -->
+                            <th [ngSwitch]="statename" pfrozencolumn="" class="p-element p-frozen-column col-80 text-nowrap" style="left: 0px;">
+                                <input  pInputText type="text" (keyup.enter)=" dt.filter($event.target.value, 'statename', 'contains')"  [value]="dt.filters['statename'] ? dt.filters['statename'].value : ''" />
+                            </th>
+                            <th [ngSwitch]="statecode" pfrozencolumn="" class="p-element p-frozen-column col-80 text-nowrap" style="left: 0px;">
+                                <input  pInputText type="text" (keyup.enter)=" dt.filter($event.target.value, 'statecode', 'contains')"  [value]="dt.filters['statecode'] ? dt.filters['statecode'].value : ''" />
+                            </th>
+                            <th [ngSwitch]="name" pfrozencolumn="" class="p-element p-frozen-column col-80 text-nowrap" style="left: 0px;">
+                                <input  pInputText type="text" (keyup.enter)=" dt.filter($event.target.value, 'name', 'contains')"  [value]="dt.filters['name'] ? dt.filters['name'].value : ''" />
+                            </th>
+                            <th [ngSwitch]="status">
+                                <p-dropdown #pDropDownId [options]="statuses" [style]="{'width':'100%'}" (onChange)="dt.filter($event.value, 'status', 'equals')" 
+                                styleClass="p-column-filter" placeholder="Select Status" [showClear]="true" appendTo="body">
+                                    <ng-template let-option pTemplate="item" >
+                                     <span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+                                    </ng-template>
+                               </p-dropdown>
+                            </th>
+                            <th>
+
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-city let-rowIndex="rowIndex">
+                        <tr>                           
+                            <td><span class="p-column-title" id="typeName">SL</span>
+                                {{rowIndex+1}}
+                            </td>
+                            <!-- <td><span class="p-column-title" id="styleName">Country</span>
+                                {{city.countryname}}
+                            </td>
+                            <td><span class="p-column-title" id="styleName">Country Code</span>
+                                {{city.countrycode}}
+                            </td> -->
+                            <td><span class="p-column-title" id="styleName">State</span>
+                                {{city.statename}}
+                            </td>
+                            <td><span class="p-column-title" id="styleName">State Code</span>
+                                {{city.statecode}}
+                            </td>
+                            <td><span class="p-column-title" id="styleName">State</span>
+                                {{city.name}}
+                            </td>
+
+                            <td><span class="p-column-title">Status</span>
+                                <!-- <div *ngIf="city.status == true; else elsePart">
+                                    Active
+                                </div>
+                                <ng-template #elsePart>
+                                    Inactive
+                                </ng-template> -->
+                                <span *ngIf="city.status">
+                                    <p-tag styleClass="mr-2" severity="success" value="Active"></p-tag>
+                                </span>
+                                <span *ngIf="!city.status">
+                                    <p-tag severity="danger" value="In-Active"></p-tag>
+                                  </span>
+                                <p-inputSwitch [(ngModel)]="city.status" (onChange)="changeStatus(city)"></p-inputSwitch>
+                            </td>
+                            <td><span class="p-column-title">Action</span>
+                                <button pButton pRipple icon="pi pi-pencil" pTooltip="Edit City" tooltipPosition="bottom"
+                                    class="p-button-rounded p-button-success p-mr-2"
+                                    (click)="onEdit(city)"></button>
+                                <button pButton pRipple icon="pi pi-trash" pTooltip="Delete City" tooltipPosition="bottom"
+                                    class="p-button-rounded p-button-denger p-mr-2"
+                                    (click)="onDelete(city)"></button>
+                                <!--<button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-rounded"></button>-->
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                        <div class="p-d-flex p-ai-center p-jc-between">
+                            In total there are {{totalRecords }} Cities.
+                        </div>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+    <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+</div>
+
