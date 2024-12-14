@@ -82,9 +82,25 @@ export class FaqComponent implements OnInit, OnChanges {
     }
 
     updateTitle(): void {
-        if (this.selectedVenueList.length > 0) {
-            const { subarea } = this.selectedVenueList[0];
-            this.title = `Banquet Halls in ${subarea}`;
+        // Check the route parameters first
+        const subarea = this.route.snapshot.params['subarea'];
+        const city = this.route.snapshot.params['city'];
+
+        if (city && !subarea) {
+            // If only city is present in the route, use just the city
+            this.title = `Banquet Halls in ${city.charAt(0).toUpperCase() + city.slice(1)}`;
+        } else if (subarea && city) {
+            // If both subarea and city are in the route, use them directly
+            this.title = `Banquet Halls in ${subarea}, ${city.charAt(0).toUpperCase() + city.slice(1)}`;
+        } else if (this.selectedVenueList.length > 0) {
+            const { subarea, cityname } = this.selectedVenueList[0];
+
+            // Fallback to first venue details if route params are incomplete
+            if (subarea) {
+                this.title = `Banquet Halls in ${subarea}, ${cityname}`;
+            } else {
+                this.title = `Banquet Halls in ${cityname}`;
+            }
         } else {
             this.title = 'Banquet Halls';
         }
