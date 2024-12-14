@@ -1,21 +1,20 @@
 export const environment = {
     production: false,
-    // apiUrl: 'https://labs-api.eazyvenue.com/api/',
-    apiUrl: 'http://localhost:3006/api/', //local
+    apiUrl: 'https://api.eazyvenue.com/api/',
     ageDiff: 18,
     defaultDate: "february 01 1950 00:00",
     minYear: "1950",
     yearRange: "2022:2060",
     yearDiff: 1,
     pagination: [10, 20, 50, 100, 1000, { showAll: 'All' }],
-    productUploadUrl: 'https://labs-api.eazyvenue.com/uploads/',
+    productUploadUrl: 'https://api.eazyvenue.com/uploads/',
     uploadUrl: 'src/public/uploads/cmsPic/',
     imageSize: 2000000,
     videoSize: 20000000,
     defaultDays: 5,
     frontEnd: {
-        domain: 'https://labs.eazyvenue.com',
-        picPath: 'https://labs-api.eazyvenue.com'
+        domain: 'https://eazyvenue.com',
+        picPath: 'https://api.eazyvenue.com'
     },
     picture: {
         profilePicFolder: 'src/public/uploads/profilepic/',
@@ -58,7 +57,7 @@ export const environment = {
         {
             'id': 10, 'label': "30-800", condition: 'lte', value: 800, status: false
         },
-        {
+ {
             'id': 11, 'label': "30-900", condition: 'lte', value: 900, status: false
         },
         {
@@ -112,13 +111,3 @@ export const environment = {
         { name: 'Entertainment License', slug: 'entertainment_license', status: false },
     ],
 };
-
-/*
- * by miDuration value represent year,month,day,hour,min,Second,millisecond
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.

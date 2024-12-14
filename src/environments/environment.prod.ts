@@ -111,8 +111,3 @@ export const environment = {
         { name: 'Entertainment License', slug: 'entertainment_license', status: false },
     ],
 };
-
-/*
- * by miDuration value represent year,month,day,hour,min,Second,millisecond
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as zone.run, zoneDelegate.invokeTask.
