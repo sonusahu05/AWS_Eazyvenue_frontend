@@ -107,43 +107,80 @@ export class FaqComponent implements OnInit, OnChanges {
     }
 
     updateDescription(): void {
+        const city = this.route.snapshot.params['city'];
+        const subarea = this.route.snapshot.params['subarea'];
+
         if (this.selectedVenueList.length > 0) {
-            const { subarea } = this.selectedVenueList[0];
-            const normalizedSubarea = subarea.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const venue = this.selectedVenueList[0];
+            const normalizedSubarea = venue.subarea.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const cityname = venue.cityname.toLowerCase().replace(/[^a-z0-9]/g, '');
 
-            switch (normalizedSubarea) {
-                case 'chembur':
-                    this.fullDescription = `
-                        <h5>An Ideal Destination for Events</h5>
-                        <p>Chembur, a vibrant suburb in the northeastern part of Mumbai, is a blend of natural beauty and urban amenities, making it an ideal location for hosting a wide variety of events. Known for its picturesque lakes, such as Upvan Lake and Masunda Lake, and lush green landscapes like Yeoor Hills, Chembur offers a tranquil setting that is perfect for both grand celebrations and intimate gatherings. The area is home to numerous banquet halls that cater to all types of events, including weddings, corporate meetings, birthday parties, and anniversaries, offering a wide range of choices to meet every need.</p>
+            if (city && !subarea) {
+                // If only city is present, show description for the city
+                switch (cityname) {
+                    case 'mumbai':
+                        this.fullDescription = `
+                            <h5>Mumbai’s Versatile Event Hubs</h5>
+                            <p>Mumbai, the bustling heart of India, is home to some of the most exquisite banquet halls designed to host events that leave a lasting impression. Whether you're planning a lavish wedding, a corporate gala, a milestone celebration, or a private gathering, Mumbai offers a myriad of banquet halls that blend elegance with modern functionality. Neighborhoods like Bandra, Andheri, Powai, and Juhu are especially known for their premier event venues, catering to diverse preferences and budgets.</p>
 
-                        <h5>Versatile Banquet Hall Options</h5>
-                        <p>Banquet halls in Chembur come in various sizes and styles, ranging from opulent spaces with grand interiors and state-of-the-art facilities to more modest venues for smaller, personal celebrations. These venues are equipped with modern amenities such as advanced audiovisual systems, in-house catering, and customizable décor options, ensuring that every event is memorable and tailored to the host's preferences. The diversity of options allows event organizers to select venues that align with their specific requirements, whether they seek luxury, comfort, or affordability.</p>
+                            <h5>Exceptional Banquet Halls Across Mumbai</h5>
+                            <p>The banquet halls in Mumbai are renowned for their versatility, catering to events of all sizes and types. From grand ballrooms with luxurious chandeliers and state-of-the-art sound systems to cozy spaces ideal for intimate functions, these venues are tailored to perfection. Many banquet halls offer customizable décor options, in-house catering with gourmet cuisines, and advanced audiovisual setups, making them an ideal choice for weddings, corporate conferences, product launches, and more. Additionally, their professional event management services ensure that every detail is flawlessly executed.</p>
 
-                        <h5>Accessibility and Nearby Attractions</h5>
-                        <p>Chembur is easily accessible from different parts of Mumbai, thanks to its strategic location along the Eastern Express Highway and its well-connected railway station. This makes it a convenient choice for guests traveling from nearby areas. In addition to its banquet halls, Chembur boasts numerous attractions, including popular shopping centers like Viviana Mall and Korum Mall, which provide excellent leisure and entertainment options for event attendees. These amenities enhance the overall experience for guests, making Chembur a favored destination for hosting events.</p>
+                            <h5>Prime Locations with Seamless Connectivity</h5>
+                            <p>Mumbai’s banquet halls are strategically located in areas with excellent connectivity, ensuring ease of access for both local and out-of-town guests. For instance:</p>
+                            <ul>
+                                <li>Andheri East: Close to the Mumbai International Airport, Andheri East boasts venues perfect for high-profile corporate events and weddings.</li>
+                                <li>Bandra and Juhu: These vibrant locales are popular for their proximity to upscale hotels, beaches, and nightlife, adding charm to any celebration.</li>
+                                <li>Powai and Navi Mumbai: Ideal for serene lakeside events or large-scale gatherings in spacious banquet halls.</li>
+                            </ul>
 
-                        <h5>Why Choose Chembur for Your Event?</h5>
-                        <p>Choosing Chembur for your event offers numerous advantages. Its serene environment, coupled with a wide range of banquet halls and convenient accessibility, makes it an ideal choice for any celebration. The area's rich mix of natural beauty and urban amenities provides a unique backdrop that adds charm and sophistication to any occasion. Whether you are planning a wedding, a corporate function, or a social gathering, Chembur ensures a memorable experience for both hosts and guests alike.</p>
-                    `;
-                    break;
-                case 'powai':
-                    this.fullDescription = `
-                        <h5>A Prime Location for Events</h5>
-                        <p>Powai, strategically located near Mumbai's international airport, is one of the city's most dynamic neighborhoods and a popular destination for both corporate and social events. Known for its bustling business centers, luxury hotels, and a wide range of banquet halls, Powai caters to a diverse clientele looking to host everything from high-profile weddings and gala dinners to product launches, conferences, and private parties. The area's cosmopolitan vibe and extensive facilities make it an ideal choice for events of all sizes.</p>
+                            <h5>Why Choose Banquet Halls in Mumbai?</h5>
+                            <p>Opting for banquet halls in Mumbai elevates your event, offering a combination of premium facilities and the city’s dynamic energy. These venues cater to every aspect of your celebration:</p>
+                            <ul>
+                                <li>Comprehensive Event Packages: Many venues offer all-in-one packages that include catering, décor, and entertainment services.</li>
+                                <li>Flexibility: Spaces designed to host everything from intimate parties to grand events.</li>
+                                <li>Proximity to Attractions: Popular landmarks like Marine Drive, Gateway of India, and Juhu Beach enhance the overall experience for outstation guests.</li>
+                            </ul>
 
-                        <h5>Banquet Halls Tailored for Every Occasion</h5>
-                        <p>The banquet halls in Powai are known for their versatility and modern amenities. From upscale venues featuring grand ballrooms and exquisite interiors to mid-sized spaces perfect for seminars and intimate gatherings, Powai offers a multitude of options to suit every type of event. These halls are equipped with high-speed internet, cutting-edge audiovisual equipment, customizable décor options, and professional event management services. Many venues also offer comprehensive packages that include catering, entertainment, and décor, ensuring a seamless experience from start to finish.</p>
-
-                        <h5>Connectivity and Convenience</h5>
-                        <p>One of the biggest advantages of hosting an event in Powai is its excellent connectivity. The area is well-served by the Mumbai Metro, major highways, and is just a short drive from the Mumbai International Airport, making it easily accessible for both local and international guests. In addition, Powai is surrounded by a wide array of amenities, including luxury hotels, shopping malls, restaurants, and entertainment options, all of which contribute to a vibrant atmosphere and enhance the overall experience for event attendees.</p>
-
-                        <h5>Why Powai Stands Out</h5>
-                        <p>Choosing Powai for your event provides numerous benefits. Its central location ensures ease of access for guests, while its wide range of banquet halls caters to every taste, size, and budget. The area's vibrant energy, combined with its proximity to key city attractions such as Juhu Beach, Powai Lake, and the popular Lokhandwala Market, adds an extra dimension to any event. Powai truly stands out as a prime location for celebrations that require both style and substance.</p>
-                    `;
-                    break;
-                default:
-                    this.fullDescription = `<p>Description for ${subarea} is not available.</p>`;
+                            <h5>Plan Your Event in Style</h5>
+                            <p>With their unmatched facilities, strategic locations, and Mumbai's vibrant charm, banquet halls in the city stand out as the ultimate choice for memorable celebrations. Whether it’s a wedding dripping with opulence or a sleek corporate gathering, Mumbai has the perfect venue for every occasion.</p>
+                        `;
+                        break;
+                    default:
+                        this.fullDescription = `<p>Description for ${city} is not available.</p>`;
+                }
+            } else if (subarea && city) {
+                // If both subarea and city are present, use them directly
+                switch (normalizedSubarea) {
+                    case 'chembur':
+                        this.fullDescription = `
+                            <h5>An Ideal Destination for Events</h5>
+                            <p>Chembur, a vibrant suburb in the northeastern part of Mumbai, is a blend of natural beauty and urban amenities, making it an ideal location for hosting a wide variety of events. Known for its picturesque lakes, such as Upvan Lake and Masunda Lake, and lush green landscapes like Yeoor Hills, Chembur offers a tranquil setting that is perfect for both grand celebrations and intimate gatherings.</p>
+                            <h5>Versatile Banquet Hall Options</h5>
+                            <p>Banquet halls in Chembur come in various sizes and styles, ranging from opulent spaces with grand interiors and state-of-the-art facilities to more modest venues for smaller, personal celebrations. These venues are equipped with modern amenities such as advanced audiovisual systems, in-house catering, and customizable décor options, ensuring that every event is memorable and tailored to the host's preferences.</p>
+                            <h5>Accessibility and Nearby Attractions</h5>
+                            <p>Chembur is easily accessible from different parts of Mumbai, thanks to its strategic location along the Eastern Express Highway and its well-connected railway station. In addition to its banquet halls, Chembur boasts numerous attractions, including popular shopping centers like Viviana Mall and Korum Mall, which provide excellent leisure and entertainment options for event attendees.</p>
+                            <h5>Why Choose Chembur for Your Event?</h5>
+                            <p>Choosing Chembur for your event offers numerous advantages. Its serene environment, coupled with a wide range of banquet halls and convenient accessibility, makes it an ideal choice for any celebration.</p>
+                        `;
+                        break;
+                    case 'powai':
+                        this.fullDescription = `
+                            <h5>A Prime Location for Events</h5>
+                            <p>Powai, strategically located near Mumbai's international airport, is one of the city's most dynamic neighborhoods and a popular destination for both corporate and social events. Known for its bustling business centers, luxury hotels, and a wide range of banquet halls, Powai caters to a diverse clientele looking to host everything from high-profile weddings and gala dinners to product launches, conferences, and private parties.</p>
+                            <h5>Banquet Halls Tailored for Every Occasion</h5>
+                            <p>The banquet halls in Powai are known for their versatility and modern amenities. From upscale venues featuring grand ballrooms and exquisite interiors to mid-sized spaces perfect for seminars and intimate gatherings, Powai offers a multitude of options to suit every type of event. These halls are equipped with high-speed internet, cutting-edge audiovisual equipment, customizable décor options, and professional event management services.</p>
+                            <h5>Connectivity and Convenience</h5>
+                            <p>One of the biggest advantages of hosting an event in Powai is its excellent connectivity. The area is well-served by the Mumbai Metro, major highways, and is just a short drive from the Mumbai International Airport, making it easily accessible for both local and international guests. In addition, Powai is surrounded by a wide array of amenities, including luxury hotels, shopping malls, restaurants, and entertainment options, all of which contribute to a vibrant atmosphere and enhance the overall experience for event attendees.</p>
+                            <h5>Why Powai Stands Out</h5>
+                            <p>Choosing Powai for your event provides numerous benefits. Its central location ensures ease of access for guests, while its wide range of banquet halls caters to every taste, size, and budget.</p>
+                        `;
+                        break;
+                    default:
+                        this.fullDescription = `<p>Description for ${subarea} is not available.</p>`;
+                }
+            } else {
+                this.fullDescription = `<p>Description is not available.</p>`;
             }
 
             // Set the initial description to show the first two sections
