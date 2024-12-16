@@ -4,7 +4,7 @@
     left: 50%;
     transform: translateX(-10%);
     width: 450px;
-    height: 490px;
+    height: 296px;
     background-color: white;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.2s ease-in-out;
@@ -20,12 +20,13 @@
   .drawer-content {
     padding: 5px;
     position: relative;
+    top: 10px;
   }
 
   .close-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: -5px;
+    right: 0px;
     font-size: 24px;
     background: none;
     border: none;
