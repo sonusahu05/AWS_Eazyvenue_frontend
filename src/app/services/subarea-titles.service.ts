@@ -13,7 +13,7 @@ import { Injectable } from '@angular/core';
       'powai': {
         baseTitle: 'Premium Banquet Halls in Powai\'s Tech and Leisure Hub',
         baseDescription: 'Uncover elegant banquet halls in Powai, blending modern amenities with sophisticated spaces. Ideal for weddings, corporate events, and special celebrations in Mumbai\'s most dynamic neighborhood.',
-        occasionTemplate: 'Top {occasion} Venues in Powai'
+        occasionTemplate: '50+ Banquet Halls in Powai for Weddings'
       },
       'bandra': {
         baseTitle: 'Stylish Banquet Halls in the Trendy Bandra Locale',
@@ -23,12 +23,12 @@ import { Injectable } from '@angular/core';
       'andheri': {
         baseTitle: 'Top-Rated Banquet Halls in Andheri\'s Versatile Landscape',
         baseDescription: 'Find the most versatile and well-equipped banquet halls in Andheri. From corporate events to grand weddings, our curated list offers spaces that cater to every occasion and style.',
-        occasionTemplate: 'Best {occasion} Venues in Andheri'
+        occasionTemplate: 'Best Banquet Halls in Andheri'
       },
       'juhu': {
         baseTitle: 'Exclusive Banquet Halls in the Iconic Juhu Area',
         baseDescription: 'Experience premium banquet halls in Juhu, blending luxury, convenience, and breathtaking ambiance. Ideal for those seeking a remarkable venue in one of Mumbai\'s most prestigious neighborhoods.',
-        occasionTemplate: 'Top {occasion} Banquet Halls in Juhu'
+        occasionTemplate: 'Explore Banquet Halls in Juhu for Events'
       },
       'default': {
         baseTitle: 'Explore The Top Banquet Halls',
@@ -54,7 +54,7 @@ import { Injectable } from '@angular/core';
         const formattedSubarea = this.capitalizeWords(subarea_slug);
         subareaDetails = {
           ...subareaDetails,
-          occasionTemplate: `Explore The Top Banquet Halls in ${formattedSubarea} - Eazyvenue.com`
+          occasionTemplate: `Explore The Top Banquet Halls in ${formattedSubarea}`
         };
       }
 
