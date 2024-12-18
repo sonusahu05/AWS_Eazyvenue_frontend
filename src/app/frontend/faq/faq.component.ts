@@ -82,24 +82,30 @@ export class FaqComponent implements OnInit, OnChanges {
     }
 
     updateTitle(): void {
+        // Function to capitalize first letter of each word
+        const capitalizeWords = (str: string) => {
+            return str.split(' ').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            ).join(' ');
+        };
         // Check the route parameters first
         const subarea = this.route.snapshot.params['subarea'];
         const city = this.route.snapshot.params['city'];
 
         if (city && !subarea) {
             // If only city is present in the route, use just the city
-            this.title = `Banquet Halls in ${city.charAt(0).toUpperCase() + city.slice(1)}`;
+            this.title = `Banquet Halls in ${capitalizeWords(city)}`;
         } else if (subarea && city) {
             // If both subarea and city are in the route, use them directly
-            this.title = `Banquet Halls in ${subarea}, ${city.charAt(0).toUpperCase() + city.slice(1)}`;
+            this.title = `Banquet Halls in ${capitalizeWords(subarea)}, ${capitalizeWords(city)}`;
         } else if (this.selectedVenueList.length > 0) {
             const { subarea, cityname } = this.selectedVenueList[0];
 
             // Fallback to first venue details if route params are incomplete
             if (subarea) {
-                this.title = `Banquet Halls in ${subarea}, ${cityname}`;
+                this.title = `Banquet Halls in ${capitalizeWords(subarea)}, ${capitalizeWords(cityname)}`;
             } else {
-                this.title = `Banquet Halls in ${cityname}`;
+                this.title = `Banquet Halls in ${capitalizeWords(cityname)}`;
             }
         } else {
             this.title = 'Banquet Halls';
@@ -107,6 +113,11 @@ export class FaqComponent implements OnInit, OnChanges {
     }
 
     updateDescription(): void {
+        const capitalizeWords = (str: string) => {
+            return str.split(' ').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            ).join(' ');
+        };
         const city = this.route.snapshot.params['city'];
         const subarea = this.route.snapshot.params['subarea'];
 
@@ -119,55 +130,54 @@ export class FaqComponent implements OnInit, OnChanges {
                 // If only city is present, show description for the city
                 switch (cityname) {
                     case 'mumbai':
-                        this.fullDescription = `
-                            <h5>Mumbai's Versatile Event Hubs</h5>
+                        this.fullDescription =
+                            `<h5>Mumbai's Versatile Event Hubs</h5>
                             <p>Mumbai, the bustling heart of India, is home to some of the most exquisite banquet halls designed to host events that leave a lasting impression. Whether you're planning a lavish wedding, a corporate gala, a milestone celebration, or a private gathering, Mumbai offers a myriad of banquet halls that blend elegance with modern functionality.</p>
 
                             <h5>Exceptional Banquet Halls Across Mumbai</h5>
                             <p>The banquet halls in Mumbai are renowned for their versatility, catering to events of all sizes and types. From grand ballrooms with luxurious chandeliers and state-of-the-art sound systems to cozy spaces ideal for intimate functions, these venues are tailored to perfection.</p>
 
                             <h5>Prime Locations with Seamless Connectivity</h5>
-                            <p>Mumbai's banquet halls are strategically located in areas with excellent connectivity, ensuring ease of access for both local and out-of-town guests.</p>
-                        `;
+                            <p>Mumbai's banquet halls are strategically located in areas with excellent connectivity, ensuring ease of access for both local and out-of-town guests.</p>`;
                         break;
                     default:
-                        this.fullDescription = `<p>Description for ${city} is not available.</p>`;
+                        this.fullDescription = `<p>Description for ${capitalizeWords(city)} is not available.</p>`;
                 }
             } else if (subarea && city) {
                 // Templates for different location groups
                 const chemburGroup = ['chembur', 'juhu', 'malad', 'andheri'];
                 const powaiGroup = ['powai', 'ghatkopar', 'thane', 'mulund'];
 
+                const capitalizedSubarea = capitalizeWords(subarea);
+
                 if (chemburGroup.includes(normalizedSubarea)) {
-                    this.fullDescription = `
-                        <h5>A Vibrant Destination for Events</h5>
-                        <p>${subarea} is a dynamic and sought-after location in Mumbai, offering an ideal setting for hosting a wide variety of events. Known for its strategic location and excellent infrastructure, this area provides a perfect backdrop for memorable celebrations and professional gatherings.</p>
+                    this.fullDescription =
+                        `<h5>A Vibrant Destination for Events</h5>
+                        <p>${capitalizedSubarea} is a dynamic and sought-after location in Mumbai, offering an ideal setting for hosting a wide variety of events. Known for its strategic location and excellent infrastructure, this area provides a perfect backdrop for memorable celebrations and professional gatherings.</p>
 
                         <h5>Versatile Banquet Hall Options</h5>
-                        <p>Banquet halls in ${subarea} come in various sizes and styles, ranging from opulent spaces with grand interiors and state-of-the-art facilities to more modest venues for smaller, personal celebrations. These venues are equipped with modern amenities such as advanced audiovisual systems, in-house catering, and customizable décor options.</p>
+                        <p>Banquet halls in ${capitalizedSubarea} come in various sizes and styles, ranging from opulent spaces with grand interiors and state-of-the-art facilities to more modest venues for smaller, personal celebrations. These venues are equipped with modern amenities such as advanced audiovisual systems, in-house catering, and customizable décor options.</p>
 
                         <h5>Accessibility and Convenience</h5>
-                        <p>${subarea} is easily accessible from different parts of Mumbai, with excellent connectivity through highways, railway stations, and public transportation. This makes it convenient for guests from various locations to attend your event.</p>
+                        <p>${capitalizedSubarea} is easily accessible from different parts of Mumbai, with excellent connectivity through highways, railway stations, and public transportation. This makes it convenient for guests from various locations to attend your event.</p>
 
-                        <h5>Why Choose ${subarea} for Your Event?</h5>
-                        <p>The combination of versatile venues, strategic location, and excellent amenities makes ${subarea} an ideal choice for hosting events ranging from weddings and corporate gatherings to private parties and social celebrations.</p>
-                    `;
+                        <h5>Why Choose ${capitalizedSubarea} for Your Event?</h5>
+                        <p>The combination of versatile venues, strategic location, and excellent amenities makes ${capitalizedSubarea} an ideal choice for hosting events ranging from weddings and corporate gatherings to private parties and social celebrations.</p>`;
                 } else if (powaiGroup.includes(normalizedSubarea)) {
-                    this.fullDescription = `
-                        <h5>A Prime Business and Event Hub</h5>
-                        <p>${subarea} stands out as a sophisticated and modern location in Mumbai, renowned for its premium event spaces and professional infrastructure. Whether you're planning a corporate conference, a lavish wedding, or a private celebration, this area offers exceptional venues that meet the highest standards.</p>
+                    this.fullDescription =
+                        `<h5>A Prime Business and Event Hub</h5>
+                        <p>${capitalizedSubarea} stands out as a sophisticated and modern location in Mumbai, renowned for its premium event spaces and professional infrastructure. Whether you're planning a corporate conference, a lavish wedding, or a private celebration, this area offers exceptional venues that meet the highest standards.</p>
 
                         <h5>Premium Banquet Halls for Every Occasion</h5>
-                        <p>Banquet halls in ${subarea} are designed to cater to diverse event requirements. These venues feature cutting-edge facilities, including high-speed internet, advanced audiovisual equipment, flexible space configurations, and professional event management services.</p>
+                        <p>Banquet halls in ${capitalizedSubarea} are designed to cater to diverse event requirements. These venues feature cutting-edge facilities, including high-speed internet, advanced audiovisual equipment, flexible space configurations, and professional event management services.</p>
 
                         <h5>Strategic Location and Connectivity</h5>
-                        <p>${subarea} boasts excellent connectivity with major highways, metro stations, and proximity to business districts. This makes it an attractive destination for hosting events that require convenience and accessibility for attendees.</p>
+                        <p>${capitalizedSubarea} boasts excellent connectivity with major highways, metro stations, and proximity to business districts. This makes it an attractive destination for hosting events that require convenience and accessibility for attendees.</p>
 
-                        <h5>Why ${subarea} is an Ideal Event Destination</h5>
-                        <p>With its blend of modern infrastructure, versatile venues, and strategic location, ${subarea} provides the perfect setting for creating unforgettable event experiences across various domains.</p>
-                    `;
+                        <h5>Why ${capitalizedSubarea} is an Ideal Event Destination</h5>
+                        <p>With its blend of modern infrastructure, versatile venues, and strategic location, ${capitalizedSubarea} provides the perfect setting for creating unforgettable event experiences across various domains.</p>`;
                 } else {
-                    this.fullDescription = `<p>Description for ${subarea} is not available.</p>`;
+                    this.fullDescription = `<p>Description for ${capitalizedSubarea} is not available.</p>`;
                 }
             } else {
                 this.fullDescription = `<p>Description is not available.</p>`;
