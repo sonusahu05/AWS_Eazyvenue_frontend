@@ -47,6 +47,7 @@ export class FaqComponent implements OnInit, OnChanges {
                 id: string;
             }[];
             this.updateContent();
+            this.generateFaqSchema();
         });
     }
 
@@ -97,7 +98,7 @@ export class FaqComponent implements OnInit, OnChanges {
             this.title = `Banquet Halls in ${capitalizeWords(city)}`;
         } else if (subarea && city) {
             // If both subarea and city are in the route, use them directly
-            this.title = `Banquet Halls in ${capitalizeWords(subarea)}, ${capitalizeWords(city)}`;
+            this.title = `Banquet Halls in ${capitalizeWords(subarea)}`;
         } else if (this.selectedVenueList.length > 0) {
             const { subarea, cityname } = this.selectedVenueList[0];
 
@@ -141,7 +142,7 @@ export class FaqComponent implements OnInit, OnChanges {
                             <p>Mumbai's banquet halls are strategically located in areas with excellent connectivity, ensuring ease of access for both local and out-of-town guests.</p>`;
                         break;
                     default:
-                        this.fullDescription = `<p>Description for ${capitalizeWords(city)} is not available.</p>`;
+                        this.fullDescription = `${capitalizeWords(city)},the bustling heart of India, is home to some of the most exquisite banquet halls designed to host events that leave a lasting impression. Whether you're planning a lavish wedding, a corporate gala, a milestone celebration, or a private gathering, Mumbai offers a myriad of banquet halls that blend elegance with modern functionality.</p>The banquet halls are renowned for their versatility, catering to events of all sizes and types. From grand ballrooms with luxurious chandeliers and state-of-the-art sound systems to cozy spaces ideal for intimate functions, these venues are tailored to perfection.</p>`;
                 }
             } else if (subarea && city) {
                 // Templates for different location groups
@@ -177,10 +178,10 @@ export class FaqComponent implements OnInit, OnChanges {
                         <h5>Why ${capitalizedSubarea} is an Ideal Event Destination</h5>
                         <p>With its blend of modern infrastructure, versatile venues, and strategic location, ${capitalizedSubarea} provides the perfect setting for creating unforgettable event experiences across various domains.</p>`;
                 } else {
-                    this.fullDescription = `<p>Description for ${capitalizedSubarea} is not available.</p>`;
+                    this.fullDescription = `${capitalizedSubarea} the bustling heart of India, is home to some of the most exquisite banquet halls designed to host events that leave a lasting impression. Whether you're planning a lavish wedding, a corporate gala, a milestone celebration, or a private gathering, Mumbai offers a myriad of banquet halls that blend elegance with modern functionality.</p>The banquet halls are renowned for their versatility, catering to events of all sizes and types. From grand ballrooms with luxurious chandeliers and state-of-the-art sound systems to cozy spaces ideal for intimate functions, these venues are tailored to perfection.</p>`;
                 }
             } else {
-                this.fullDescription = `<p>Description is not available.</p>`;
+                this.fullDescription = `the bustling heart of India, is home to some of the most exquisite banquet halls designed to host events that leave a lasting impression. Whether you're planning a lavish wedding, a corporate gala, a milestone celebration, or a private gathering, Mumbai offers a myriad of banquet halls that blend elegance with modern functionality.</p>The banquet halls are renowned for their versatility, catering to events of all sizes and types. From grand ballrooms with luxurious chandeliers and state-of-the-art sound systems to cozy spaces ideal for intimate functions, these venues are tailored to perfection.</p>`;
             }
 
             // Set the initial description to show the first two sections
@@ -212,8 +213,17 @@ export class FaqComponent implements OnInit, OnChanges {
     }
 
     updateFaqs(): void {
-        const { city, subarea } = this.route.snapshot.params; // Destructure city and subarea from URL params
-        const displayLocation = subarea ? `${subarea}, ${city}` : city; // Display subarea if available, otherwise just the city
+        // Function to capitalize first letter of each word
+        const capitalizeWords = (str: string) => {
+            return str.split(' ').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            ).join(' ');
+        };
+
+        const { city, subarea } = this.route.snapshot.params;
+        const displayLocation = subarea
+            ? `${capitalizeWords(subarea)}, ${capitalizeWords(city)}`
+            : capitalizeWords(city);
 
         this.faqs = [
             {
@@ -277,8 +287,37 @@ export class FaqComponent implements OnInit, OnChanges {
                 answer: `Yes, many banquet halls in ${displayLocation} provide discounts for weekday events, off-peak seasons, or special occasions. They may also offer package deals for weddings, corporate events, and multiple bookings.`,
             },
         ];
+        this.generateFaqSchema();
     }
 
+    generateFaqSchema(): void {
+        const faqSchema = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": this.faqs.map(faq => ({
+                "@type": "Question",
+                "name": faq.question,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": faq.answer
+                }
+            }))
+        };
+
+        // Remove any existing JSON-LD script
+        const existingScript = document.querySelector('script[type="application/ld+json"]');
+        if (existingScript) {
+            existingScript.remove();
+        }
+
+        // Create new script element
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.text = JSON.stringify(faqSchema);
+
+        // Append to head
+        document.head.appendChild(script);
+    }
 
     updateSearches(): void {
         this.frequentSearches = [

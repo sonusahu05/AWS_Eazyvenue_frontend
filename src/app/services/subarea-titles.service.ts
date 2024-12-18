@@ -13,7 +13,7 @@ import { Injectable } from '@angular/core';
       'powai': {
         baseTitle: 'Premium Banquet Halls in Powai\'s Tech and Leisure Hub',
         baseDescription: 'Uncover elegant banquet halls in Powai, blending modern amenities with sophisticated spaces. Ideal for weddings, corporate events, and special celebrations in Mumbai\'s most dynamic neighborhood.',
-        occasionTemplate: '50+ Banquet Halls in Powai for Weddings'
+        occasionTemplate: 'Best Banquet Halls in Powai for Weddings'
       },
       'bandra': {
         baseTitle: 'Stylish Banquet Halls in the Trendy Bandra Locale',

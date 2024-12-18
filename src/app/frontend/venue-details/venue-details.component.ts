@@ -828,46 +828,6 @@ export class VenueDetailsComponent implements OnInit {
                 this.meta.addTag({name:"keywords",content:this.venueDetails.metaKeywords})
                 this.meta.addTag({ name: 'robots', content: 'index, follow' });
 
-
-
-                const localBusinessSchema = {
-                    "@context": "http://schema.org/",
-                    "@type": "LocalBusiness",
-                    "@id": location.href,
-                    "name": this.venueDetails.name + " - " + "Eazyvenue.com",
-                    "description": this.venueDetails.metaDescription,
-                    "image": [
-                        this.venueDetails.venueImage[0]?.venue_image_src
-                    ],
-                    "address": {
-                        "@type": "PostalAddress",
-                        // "streetAddress": "Near thane,Mumbai, Maharashtra",
-                        "streetAddress": "Near "+this.venueDetails.subarea+", "+this.venueDetails.cityname+","+this.venueDetails.statename+"",
-                        // "addressLocality": "Near thane, Mumbai, Maharashtra",
-                        "addressLocality": "Near "+this.venueDetails.subarea+", "+this.venueDetails.cityname+","+this.venueDetails.statename+"",
-                        // "addressRegion": "Mumbai",
-                        "addressRegion": this.venueDetails.cityname,
-                        // "postalCode": "400601",
-                        "postalCode": this.venueDetails.zipcode,
-                        "addressCountry": "India"
-                    },
-                    "aggregateRating": {
-                        "@type": "AggregateRating",
-                        "ratingValue": this.venueDetails.googleRating,
-                        "reviewCount": "1206",
-                        "bestRating": "5",
-                        "worstRating": "1.2"
-                    },
-                    "priceRange": "Menu starts from Rs."+this.venueDetails.foodMenuType.veg_food[0].value+" to Rs."+this.venueDetails.foodMenuType.veg_food[this.venueDetails.foodMenuType.veg_food.length - 1].value,
-                    "telephone": "+91 93720 91300"
-                }
-
-
-                const localBusinessScript = document.createElement('script');
-                localBusinessScript.type = 'application/ld+json';
-                localBusinessScript.text = JSON.stringify(localBusinessSchema);
-                document.body.appendChild(localBusinessScript);
-
                 const itemListSchema = {
                     "itemListElement":
                         [
