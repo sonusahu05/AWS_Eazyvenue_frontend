@@ -108,6 +108,14 @@ export class VenueService {
         );
     }
 
+    saveCustomAmount(requestData: { email: string; amount: number }): Observable<any> {
+        return this.http.post<any>(
+            environment.apiUrl + 'request-custom-amount',
+            requestData,
+            this.httpOptions
+        );
+    }
+
     private venueID = new BehaviorSubject('');
     _venueid = this.venueID.asObservable();
     passvenueID(val: any) {

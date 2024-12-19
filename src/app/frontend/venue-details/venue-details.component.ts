@@ -5,6 +5,7 @@ import { ProductService } from '../../demo/service/productservice';
 import { Product } from '../../demo/domain/product';
 // import listingblock from '../../../assets/demo/data/listing.json';
 import { BannerService } from 'src/app/services/banner.service';
+import { CustomAmountService } from '../../services/custom-amount.service';
 import { VenueService } from 'src/app/manage/venue/service/venue.service';
 import { environment } from 'src/environments/environment';
 import { LazyLoadEvent } from 'primeng/api';
@@ -50,6 +51,8 @@ interface City {
 export class VenueDetailsComponent implements OnInit {
     venueDetailSearch: boolean = false;
     responsiveOptions: any[] | undefined;
+    displayCustomAmountModal: boolean = false;
+    customAmountForm: FormGroup;
 
     showVenueDetailSearch() {
         this.venueDetailSearch = true;
@@ -265,6 +268,7 @@ export class VenueDetailsComponent implements OnInit {
     @ViewChild('paginator', { static: true }) paginator: Paginator;
     @ViewChild('searchCalendar', { static: true }) datePicker;
     constructor(
+        private customAmountService: CustomAmountService,
         private renderer: Renderer2,
         private productService: ProductService,
         private BannerService: BannerService,
@@ -288,16 +292,27 @@ export class VenueDetailsComponent implements OnInit {
         private activeRoute: ActivatedRoute,
         private title: Title,
         private meta: Meta,
-        private razorpayService: RazorpayService
+        private razorpayService: RazorpayService,
+        private fb: FormBuilder,
     ) {
         this.bodyClass = this.availableClasses[this.currentClassIdx];
         this.changeBodyClass();
+
+        this.customAmountForm = this.fb.group({
+            email: ['', [Validators.required, Validators.email]],
+            amount: ['', [Validators.required, Validators.min(1)]]
+        });
     }
+
     ngOnInit() {
         const canonicalLink = this.renderer.createElement('link');
         this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
         this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
         this.renderer.appendChild(document.head, canonicalLink);
+        this.customAmountForm = this.fb.group({
+            email: ['', [Validators.required, Validators.email]],
+            amount: ['', [Validators.required, Validators.min(0)]]
+          });
         this.responsiveOptions = [
             {
                 breakpoint: '1024px',
@@ -521,6 +536,46 @@ export class VenueDetailsComponent implements OnInit {
     get h() {
         return this.mobileForm.controls;
     }
+    onClickSendRequest(type: string) {
+        if (type === 'book_now') {
+          this.displayCustomAmountModal = true;
+        }
+      }
+
+      submitCustomAmount() {
+        if (this.customAmountForm.valid) {
+          const requestData = {
+            ...this.customAmountForm.value,
+            venue_id: this.venueDetails._id
+          };
+
+          this.venueService.saveCustomAmount(requestData).subscribe(
+            response => {
+              this.displayCustomAmountModal = false;
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Custom amount request submitted successfully'
+              });
+              this.customAmountForm.reset();
+            },
+            error => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to submit custom amount request'
+              });
+            }
+          );
+        } else {
+          Object.keys(this.customAmountForm.controls).forEach(key => {
+            const control = this.customAmountForm.get(key);
+            if (control.invalid) {
+              control.markAsTouched();
+            }
+          });
+        }
+      }
     onSubmitNumber(mode) {
         this.submitted = true;
         if (this.mobileForm.invalid) {
@@ -827,6 +882,42 @@ export class VenueDetailsComponent implements OnInit {
                 this.meta.addTag({name:"description",content:this.venueDetails.metaDescription})
                 this.meta.addTag({name:"keywords",content:this.venueDetails.metaKeywords})
                 this.meta.addTag({ name: 'robots', content: 'index, follow' });
+
+                const localBusinessSchema = {
+                    "@context": "http://schema.org/",
+                    "@type": "LocalBusiness",
+                    "@id": location.href,
+                    "name": this.venueDetails.name + " - " + "Eazyvenue.com",
+                    "description": this.venueDetails.metaDescription,
+                    "image": [
+                        this.venueDetails.venueImage[0]?.venue_image_src
+                    ],
+                    "address": {
+                        "@type": "PostalAddress",
+                        // "streetAddress": "Near thane,Mumbai, Maharashtra",
+                        "streetAddress": "Near "+this.venueDetails.subarea+", "+this.venueDetails.cityname+","+this.venueDetails.statename+"",
+                        // "addressLocality": "Near thane, Mumbai, Maharashtra",
+                        "addressLocality": "Near "+this.venueDetails.subarea+", "+this.venueDetails.cityname+","+this.venueDetails.statename+"",
+                        // "addressRegion": "Mumbai",
+                        "addressRegion": this.venueDetails.cityname,
+                        // "postalCode": "400601",
+                        "postalCode": this.venueDetails.zipcode,
+                        "addressCountry": "India"
+                    },
+                    "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": this.venueDetails.googleRating,
+                        "reviewCount": "1206",
+                        "bestRating": "5",
+                        "worstRating": "1.2"
+                    },
+                    "priceRange": "Menu starts from Rs."+this.venueDetails.foodMenuType.veg_food[0].value+" to Rs."+this.venueDetails.foodMenuType.veg_food[this.venueDetails.foodMenuType.veg_food.length - 1].value,
+                    "telephone": "+91 93720 91300"
+                }
+                const localBusinessScript = document.createElement('script');
+                localBusinessScript.type = 'application/ld+json';
+                localBusinessScript.text = JSON.stringify(localBusinessSchema);
+                document.body.appendChild(localBusinessScript);
 
                 const itemListSchema = {
                     "itemListElement":
