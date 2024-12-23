@@ -2720,60 +2720,12 @@ export class VenueCategoryListComponent {
                     this.noVenueFlag = false;
                 }
 
-                const localBusinessSchema = {
-                    '@context': 'http://schema.org/',
-                    '@type': 'LocalBusiness',
-                    '@id': location.href,
-                    name: this.currentTitle,
-                    description: this.currentDescription,
-                    image: [
-                        this.finalVenueList[0].venueImage[0]?.venue_image_src, //first image
-                    ],
-                    address: {
-                        '@type': 'PostalAddress',
-                        // "streetAddress": "Near thane,Mumbai, Maharashtra",
-                        streetAddress:
-                            'Near ' +
-                            this.finalVenueList[0].subarea +
-                            ', ' +
-                            this.finalVenueList[0].cityname +
-                            ',' +
-                            this.finalVenueList[0].statename +
-                            '',
-                        // "addressLocality": "Near thane, Mumbai, Maharashtra",
-                        addressLocality:
-                            'Near ' +
-                            this.finalVenueList[0].subarea +
-                            ', ' +
-                            this.finalVenueList[0].cityname +
-                            ',' +
-                            this.finalVenueList[0].statename +
-                            '',
-                        // "addressRegion": "Mumbai",
-                        addressRegion: this.finalVenueList[0].cityname,
-                        // "postalCode": "400601",
-                        postalCode: this.finalVenueList[0].zipcode,
-                        addressCountry: 'India',
-                    },
-                    aggregateRating: {
-                        '@type': 'AggregateRating',
-                        ratingValue: this.finalVenueList[0].googleRating,
-                        reviewCount: '1206',
-                        bestRating: '5',
-                        worstRating: '1.2',
-                    },
-                    priceRange:
-                        'Venue price starts from Rs.' +
-                        minVenuePrice +
-                        ' to Rs.' +
-                        maxVenuePrice,
-                    telephone: '+91 93720 91300',
-                };
 
-                const localBusinessScript = document.createElement('script');
-                localBusinessScript.type = 'application/ld+json';
-                localBusinessScript.text = JSON.stringify(localBusinessSchema);
-                document.body.appendChild(localBusinessScript);
+
+                // const localBusinessScript = document.createElement('script');
+                // localBusinessScript.type = 'application/ld+json';
+                // localBusinessScript.text = JSON.stringify(localBusinessSchema);
+                // document.body.appendChild(localBusinessScript);
             },
             (err) => {
                 this.errorMessage = err.error.message;

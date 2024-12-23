@@ -37,60 +37,84 @@ import { Injectable } from '@angular/core';
       }
     };
 
-    getSubareaSpecificTitle(
-      subarea_slug: string | null,
-      occasion_slug: string | null,
-      city_slug: string | null
-    ): { title: string, description: string } {
-      // Normalize the subarea slug
-      const normalizedSubarea = subarea_slug ? subarea_slug.toLowerCase() : 'default';
-
-      // Get the base details
-      let subareaDetails = this.subareaSpecificTitles[normalizedSubarea] ||
-                           this.subareaSpecificTitles['default'];
-
-      // Modify baseTitle dynamically for subareas not explicitly defined
-      if (!this.subareaSpecificTitles[normalizedSubarea] && subarea_slug) {
-        const formattedSubarea = this.capitalizeWords(subarea_slug);
-        subareaDetails = {
-          ...subareaDetails,
-          occasionTemplate: `Explore The Top Banquet Halls in ${formattedSubarea}`
-        };
-      }
-
-      // If no occasion, return base details
-      if (!occasion_slug) {
-        return {
-          title: subareaDetails.baseTitle,
-          description: subareaDetails.baseDescription
-        };
-      }
-
-      // Format the occasion and location
-      const formattedOccasion = this.capitalizeWords(occasion_slug);
-      const formattedCity = city_slug ? ` in ${this.capitalizeWords(city_slug)}` : '';
-      const formattedSubarea = subarea_slug ? `, ${this.capitalizeWords(subarea_slug)}` : '';
-
-      // Generate dynamic title
-      const dynamicTitle = subareaDetails.occasionTemplate
-        .replace('{occasion}', formattedOccasion)
-        .concat(` - Eazyvenue.com`);
-
-      // Generate dynamic description
-      const dynamicDescription = subareaDetails.baseDescription
-        .replace(/\{occasion\}/g, formattedOccasion);
-
-      return {
-        title: dynamicTitle,
-        description: dynamicDescription
+    private citySpecificTitles = {
+        'mumbai': {
+          baseTitle: 'Premier Banquet Halls in Mumbai - Your Perfect Venue Awaits',
+          baseDescription: 'Discover Mumbai\'s finest banquet halls for all occasions. From luxurious wedding venues to corporate event spaces, find the perfect location in the city of dreams.',
+          occasionTemplate: 'Top Recommended Banquet Halls in Mumbai'
+        },
+        'delhi': {
+          baseTitle: 'Discover Distinguished Banquet Halls in Delhi',
+          baseDescription: 'Explore Delhi\'s most elegant banquet halls, perfect for weddings, corporate events, and celebrations. Find venues that blend tradition with modern luxury.',
+          occasionTemplate: 'Best {occasion} Banquet Halls in Delhi'
+        },
+        'default': {
+          baseTitle: 'Explore The Top Banquet Halls',
+          baseDescription: 'Explore exquisite banquet halls near you for weddings, parties, and corporate events. EazyVenue.com offers a curated selection of premier event spaces, blending sophistication and charm.',
+          occasionTemplate: 'List of best {occasion} Banquet Halls'
+        }
       };
-    }
 
-    // Utility method to capitalize words
-    private capitalizeWords(str: string): string {
-      return str
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
+      getSubareaSpecificTitle(
+        subarea_slug: string | null,
+        occasion_slug: string | null,
+        city_slug: string | null
+      ): { title: string, description: string } {
+        // Normalize the slugs
+        const normalizedSubarea = subarea_slug ? subarea_slug.toLowerCase() : null;
+        const normalizedCity = city_slug ? city_slug.toLowerCase() : null;
+
+        // Determine which metadata to use based on URL pattern
+        let baseDetails;
+        if (normalizedSubarea) {
+          // Prioritize subarea if it exists
+          baseDetails = this.subareaSpecificTitles[normalizedSubarea] || {
+            baseTitle: `Discover Banquet Halls in ${this.capitalizeWords(normalizedSubarea)}`,
+            baseDescription: `Find the perfect banquet hall for your event in ${this.capitalizeWords(normalizedSubarea)}. Browse through our carefully curated selection of venues suitable for all occasions.`,
+            occasionTemplate: `Best {occasion} Banquet Halls in ${this.capitalizeWords(normalizedSubarea)}`
+          };
+        } else if (normalizedCity) {
+          // Use city-specific metadata if no subarea
+          baseDetails = this.citySpecificTitles[normalizedCity] || {
+            baseTitle: `Explore Banquet Halls in ${this.capitalizeWords(normalizedCity)}`,
+            baseDescription: `Discover the finest banquet halls in ${this.capitalizeWords(normalizedCity)}. From intimate gatherings to grand celebrations, find your perfect venue.`,
+            occasionTemplate: `Best {occasion} Banquet Halls in ${this.capitalizeWords(normalizedCity)}`
+          };
+        } else {
+          // Fallback to default if neither exists
+          baseDetails = this.citySpecificTitles['default'];
+        }
+
+        // If no occasion, return base details
+        if (!occasion_slug) {
+          return {
+            title: `${baseDetails.baseTitle} - Eazyvenue.com`,
+            description: baseDetails.baseDescription
+          };
+        }
+
+        // Format the occasion
+        const formattedOccasion = this.capitalizeWords(occasion_slug);
+
+        // Generate dynamic title and description
+        const dynamicTitle = baseDetails.occasionTemplate
+          .replace('{occasion}', formattedOccasion)
+          .concat(' - Eazyvenue.com');
+
+        const dynamicDescription = baseDetails.baseDescription
+          .replace(/\{occasion\}/g, formattedOccasion);
+
+        return {
+          title: dynamicTitle,
+          description: dynamicDescription
+        };
+      }
+
+      // Utility method to capitalize words
+      private capitalizeWords(str: string): string {
+        return str
+          .split('-')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ');
+      }
     }
-  }
