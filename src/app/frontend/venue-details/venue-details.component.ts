@@ -5,7 +5,6 @@ import { ProductService } from '../../demo/service/productservice';
 import { Product } from '../../demo/domain/product';
 // import listingblock from '../../../assets/demo/data/listing.json';
 import { BannerService } from 'src/app/services/banner.service';
-import { CustomAmountService } from '../../services/custom-amount.service';
 import { VenueService } from 'src/app/manage/venue/service/venue.service';
 import { environment } from 'src/environments/environment';
 import { LazyLoadEvent } from 'primeng/api';
@@ -268,7 +267,6 @@ export class VenueDetailsComponent implements OnInit {
     @ViewChild('paginator', { static: true }) paginator: Paginator;
     @ViewChild('searchCalendar', { static: true }) datePicker;
     constructor(
-        private customAmountService: CustomAmountService,
         private renderer: Renderer2,
         private productService: ProductService,
         private BannerService: BannerService,
@@ -576,6 +574,7 @@ export class VenueDetailsComponent implements OnInit {
           });
         }
       }
+
     onSubmitNumber(mode) {
         this.submitted = true;
         if (this.mobileForm.invalid) {
@@ -2139,7 +2138,7 @@ export class VenueDetailsComponent implements OnInit {
                 if(this.orderType == 'book_now'){
                     const options = {
                         // key: environment.razorPayKeyTest, //test key
-                        // key: environment.razorPayKeyLive, //Live key
+                        key: environment.razorPayKeyLive, //Live key
                         amount: data.amount,
                         currency: data.currency,
                         order_id: data.order_id,

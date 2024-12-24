@@ -27,6 +27,7 @@ export const environment = {
         port: 3006,
         root: '/api',
     },
+    razorPayKeyLive:'rzp_test_Mn8kN9Uyp2RmWd',
     maxVenuePrice: 1000000,
     minVenuePrice: 10000,
     capacity: [

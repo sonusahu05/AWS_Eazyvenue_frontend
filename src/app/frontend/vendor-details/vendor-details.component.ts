@@ -46,7 +46,15 @@ export class VendorDetailsComponent implements OnInit {
 
 
   //details
-  vendorDetails: any;
+  vendorDetails: any = {
+    services: [],
+    otherServices: {},
+    vendorImage: [],
+    categories: [],
+    subarea: {},
+    city: {},
+    state: {}
+  };
   showAvailabilityMessage: any;
   responsiveOptions = [
     {
@@ -186,9 +194,16 @@ export class VendorDetailsComponent implements OnInit {
   }
   getVendorData(query) {
     this.vendorService.getVendorByMetaUrl(this.vendorMetaName, query).subscribe(res => {
-      // console.log(res);
-      if (res) {
-        this.vendorDetails = res.data[0];
+        if (res) {
+          this.vendorDetails = res.data[0];
+          // Add this line after setting vendorDetails
+          if (this.vendorDetails.services) {
+            this.vendorDetails.services = this.vendorDetails.services.map(service => ({
+              ...service,
+              selected: false,
+              disable: false
+            }));
+          }
         console.log(this.vendorDetails);
 
         // this.title.setTitle(res.data[0].name + " - "+res.data[0].categories[0].name+" - Eazyvenue.com")
@@ -534,25 +549,19 @@ export class VendorDetailsComponent implements OnInit {
     this.getVendorData(query)
   }
   onVendorServiceClick(vendorService, event) {
+    console.log('Service clicked:', vendorService, 'Event:', event);
     const targetService = this.vendorDetails.services.find(s => s.name === vendorService.name);
 
-    if (event.checked === true) {
-      this.selectedVendorServices.push(vendorService);
-      this.totalAmount += parseInt(vendorService.price.match(/\d+/)[0], 10);
-
-      if (targetService) {
-        targetService.selected = true;
-      }
+    if (event.checked) {
+        this.selectedVendorServices.push(vendorService);
+        this.totalAmount += parseInt(vendorService.price.toString().match(/\d+/)[0], 10);
     } else {
-      this.selectedVendorServices = this.selectedVendorServices.filter(o => o.name !== vendorService.name);
-      this.totalAmount -= parseInt(vendorService.price.match(/\d+/)[0], 10);
-
-      if (targetService) {
-        targetService.selected = false;
-      }
+        this.selectedVendorServices = this.selectedVendorServices.filter(o => o.name !== vendorService.name);
+        this.totalAmount -= parseInt(vendorService.price.toString().match(/\d+/)[0], 10);
     }
-    console.log(this.selectedVendorServices);
-  }
+
+    console.log('Selected services:', this.selectedVendorServices);  // Add this for debugging
+}
 
   onClickDecorationService(decorationService){
     // console.log(decorationService);
@@ -592,9 +601,9 @@ export class VendorDetailsComponent implements OnInit {
     //validate fields
     console.log(this.selectedOccasion);
 
-    if(!this.selectedOccasion){
-      this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please select an occasion', life: 3000 });
-      return;
+    if(!this.selectedOccasion) {
+        this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please select an occasion', life: 3000 });
+        return;
     }
     if(!this.startDate && !this.endDate){
       this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please select occasion dates', life: 3000 });
@@ -606,9 +615,9 @@ export class VendorDetailsComponent implements OnInit {
     }
     //check selected vendor services
     const vendorServices = this.vendorDetails.services.filter(o => o.selected === true);
-    if(vendorServices.length === 0){
-      this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please select services', life: 3000 });
-      return;
+    if(this.selectedVendorServices.length === 0) {
+        this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please select services', life: 3000 });
+        return;
     }
 
     //call razorpayservice.createOrder and get resoponse from our database
@@ -638,7 +647,7 @@ export class VendorDetailsComponent implements OnInit {
       //order saved now open razor pay window
       const options = {
         // key: environment.razorPayKeyTest, //test key
-        // key: environment.razorPayKeyLive, //Live key
+        key: environment.razorPayKeyLive, //Live key
         amount: res.amount,
         currency: res.currency,
         order_id: res.order_id,
