@@ -42,6 +42,11 @@ interface Vendor {
 })
 export class HeaderComponent implements OnInit, AfterViewInit {
     isNavbarFixed: boolean = false;
+    isMobileView: boolean = window.innerWidth <= 768;
+    @HostListener('window:resize', [])
+    onResize() {
+      this.isMobileView = window.innerWidth <= 768;
+    }
     venuecityname: any;
     subarealist: any;
     selectedCountries: any[];
@@ -283,12 +288,20 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     isHotMuhuratsOpen: boolean = false;
 
     toggleHotMuhurats() {
-      this.isHotMuhuratsOpen = !this.isHotMuhuratsOpen;
-    }
+        if (this.isMobileView) {
+          const sidebar = document.querySelector('.p-sidebar-left') as HTMLElement;
+          sidebar?.classList.add('expanded'); // Expand sidebar on mobile
+        }
+        this.isHotMuhuratsOpen = true;
+      }
 
-    closeHotMuhurats() {
-      this.isHotMuhuratsOpen = false;
-    }
+      closeHotMuhurats() {
+        if (this.isMobileView) {
+          const sidebar = document.querySelector('.p-sidebar-left') as HTMLElement;
+          sidebar?.classList.remove('expanded'); // Collapse sidebar on mobile
+        }
+        this.isHotMuhuratsOpen = false;
+      }
 
       getRouteSegments(route: any): string[] {
         const segments: string[] = [];

@@ -203,13 +203,14 @@
                             </div>
                             <a class="nav-link" [class.active]="activeRoute === 'venue'" routerLink="/">Venues<span class="sr-only">(current)</span></a>
                             <a class="nav-link" [class.active]="activeRoute === 'venodr'" routerLink="/vendor">Vendors</a>
-                            <a class="nav-link" (click)="toggleMuhurat()">Hot Muhurats</a>
-                            <a class="nav-link" style="color: gray;" pTooltip="Coming Soon" >Couple Date</a>
+                                <a class="nav-link" (click)="toggleHotMuhurats()">HOT MUHURATS</a>
+                              <app-muhrats [isOpen]="isHotMuhuratsOpen" (closeDrawer)="closeHotMuhurats()"></app-muhrats>
+                            <!-- <a class="nav-link" style="color: gray;" pTooltip="Coming Soon" >Couple Date</a>
                             <a class="nav-link" *ngIf="!isLoggedIn" (click)="showDialogoffer()">Login</a>
 
                             <div class="vendor-reg">
                                 <a class="nav-link" (click)="showDialogvendor()">Are You A Vendor?</a>
-                            </div>
+                            </div> -->
                             <!-- <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/availability'">Availability
                                 Updates</a>
                             <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/my-profile'">Schedule

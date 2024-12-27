@@ -11,7 +11,14 @@
     z-index: 1000;
     border-radius: 10px;
     display: none;
-  }
+
+    @media (max-width: 768px) { // Mobile-specific styles
+        top: 22%;
+        left: 6%;
+        width: 415px;
+        height: 276px;
+    }
+}
 
   .hot-muhurats-drawer.open {
     display: block;
