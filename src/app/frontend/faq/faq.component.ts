@@ -85,9 +85,14 @@ export class FaqComponent implements OnInit, OnChanges {
     updateTitle(): void {
         // Function to capitalize first letter of each word
         const capitalizeWords = (str: string) => {
-            return str.split(' ').map(word =>
-                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-            ).join(' ');
+            return str
+                .split(' ')
+                .map(
+                    (word) =>
+                        word.charAt(0).toUpperCase() +
+                        word.slice(1).toLowerCase()
+                )
+                .join(' ');
         };
         // Check the route parameters first
         const subarea = this.route.snapshot.params['subarea'];
@@ -104,7 +109,9 @@ export class FaqComponent implements OnInit, OnChanges {
 
             // Fallback to first venue details if route params are incomplete
             if (subarea) {
-                this.title = `Banquet Halls in ${capitalizeWords(subarea)}, ${capitalizeWords(cityname)}`;
+                this.title = `Banquet Halls in ${capitalizeWords(
+                    subarea
+                )}, ${capitalizeWords(cityname)}`;
             } else {
                 this.title = `Banquet Halls in ${capitalizeWords(cityname)}`;
             }
@@ -115,58 +122,81 @@ export class FaqComponent implements OnInit, OnChanges {
 
     updateDescription(): void {
         const capitalizeWords = (str: string) => {
-            return str.split(' ').map(word =>
-                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-            ).join(' ');
+            return str
+                .split(' ')
+                .map(
+                    (word) =>
+                        word.charAt(0).toUpperCase() +
+                        word.slice(1).toLowerCase()
+                )
+                .join(' ');
         };
         const city = this.route.snapshot.params['city'];
         const subarea = this.route.snapshot.params['subarea'];
 
         if (this.selectedVenueList.length > 0) {
             const venue = this.selectedVenueList[0];
-            const normalizedSubarea = venue.subarea.toLowerCase().replace(/[^a-z0-9]/g, '');
-            const cityname = venue.cityname.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const normalizedSubarea = venue.subarea
+                .toLowerCase()
+                .replace(/[^a-z0-9]/g, '');
+            const cityname = venue.cityname
+                .toLowerCase()
+                .replace(/[^a-z0-9]/g, '');
 
             if (city && !subarea) {
                 // If only city is present, show description for the city
                 switch (cityname) {
                     case 'mumbai':
-                        this.fullDescription =
-                            `<h5>Mumbai's Versatile Event Hubs</h5>
-                            <p>Mumbai, the bustling heart of India, is home to some of the most exquisite banquet halls designed to host events that leave a lasting impression. Whether you're planning a lavish wedding, a corporate gala, a milestone celebration, or a private gathering, Mumbai offers a myriad of banquet halls that blend elegance with modern functionality.</p>
+                        this.fullDescription = `<h5>Best Banquet Halls in Mumbai</h5>
+                            <p>Weddings or receptions & parties are cherished events in a person's life, so booking the best wedding banquet hall / venue is a must. All the celebrations associated with them are very important to all of us. So we provide a range of party halls in Mumbaifor you to choose from.
+At Eazy Venue, we understand the sentimental value of all the celebrations you plan and hence help you book the best wedding venues in Mumbai. The bright, open space in the venue will make your wedding day a joyful one, as it should be from the moment you enter.
+There is no better feeling than serving our guests on such special occasions. To ensure our clients get the best banquet hall, we always go the extra mile. We offer our guests a unique experience, combining modern comfort with traditional hospitality. So, we will offer the best venue that fits your needs and makes the entire event exciting for you and your guests.
+</p>
 
-                            <h5>Exceptional Banquet Halls Across Mumbai</h5>
-                            <p>The banquet halls in Mumbai are renowned for their versatility, catering to events of all sizes and types. From grand ballrooms with luxurious chandeliers and state-of-the-art sound systems to cozy spaces ideal for intimate functions, these venues are tailored to perfection.</p>
+                            <h5>Book the Best Banquet Halls in Mumbai</h5>
+                            <p>Mumbai is located at the heart of Mumbai city and is known for its posh residential areas. It is home to many prominent personalities from various fields. The area is well connected to the rest of the city through public transport and is a popular place for tourists.
+Banquet halls are perfect for any type of event, whether it is a birthday party, wedding reception, corporate meeting, holiday celebration, or even a family reunion. We offer a wide variety of options, from indoor and outdoor venues to fully furnished banquet rooms.
+</p>
 
-                            <h5>Prime Locations with Seamless Connectivity</h5>
-                            <p>Mumbai's banquet halls are strategically located in areas with excellent connectivity, ensuring ease of access for both local and out-of-town guests.</p>`;
+<h5>Book Banquet Halls for Corporate Events</h5>
+                            <p>Corporate events are a great way to bring employees together. We are also aware of the fact that such events are a good way to reward employees for their hard work. Whether it’s a company picnic, a team-building event, or a company retreat, they are a fun and productive way to bond with coworkers. Our Team will help you with the best Venue & catering service for such events.</p>
+
+                            <h5>Book Your Comfortable Stay with Us</h5>
+                            <p>Your guests need a wonderful location and a comfortable stay when you invite them to an event. So, whether it is corporate or personal, we have tie ups with the best hotels, resorts, etc. to book your stay.
+You can expect flexible services and neat rooms that are sanitized and well maintained. The staff at the hotel will take care of your needs and you can enjoy the various amenities and facilities as well. Let us know the dates in advance so we can give you the best options and hence make your stay count.
+</p>`;
                         break;
                     default:
-                        this.fullDescription = `${capitalizeWords(city)},the bustling heart of India, is home to some of the most exquisite banquet halls designed to host events that leave a lasting impression. Whether you're planning a lavish wedding, a corporate gala, a milestone celebration, or a private gathering, Mumbai offers a myriad of banquet halls that blend elegance with modern functionality.</p>The banquet halls are renowned for their versatility, catering to events of all sizes and types. From grand ballrooms with luxurious chandeliers and state-of-the-art sound systems to cozy spaces ideal for intimate functions, these venues are tailored to perfection.</p>`;
+                        this.fullDescription = `${capitalizeWords(
+                            city
+                        )},the bustling heart of India, is home to some of the most exquisite banquet halls designed to host events that leave a lasting impression. Whether you're planning a lavish wedding, a corporate gala, a milestone celebration, or a private gathering, Mumbai offers a myriad of banquet halls that blend elegance with modern functionality.</p>The banquet halls are renowned for their versatility, catering to events of all sizes and types. From grand ballrooms with luxurious chandeliers and state-of-the-art sound systems to cozy spaces ideal for intimate functions, these venues are tailored to perfection.</p>`;
                 }
             } else if (subarea && city) {
                 // Templates for different location groups
-                const chemburGroup = ['chembur', 'juhu', 'malad', 'andheri'];
-                const powaiGroup = ['powai', 'ghatkopar', 'thane', 'mulund'];
+                const firstGroup = ['chembur', 'powai', 'andheri','malad'];
+                const secondGroup = ['juhu', 'ghatkopar', 'thane', 'mulund','kurla'];
 
                 const capitalizedSubarea = capitalizeWords(subarea);
 
-                if (chemburGroup.includes(normalizedSubarea)) {
-                    this.fullDescription =
-                        `<h5>A Vibrant Destination for Events</h5>
-                        <p>${capitalizedSubarea} is a dynamic and sought-after location in Mumbai, offering an ideal setting for hosting a wide variety of events. Known for its strategic location and excellent infrastructure, this area provides a perfect backdrop for memorable celebrations and professional gatherings.</p>
+                if (firstGroup.includes(normalizedSubarea)) {
+                    this.fullDescription = `<h5>Banquet Halls in ${capitalizedSubarea}, Mumbai</h5>
+                        <p>Weddings or receptions & parties are cherished events in a person's life, so booking the best wedding banquet hall / venue is a must. All the celebrations associated with them are very important to all of us. So we provide a range of party halls in Powai for you to choose from.
+At Eazy Venue, we understand the sentimental value of all the celebrations you plan and hence help you book the best wedding venues in Powai. The bright, open space in the venue will make your wedding day a joyful one, as it should be from the moment you enter.
+There is no better feeling than serving our guests on such special occasions. To ensure our clients get the best banquet hall, we always go the extra mile. We offer our guests a unique experience, combining modern comfort with traditional hospitality. So, we will offer the best venue that fits your needs and makes the entire event exciting for you and your guests.
+</p>
 
-                        <h5>Versatile Banquet Hall Options</h5>
-                        <p>Banquet halls in ${capitalizedSubarea} come in various sizes and styles, ranging from opulent spaces with grand interiors and state-of-the-art facilities to more modest venues for smaller, personal celebrations. These venues are equipped with modern amenities such as advanced audiovisual systems, in-house catering, and customizable décor options.</p>
+                        <h5>Book Your Comfortable Stay with Us</h5>
+                        <p>Your guests need a wonderful location and a comfortable stay when you invite them to an event. So, whether it is corporate or personal, we have tie ups with the best hotels, resorts, etc. to book your stay.
+You can expect flexible services and neat rooms that are sanitized and well maintained. The staff at the hotel will take care of your needs and you can enjoy the various amenities and facilities as well. Let us know the dates in advance so we can give you the best options and hence make your stay count.
+</p>
 
-                        <h5>Accessibility and Convenience</h5>
-                        <p>${capitalizedSubarea} is easily accessible from different parts of Mumbai, with excellent connectivity through highways, railway stations, and public transportation. This makes it convenient for guests from various locations to attend your event.</p>
+                        <h5>Book Banquet Halls for Corporate Events</h5>
+                        <p>Corporate events are a great way to bring employees together. We are also aware of the fact that such events are a good way to reward employees for their hard work. Whether it’s a company picnic, a team-building event, or a company retreat, they are a fun and productive way to bond with coworkers. Our Team will help you with the best Venue & catering service for such events.x</p>
 
                         <h5>Why Choose ${capitalizedSubarea} for Your Event?</h5>
                         <p>The combination of versatile venues, strategic location, and excellent amenities makes ${capitalizedSubarea} an ideal choice for hosting events ranging from weddings and corporate gatherings to private parties and social celebrations.</p>`;
-                } else if (powaiGroup.includes(normalizedSubarea)) {
-                    this.fullDescription =
-                        `<h5>A Prime Business and Event Hub</h5>
+                } else if (secondGroup.includes(normalizedSubarea)) {
+                    this.fullDescription = `<h5>A Prime Business and Event Hub</h5>
                         <p>${capitalizedSubarea} stands out as a sophisticated and modern location in Mumbai, renowned for its premium event spaces and professional infrastructure. Whether you're planning a corporate conference, a lavish wedding, or a private celebration, this area offers exceptional venues that meet the highest standards.</p>
 
                         <h5>Premium Banquet Halls for Every Occasion</h5>
@@ -186,7 +216,10 @@ export class FaqComponent implements OnInit, OnChanges {
 
             // Set the initial description to show the first two sections
             const parser = new DOMParser();
-            const doc = parser.parseFromString(this.fullDescription, 'text/html');
+            const doc = parser.parseFromString(
+                this.fullDescription,
+                'text/html'
+            );
             const sections = doc.querySelectorAll('h5, p');
             let initialDescriptionHtml = '';
             for (let i = 0; i < Math.min(4, sections.length); i++) {
@@ -215,9 +248,14 @@ export class FaqComponent implements OnInit, OnChanges {
     updateFaqs(): void {
         // Function to capitalize first letter of each word
         const capitalizeWords = (str: string) => {
-            return str.split(' ').map(word =>
-                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-            ).join(' ');
+            return str
+                .split(' ')
+                .map(
+                    (word) =>
+                        word.charAt(0).toUpperCase() +
+                        word.slice(1).toLowerCase()
+                )
+                .join(' ');
         };
 
         const { city, subarea } = this.route.snapshot.params;
@@ -292,20 +330,22 @@ export class FaqComponent implements OnInit, OnChanges {
 
     generateFaqSchema(): void {
         const faqSchema = {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": this.faqs.map(faq => ({
-                "@type": "Question",
-                "name": faq.question,
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": faq.answer
-                }
-            }))
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: this.faqs.map((faq) => ({
+                '@type': 'Question',
+                name: faq.question,
+                acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: faq.answer,
+                },
+            })),
         };
 
         // Remove any existing JSON-LD script
-        const existingScript = document.querySelector('script[type="application/ld+json"]');
+        const existingScript = document.querySelector(
+            'script[type="application/ld+json"]'
+        );
         if (existingScript) {
             existingScript.remove();
         }
