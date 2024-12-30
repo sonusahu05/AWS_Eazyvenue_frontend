@@ -102,7 +102,7 @@
                 <p-autoComplete [(ngModel)]="selectedCountries" [suggestions]="filtration"
                     (completeMethod)="search($event)" (onSelect)="onSelectSearch($event)"
                     (onUnselect)="onClearResetAllData($event)" field="name"
-                    placeholder="easisVenue/Restaurant/Banquet*" [multiple]="true"
+                      placeholder="Search for Banquet-Halls/Occasion/Vendors"[multiple]="true"
                     class="mostly-customized-scrollbar">
                     <ng-template let-item pTemplate="item">
                         <div class="flex align-items-center">
