@@ -75,6 +75,7 @@ export class VenueDetailsComponent implements OnInit {
     selectedCity1: City;
     selectedOccasion1: City;
     val1: number;
+    value1:number;
     val2: number = 3;
     val3: number = 5;
     val4: number = 5;
@@ -181,6 +182,7 @@ export class VenueDetailsComponent implements OnInit {
     public decorImages: any[] = [];
     public url;
     public orderType = 'book_now';
+    public orderType1 = 'customamount_request';
     genders;
     message;
     showMessage: boolean = false;
@@ -250,6 +252,7 @@ export class VenueDetailsComponent implements OnInit {
     public sOccasion;
     public metaUrl: string;
     isBookingSummary: boolean = false;
+    isCustomAmountSummary: boolean = false;
     public numberPopup = false;
     public otpPopup = false;
     mobileForm: FormGroup;
@@ -615,6 +618,10 @@ export class VenueDetailsComponent implements OnInit {
     public tick;
     otpArray:string[] = [];
     public showResendButton: boolean = false;
+
+    isCustomAmountValid(): boolean {
+        return this.value1 !== undefined && this.value1 > 0;
+    }
     pastedEvent(event){
         const val = event.target.value;
         this.showOtpErrors = false;
@@ -2089,6 +2096,59 @@ export class VenueDetailsComponent implements OnInit {
         this.isBookingSummary = true;
         this.showVenueDetailFilter = false;
     }
+    onClickCustomAmount(mode) {
+        if (this.isLoggedIn == false) {
+            this.numberPopup = true;
+            return;
+        }
+
+        if (this.selectedOccasion === undefined || this.selectedOccasion === null) {
+            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select occasion.', life: 6000 });
+            return;
+        }
+        // if (this.selectedOccasion.length == 0) {
+        //     this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select occasion.', life: 6000 });
+        //     return;
+        // }
+        if (this.selectedDate == undefined) {
+            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Event Date.', life: 6000 });
+            return;
+        }
+        if (mode === 'customamount_request') {
+            if (this.selectedSlots.length == 0) {
+                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Slot.', life: 6000 });
+                return;
+            }
+        }
+        if (this.selectedVenueCapacity == undefined) {
+            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Guest Capacity.', life: 6000 });
+            return;
+        }
+        if (mode === 'customamount_request') {
+
+            if (this.selectedFoodTypeSlug == undefined) {
+                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Food Type.', life: 6000 });
+                return;
+            }
+            if (this.selectedFoodMenuTypes == undefined || this.selectedFoodMenuTypes.length == 0) {
+                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Food Menu Type.', life: 6000 });
+                return;
+            }
+
+        }
+        // if (this.selectedDecor == undefined) {
+        //   this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Decor.', life: 6000 });
+        //   return;
+        // }
+        // if (this.selectedVendor.length == 0) {
+        //   this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Vendor.', life: 6000 });
+        //   return;
+        // }
+        this.isCustomAmountSummary = true;
+        this.orderType1 = mode;
+        this.showVenueDetailFilter = false;
+    }
+
     onClickBooking(mode){
         // console.log(this.paymentAmount);
         // console.log(this.selectedDecor);
@@ -2182,6 +2242,105 @@ export class VenueDetailsComponent implements OnInit {
 
                 this.messageService.add({ key: 'toastMsg', severity: 'error', summary: err.error.message, detail: 'Venue order booked failed', life: 6000 });
             })
+        );
+    }
+
+    onClickCustomBooking(mode) {
+        let durationData = [{
+            occasionStartDate: this.rangeDates[0],
+            occasionEndDate: this.rangeDates[1],
+            slotId: this.selectedSlots[0]?.slotId
+        }];
+
+        // Validate custom amount
+        if (!this.value1 || this.value1 <= 0) {
+            this.messageService.add({
+                key: 'toastMsg',
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Please enter a valid amount',
+                life: 6000
+            });
+            return;
+        }
+
+        let venueOrderData = {
+            categoryId: this.sOccasion.id,
+            occasionDate: this.selectedDate,
+            durationData: durationData,
+            guestcnt: this.selectedVenueCapacity,
+            decor: this.selectedDecorPrice,
+            foodType: [this.selectedFoodTypeSlug],
+            foodPrice: this.totalFoodPrice,
+            decorType: this.selectedDecor?.name,
+            vendors: this.selectedVendor,
+            customerId: this.userId,
+            venueId: this.venueDetails.id,
+            price: this.value1, // Use custom amount as the price
+            foodMenuType: this.selectedFoodMenuTypes,
+            orderType: 'customamount_request', // Changed to match your desired orderType
+            bookingPrice: this.value1,
+            guestCount: this.capacity,
+            decorName: this.selectedDecorName,
+            paymentType: 'custom_amount',
+            status: true,
+            disable: false,
+            created_by: this.userId
+        };
+
+        this.placeCustomAmountRequest(venueOrderData);
+    }
+
+    placeCustomAmountRequest(orderData) {
+        this.venueOrderService.addVenueOrder(orderData).subscribe(
+            data => {
+                if (data && data.message === 'no profile') {
+                    this.messageService.add({
+                        key: 'toastMsg',
+                        severity: 'error',
+                        summary: 'Problem',
+                        detail: 'Please complete your profile before inquiry or booking',
+                        life: 5000
+                    });
+                    setTimeout(() => {
+                        this.router.navigateByUrl("/my-profile?mode=" + data.mode)
+                    }, 3000);
+                } else {
+                    // Successfully saved custom amount request
+                    this.messageService.add({
+                        key: 'toastMsg',
+                        severity: 'success',
+                        summary: 'Successful',
+                        detail: 'Custom amount request sent successfully.',
+                        life: 6000
+                    });
+
+                    // Close the custom amount summary dialog
+                    this.isCustomAmountSummary = false;
+
+                    // Navigate to profile page after successful submission
+                    setTimeout(() => {
+                        let currentUrl = '/my-profile';
+                        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+                        this.router.onSameUrlNavigation = 'reload';
+                        this.router.navigate([currentUrl], {
+                            queryParams: {
+                                mode: 'customamount_request'
+                            }
+                        });
+                    }, 2000);
+                }
+            },
+            (err) => {
+                console.log(err);
+                this.messageService.add({
+                    key: 'toastMsg',
+                    severity: 'error',
+                    summary: err.error.message || 'Error',
+                    detail: 'Failed to send custom amount request',
+                    life: 6000
+                });
+            }
         );
     }
     onRazorWindowClosed(response){
