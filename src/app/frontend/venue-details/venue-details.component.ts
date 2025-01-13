@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    ViewChild,
+    ElementRef,
+    Renderer2,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 // import data from '../../../assets/demo/data/navigation.json';
 import { ProductService } from '../../demo/service/productservice';
@@ -16,7 +22,13 @@ import { PostAvailabilityService } from 'src/app/services/postAvailability.servi
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { VenueOrderService } from 'src/app/services/venueOrder.service';
-import { FormBuilder, FormGroup, FormArray, Validators, FormControl } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    FormArray,
+    Validators,
+    FormControl,
+} from '@angular/forms';
 import { CustomValidators } from 'ng2-validation';
 import { MustMatch } from 'src/app/_helpers/must-match.validator';
 import { RoleService } from 'src/app/services/role.service';
@@ -41,17 +53,27 @@ interface City {
     templateUrl: './venue-details.component.html',
     styleUrls: ['./venue-details.component.scss'],
     providers: [BannerService, ConfirmationService, MessageService],
-    styles: [`
-     .bg-light  app-root app-frontend #front page-header .sigma_header .sigma_header-bottom .sigma_header-bottom-inner app-navigation .navigation-search-bar{
-          display:none !important;
-        }
-    `],
+    styles: [
+        `
+            .bg-light
+                app-root
+                app-frontend
+                #front
+                page-header
+                .sigma_header
+                .sigma_header-bottom
+                .sigma_header-bottom-inner
+                app-navigation
+                .navigation-search-bar {
+                display: none !important;
+            }
+        `,
+    ],
 })
 export class VenueDetailsComponent implements OnInit {
     venueDetailSearch: boolean = false;
     responsiveOptions: any[] | undefined;
     displayCustomAmountModal: boolean = false;
-    customAmountForm: FormGroup;
 
     showVenueDetailSearch() {
         this.venueDetailSearch = true;
@@ -67,7 +89,7 @@ export class VenueDetailsComponent implements OnInit {
     }
     showVenueDetailFilter: boolean = false;
     classToggled = false;
-    availableClasses: string[] = ["light", "normal-header"];
+    availableClasses: string[] = ['light', 'normal-header'];
     currentClassIdx: number = 0;
     bodyClass: string;
     occasion: City[];
@@ -85,18 +107,18 @@ export class VenueDetailsComponent implements OnInit {
         {
             breakpoint: '1024px',
             numVisible: 12,
-            numScroll: 12
+            numScroll: 12,
         },
         {
             breakpoint: '768px',
             numVisible: 12,
-            numScroll: 12
+            numScroll: 12,
         },
         {
             breakpoint: '560px',
             numVisible: 1,
-            numScroll: 1
-        }
+            numScroll: 1,
+        },
     ];
 
     public finalVenueList: any[] = [];
@@ -105,7 +127,8 @@ export class VenueDetailsComponent implements OnInit {
     public date12: Date;
     public date13: Date;
     public es: any;
-    public invalidDates: Array<Date>
+    customAmountValue: number;
+    public invalidDates: Array<Date>;
     public venueImageNumVisible: number = 8;
     public listingblock;
     public loading: boolean = true;
@@ -259,11 +282,11 @@ export class VenueDetailsComponent implements OnInit {
     public oldUser: any = {};
     public userFirstName: string = '';
     public userLastName: string = '';
-    firstNameError:boolean = false;
-    lastNameError:boolean = false;
+    firstNameError: boolean = false;
+    lastNameError: boolean = false;
     mobileNumber: any;
     offerPaymentValue25_percent: number = 0;
-    paymentAmount:any;
+    paymentAmount: any;
     @ViewChild('paginator', { static: true }) paginator: Paginator;
     @ViewChild('searchCalendar', { static: true }) datePicker;
     constructor(
@@ -291,15 +314,10 @@ export class VenueDetailsComponent implements OnInit {
         private title: Title,
         private meta: Meta,
         private razorpayService: RazorpayService,
-        private fb: FormBuilder,
+        private fb: FormBuilder
     ) {
         this.bodyClass = this.availableClasses[this.currentClassIdx];
         this.changeBodyClass();
-
-        this.customAmountForm = this.fb.group({
-            email: ['', [Validators.required, Validators.email]],
-            amount: ['', [Validators.required, Validators.min(1)]]
-        });
     }
 
     ngOnInit() {
@@ -307,46 +325,70 @@ export class VenueDetailsComponent implements OnInit {
         this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
         this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
         this.renderer.appendChild(document.head, canonicalLink);
-        this.customAmountForm = this.fb.group({
-            email: ['', [Validators.required, Validators.email]],
-            amount: ['', [Validators.required, Validators.min(0)]]
-          });
         this.responsiveOptions = [
             {
                 breakpoint: '1024px',
-                numVisible: 5
+                numVisible: 5,
             },
             {
                 breakpoint: '768px',
-                numVisible: 3
+                numVisible: 3,
             },
             {
                 breakpoint: '560px',
-                numVisible: 1
-            }
+                numVisible: 1,
+            },
         ];
         this.renderer.addClass(document.body, 'body-dark');
         this.filterGuestArray = [
             {
-                'id': 1, 'label': "50", condition: 'lte', value: 50, status: false
+                id: 1,
+                label: '50',
+                condition: 'lte',
+                value: 50,
+                status: false,
             },
             {
-                'id': 2, 'label': "100", condition: 'lte', value: 100, status: false
+                id: 2,
+                label: '100',
+                condition: 'lte',
+                value: 100,
+                status: false,
             },
             {
-                'id': 3, 'label': "200", condition: 'lte', value: 200, status: false
+                id: 3,
+                label: '200',
+                condition: 'lte',
+                value: 200,
+                status: false,
             },
             {
-                'id': 4, 'label': "500", condition: 'lte', value: 500, status: false
+                id: 4,
+                label: '500',
+                condition: 'lte',
+                value: 500,
+                status: false,
             },
             {
-                'id': 5, 'label': "1000", condition: 'lte', value: 1000, status: false
+                id: 5,
+                label: '1000',
+                condition: 'lte',
+                value: 1000,
+                status: false,
             },
             {
-                'id': 6, 'label': "1500", condition: 'lte', value: 1500, status: false
+                id: 6,
+                label: '1500',
+                condition: 'lte',
+                value: 1500,
+                status: false,
             },
             {
-                'id': 7, 'label': "2000", condition: 'gte', value: 2000, status: false
+                id: 7,
+                label: '2000',
+                condition: 'gte',
+                value: 2000,
+                status: false,
             },
         ];
         this.occasion = [
@@ -369,10 +411,10 @@ export class VenueDetailsComponent implements OnInit {
             { name: 'Popularity', code: 'popularity' },
             // { name: 'Distance', code: 'distance' }
         ];
-        if(this.activeRoute.snapshot.params.id){
+        if (this.activeRoute.snapshot.params.id) {
             this.id = this.activeRoute.snapshot.params.id;
         }
-        if(this.activeRoute.snapshot.params.metaurl){
+        if (this.activeRoute.snapshot.params.metaurl) {
             this.metaUrl = this.activeRoute.snapshot.params.metaurl;
         }
         this.staticPath = environment.productUploadUrl;
@@ -385,7 +427,10 @@ export class VenueDetailsComponent implements OnInit {
             this.isLoggedIn = true;
         }
 
-        if (this.loggedInUser != undefined && Object.keys(this.loggedInUser).length != 0) {
+        if (
+            this.loggedInUser != undefined &&
+            Object.keys(this.loggedInUser).length != 0
+        ) {
             this.isLoggedIn = true;
             this.userId = this.loggedInUser.id;
         }
@@ -394,8 +439,15 @@ export class VenueDetailsComponent implements OnInit {
             this.numberPopup = false;
         }
         this.mobileForm = this.formBuilder.group({
-            mobileNumber: [null, [Validators.required, Validators.pattern("[0-9 ]{10}"), Validators.minLength(10)]],
-        })
+            mobileNumber: [
+                null,
+                [
+                    Validators.required,
+                    Validators.pattern('[0-9 ]{10}'),
+                    Validators.minLength(10),
+                ],
+            ],
+        });
 
         // this.forgotPassForm = new FormGroup({
         //     email: new FormControl("", [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")])
@@ -427,36 +479,65 @@ export class VenueDetailsComponent implements OnInit {
             this.rangeDates.push(new Date(this.defaultDate));
         }
 
-        this.productService.getVenue().then(products => {
+        this.productService.getVenue().then((products) => {
             this.products = products;
         });
         this.featureArray = [
             {
-                'id': 1, 'label': "Check Availability", selected: true, status: true
+                id: 1,
+                label: 'Check Availability',
+                selected: true,
+                status: true,
             },
             {
-                'id': 2, 'label': "Book Visit (Before Booking The Venue)", selected: false, status: false
+                id: 2,
+                label: 'Book Visit (Before Booking The Venue)',
+                selected: false,
+                status: false,
             },
             {
-                'id': 3, 'label': "Book Now", selected: false, status: false
+                id: 3,
+                label: 'Book Now',
+                selected: false,
+                status: false,
             },
         ];
         this.selectedFeature = this.featureArray[0];
         this.filterCapacityArray = [
             {
-                'id': 1, 'label': "0-50", condition: 'lte', value: 50, status: false
+                id: 1,
+                label: '0-50',
+                condition: 'lte',
+                value: 50,
+                status: false,
             },
             {
-                'id': 2, 'label': "0-100", condition: 'lte', value: 100, status: false
+                id: 2,
+                label: '0-100',
+                condition: 'lte',
+                value: 100,
+                status: false,
             },
             {
-                'id': 3, 'label': "0-200", condition: 'lte', value: 200, status: false
+                id: 3,
+                label: '0-200',
+                condition: 'lte',
+                value: 200,
+                status: false,
             },
             {
-                'id': 4, 'label': "0-500", condition: 'lte', value: 500, status: false
+                id: 4,
+                label: '0-500',
+                condition: 'lte',
+                value: 500,
+                status: false,
             },
             {
-                'id': 5, 'label': ">500", condition: 'gte', value: 500, status: false
+                id: 5,
+                label: '>500',
+                condition: 'gte',
+                value: 500,
+                status: false,
             },
         ];
         this.genders = [
@@ -467,15 +548,25 @@ export class VenueDetailsComponent implements OnInit {
         this.currentYear = new Date();
         this.currentYear = this.currentYear.getFullYear();
         this.yearDiff = environment.yearDiff;
-        this.maxYear = moment({ year: this.currentYear + this.yearDiff }).format('YYYY');
-        this.yearRange = this.currentYear + ":" + this.maxYear;
-        this.birthYearRange = this.minYear + ":" + maxYearFunction();
-        this.birthMaxValue = new Date(moment(this.birthMaxValue.setFullYear(this.birthMaxValue.getFullYear() + 1)).format('YYYY-MM-DD'));
-        this.birthYearDefaultDate = new Date(moment(this.birthMaxValue).subtract(1, "d").format('YYYY-MM-DD'));
+        this.maxYear = moment({
+            year: this.currentYear + this.yearDiff,
+        }).format('YYYY');
+        this.yearRange = this.currentYear + ':' + this.maxYear;
+        this.birthYearRange = this.minYear + ':' + maxYearFunction();
+        this.birthMaxValue = new Date(
+            moment(
+                this.birthMaxValue.setFullYear(
+                    this.birthMaxValue.getFullYear() + 1
+                )
+            ).format('YYYY-MM-DD')
+        );
+        this.birthYearDefaultDate = new Date(
+            moment(this.birthMaxValue).subtract(1, 'd').format('YYYY-MM-DD')
+        );
         this.maxDateValue = new Date();
         this.minDateValue = new Date();
         this.maxDateValue.setFullYear(this.maxYear);
-        this.activeRoute.queryParams.subscribe(params => {
+        this.activeRoute.queryParams.subscribe((params) => {
             this.startDate = params['startDate'];
             this.endDate = params['endDate'];
             this.selectedVenueCapacity = params['capacity'];
@@ -517,14 +608,18 @@ export class VenueDetailsComponent implements OnInit {
             this.filterCategoryId = params['occasion'];
             if (this.selectedVenueCapacity != null) {
                 // this.venuecapacity = this.capacity;
-                this.capacityCondition = "lte";
+                this.capacityCondition = 'lte';
                 if (this.selectedVenueCapacity > 500) {
-                    this.capacityCondition = "lte";
+                    this.capacityCondition = 'lte';
                 }
             }
             if (this.startDate !== undefined && this.endDate !== undefined) {
-                this.selectedStartDate = moment(this.startDate).format("DD/MM/YYYY");
-                this.selectedEndDate = moment(this.endDate).format("DD/MM/YYYY");
+                this.selectedStartDate = moment(this.startDate).format(
+                    'DD/MM/YYYY'
+                );
+                this.selectedEndDate = moment(this.endDate).format(
+                    'DD/MM/YYYY'
+                );
                 this.rangeDates = [new Date(this.startDate)];
                 this.rangeDates.push(new Date(this.endDate));
             }
@@ -534,46 +629,6 @@ export class VenueDetailsComponent implements OnInit {
     get h() {
         return this.mobileForm.controls;
     }
-    onClickSendRequest(type: string) {
-        if (type === 'book_now') {
-          this.displayCustomAmountModal = true;
-        }
-      }
-
-      submitCustomAmount() {
-        if (this.customAmountForm.valid) {
-          const requestData = {
-            ...this.customAmountForm.value,
-            venue_id: this.venueDetails._id
-          };
-
-          this.venueService.saveCustomAmount(requestData).subscribe(
-            response => {
-              this.displayCustomAmountModal = false;
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Custom amount request submitted successfully'
-              });
-              this.customAmountForm.reset();
-            },
-            error => {
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Failed to submit custom amount request'
-              });
-            }
-          );
-        } else {
-          Object.keys(this.customAmountForm.controls).forEach(key => {
-            const control = this.customAmountForm.get(key);
-            if (control.invalid) {
-              control.markAsTouched();
-            }
-          });
-        }
-      }
 
     onSubmitNumber(mode) {
         this.submitted = true;
@@ -586,7 +641,7 @@ export class VenueDetailsComponent implements OnInit {
 
         this.showResendButton = false;
         this.authService.otpLogin(data).subscribe(
-            (res:any) => {
+            (res: any) => {
                 // console.log(res);
 
                 if (mode !== 'resendOtp') {
@@ -596,7 +651,7 @@ export class VenueDetailsComponent implements OnInit {
                     userType: res.firstName === '' ? 'new' : 'old',
                     firstName: res.firstName,
                     lastName: res.lastName,
-                }
+                };
                 //this.mobileForm.reset();
                 this.submitted = false;
                 this.numberPopup = false;
@@ -604,54 +659,59 @@ export class VenueDetailsComponent implements OnInit {
                 this.counter = 90;
                 this.tick = 1000;
                 this.otpTimer(this.counter, this.tick);
-
             },
-            err => {
-                this.messageService.add({ key: 'usertoastmsg', severity: 'error', summary: err.error.error, detail: err.error.error, life: 6000 });
+            (err) => {
+                this.messageService.add({
+                    key: 'usertoastmsg',
+                    severity: 'error',
+                    summary: err.error.error,
+                    detail: err.error.error,
+                    life: 6000,
+                });
             }
         );
     }
     public counter;
     public tick;
-    otpArray:string[] = [];
+    otpArray: string[] = [];
     public showResendButton: boolean = false;
-    pastedEvent(event){
+    pastedEvent(event) {
         const val = event.target.value;
         this.showOtpErrors = false;
-        if(val.length === 4){
+        if (val.length === 4) {
             this.otpArray = val.toString().split('');
-            const txt1 = document.getElementById("txt1") as HTMLInputElement;
-            const txt2 = document.getElementById("txt2") as HTMLInputElement;
-            const txt3 = document.getElementById("txt3") as HTMLInputElement;
-            const txt4 = document.getElementById("txt4") as HTMLInputElement;
+            const txt1 = document.getElementById('txt1') as HTMLInputElement;
+            const txt2 = document.getElementById('txt2') as HTMLInputElement;
+            const txt3 = document.getElementById('txt3') as HTMLInputElement;
+            const txt4 = document.getElementById('txt4') as HTMLInputElement;
 
-            txt1.value = val.charAt(0) || ''
-            txt2.value = val.charAt(1) || ''
-            txt3.value = val.charAt(2) || ''
-            txt4.value = val.charAt(3) || ''
+            txt1.value = val.charAt(0) || '';
+            txt2.value = val.charAt(1) || '';
+            txt3.value = val.charAt(2) || '';
+            txt4.value = val.charAt(3) || '';
 
             txt4.focus();
         }
     }
-    move(e: any, p: any, c: any, n: any, i:any) {
-          let length = c.value.length;
-          this.showOtpErrors = false;
-          let maxLength = 1;
+    move(e: any, p: any, c: any, n: any, i: any) {
+        let length = c.value.length;
+        this.showOtpErrors = false;
+        let maxLength = 1;
 
-          if (length === maxLength) {
+        if (length === maxLength) {
             this.otpArray[i] = c.value;
             if (n !== '') {
-              n.focus();
+                n.focus();
             }
-          }
+        }
 
-          if (e.key === 'Backspace') {
+        if (e.key === 'Backspace') {
             this.otpArray[i] = '';
             if (p !== '') {
-              p.focus();
+                p.focus();
             }
-          }
-      }
+        }
+    }
 
     onOtpChange(otp) {
         this.showOtpErrors = false;
@@ -669,28 +729,28 @@ export class VenueDetailsComponent implements OnInit {
         }
         this.otpError = undefined;
     }
-    validateFirstName(){
-        if(this.userFirstName.length <= 3){
+    validateFirstName() {
+        if (this.userFirstName.length <= 3) {
             this.firstNameError = true;
-        }else{
+        } else {
             this.firstNameError = false;
         }
     }
-    validateLastName(){
-        if(this.userLastName.length <= 3){
+    validateLastName() {
+        if (this.userLastName.length <= 3) {
             this.lastNameError = true;
-        }else{
+        } else {
             this.lastNameError = false;
         }
     }
     otpSubmit() {
-        this.otp = this.otpArray.join('')
-        if(this.oldUser.userType === 'new'){
-            if(this.userFirstName.length <= 3){
+        this.otp = this.otpArray.join('');
+        if (this.oldUser.userType === 'new') {
+            if (this.userFirstName.length <= 3) {
                 this.firstNameError = true;
                 return;
             }
-            if(this.userLastName.length <= 3){
+            if (this.userLastName.length <= 3) {
                 this.lastNameError = true;
                 return;
             }
@@ -706,10 +766,12 @@ export class VenueDetailsComponent implements OnInit {
         data['otp'] = this.otp;
         this.otpError = undefined;
         this.authService.verifyOtp(data).subscribe(
-            data => {
+            (data) => {
                 this.otpPopup = false;
                 this.userData = data;
-                this.tokenStorageService.saveToken(this.userData.data.access_token);
+                this.tokenStorageService.saveToken(
+                    this.userData.data.access_token
+                );
                 this.tokenStorageService.saveUser(this.userData.data.userdata);
                 //this.tokenStorageService.getAuthStatus(this.userData.data);
                 this.isLoginFailed = false;
@@ -719,7 +781,9 @@ export class VenueDetailsComponent implements OnInit {
                 // this.getRoleList();
                 this.mobileForm.reset();
                 let selectedCities = JSON.stringify(this.selectedCities);
-                let selectedSubareaIds = JSON.stringify(this.selectedSubareaIds);
+                let selectedSubareaIds = JSON.stringify(
+                    this.selectedSubareaIds
+                );
                 let selectedVenueIds = JSON.stringify(this.selectedVenueIds);
                 window.location.reload();
                 // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -757,15 +821,15 @@ export class VenueDetailsComponent implements OnInit {
         // }
     }
     resendOtp() {
-        this.otp = "";
+        this.otp = '';
         this.showOtpErrors = false;
         this.otpError = undefined;
         this.showResendButton = false;
         this.onSubmitNumber('resendOtp');
-        const txt1 = document.getElementById("txt1") as HTMLInputElement;
-        const txt2 = document.getElementById("txt2") as HTMLInputElement;
-        const txt3 = document.getElementById("txt3") as HTMLInputElement;
-        const txt4 = document.getElementById("txt4") as HTMLInputElement;
+        const txt1 = document.getElementById('txt1') as HTMLInputElement;
+        const txt2 = document.getElementById('txt2') as HTMLInputElement;
+        const txt3 = document.getElementById('txt3') as HTMLInputElement;
+        const txt4 = document.getElementById('txt4') as HTMLInputElement;
 
         txt1.value = '';
         txt2.value = '';
@@ -773,7 +837,7 @@ export class VenueDetailsComponent implements OnInit {
         txt4.value = '';
 
         this.otp = '';
-        this.otpArray = []
+        this.otpArray = [];
     }
     public countDown: Subscription;
     otpTimer(counter, tick) {
@@ -803,15 +867,15 @@ export class VenueDetailsComponent implements OnInit {
         this.otp = undefined;
         this.countDown?.unsubscribe();
         this.otpError = '';
-        const txt1 = document.getElementById("txt1") as HTMLInputElement;
-        const txt2 = document.getElementById("txt2") as HTMLInputElement;
-        const txt3 = document.getElementById("txt3") as HTMLInputElement;
-        const txt4 = document.getElementById("txt4") as HTMLInputElement;
+        const txt1 = document.getElementById('txt1') as HTMLInputElement;
+        const txt2 = document.getElementById('txt2') as HTMLInputElement;
+        const txt3 = document.getElementById('txt3') as HTMLInputElement;
+        const txt4 = document.getElementById('txt4') as HTMLInputElement;
         txt1.value = '';
         txt2.value = '';
         txt3.value = '';
         txt4.value = '';
-        this.otpArray = []
+        this.otpArray = [];
     }
     ngOnDestroy() {
         this.renderer.removeClass(document.body, 'body-dark');
@@ -857,148 +921,188 @@ export class VenueDetailsComponent implements OnInit {
         this.displayModal = true;
     }
     getSlots() {
-        let query = "?filterByDisable=false&filterByStatus=true";
+        let query = '?filterByDisable=false&filterByStatus=true';
         this.slotService.getSlotListWithoutAuth(query).subscribe(
-            data => {
+            (data) => {
                 if (data.data.items.length > 0) {
                     this.slotList = data.data.items;
                 }
             },
-            error => {
-
-            }
+            (error) => {}
         );
     }
     getVenueDetails() {
         this.venueService.getVenueDetailsByMeta(this.metaUrl).subscribe(
-        // this.venueService.getVenueDetails(this.id).subscribe(
-            async data => {
+            // this.venueService.getVenueDetails(this.id).subscribe(
+            async (data) => {
                 console.log(data);
 
                 this.venueDetails = data;
-                this.title.setTitle(this.venueDetails.name + " - " + "Eazyvenue.com");
-                this.meta.addTag({name:"title",content:this.venueDetails.name + " - " + "Eazyvenue.com"})
-                this.meta.addTag({name:"description",content:this.venueDetails.metaDescription})
-                this.meta.addTag({name:"keywords",content:this.venueDetails.metaKeywords})
+                this.title.setTitle(
+                    this.venueDetails.name + ' - ' + 'Eazyvenue.com'
+                );
+                this.meta.addTag({
+                    name: 'title',
+                    content: this.venueDetails.name + ' - ' + 'Eazyvenue.com',
+                });
+                this.meta.addTag({
+                    name: 'description',
+                    content: this.venueDetails.metaDescription,
+                });
+                this.meta.addTag({
+                    name: 'keywords',
+                    content: this.venueDetails.metaKeywords,
+                });
                 this.meta.addTag({ name: 'robots', content: 'index, follow' });
 
                 const localBusinessSchema = {
-                    "@context": "http://schema.org/",
-                    "@type": "LocalBusiness",
-                    "@id": location.href,
-                    "name": this.venueDetails.name + " - " + "Eazyvenue.com",
-                    "description": this.venueDetails.metaDescription,
-                    "image": [
-                        this.venueDetails.venueImage[0]?.venue_image_src
-                    ],
-                    "address": {
-                        "@type": "PostalAddress",
+                    '@context': 'http://schema.org/',
+                    '@type': 'LocalBusiness',
+                    '@id': location.href,
+                    name: this.venueDetails.name + ' - ' + 'Eazyvenue.com',
+                    description: this.venueDetails.metaDescription,
+                    image: [this.venueDetails.venueImage[0]?.venue_image_src],
+                    address: {
+                        '@type': 'PostalAddress',
                         // "streetAddress": "Near thane,Mumbai, Maharashtra",
-                        "streetAddress": "Near "+this.venueDetails.subarea+", "+this.venueDetails.cityname+","+this.venueDetails.statename+"",
+                        streetAddress:
+                            'Near ' +
+                            this.venueDetails.subarea +
+                            ', ' +
+                            this.venueDetails.cityname +
+                            ',' +
+                            this.venueDetails.statename +
+                            '',
                         // "addressLocality": "Near thane, Mumbai, Maharashtra",
-                        "addressLocality": "Near "+this.venueDetails.subarea+", "+this.venueDetails.cityname+","+this.venueDetails.statename+"",
+                        addressLocality:
+                            'Near ' +
+                            this.venueDetails.subarea +
+                            ', ' +
+                            this.venueDetails.cityname +
+                            ',' +
+                            this.venueDetails.statename +
+                            '',
                         // "addressRegion": "Mumbai",
-                        "addressRegion": this.venueDetails.cityname,
+                        addressRegion: this.venueDetails.cityname,
                         // "postalCode": "400601",
-                        "postalCode": this.venueDetails.zipcode,
-                        "addressCountry": "India"
+                        postalCode: this.venueDetails.zipcode,
+                        addressCountry: 'India',
                     },
-                    "aggregateRating": {
-                        "@type": "AggregateRating",
-                        "ratingValue": this.venueDetails.googleRating,
-                        "reviewCount": "1206",
-                        "bestRating": "5",
-                        "worstRating": "1.2"
+                    aggregateRating: {
+                        '@type': 'AggregateRating',
+                        ratingValue: this.venueDetails.googleRating,
+                        reviewCount: '1206',
+                        bestRating: '5',
+                        worstRating: '1.2',
                     },
-                    "priceRange": "Menu starts from Rs."+this.venueDetails.foodMenuType.veg_food[0].value+" to Rs."+this.venueDetails.foodMenuType.veg_food[this.venueDetails.foodMenuType.veg_food.length - 1].value,
-                    "telephone": "+91 93720 91300"
-                }
+                    priceRange:
+                        'Menu starts from Rs.' +
+                        this.venueDetails.foodMenuType.veg_food[0].value +
+                        ' to Rs.' +
+                        this.venueDetails.foodMenuType.veg_food[
+                            this.venueDetails.foodMenuType.veg_food.length - 1
+                        ].value,
+                    telephone: '+91 93720 91300',
+                };
                 const localBusinessScript = document.createElement('script');
                 localBusinessScript.type = 'application/ld+json';
                 localBusinessScript.text = JSON.stringify(localBusinessSchema);
                 document.body.appendChild(localBusinessScript);
 
                 const itemListSchema = {
-                    "itemListElement":
-                        [
-                            {
-                                "item": "https://eazyvenue.com/",
-                                "@type": "ListItem",
-                                "name": "Home",
-                                "position": "1"
-                            },
-                            {
-                                "item": "https://eazyvenue.com/banquet-halls/",
-                                "@type": "ListItem",
-                                "name": "Venues",
-                                "position": "2"
-                            }, {
-                                "item": location.href,
-                                "@type": "ListItem",
-                                "name": this.venueDetails.name,
-                                "position": "3"
-                            }], "@type": "BreadcrumbList",
-                    "@context": "http://schema.org"
-                }
+                    itemListElement: [
+                        {
+                            item: 'https://eazyvenue.com/',
+                            '@type': 'ListItem',
+                            name: 'Home',
+                            position: '1',
+                        },
+                        {
+                            item: 'https://eazyvenue.com/banquet-halls/',
+                            '@type': 'ListItem',
+                            name: 'Venues',
+                            position: '2',
+                        },
+                        {
+                            item: location.href,
+                            '@type': 'ListItem',
+                            name: this.venueDetails.name,
+                            position: '3',
+                        },
+                    ],
+                    '@type': 'BreadcrumbList',
+                    '@context': 'http://schema.org',
+                };
 
-                const itemListScript =  document.createElement('script');
+                const itemListScript = document.createElement('script');
                 itemListScript.type = 'application/ld+json';
                 itemListScript.text = JSON.stringify(itemListSchema);
                 document.body.appendChild(itemListScript);
 
-
                 this.selectedVenueList = [data];
                 this.cityName = this.venueDetails.cityname.toLowerCase();
-                var googleMapSource = "https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=" + this.cityName + "&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed";
+                var googleMapSource =
+                    'https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=' +
+                    this.cityName +
+                    '&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed';
                 // window.location.replace(this.googleMapSource);
                 //this.googleMapSource.toString();
-                this.tmpVenueList.forEach(element => {
+                this.tmpVenueList.forEach((element) => {
                     if (element.venueVideo !== '') {
                         element.venueImage.push({ video: element.venueVideo });
                     }
-                })
+                });
                 this.finalVenueList = [...this.venueList, ...this.tmpVenueList];
-                this.googleMapSource = this.sanitizer.bypassSecurityTrustResourceUrl(googleMapSource);
-                this.googleMapSource = this.googleMapSource.changingThisBreaksApplicationSecurity;
+                this.googleMapSource =
+                    this.sanitizer.bypassSecurityTrustResourceUrl(
+                        googleMapSource
+                    );
+                this.googleMapSource =
+                    this.googleMapSource.changingThisBreaksApplicationSecurity;
                 // this.url = this.googleMapSource.changingThisBreaksApplicationSecurity;
                 let swimmingObj = {
-                    'title': 'Swimming Pool',
-                    'details': this.venueDetails.swimmingdetails,
-                    'icon': "assets/images/category-icons/pool_party.svg",
-                }
+                    title: 'Swimming Pool',
+                    details: this.venueDetails.swimmingdetails,
+                    icon: 'assets/images/category-icons/pool_party.svg',
+                };
                 let parkingObj = {
-                    'title': 'Parking',
-                    'details': this.venueDetails.parkingdetails,
-                    'icon': "assets/images/category-icons/parking-icon.svg",
-                }
+                    title: 'Parking',
+                    details: this.venueDetails.parkingdetails,
+                    icon: 'assets/images/category-icons/parking-icon.svg',
+                };
                 let acObj = {
-                    'title': 'A/C',
-                    'details': this.venueDetails.acdetails,
-                    'icon': "assets/images/category-icons/ac-icon.svg",
-                }
+                    title: 'A/C',
+                    details: this.venueDetails.acdetails,
+                    icon: 'assets/images/category-icons/ac-icon.svg',
+                };
                 let roomsObj = {
-                    'title': "Rooms",
-                    'details': this.venueDetails.capacityDescription,
-                    'icon': "assets/images/category-icons/rooms-icons.svg",
-                }
+                    title: 'Rooms',
+                    details: this.venueDetails.capacityDescription,
+                    icon: 'assets/images/category-icons/rooms-icons.svg',
+                };
                 let powerBackupObj = {
-                    'title': 'Power Backup',
-                    'details': this.venueDetails.powerbackupdetails,
-                    'icon': "assets/images/category-icons/power_backup.svg",
-                }
+                    title: 'Power Backup',
+                    details: this.venueDetails.powerbackupdetails,
+                    icon: 'assets/images/category-icons/power_backup.svg',
+                };
                 let djObj = {
-                    'title': 'DJ',
-                    'details': this.venueDetails.djdetails,
-                    'icon': "assets/images/category-icons/dj-music.svg",
-                }
+                    title: 'DJ',
+                    details: this.venueDetails.djdetails,
+                    icon: 'assets/images/category-icons/dj-music.svg',
+                };
                 let entertainmentLicenseObj = {
-                    'title': 'Entertainment License',
-                    'details': this.venueDetails.entertainmentlicensedetails,
-                    'icon': "assets/images/category-icons/entertainment.svg",
-                }
-                this.venueImageNumVisible = Number(this.venueDetails.venueImage.length);
+                    title: 'Entertainment License',
+                    details: this.venueDetails.entertainmentlicensedetails,
+                    icon: 'assets/images/category-icons/entertainment.svg',
+                };
+                this.venueImageNumVisible = Number(
+                    this.venueDetails.venueImage.length
+                );
                 if (this.venueImageNumVisible < 8) {
-                    let hideThumbnailClass = this.el.nativeElement.querySelector('.section-venuelisting-details');
+                    let hideThumbnailClass =
+                        this.el.nativeElement.querySelector(
+                            '.section-venuelisting-details'
+                        );
                     //showp2Table.classList.remove('hide-columns');
                 }
                 if (this.venueImageNumVisible > 8) {
@@ -1025,31 +1129,61 @@ export class VenueDetailsComponent implements OnInit {
                 if (this.venueDetails.isEntertainmentLicense == true) {
                     this.facilitiesArray.push(entertainmentLicenseObj);
                 }
-                if (this.venueDetails.decor1Price != undefined || this.venueDetails.decor1Price != '') {
-                    let decor1img = "";
+                if (
+                    this.venueDetails.decor1Price != undefined ||
+                    this.venueDetails.decor1Price != ''
+                ) {
+                    let decor1img = '';
                     if (this.venueDetails.decor1Image.length > 0) {
                         // if (this.venueDetails.decor1Image[0].venue_image_src) {
-                            decor1img = this.venueDetails.decor1Image[0].venue_image_src;
-                            this.decorArray.push({ name: "Basic", price: this.venueDetails.decor1Price, image: 'http://localhost:3006//uploads/venuePic/Hope_Hall_Bhayander_West_Mumbai_001.jpg', selected: false, decorImages: this.venueDetails.decor1Image });
+                        decor1img =
+                            this.venueDetails.decor1Image[0].venue_image_src;
+                        this.decorArray.push({
+                            name: 'Basic',
+                            price: this.venueDetails.decor1Price,
+                            image: 'http://localhost:3006//uploads/venuePic/Hope_Hall_Bhayander_West_Mumbai_001.jpg',
+                            selected: false,
+                            decorImages: this.venueDetails.decor1Image,
+                        });
                         // }
                     }
                 }
-                if (this.venueDetails.decor2Price != undefined || this.venueDetails.decor2Price != '') {
-                    let decor2img = "";
+                if (
+                    this.venueDetails.decor2Price != undefined ||
+                    this.venueDetails.decor2Price != ''
+                ) {
+                    let decor2img = '';
                     // console.log(this.venueDetails.decor2Image[0].venue_image_src)
                     if (this.venueDetails.decor2Image.length > 0) {
                         // if (this.venueDetails.decor2Image[0].venue_image_src) {
-                            decor2img = this.venueDetails.decor2Image[0].venue_image_src;
-                            this.decorArray.push({ name: "Standard", price: this.venueDetails.decor2Price, image: 'http://localhost:3006//uploads/venuePic/Hope_Hall_Bhayander_West_Mumbai_001.jpg', selected: false, decorImages: this.venueDetails.decor2Image });
+                        decor2img =
+                            this.venueDetails.decor2Image[0].venue_image_src;
+                        this.decorArray.push({
+                            name: 'Standard',
+                            price: this.venueDetails.decor2Price,
+                            image: 'http://localhost:3006//uploads/venuePic/Hope_Hall_Bhayander_West_Mumbai_001.jpg',
+                            selected: false,
+                            decorImages: this.venueDetails.decor2Image,
+                        });
                         // }
                     }
                 }
-                if (this.venueDetails.decor3Price != undefined || this.venueDetails.decor3Price != '') {
-                    let decor3img = "";
+                if (
+                    this.venueDetails.decor3Price != undefined ||
+                    this.venueDetails.decor3Price != ''
+                ) {
+                    let decor3img = '';
                     if (this.venueDetails.decor3Image.length > 0) {
                         // if (this.venueDetails.decor3Image[0].venue_image_src) {
-                            decor3img = this.venueDetails.decor3Image[0].venue_image_src;
-                            this.decorArray.push({ name: "Premium", price: this.venueDetails.decor3Price, image: 'http://localhost:3006//uploads/venuePic/Hope_Hall_Bhayander_West_Mumbai_001.jpg', selected: false, decorImages: this.venueDetails.decor3Image });
+                        decor3img =
+                            this.venueDetails.decor3Image[0].venue_image_src;
+                        this.decorArray.push({
+                            name: 'Premium',
+                            price: this.venueDetails.decor3Price,
+                            image: 'http://localhost:3006//uploads/venuePic/Hope_Hall_Bhayander_West_Mumbai_001.jpg',
+                            selected: false,
+                            decorImages: this.venueDetails.decor3Image,
+                        });
                         // }
                     }
                 }
@@ -1057,44 +1191,64 @@ export class VenueDetailsComponent implements OnInit {
                 if (this.venueDetails.foodMenuType) {
                     //this.venueDetails.foodMenuType.forEach(fElement => {
                     if (this.venueDetails.foodMenuType.jainFood !== undefined) {
-                        if (this.venueDetails.foodMenuType.jainFood.length > 0) {
-                            this.venueDetails.foodMenuType.jainFood.forEach(jfElement => {
-                                if (jfElement.value > 0) {
-                                    this.allFoodMenuPriceArray.push(jfElement.value);
+                        if (
+                            this.venueDetails.foodMenuType.jainFood.length > 0
+                        ) {
+                            this.venueDetails.foodMenuType.jainFood.forEach(
+                                (jfElement) => {
+                                    if (jfElement.value > 0) {
+                                        this.allFoodMenuPriceArray.push(
+                                            jfElement.value
+                                        );
+                                    }
                                 }
-                            });
+                            );
                         }
                     }
                     if (this.venueDetails.foodMenuType.mixFood !== undefined) {
                         if (this.venueDetails.foodMenuType.mixFood.length > 0) {
-                            this.venueDetails.foodMenuType.mixFood.forEach(mfElement => {
-                                if (mfElement.value > 0) {
-                                    this.allFoodMenuPriceArray.push(mfElement.value);
+                            this.venueDetails.foodMenuType.mixFood.forEach(
+                                (mfElement) => {
+                                    if (mfElement.value > 0) {
+                                        this.allFoodMenuPriceArray.push(
+                                            mfElement.value
+                                        );
+                                    }
                                 }
-                            });
+                            );
                         }
                     }
                     if (this.venueDetails.foodMenuType.non_veg !== undefined) {
                         if (this.venueDetails.foodMenuType.non_veg.length > 0) {
-                            this.venueDetails.foodMenuType.non_veg.forEach(nvElement => {
-                                if (nvElement.value > 0) {
-                                    this.allFoodMenuPriceArray.push(nvElement.value);
+                            this.venueDetails.foodMenuType.non_veg.forEach(
+                                (nvElement) => {
+                                    if (nvElement.value > 0) {
+                                        this.allFoodMenuPriceArray.push(
+                                            nvElement.value
+                                        );
+                                    }
                                 }
-                            });
+                            );
                         }
                     }
                     if (this.venueDetails.foodMenuType.veg_food !== undefined) {
-                        if (this.venueDetails.foodMenuType.veg_food.length > 0) {
-                            this.venueDetails.foodMenuType.veg_food.forEach(vElement => {
-                                if (vElement.value > 0) {
-                                    this.allFoodMenuPriceArray.push(vElement.value);
+                        if (
+                            this.venueDetails.foodMenuType.veg_food.length > 0
+                        ) {
+                            this.venueDetails.foodMenuType.veg_food.forEach(
+                                (vElement) => {
+                                    if (vElement.value > 0) {
+                                        this.allFoodMenuPriceArray.push(
+                                            vElement.value
+                                        );
+                                    }
                                 }
-                            });
+                            );
                         }
                     }
                     let minPrice = 0;
                     if (this.allFoodMenuPriceArray.length > 0) {
-                        minPrice = Math.min(...this.allFoodMenuPriceArray)
+                        minPrice = Math.min(...this.allFoodMenuPriceArray);
                     }
                     // if (this.capacity > 0) {
                     this.venueDetails['minVenuePrice'] = minPrice;
@@ -1115,7 +1269,7 @@ export class VenueDetailsComponent implements OnInit {
                 await this.getSubareas();
                 await this.getCities();
             },
-            err => {
+            (err) => {
                 this.errorMessage = err.error.message;
             }
         );
@@ -1124,29 +1278,33 @@ export class VenueDetailsComponent implements OnInit {
         return typeof val === 'number';
     }
     methodToGetURL() {
-        var googleMapSource = "https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=" + this.cityName + "&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed";
+        var googleMapSource =
+            'https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=' +
+            this.cityName +
+            '&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed';
         return this.sanitizer.bypassSecurityTrustResourceUrl(googleMapSource);
     }
     getCategoryDetails() {
-        let query = "?filterByDisable=false&filterByStatus=true&sortBy=created_at&orderBy=1";
+        let query =
+            '?filterByDisable=false&filterByStatus=true&sortBy=created_at&orderBy=1';
         this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-            data => {
+            (data) => {
                 //if (data.data.items.length > 0) {
                 this.categoryList = data.data.items;
                 let count = 0;
-                let obj = this.categoryList.find(o => o.slug === "vendor");
+                let obj = this.categoryList.find((o) => o.slug === 'vendor');
                 let categoryList = this.venueDetails.category;
                 let foodTypesList = this.venueDetails.foodType;
                 let foodMenuTypesList = this.venueDetails.foodType;
-                this.categoryList.forEach(element => {
+                this.categoryList.forEach((element) => {
                     element['selected'] = false;
-                    categoryList.forEach(category => {
+                    categoryList.forEach((category) => {
                         element['selected'] = false;
                         if (element.id == category.id) {
                             this.occasionArray.push(element);
                         }
                     });
-                    foodTypesList.forEach(foodType => {
+                    foodTypesList.forEach((foodType) => {
                         element['selected'] = false;
                         if (element.id == foodType.id) {
                             this.foodTypesList.push(element);
@@ -1159,13 +1317,19 @@ export class VenueDetailsComponent implements OnInit {
                 // this.selectedFoodType = this.foodTypesList[0];
                 // this.onFoodTypeClick(this.selectedFoodType);
                 if (this.occasionArray.length > 0) {
-                    this.occasionArray.forEach(element => {
-                        let categoryImage = "assets/images/category-icons/" + element.slug + ".svg";
+                    this.occasionArray.forEach((element) => {
+                        let categoryImage =
+                            'assets/images/category-icons/' +
+                            element.slug +
+                            '.svg';
                         if (element['categoryImage']) {
                             element['image_src'] = categoryImage;
                         }
                     });
-                    let index = this.findIndexById(this.filterCategoryId, this.occasionArray);
+                    let index = this.findIndexById(
+                        this.filterCategoryId,
+                        this.occasionArray
+                    );
                     if (index != -1) {
                         this.occasionArray[index].selected = true;
                         //this.selectedOccasion.push(occasion.id);
@@ -1175,7 +1339,7 @@ export class VenueDetailsComponent implements OnInit {
                     }
                 }
             },
-            err => {
+            (err) => {
                 this.errorMessage = err.error.message;
             }
         );
@@ -1198,7 +1362,6 @@ export class VenueDetailsComponent implements OnInit {
     //   );
     // }
 
-
     onFoodTypeClick(foodType) {
         this.selectedFoodType = foodType;
         this.selectedFoodTypeId = foodType.id;
@@ -1207,7 +1370,7 @@ export class VenueDetailsComponent implements OnInit {
         let foodMenuTypeArray = this.foodMenuTypeArray[foodType.slug];
         this.foodMenuTypes = [];
         this.selectedFoodMenuTypes = [];
-        foodMenuTypeArray.forEach(element => {
+        foodMenuTypeArray.forEach((element) => {
             if (element.value != '0') {
                 element['selected'] = false;
                 this.foodMenuTypes.push(element);
@@ -1220,11 +1383,16 @@ export class VenueDetailsComponent implements OnInit {
         // console.log(event);
         this.selectedFoodMenuType = foodMenuType;
         if (this.selectedVenueCapacity != undefined) {
-            this.totalVenuePrice = Number(this.selectedVenueCapacity) * Number(foodMenuType.value);
+            this.totalVenuePrice =
+                Number(this.selectedVenueCapacity) * Number(foodMenuType.value);
             this.totalFoodPrice = this.totalVenuePrice;
         }
-        if (this.selectedDecorPrice != 0 && this.selectedDecorPrice != undefined) {
-            this.totalVenuePrice = Number(this.totalVenuePrice) + Number(this.selectedDecorPrice);
+        if (
+            this.selectedDecorPrice != 0 &&
+            this.selectedDecorPrice != undefined
+        ) {
+            this.totalVenuePrice =
+                Number(this.totalVenuePrice) + Number(this.selectedDecorPrice);
         }
         // if (foodMenuType.selected == true) {
         //     let index = this.findIndexBySlug(foodMenuType.slug, this.foodMenuTypes);
@@ -1244,13 +1412,13 @@ export class VenueDetailsComponent implements OnInit {
             this.selectedFoodMenuTypes = [foodMenuType.slug];
             //this.selectedVendorNames.push({ 'id': foodMenuType.id, 'name': foodMenuType.name });
         }
-        this.foodMenuTypes.forEach(element => {
+        this.foodMenuTypes.forEach((element) => {
             if (element.slug == foodMenuType.slug) {
                 element.selected = true;
             } else {
                 element.selected = false;
             }
-        })
+        });
     }
     findIndexBySlug(slug, arrayName) {
         let index = -1;
@@ -1276,9 +1444,9 @@ export class VenueDetailsComponent implements OnInit {
         this.showDecorImages = true;
         this.decorImages = decor.decorImages;
     }
-    premiumDecor:boolean = false;
+    premiumDecor: boolean = false;
     onClickDecor(decor) {
-        this.decorArray.forEach(element => {
+        this.decorArray.forEach((element) => {
             if (element.name == decor.name) {
                 element['selected'] = true;
             } else {
@@ -1291,17 +1459,20 @@ export class VenueDetailsComponent implements OnInit {
         this.selectedDecorPrice = decor.price;
         this.selectedDecorName = decor.name;
 
-        if(decor.price != 'Call for prices'){
+        if (decor.price != 'Call for prices') {
             this.premiumDecor = false;
             if (decor.price != undefined || decor.price != '') {
-                this.totalVenuePrice = this.totalFoodPrice + Number(decor.price);
+                this.totalVenuePrice =
+                    this.totalFoodPrice + Number(decor.price);
                 // this.totalVenuePrice = Number(this.totalVenuePrice) - Number(this.oldDecorPrice);
                 // this.oldDecorPrice = decor.price;
                 // this.totalVenuePrice = Number(this.totalVenuePrice) + Number(decor.price);
             }
-        }else{
+        } else {
             this.premiumDecor = true;
-            this.totalVenuePrice = Number(this.selectedVenueCapacity) * Number(this.selectedFoodMenuType.value);
+            this.totalVenuePrice =
+                Number(this.selectedVenueCapacity) *
+                Number(this.selectedFoodMenuType.value);
         }
     }
     onFeatureClick(feature) {
@@ -1329,8 +1500,14 @@ export class VenueDetailsComponent implements OnInit {
             let index = this.findIndexById(vendor.id, this.vendorList);
             if (index != -1) {
                 this.vendorList[index].selected = false;
-                let selectedIndex = this.findSelectedIndexById(vendor.id, this.selectedVendor);
-                let selectedNameIndex = this.findIndexById(vendor.id, this.selectedVendorNames);
+                let selectedIndex = this.findSelectedIndexById(
+                    vendor.id,
+                    this.selectedVendor
+                );
+                let selectedNameIndex = this.findIndexById(
+                    vendor.id,
+                    this.selectedVendorNames
+                );
                 this.selectedVendor.splice(selectedIndex, 1);
                 this.selectedVendorNames.splice(selectedNameIndex, 1);
             }
@@ -1339,7 +1516,10 @@ export class VenueDetailsComponent implements OnInit {
             if (index != -1) {
                 this.vendorList[index].selected = true;
                 this.selectedVendor.push(vendor.id);
-                this.selectedVendorNames.push({ 'id': vendor.id, 'name': vendor.name });
+                this.selectedVendorNames.push({
+                    id: vendor.id,
+                    name: vendor.name,
+                });
             }
         }
     }
@@ -1357,23 +1537,31 @@ export class VenueDetailsComponent implements OnInit {
         let index = this.findIndexById(occasion.id, this.occasionArray);
         if (index != -1) {
             // this.occasionArray[index].selected = true;
-            this.occasionArray.forEach(element => {
+            this.occasionArray.forEach((element) => {
                 if (element.id == occasion.id) {
                     element.selected = true;
                 } else {
                     element.selected = false;
                 }
-            })
+            });
             //this.selectedOccasion.push(occasion.id);
             this.selectedOccasion = occasion.id;
             this.sOccasion = occasion;
             //this.selectedOccasionNames.push({ 'id': occasion.id, 'name': occasion.name });
-            this.selectedOccasionNames = [{ 'id': occasion.id, 'name': occasion.name }];
+            this.selectedOccasionNames = [
+                { id: occasion.id, name: occasion.name },
+            ];
         }
         // }
     }
     onSlotClick(slot) {
-        this.selectedSlots = [{ 'occasionStartDate': this.selectedStartDate, occasionEndDate: this.selectedEndDate, 'slotId': slot.id }];
+        this.selectedSlots = [
+            {
+                occasionStartDate: this.selectedStartDate,
+                occasionEndDate: this.selectedEndDate,
+                slotId: slot.id,
+            },
+        ];
         this.selectedSlotsName = slot.slot;
         // this.availabilityList.forEach(element => {
         //     element[1].forEach(item => {
@@ -1432,8 +1620,11 @@ export class VenueDetailsComponent implements OnInit {
                 this.selectedVenueCapacity = event;
             }
             if (this.selectedFoodMenuType != undefined) {
-                venuePrice = Number(this.selectedVenueCapacity) * Number(this.selectedFoodMenuType.value);
-                totalVenuePrice = Number(this.selectedDecorPrice) + Number(venuePrice);
+                venuePrice =
+                    Number(this.selectedVenueCapacity) *
+                    Number(this.selectedFoodMenuType.value);
+                totalVenuePrice =
+                    Number(this.selectedDecorPrice) + Number(venuePrice);
             }
             this.totalVenuePrice = totalVenuePrice;
             this.selectedGuestName = event.value;
@@ -1442,65 +1633,86 @@ export class VenueDetailsComponent implements OnInit {
     onClickEventDate(event) {
         this.selectedStartDate = this.rangeDates[0];
         this.selectedEndDate = this.rangeDates[1];
-        let startDate = moment(this.selectedStartDate).subtract(1, "d").format("YYYY-MM-DD");
+        let startDate = moment(this.selectedStartDate)
+            .subtract(1, 'd')
+            .format('YYYY-MM-DD');
         //let startDate = moment(this.selectedStartDate).format("YYYY-MM-DD");
         let endDate;
         if (this.selectedEndDate === null) {
-            this.selectedEndDate = moment(this.selectedStartDate).format("YYYY-MM-DD");
-            endDate = moment(this.selectedStartDate).format("YYYY-MM-DD");
+            this.selectedEndDate = moment(this.selectedStartDate).format(
+                'YYYY-MM-DD'
+            );
+            endDate = moment(this.selectedStartDate).format('YYYY-MM-DD');
             //endDate = moment(this.selectedStartDate).format("YYYY-MM-DD");
         } else {
             this.datePicker.overlayVisible = false;
-            this.selectedEndDate = moment(this.rangeDates[1]).format("YYYY-MM-DD");
-            endDate = moment(this.rangeDates[1]).format("YYYY-MM-DD");
+            this.selectedEndDate = moment(this.rangeDates[1]).format(
+                'YYYY-MM-DD'
+            );
+            endDate = moment(this.rangeDates[1]).format('YYYY-MM-DD');
             //endDate = moment(this.rangeDates[1]).format("YYYY-MM-DD");
         }
-        this.selectedStartDate = moment(this.selectedStartDate).local().format('DD/MM/YYYY');
-        this.selectedEndDate = moment(this.selectedEndDate).local().format('DD/MM/YYYY');
+        this.selectedStartDate = moment(this.selectedStartDate)
+            .local()
+            .format('DD/MM/YYYY');
+        this.selectedEndDate = moment(this.selectedEndDate)
+            .local()
+            .format('DD/MM/YYYY');
         this.selectedDate = moment(event).local().format('DD-MM-YYYY');
-        let searchDate = moment(event).subtract(1, "d").format('MM-DD-YYYY');
+        let searchDate = moment(event).subtract(1, 'd').format('MM-DD-YYYY');
         // startDate = moment(this.rangeDates[0]).subtract(1, "d").format('MM-DD-YYYY');
         // endDate = moment(this.rangeDates[1]).subtract(1, "d").format('MM-DD-YYYY');
 
-        let query = "filterByDisable=false&filterByStatus=true&filterByVenueId=" + this.id + "&filterBySlotStartDate=" + startDate + "&filterBySlotEndDate=" + endDate;
-        this.postAvailabilityService.getPostAvailabilityListWithoutAuth(query).subscribe(
-            data => {
-                let totalCount = data.data.totalCount;
-                let startDate = moment(this.selectedStartDate, "DD.MM.YYYY");
-                let endDate = moment(this.selectedEndDate, "DD.MM.YYYY");
-                var days = endDate.diff(startDate, 'days');
-                days = Number(days) + Number(1);
-                let totalExpectedSlots = Number(days) * 3;
-                if (totalCount == totalExpectedSlots) {
-                    this.showAvailabilityMessage = false;
-                } else {
-                    this.showAvailabilityMessage = true;
+        let query =
+            'filterByDisable=false&filterByStatus=true&filterByVenueId=' +
+            this.id +
+            '&filterBySlotStartDate=' +
+            startDate +
+            '&filterBySlotEndDate=' +
+            endDate;
+        this.postAvailabilityService
+            .getPostAvailabilityListWithoutAuth(query)
+            .subscribe(
+                (data) => {
+                    let totalCount = data.data.totalCount;
+                    let startDate = moment(
+                        this.selectedStartDate,
+                        'DD.MM.YYYY'
+                    );
+                    let endDate = moment(this.selectedEndDate, 'DD.MM.YYYY');
+                    var days = endDate.diff(startDate, 'days');
+                    days = Number(days) + Number(1);
+                    let totalExpectedSlots = Number(days) * 3;
+                    if (totalCount == totalExpectedSlots) {
+                        this.showAvailabilityMessage = false;
+                    } else {
+                        this.showAvailabilityMessage = true;
+                    }
+                    //this.availabilityList = [];
+                    //let availabilityList = data.data.items;
+                    // this.availabilityList =
+                    //     availabilityList.reduce((result, currentValue) => {
+                    //         (result[currentValue.slotdate] = result[currentValue.slotdate] || []).push(
+                    //             currentValue
+                    //         );
+                    //         return result;
+                    //     }, {});
+                    // this.availabilityList = Object.entries(this.availabilityList);
+                    // this.availabilityList.forEach(element => {
+                    //     if (element[0]) {
+                    //         element[0] = moment(element[0]).local().format('DD-MM-YYYY');
+                    //     }
+                    //     if (element[1].length > 0) {
+                    //         element[1].forEach(item => {
+                    //             item['selected'] = false;
+                    //         });
+                    //     }
+                    // });
+                },
+                (err) => {
+                    this.errorMessage = err.error.message;
                 }
-                //this.availabilityList = [];
-                //let availabilityList = data.data.items;
-                // this.availabilityList =
-                //     availabilityList.reduce((result, currentValue) => {
-                //         (result[currentValue.slotdate] = result[currentValue.slotdate] || []).push(
-                //             currentValue
-                //         );
-                //         return result;
-                //     }, {});
-                // this.availabilityList = Object.entries(this.availabilityList);
-                // this.availabilityList.forEach(element => {
-                //     if (element[0]) {
-                //         element[0] = moment(element[0]).local().format('DD-MM-YYYY');
-                //     }
-                //     if (element[1].length > 0) {
-                //         element[1].forEach(item => {
-                //             item['selected'] = false;
-                //         });
-                //     }
-                // });
-            },
-            err => {
-                this.errorMessage = err.error.message;
-            }
-        );
+            );
     }
     findIndexById(id, arrayName) {
         let index = -1;
@@ -1529,15 +1741,16 @@ export class VenueDetailsComponent implements OnInit {
         }
     }
     getRoleDetails() {
-        const querystring = "filterByroleId=" + this.userData.data.userdata.role;
+        const querystring =
+            'filterByroleId=' + this.userData.data.userdata.role;
         this.roleService.searchRoleDetails(querystring).subscribe(
-            data => {
+            (data) => {
                 this.trainerRoleId = data.data.items[0]['id'];
                 this.permissions = data.data.items[0]['permissions'];
                 this.tokenStorageService.saveUserPermissions(this.permissions);
                 this.rolelist = data.data.items[0];
             },
-            err => {
+            (err) => {
                 this.errorMessage = err.error.message;
             }
         );
@@ -1553,19 +1766,22 @@ export class VenueDetailsComponent implements OnInit {
         return index;
     }
     getRoleList() {
-        var querystring = "filterByDisable=false&filterByStatus=true";
+        var querystring = 'filterByDisable=false&filterByStatus=true';
         var rolearray = [];
         this.roleService.getRoleList(querystring).subscribe(
-            data => {
+            (data) => {
                 var rolelist = data.data.items;
-                rolelist.forEach(element => {
-                    rolearray.push({ "roleid": element.id, "rolename": element.user_role_name });
+                rolelist.forEach((element) => {
+                    rolearray.push({
+                        roleid: element.id,
+                        rolename: element.user_role_name,
+                    });
                 });
                 if (rolearray.length > 0) {
                     this.tokenStorageService.saveRolelist(rolearray);
                 }
             },
-            err => {
+            (err) => {
                 this.errorMessage = err.error.message;
             }
         );
@@ -1698,36 +1914,36 @@ export class VenueDetailsComponent implements OnInit {
         for (let i = 0; i < this.cityList.length; i++) {
             let city = this.cityList[i];
             if (city.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-                city.mode = "city";
+                city.mode = 'city';
                 filtered.push(city);
             }
         }
         for (let i = 0; i < this.subareaList.length; i++) {
             let subarea = this.subareaList[i];
             if (subarea.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-                subarea.mode = "subarea";
+                subarea.mode = 'subarea';
                 filtered.push(subarea);
             }
         }
         for (let i = 0; i < this.finalVenueList.length; i++) {
             let venue = this.finalVenueList[i];
             if (venue.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-                venue.mode = "venue";
+                venue.mode = 'venue';
                 filtered.push(venue);
             }
         }
         this.filteredList = filtered;
     }
     async getSubareas() {
-        let query = "?filterByDisable=false&filterByStatus=true";
+        let query = '?filterByDisable=false&filterByStatus=true';
         this.subareaService.getSubareaList(query).subscribe(
-            data => {
+            (data) => {
                 this.subareaList = data.data.items;
                 this.selectedSubareaData = [];
-                this.subareaList.forEach(element => {
+                this.subareaList.forEach((element) => {
                     if (this.filterSubareaIds != undefined) {
                         if (this.filterSubareaIds.length > 0) {
-                            this.filterSubareaIds.forEach(sElement => {
+                            this.filterSubareaIds.forEach((sElement) => {
                                 if (sElement === element.id) {
                                     this.selectedSubareaData.push(element);
                                     if (this.selectedFilter === undefined) {
@@ -1741,22 +1957,22 @@ export class VenueDetailsComponent implements OnInit {
                     }
                 });
             },
-            err => {
+            (err) => {
                 this.errorMessage = err.error.message;
             }
         );
     }
     async getCities() {
-        let query = "?filterByDisable=false&filterByStatus=true";
+        let query = '?filterByDisable=false&filterByStatus=true';
         this.cityService.getcityList(query).subscribe(
-            data => {
+            (data) => {
                 this.cityList = data.data.items;
                 if (this.cityList.length > 0) {
                     this.selectedFilter = [];
-                    this.cityList.forEach(element => {
+                    this.cityList.forEach((element) => {
                         if (this.filterCityIds !== undefined) {
                             if (this.filterCityIds.length > 0) {
-                                this.filterCityIds.forEach(cElement => {
+                                this.filterCityIds.forEach((cElement) => {
                                     element.mode = 'city';
                                     if (cElement === element.id) {
                                         if (this.selectedFilter == undefined) {
@@ -1768,20 +1984,20 @@ export class VenueDetailsComponent implements OnInit {
                                 });
                             }
                         }
-                    })
-                    this.selectedSubareaData.forEach(sElement => {
+                    });
+                    this.selectedSubareaData.forEach((sElement) => {
                         sElement.mode = 'subarea';
                         this.selectedFilter.push(sElement);
                     });
                     if (this.selectedVenueList.length > 0) {
-                        this.selectedVenueList.forEach(vElement => {
+                        this.selectedVenueList.forEach((vElement) => {
                             vElement.mode = 'venue';
                             this.selectedFilter.push(vElement);
                         });
                     }
                 }
             },
-            err => {
+            (err) => {
                 this.errorMessage = err.error.message;
             }
         );
@@ -1789,9 +2005,18 @@ export class VenueDetailsComponent implements OnInit {
 
     onClearResetAllData(event) {
         if (event.mode === 'venue') {
-            let index = this.findVenueIndexById(event.id, this.selectedVenueIds);
-            let venueIndex = this.findIndexById(event.id, this.selectedVenueList);
-            let filterVenueIndex = this.findVenueIndexById(event.id, this.filterVenueIds);
+            let index = this.findVenueIndexById(
+                event.id,
+                this.selectedVenueIds
+            );
+            let venueIndex = this.findIndexById(
+                event.id,
+                this.selectedVenueList
+            );
+            let filterVenueIndex = this.findVenueIndexById(
+                event.id,
+                this.filterVenueIds
+            );
             if (index !== -1) {
                 if (this.selectedVenueIds.length > 0) {
                     this.selectedVenueIds.splice(index, 1);
@@ -1804,9 +2029,18 @@ export class VenueDetailsComponent implements OnInit {
                 this.filterVenueIds.splice(filterVenueIndex, 1);
             }
         } else if (event.mode === 'subarea') {
-            let index = this.findVenueIndexById(event.id, this.selectedSubareaIds);
-            let filterSubareaIdsIndex = this.findVenueIndexById(event.id, this.filterSubareaIds);
-            let selectedSubareaIndex = this.findIndexById(event.id, this.selectedSubareaData);
+            let index = this.findVenueIndexById(
+                event.id,
+                this.selectedSubareaIds
+            );
+            let filterSubareaIdsIndex = this.findVenueIndexById(
+                event.id,
+                this.filterSubareaIds
+            );
+            let selectedSubareaIndex = this.findIndexById(
+                event.id,
+                this.selectedSubareaData
+            );
             if (index !== -1) {
                 this.selectedSubareaIds.splice(index, 1);
             }
@@ -1818,7 +2052,10 @@ export class VenueDetailsComponent implements OnInit {
             }
         } else if (event.mode === 'city') {
             let index = this.findVenueIndexById(event.id, this.selectedCities);
-            let filterCityIndex = this.findVenueIndexById(event.id, this.filterCityIds);
+            let filterCityIndex = this.findVenueIndexById(
+                event.id,
+                this.filterCityIds
+            );
             if (index !== -1) {
                 this.selectedCities.splice(index, 1);
             }
@@ -1850,7 +2087,13 @@ export class VenueDetailsComponent implements OnInit {
     }
     onClickSearch() {
         if (this.selectedVenueCapacity === undefined) {
-            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'Error', detail: 'Please select guest count.', life: 3000 });
+            this.messageService.add({
+                key: 'toastMsg',
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Please select guest count.',
+                life: 3000,
+            });
             return;
         }
         let selectedCities = JSON.stringify(this.selectedCities);
@@ -1858,17 +2101,19 @@ export class VenueDetailsComponent implements OnInit {
         let selectedVenueIds = JSON.stringify(this.selectedVenueIds);
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';
-        this.startDate = moment(this.rangeDates[0]).format("YYYY-MM-DD");
+        this.startDate = moment(this.rangeDates[0]).format('YYYY-MM-DD');
         this.endDate = moment(this.rangeDates[1]).format('YYYY-MM-DD');
-        this.router.navigate(
-            ['/venue'],
-            {
-                queryParams: {
-                    startDate: this.startDate, endDate: this.endDate, capacity: this.selectedVenueCapacity, occasion: this.selectedCategories, city: selectedCities,
-                    area: selectedSubareaIds, venue: selectedVenueIds
-                }
-            }
-        );
+        this.router.navigate(['/venue'], {
+            queryParams: {
+                startDate: this.startDate,
+                endDate: this.endDate,
+                capacity: this.selectedVenueCapacity,
+                occasion: this.selectedCategories,
+                city: selectedCities,
+                area: selectedSubareaIds,
+                venue: selectedVenueIds,
+            },
+        });
     }
     onClickCategory(category) {
         if (category !== null) {
@@ -1876,7 +2121,10 @@ export class VenueDetailsComponent implements OnInit {
             if (category.selected == true) {
                 this.selectedCategories = [];
                 //this.selectedCategoriesNames = [];
-                let index = this.findIndexById(category.id, this.categoryMenuList);
+                let index = this.findIndexById(
+                    category.id,
+                    this.categoryMenuList
+                );
                 if (index != -1) {
                     this.categoryMenuList[index].selected = false;
                     // let selectedIndex = this.findSelectedIndexById(category.id, this.selectedCategories);
@@ -1889,7 +2137,10 @@ export class VenueDetailsComponent implements OnInit {
                     // }
                 }
             } else {
-                let index = this.findIndexById(category.id, this.categoryMenuList);
+                let index = this.findIndexById(
+                    category.id,
+                    this.categoryMenuList
+                );
                 if (index != -1) {
                     this.categoryMenuList[index].selected = true;
                     //let selectedIndex = this.findSelectedIndexById(category.id, this.selectedCategories);
@@ -1911,38 +2162,36 @@ export class VenueDetailsComponent implements OnInit {
         console.log(event);
         this.selectedOccasion = event.id;
         this.sOccasion = event;
-        this.selectedOccasionNames = [{ 'id': event.id, 'name': event.name }];
+        this.selectedOccasionNames = [{ id: event.id, name: event.name }];
         if (event.id !== undefined) {
             let index = this.findIndexById(event.id, this.occasionArray);
             if (index != -1) {
                 // this.occasionArray[index].selected = true;
-                this.occasionArray.forEach(element => {
+                this.occasionArray.forEach((element) => {
                     if (element.id == event.id) {
                         element.selected = true;
                     } else {
                         element.selected = false;
                     }
-                })
+                });
                 //this.selectedOccasion.push(occasion.id);
                 //this.selectedOccasion = event.id;
                 //this.selectedOccasionNames.push({ 'id': occasion.id, 'name': occasion.name });
             } else {
-                this.occasionArray.forEach(element => {
-
+                this.occasionArray.forEach((element) => {
                     element.selected = false;
-
-                })
+                });
             }
         }
     }
     getCategoryBySlug() {
-        let query = "?filterByDisable=false&filterByStatus=true";
+        let query = '?filterByDisable=false&filterByStatus=true';
         this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-            data => {
+            (data) => {
                 if (data.data.items.length > 0) {
                     this.parentCategoryDetails = data.data.items;
-                    this.parentCategoryDetails.forEach(element => {
-                        if (element.slug == "parent_category") {
+                    this.parentCategoryDetails.forEach((element) => {
+                        if (element.slug == 'parent_category') {
                             this.parentCategoryId = element['id'];
                             this.getCategoryList();
                         }
@@ -1950,27 +2199,30 @@ export class VenueDetailsComponent implements OnInit {
                         //     this.propertyTypeId = element['id'];
                         //     this.getPropertyTypes();
                         // }
-                        if (element.slug == "food") {
+                        if (element.slug == 'food') {
                             this.foodTypeId = element['id'];
                             this.getFoodTypes();
                         }
-                    })
+                    });
                 }
             },
-            err => {
+            (err) => {
                 this.errorMessage = err.error.message;
             }
         );
     }
     getCategoryList() {
-        let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + this.parentCategoryId + "&sortBy=created_at&orderBy=1";
+        let query =
+            '?filterByDisable=false&filterByStatus=true&filterByParent=' +
+            this.parentCategoryId +
+            '&sortBy=created_at&orderBy=1';
         this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-            data => {
+            (data) => {
                 //if (data.data.items.length > 0) {
                 this.selectedCategories = [];
                 this.categoryMenuList = data.data.items;
                 let count = 0;
-                this.categoryMenuList.forEach(element => {
+                this.categoryMenuList.forEach((element) => {
                     element['selected'] = false;
                     if (this.filterCategoryId == element.id) {
                         //this.selectedOccasion.push(element);
@@ -1978,44 +2230,50 @@ export class VenueDetailsComponent implements OnInit {
                         element['selected'] = true;
                         this.selectedCategories.push(element.id);
                         this.sOccasion = element;
-                        this.occasionArray.forEach(element => {
+                        this.occasionArray.forEach((element) => {
                             if (element.id == this.filterCategoryId) {
                                 element.selected = true;
                             } else {
                                 element.selected = false;
                             }
                         });
-                        this.selectedOccasionNames.push({ 'id': element.id, 'name': element.name });
+                        this.selectedOccasionNames.push({
+                            id: element.id,
+                            name: element.name,
+                        });
                     }
                     count++;
                 });
 
                 //}
             },
-            err => {
+            (err) => {
                 this.errorMessage = err.error.message;
             }
         );
     }
     getFoodTypes() {
-        let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + this.foodTypeId + "&sortBy=created_at&orderBy=1";
+        let query =
+            '?filterByDisable=false&filterByStatus=true&filterByParent=' +
+            this.foodTypeId +
+            '&sortBy=created_at&orderBy=1';
         this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-            data => {
+            (data) => {
                 //if (data.data.items.length > 0) {
                 this.foodTypesListA = data.data.items;
                 let count = 0;
-                this.foodTypesListA.forEach(element => {
+                this.foodTypesListA.forEach((element) => {
                     element['selected'] = false;
                     element['disable'] = true;
-                    this.foodTypesList.forEach(fElement => {
+                    this.foodTypesList.forEach((fElement) => {
                         if (fElement.id === element.id) {
                             element['disable'] = false;
                         }
-                    })
+                    });
                     count++;
                 });
             },
-            err => {
+            (err) => {
                 this.errorMessage = err.error.message;
             }
         );
@@ -2026,7 +2284,6 @@ export class VenueDetailsComponent implements OnInit {
         for (let i = 0; i < this.categoryMenuList.length; i++) {
             let category = this.categoryMenuList[i];
             if (category.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-
                 filtered.push(category);
             }
         }
@@ -2042,8 +2299,17 @@ export class VenueDetailsComponent implements OnInit {
             return;
         }
 
-        if (this.selectedOccasion === undefined || this.selectedOccasion === null) {
-            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select occasion.', life: 6000 });
+        if (
+            this.selectedOccasion === undefined ||
+            this.selectedOccasion === null
+        ) {
+            this.messageService.add({
+                key: 'toastMsg',
+                severity: 'error',
+                summary: 'error',
+                detail: 'Please select occasion.',
+                life: 6000,
+            });
             return;
         }
         // if (this.selectedOccasion.length == 0) {
@@ -2051,30 +2317,61 @@ export class VenueDetailsComponent implements OnInit {
         //     return;
         // }
         if (this.selectedDate == undefined) {
-            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Event Date.', life: 6000 });
+            this.messageService.add({
+                key: 'toastMsg',
+                severity: 'error',
+                summary: 'error',
+                detail: 'Please select Event Date.',
+                life: 6000,
+            });
             return;
         }
         if (mode === 'book_now') {
             if (this.selectedSlots.length == 0) {
-                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Slot.', life: 6000 });
+                this.messageService.add({
+                    key: 'toastMsg',
+                    severity: 'error',
+                    summary: 'error',
+                    detail: 'Please select Slot.',
+                    life: 6000,
+                });
                 return;
             }
         }
         if (this.selectedVenueCapacity == undefined) {
-            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Guest Capacity.', life: 6000 });
+            this.messageService.add({
+                key: 'toastMsg',
+                severity: 'error',
+                summary: 'error',
+                detail: 'Please select Guest Capacity.',
+                life: 6000,
+            });
             return;
         }
         if (mode === 'book_now') {
-
             if (this.selectedFoodTypeSlug == undefined) {
-                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Food Type.', life: 6000 });
+                this.messageService.add({
+                    key: 'toastMsg',
+                    severity: 'error',
+                    summary: 'error',
+                    detail: 'Please select Food Type.',
+                    life: 6000,
+                });
                 return;
             }
-            if (this.selectedFoodMenuTypes == undefined || this.selectedFoodMenuTypes.length == 0) {
-                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Food Menu Type.', life: 6000 });
+            if (
+                this.selectedFoodMenuTypes == undefined ||
+                this.selectedFoodMenuTypes.length == 0
+            ) {
+                this.messageService.add({
+                    key: 'toastMsg',
+                    severity: 'error',
+                    summary: 'error',
+                    detail: 'Please select Food Menu Type.',
+                    life: 6000,
+                });
                 return;
             }
-
         }
         // if (this.selectedDecor == undefined) {
         //   this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Decor.', life: 6000 });
@@ -2089,15 +2386,17 @@ export class VenueDetailsComponent implements OnInit {
         this.isBookingSummary = true;
         this.showVenueDetailFilter = false;
     }
-    onClickBooking(mode){
+    onClickBooking(mode) {
         // console.log(this.paymentAmount);
         // console.log(this.selectedDecor);
 
-        let durationData = [{
-            occasionStartDate: this.rangeDates[0],
-            occasionEndDate: this.rangeDates[1],
-            slotId: this.selectedSlots[0]?.slotId
-        }];
+        let durationData = [
+            {
+                occasionStartDate: this.rangeDates[0],
+                occasionEndDate: this.rangeDates[1],
+                slotId: this.selectedSlots[0]?.slotId,
+            },
+        ];
         // console.log(this.orderType);
 
         // console.log(this.selectedOccasion);
@@ -2116,91 +2415,126 @@ export class VenueDetailsComponent implements OnInit {
             price: this.totalVenuePrice,
             foodMenuType: this.selectedFoodMenuTypes,
             orderType: mode,
-            bookingPrice: this.paymentAmount === 'full' ? this.totalVenuePrice : this.paymentAmount === '25_percent' ? this.offerPaymentValue25_percent : 5000,
+            bookingPrice:
+                this.paymentAmount === 'full'
+                    ? this.totalVenuePrice
+                    : this.paymentAmount === '25_percent'
+                    ? this.offerPaymentValue25_percent
+                    : this.paymentAmount === 'custom'
+                    ? this.customAmountValue
+                    : 5000,
             guestCount: this.capacity,
             decorName: this.selectedDecorName,
-            paymentType: this.paymentAmount
+            paymentType: this.paymentAmount,
         };
         console.log(venueOrderData);
 
         //send data to api and
         this.placeAnOrderOrEnquiry(venueOrderData);
     }
-    placeAnOrderOrEnquiry(orderData){
-       this.venueOrderService.addVenueOrder(orderData).subscribe(
-            data => {
-             if(data && data.message === 'no profile'){
-                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'Problem', detail: 'Please complete your profile before inquiry or booking', life: 5000 });
-                setTimeout(() => {
-                    this.router.navigateByUrl("/my-profile?mode="+data.mode)
-                }, 3000);
-             }else{
-                if(this.orderType == 'book_now'){
-                    const options = {
-                        // key: environment.razorPayKeyTest, //test key
-                        key: environment.razorPayKeyLive, //Live key
-                        amount: data.amount,
-                        currency: data.currency,
-                        order_id: data.order_id,
-                        name: data.name,
-                        description: data.description,
-                        image: data.image,
-                        handler: (response: any) => {
-                            response.venueOrderId = data.venueOrderId;
-                            response.orderType = 'venue';
-                            this.onRazorWindowClosed(response)
-                        },
-                        prefill: data.prefill,
-                        theme: {
-                          color: '#eb3438'
-                          // color: '#fff'
-                        },
-                        modal:{
-                          ondismiss: () =>{
-                            console.log('payment modal closed');
-
-                          }
-                        }
-                      };
-                      const rzp = new Razorpay(options);
-                      rzp.open();
-                  }else{
-                    this.messageService.add({ key: 'toastMsg', severity: 'success', summary: 'Successful', detail: 'Enquires send to eazyvenue.', life: 6000 });
-                      setTimeout(() => {
-                          let currentUrl = '/my-profile';
-                          console.log('currentUrl', currentUrl);
-                          this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-                          this.router.onSameUrlNavigation = 'reload';
-                          this.router.navigate([currentUrl], { queryParams: { mode: this.orderType } });
-                      }, 2000);
-                  }
-             }
-
+    placeAnOrderOrEnquiry(orderData) {
+        this.venueOrderService.addVenueOrder(orderData).subscribe(
+            (data) => {
+                if (data && data.message === 'no profile') {
+                    this.messageService.add({
+                        key: 'toastMsg',
+                        severity: 'error',
+                        summary: 'Problem',
+                        detail: 'Please complete your profile before inquiry or booking',
+                        life: 5000,
+                    });
+                    setTimeout(() => {
+                        this.router.navigateByUrl(
+                            '/my-profile?mode=' + data.mode
+                        );
+                    }, 3000);
+                } else {
+                    if (this.orderType == 'book_now') {
+                        const options = {
+                            // key: environment.razorPayKeyTest, //test key
+                            key: environment.razorPayKeyLive, //Live key
+                            amount: data.amount,
+                            currency: data.currency,
+                            order_id: data.order_id,
+                            name: data.name,
+                            description: data.description,
+                            image: data.image,
+                            handler: (response: any) => {
+                                response.venueOrderId = data.venueOrderId;
+                                response.orderType = 'venue';
+                                this.onRazorWindowClosed(response);
+                            },
+                            prefill: data.prefill,
+                            theme: {
+                                color: '#eb3438',
+                                // color: '#fff'
+                            },
+                            modal: {
+                                ondismiss: () => {
+                                    console.log('payment modal closed');
+                                },
+                            },
+                        };
+                        const rzp = new Razorpay(options);
+                        rzp.open();
+                    } else {
+                        this.messageService.add({
+                            key: 'toastMsg',
+                            severity: 'success',
+                            summary: 'Successful',
+                            detail: 'Enquires send to eazyvenue.',
+                            life: 6000,
+                        });
+                        setTimeout(() => {
+                            let currentUrl = '/my-profile';
+                            console.log('currentUrl', currentUrl);
+                            this.router.routeReuseStrategy.shouldReuseRoute =
+                                () => false;
+                            this.router.onSameUrlNavigation = 'reload';
+                            this.router.navigate([currentUrl], {
+                                queryParams: { mode: this.orderType },
+                            });
+                        }, 2000);
+                    }
+                }
             },
-            ((err) => {
+            (err) => {
                 console.log(err);
 
-                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: err.error.message, detail: 'Venue order booked failed', life: 6000 });
-            })
+                this.messageService.add({
+                    key: 'toastMsg',
+                    severity: 'error',
+                    summary: err.error.message,
+                    detail: 'Venue order booked failed',
+                    life: 6000,
+                });
+            }
         );
     }
-    onRazorWindowClosed(response){
+    onRazorWindowClosed(response) {
         this.isBookingSummary = false;
-        this.venueOrderService.handleVenuePayment(response).subscribe((res: any) => {
-            if (res.status === "Success") {
-                this.messageService.add({ key: 'toastMsg', severity: 'success', summary: 'Successful', detail: 'Venue order booked.', life: 6000 });
-                setTimeout(() => {
-                    this.router.navigateByUrl("/my-profile?mode=bookings")
-                }, 1000);
-            }
-            if (res.status === "pending") {
-                // payment pending show pending popup
-            }
-            if (res.status === "failed") {
-                // payment failed tell to try again
-            }
-        }, err => {
-
-        });
+        this.venueOrderService.handleVenuePayment(response).subscribe(
+            (res: any) => {
+                if (res.status === 'Success') {
+                    this.messageService.add({
+                        key: 'toastMsg',
+                        severity: 'success',
+                        summary: 'Successful',
+                        detail: 'Venue order booked.',
+                        life: 6000,
+                    });
+                    setTimeout(() => {
+                        this.router.navigateByUrl('/my-profile?mode=bookings');
+                    }, 1000);
+                }
+                if (res.status === 'pending') {
+                    // payment pending show pending popup
+                }
+                if (res.status === 'failed') {
+                    // payment failed tell to try again
+                }
+            },
+            (err) => {}
+        );
     }
 }

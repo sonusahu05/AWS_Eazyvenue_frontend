@@ -2140,51 +2140,6 @@
                                 </span>
                                 <!-- <input pInputText type="text" placeholder="Enter Coupon Code" class="coupon-input" [(ngModel)]="value2" /> -->
                             </div>
-
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <div class="total-amt-heading">
-                                        <h4>Custom amount</h4>
-                                    </div>
-                                    <!-- <span *ngIf="isLoggedIn">{{totalVenuePrice|currency:'INR'}}</span> -->
-                                </div>
-                                <div class="col">
-                                    <div
-                                        *ngIf="venueDetails && isLoggedIn"
-                                        class="price"
-                                    >
-                                        <h4
-                                            *ngIf="selectedVenueCapacity > 0"
-                                            class="total-price"
-                                        >
-                                            {{
-                                                totalVenuePrice
-                                                    | currency : "INR"
-                                            }}
-                                        </h4>
-
-                                        <!-- <span class="real-price">₹ 3,00,000</span> -->
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 coupon-code">
-                                <span class="p-input-icon-left">
-                                    <i class="coupon-icon"
-                                        ><img
-                                            src="assets/images/icons/money.png"
-                                            class="icon-size"
-                                    /></i>
-                                    <input
-                                        class="coupon-input coupon-box"
-                                        placeholder="Enter Custom Amount"
-                                        type="number"
-                                        pInputText
-                                        [(ngModel)]="value1"
-                                    />
-                                </span>
-                                <!-- <input pInputText type="text" placeholder="Enter Coupon Code" class="coupon-input" [(ngModel)]="value2" /> -->
-                            </div>
-
                             <div class="col-md-12 Send-btn">
                                 <button
                                     *ngIf="!showAvailabilityMessage"
@@ -3564,46 +3519,52 @@
                             </h4>
                             <span>exclusive of Taxes</span>
                         </div>
-                        <div
-                            class="payment-options"
-                            *ngIf="orderType == 'book_now'"
-                        >
+                        <div class="payment-options" *ngIf="orderType == 'book_now'">
                             <div class="payment-option-item">
                                 <p-radioButton
                                     [(ngModel)]="paymentAmount"
                                     value="full"
-                                    [label]="
-                                        'Full Amount: ' +
-                                        (totalVenuePrice | currency : 'INR')
-                                    "
-                                    inputId="full-amount"
-                                >
+                                    [label]="'Full Amount: ' + (totalVenuePrice | currency : 'INR')"
+                                    inputId="full-amount">
                                 </p-radioButton>
                             </div>
                             <div class="payment-option-item">
                                 <p-radioButton
                                     [(ngModel)]="paymentAmount"
                                     value="25_percent"
-                                    [label]="
-                                        '25% Amount: ' +
-                                        (offerPaymentValue25_percent
-                                            | currency : 'INR')
-                                    "
-                                    inputId="partial-amount"
-                                >
+                                    [label]="'25% Amount: ' + (offerPaymentValue25_percent | currency : 'INR')"
+                                    inputId="partial-amount">
                                 </p-radioButton>
                             </div>
                             <div class="payment-option-item">
                                 <p-radioButton
                                     [(ngModel)]="paymentAmount"
                                     value="5000_rupees"
-                                    [label]="
-                                        'Block dates @ ' +
-                                        (5000 | currency : 'INR')
-                                    "
-                                    inputId="block-amount"
-                                >
+                                    [label]="'Block dates @ ' + (5000 | currency : 'INR')"
+                                    inputId="block-amount">
                                 </p-radioButton>
+                            </div>
+                            <div class="payment-option-item">
+                                <p-radioButton
+                                    [(ngModel)]="paymentAmount"
+                                    value="custom"
+                                    [label]="'Custom Amount'"
+                                    inputId="custom-amount">
+                                </p-radioButton>
+                                <div *ngIf="paymentAmount === 'custom'" class="custom-amount-input mt-2">
+                                    <p-inputNumber
+                                        [(ngModel)]="customAmountValue"
+                                        [min]="0"
+                                        [max]="totalVenuePrice"
+                                        mode="currency"
+                                        currency="INR"
+                                        placeholder="Enter amount"
+                                        (onInput)="onCustomAmountChange($event)">
+                                    </p-inputNumber>
+                                    <small class="text-muted" *ngIf="customAmountValue > totalVenuePrice">
+                                        Amount cannot exceed total venue price
+                                    </small>
+                                </div>
                             </div>
                         </div>
                     </div>
