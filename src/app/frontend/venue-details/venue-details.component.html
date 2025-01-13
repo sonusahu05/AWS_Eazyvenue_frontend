@@ -2141,11 +2141,12 @@
                                 <!-- <input pInputText type="text" placeholder="Enter Coupon Code" class="coupon-input" [(ngModel)]="value2" /> -->
                             </div>
 
-                            <!-- <div class="row mt-2">
+                            <div class="row mt-2">
                                 <div class="col">
                                     <div class="total-amt-heading">
                                         <h4>Custom amount</h4>
                                     </div>
+                                    <!-- <span *ngIf="isLoggedIn">{{totalVenuePrice|currency:'INR'}}</span> -->
                                 </div>
                                 <div class="col">
                                     <div
@@ -2161,10 +2162,12 @@
                                                     | currency : "INR"
                                             }}
                                         </h4>
+
+                                        <!-- <span class="real-price">₹ 3,00,000</span> -->
                                     </div>
                                 </div>
-                            </div> -->
-                            <!-- <div class="col-md-12 coupon-code">
+                            </div>
+                            <div class="col-md-12 coupon-code">
                                 <span class="p-input-icon-left">
                                     <i class="coupon-icon"
                                         ><img
@@ -2179,7 +2182,8 @@
                                         [(ngModel)]="value1"
                                     />
                                 </span>
-                            </div> -->
+                                <!-- <input pInputText type="text" placeholder="Enter Coupon Code" class="coupon-input" [(ngModel)]="value2" /> -->
+                            </div>
 
                             <div class="col-md-12 Send-btn">
                                 <button
@@ -2200,17 +2204,6 @@
                                     class="btn btn-custom w-100 price-btn"
                                 >
                                     Send Enquiries
-                                    <!-- {{bookingPrice|currency:'INR'}} -->
-                                </button>
-                            </div>
-                            <div class="col-md-12 Send-btn">
-                                <button
-                                    *ngIf="!showAvailabilityMessages"
-                                    (click)="onClickCustomAmount('customamount_request')"
-                                    pButton
-                                    class="btn btn-custom w-100 price-btn"
-                                >
-                                    CustomAmount Request
                                     <!-- {{bookingPrice|currency:'INR'}} -->
                                 </button>
                             </div>
@@ -3634,201 +3627,6 @@
                 >
                     Check Availability
                 </button>
-            </div>
-        </div>
-    </div>
-</p-dialog>
-<p-dialog
-    [header]="
-        orderType1 === 'customamount_request'
-            ? 'Venue Custom Amount Request'
-            : 'Venue Custom Amount Request'
-    "
-    [(visible)]="isCustomAmountSummary"
-    [modal]="true"
-    class="Request-modal"
-    [draggable]="false"
-    [resizable]="false"
->
-    <div class="popupfilter sidebar Filter-siderbar sidebar-left popupfilter">
-        <div class="sidebar-widget">
-            <p-accordion [multiple]="true">
-                <p-accordionTab header="Venue :" class="ui-accordion">
-                    <ng-template pTemplate="header">
-                        <div *ngIf="sOccasion" class="div selected-list">
-                            <span style="font-weight: 500">{{
-                                venueDetails.name
-                            }}</span>
-                        </div>
-                    </ng-template>
-                </p-accordionTab>
-                <p-accordionTab header="Location :" class="ui-accordion">
-                    <ng-template pTemplate="header">
-                        <div *ngIf="sOccasion" class="div selected-list">
-                            <span style="font-weight: 500"
-                                >{{ venueDetails.subarea }},
-                                {{ venueDetails.cityname }}</span
-                            >
-                        </div>
-                    </ng-template>
-                </p-accordionTab>
-                <p-accordionTab header="Occasion:" class="ui-accordion">
-                    <ng-template pTemplate="header">
-                        <div *ngIf="sOccasion" class="div selected-list">
-                            <span style="font-weight: 500">{{
-                                sOccasion.name
-                            }}</span>
-                        </div>
-                    </ng-template>
-                </p-accordionTab>
-                <p-accordionTab header="Guest Count :" class="ui-accordion">
-                    <ng-template pTemplate="header">
-                        <div
-                            *ngIf="selectedVenueCapacity"
-                            class="div selected-list"
-                        >
-                            <span style="font-weight: 500">{{
-                                selectedVenueCapacity
-                            }}</span>
-                        </div>
-                    </ng-template>
-                </p-accordionTab>
-                <p-accordionTab header="Time Slot :" class="ui-accordion">
-                    <ng-template pTemplate="header">
-                        <span class="selected-list" style="font-weight: 500">{{
-                            selectedStartDate
-                        }}</span>
-                        <span
-                            class="selected-list pl-0 pr-0"
-                            *ngIf="selectedEndDate"
-                            style="font-weight: 500"
-                            >-</span
-                        >
-                        <span
-                            class="selected-list"
-                            *ngIf="selectedEndDate"
-                            style="font-weight: 500"
-                            >{{ selectedEndDate }}
-                        </span>
-                        <span class="selected-list" style="font-weight: 500">{{
-                            selectedSlotsName
-                        }}</span>
-                    </ng-template>
-                </p-accordionTab>
-                <p-accordionTab header="Food Menu :" class="ui-accordion">
-                    <ng-template pTemplate="header">
-                        <div
-                            *ngIf="
-                                selectedFoodType != undefined;
-                                else naContent
-                            "
-                            class="p-0 selected-list"
-                        >
-                            <span style="font-weight: 500"
-                                >&nbsp;&nbsp;{{
-                                    selectedFoodType.name
-                                }}&nbsp;</span
-                            >
-                        </div>
-                        <div
-                            *ngIf="selectedFoodMenuType != undefined"
-                            class="selected-list p-0"
-                        >
-                            <span style="font-weight: 500">{{
-                                selectedFoodMenuType.slug
-                            }}</span>
-                        </div>
-                        <ng-template #naContent>
-                            <div class="p-0 selected-list">
-                                <span style="font-weight: 500"
-                                    >&nbsp;&nbsp;NA&nbsp;</span
-                                >
-                            </div>
-                        </ng-template>
-                    </ng-template>
-                </p-accordionTab>
-            </p-accordion>
-            <div
-                *ngIf="orderType1 === 'customamount_request'"
-                class="col-md-12 total-amount-div"
-            >
-                <div class="row">
-                    <div class="col">
-                        <div
-                            class="total-amt-heading"
-                            *ngIf="totalFoodPrice > 0"
-                        >
-                            <h4>
-                                Food Amount :
-                                <span style="color: #ec3539">{{
-                                    totalFoodPrice | currency : "INR"
-                                }}</span>
-                            </h4>
-                        </div>
-                        <div class="total-amt-heading" *ngIf="premiumDecor">
-                            <h4>
-                                Decor Amount :
-                                <span style="color: #ec3539">
-                                    Call for prices</span
-                                >
-                            </h4>
-                        </div>
-                        <div
-                            class="total-amt-heading"
-                            *ngIf="selectedDecorPrice > 0"
-                        >
-                            <h4>
-                                Decor Amount :
-                                <span style="color: #ec3539">{{
-                                    selectedDecorPrice | currency : "INR"
-                                }}</span>
-                            </h4>
-                        </div>
-                        <div class="total-amt-heading">
-                            <h4>
-                                Total Amount :
-                                <span style="color: #ec3539">{{
-                                    totalVenuePrice | currency : "INR"
-                                }}</span>
-                            </h4>
-                            <span>exclusive of Taxes</span>
-                        </div>
-                        <div class="row mt-2">
-                                <div class="col">
-                                    <div class="total-amt-heading">
-                                        <h4>Custom amount</h4>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 coupon-code">
-                                 <span class="p-input-icon-left">
-                                    <i class="coupon-icon"
-                                        ><img
-                                            src="assets/images/icons/money.png"
-                                            class="icon-size"
-                                    /></i>
-                                    <input
-                                        class="coupon-input coupon-box"
-                                        placeholder="Enter Custom Amount"
-                                        type="number"
-                                        pInputText
-                                        [(ngModel)]="value1"
-                                    />
-                                </span>
-                            </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12 Send-btn">
-                <button
-        *ngIf="orderType1 == 'customamount_request'"
-        [disabled]="!isCustomAmountValid()"
-        (click)="onClickCustomBooking('customamount_request')"
-        pButton
-        class="btn btn-custom w-100 price-btn"
-    >
-        Book Now
-    </button>
             </div>
         </div>
     </div>
