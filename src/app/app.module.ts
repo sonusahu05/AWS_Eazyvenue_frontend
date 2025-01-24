@@ -104,27 +104,11 @@ import { BannerAddComponent } from './manage/banner/add/add.component';
 import { BannerEditComponent } from './manage/banner/edit/edit.component';
 
 import { DashboardDemoComponent } from './demo/view/dashboarddemo.component';
-import { FormLayoutDemoComponent } from './demo/view/formlayoutdemo.component';
-import { FloatLabelDemoComponent } from './demo/view/floatlabeldemo.component';
-import { InvalidStateDemoComponent } from './demo/view/invalidstatedemo.component';
-import { InputDemoComponent } from './demo/view/inputdemo.component';
-import { ButtonDemoComponent } from './demo/view/buttondemo.component';
 import { BlogComponent } from './frontend/blog/blog.component';
 import { ContactUsComponent } from './frontend/contact-us/contact-us.component';
-import { TableDemoComponent } from './demo/view/tabledemo.component';
-import { ListDemoComponent } from './demo/view/listdemo.component';
+
 import { AppTimelineDemoComponent } from './pages/app.timelinedemo.component';
-import { TreeDemoComponent } from './demo/view/treedemo.component';
-import { PanelsDemoComponent } from './demo/view/panelsdemo.component';
-import { OverlaysDemoComponent } from './demo/view/overlaysdemo.component';
-import { MediaDemoComponent } from './demo/view/mediademo.component';
-import { MenusDemoComponent } from './demo/view/menusdemo.component';
-import { MessagesDemoComponent } from './demo/view/messagesdemo.component';
-import { MiscDemoComponent } from './demo/view/miscdemo.component';
-import { EmptyDemoComponent } from './demo/view/emptydemo.component';
-import { ChartsDemoComponent } from './demo/view/chartsdemo.component';
-import { FileDemoComponent } from './demo/view/filedemo.component';
-import { DocumentationComponent } from './demo/view/documentation.component';
+
 import { DisplayComponent } from './utilities/display.component';
 import { ElevationComponent } from './utilities/elevation.component';
 import { FlexboxComponent } from './utilities/flexbox.component';
@@ -341,29 +325,12 @@ FullCalendarModule.registerPlugins([
         AppTopBarComponent,
         AppFooterComponent,
         DashboardDemoComponent,
-        FormLayoutDemoComponent,
-        FloatLabelDemoComponent,
-        InvalidStateDemoComponent,
-        InputDemoComponent,
+
         BlogComponent,
-        ButtonDemoComponent,
         SignInComponent,
         CalendarComponent,
         ContactUsComponent,
-        TableDemoComponent,
-        ListDemoComponent,
-        TreeDemoComponent,
-        PanelsDemoComponent,
-        OverlaysDemoComponent,
-        MediaDemoComponent,
-        MenusDemoComponent,
-        MessagesDemoComponent,
-        MessagesDemoComponent,
-        MiscDemoComponent,
-        ChartsDemoComponent,
-        EmptyDemoComponent,
-        FileDemoComponent,
-        DocumentationComponent,
+
         DisplayComponent,
         ElevationComponent,
         FlexboxComponent,
