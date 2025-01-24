@@ -88,6 +88,7 @@ import { TreeTableModule } from 'primeng/treetable';
 import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { AngMusicPlayerModule } from 'ang-music-player';
 import { VimeModule } from '@vime/angular';
+//import { NgxAudioPlayerModule } from 'ngx-audio-player';
 import { AppCodeModule } from './app.code.component';
 import { AboutUsComponent } from './frontend/about-us/about-us.component';
 import { AppComponent } from './app.component';
@@ -101,8 +102,29 @@ import { AppFooterComponent } from './app.footer.component';
 import { BannerComponent } from './manage/banner/banner.component';
 import { BannerAddComponent } from './manage/banner/add/add.component';
 import { BannerEditComponent } from './manage/banner/edit/edit.component';
+
+import { DashboardDemoComponent } from './demo/view/dashboarddemo.component';
+import { FormLayoutDemoComponent } from './demo/view/formlayoutdemo.component';
+import { FloatLabelDemoComponent } from './demo/view/floatlabeldemo.component';
+import { InvalidStateDemoComponent } from './demo/view/invalidstatedemo.component';
+import { InputDemoComponent } from './demo/view/inputdemo.component';
+import { ButtonDemoComponent } from './demo/view/buttondemo.component';
 import { BlogComponent } from './frontend/blog/blog.component';
 import { ContactUsComponent } from './frontend/contact-us/contact-us.component';
+import { TableDemoComponent } from './demo/view/tabledemo.component';
+import { ListDemoComponent } from './demo/view/listdemo.component';
+import { AppTimelineDemoComponent } from './pages/app.timelinedemo.component';
+import { TreeDemoComponent } from './demo/view/treedemo.component';
+import { PanelsDemoComponent } from './demo/view/panelsdemo.component';
+import { OverlaysDemoComponent } from './demo/view/overlaysdemo.component';
+import { MediaDemoComponent } from './demo/view/mediademo.component';
+import { MenusDemoComponent } from './demo/view/menusdemo.component';
+import { MessagesDemoComponent } from './demo/view/messagesdemo.component';
+import { MiscDemoComponent } from './demo/view/miscdemo.component';
+import { EmptyDemoComponent } from './demo/view/emptydemo.component';
+import { ChartsDemoComponent } from './demo/view/chartsdemo.component';
+import { FileDemoComponent } from './demo/view/filedemo.component';
+import { DocumentationComponent } from './demo/view/documentation.component';
 import { DisplayComponent } from './utilities/display.component';
 import { ElevationComponent } from './utilities/elevation.component';
 import { FlexboxComponent } from './utilities/flexbox.component';
@@ -112,7 +134,10 @@ import { WidgetsComponent } from './utilities/widgets.component';
 import { SpacingComponent } from './utilities/spacing.component';
 import { TypographyComponent } from './utilities/typography.component';
 import { TextComponent } from './utilities/text.component';
+import { AppCrudComponent } from './pages/app.crud.component';
 import { AppCalendarComponent } from './pages/app.calendar.component';
+import { AppInvoiceComponent } from './pages/app.invoice.component';
+import { AppHelpComponent } from './pages/app.help.component';
 import { AppNotfoundComponent } from './pages/app.notfound.component';
 import { AppErrorComponent } from './pages/app.error.component';
 import { AppAccessdeniedComponent } from './pages/app.accessdenied.component';
@@ -200,7 +225,6 @@ import { VendorCompareComponent } from './frontend/vendor-compare/vendor-compare
 import { CancellationComponent } from './frontend/cancellation/cancellation.component';
 import { FaqComponent } from './frontend/faq/faq.component';
 import { HotMuhuratsComponent } from './frontend/hot-muhrats/muhrats.component';
-import { AdminSignupComponent } from './pages/admin-signup.component';
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
     timeGridPlugin,
@@ -210,6 +234,9 @@ FullCalendarModule.registerPlugins([
 @NgModule({
     imports: [
         BrowserModule,
+        AngMusicPlayerModule,
+        // VimeModule,
+        //NgxAudioPlayerModule,
         FormsModule,
         ReactiveFormsModule,
         AppRoutingModule,
@@ -304,7 +331,6 @@ FullCalendarModule.registerPlugins([
     ],
     declarations: [
         AboutUsComponent,
-        AdminSignupComponent,
         AppComponent,
         FaqComponent,
         AppMainComponent,
@@ -314,12 +340,30 @@ FullCalendarModule.registerPlugins([
         AppConfigComponent,
         AppTopBarComponent,
         AppFooterComponent,
+        DashboardDemoComponent,
+        FormLayoutDemoComponent,
+        FloatLabelDemoComponent,
+        InvalidStateDemoComponent,
+        InputDemoComponent,
         BlogComponent,
-
+        ButtonDemoComponent,
         SignInComponent,
         CalendarComponent,
         ContactUsComponent,
-
+        TableDemoComponent,
+        ListDemoComponent,
+        TreeDemoComponent,
+        PanelsDemoComponent,
+        OverlaysDemoComponent,
+        MediaDemoComponent,
+        MenusDemoComponent,
+        MessagesDemoComponent,
+        MessagesDemoComponent,
+        MiscDemoComponent,
+        ChartsDemoComponent,
+        EmptyDemoComponent,
+        FileDemoComponent,
+        DocumentationComponent,
         DisplayComponent,
         ElevationComponent,
         FlexboxComponent,
@@ -329,10 +373,14 @@ FullCalendarModule.registerPlugins([
         SpacingComponent,
         TypographyComponent,
         TextComponent,
+        AppCrudComponent,
         AppCalendarComponent,
         AppLoginComponent,
+        AppInvoiceComponent,
+        AppHelpComponent,
         AppNotfoundComponent,
         AppErrorComponent,
+        AppTimelineDemoComponent,
         AppAccessdeniedComponent,
         SlotManagementComponent,
         AddVenueSlotManagementComponent,

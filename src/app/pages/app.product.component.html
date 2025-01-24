@@ -1,0 +1,164 @@
+<div class="container">
+	<div class="card">
+		<!-- <div class="invoice-header">
+			<div style="max-width: 250px; " class="mb-3">
+				<img  src="assets/layout/images/logo_apcer_b.png"
+					alt="APC Group" />
+			</div>
+		</div> -->
+		<div class="invoice-items card p-0" *ngIf="showData">
+			<div class="card-header bg-secondary">
+				<h4 class="card-title mb-0 mt-2 text-light">QR Code Data</h4>
+			</div>
+			<div class="card-body">
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom">
+					<div class="p-field col-md-4 fw-bold mb-0">
+						<label for="importerName">Importer Name & Address: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0 ">
+						{{item['productdata']['importerName']}} , {{item['productdata']['importerAddress']}}
+					</div>
+				</div>
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom"
+					*ngIf="item['productdata']['importLicenseNo']!=''">
+					<div class="p-field col-md-4 fw-bold mb-0">
+						<label for="importerLicenseNumber">Importer License Number: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0">
+						{{item['productdata']['importLicenseNo']}}
+					</div>
+				</div>
+
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom">
+					<div class="p-field col-md-4 fw-bold mb-0">
+						<label for="productName">Product Name: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0">
+						{{item['producproductidentificationdata']['apiName']}}
+					</div>
+				</div>
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom">
+					<div class="p-field col-md-4 fw-bold mb-0">
+						<label for="importerLicenseNumber">Unique Product Identification Code: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0">
+						{{item['producproductidentificationdata']['productIdentificationCode']}}
+					</div>
+				</div>
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom">
+					<div class="p-field col-md-4 fw-bold mb-0">
+						<label for="importerLicenseNumber">SSCC: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0">
+						{{item['sscc']}}
+					</div>
+				</div>
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom">
+					<div class="p-field col-md-4 col-6 mb-0 fw-bold">
+						<label for="batchNo">Batch Size: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0 col-6">
+						{{item['productdata']['batchSize']}}
+					</div>
+				</div>
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom">
+					<div class="p-field col-md-4 col-6 mb-0 fw-bold">
+						<label for="batchNo">Batch No: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0 col-6">
+						{{item['productdata']['batchNo']}}
+					</div>
+				</div>
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom">
+					<div class="p-field col-md-4 col-6 mb-0 fw-bold">
+						<label for="netWeight">Net Weight: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0 col-6">
+						{{item['weight']}} {{item['unit']}}
+					</div>
+				</div>
+
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom">
+					<div class="p-field col-md-4 col-6 mb-0 fw-bold">
+						<label for="manufacturingDate">Manufacturing Date: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0 col-6">
+						{{item['manufacturingDate']}}
+					</div>
+				</div>
+
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom">
+					<div class="p-field col-md-4 col-6 mb-0 fw-bold">
+						<label for="expiryDate ">Expiry Date: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0 col-6">
+						{{item['expiryDate']}}
+					</div>
+				</div>
+
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom">
+					<div class="p-field col-md-4 fw-bold mb-0">
+						<label for="storageCondition">Storage Condition: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0">
+						{{item['producproductidentificationdata']['specialStorage']}}
+					</div>
+				</div>
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom">
+					<div class="p-field col-md-4 fw-bold mb-0">
+						<label for="manufacturerName">Manufacturer name and address: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0">
+						{{item['producproductidentificationdata']['manufacturerName']}} ,
+						{{item['producproductidentificationdata']['manufacturerAddress']}}
+					</div>
+				</div>
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom"
+					*ngIf="item['productdata']['manufacturerLicenseNo']!=''">
+					<div class="p-field col-md-4 fw-bold mb-0">
+						<label for="importerLicenseNumber">Manufacturer License Number: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0">
+						{{item['productdata']['manufacturerLicenseNo']}} {{item['productdata']['manufacturerLicenseNo']
+						!= '' ? item['productdata']['manufacturerLicenseNo'] : '-'}}
+					</div>
+				</div>
+				<div class="p-fluid p-formgrid p-grid card-body mb-0 border-bottom">
+					<div class="p-field col-md-4 fw-bold mb-0">
+						<label for="countryName">Country of Origin: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0">
+						{{item['countryName']}}
+					</div>
+				</div>
+				<div class="p-fluid p-formgrid p-grid card-body">
+					<div class="p-field col-md-4 fw-bold mb-0">
+						<label for="sellerName">Seller Name and Address: </label>
+					</div>
+					<div class="p-field col-md-8 mb-0">
+						{{item['productdata']['sellerName']}} , {{item['productdata']['sellerAddress']}}
+					</div>
+				</div>
+
+			</div>
+			<!-- <div class="p-fluid p-formgrid p-grid">
+						<div class="p-field p-col-4">
+							<img src="{{item['qrFilename']}}" class="img-fluid" height="100px"/>
+						</div>
+					</div>			 -->
+		</div>
+		<div class="invoice-items card text-center" *ngIf="!showData">
+			<div class="card-body mb-0 fw-bold text-center">
+				<h5><label for="sellerName">404 Looks like you are lost.</label></h5>
+			</div>
+			<div class="card-body mb-0">
+				<img src="assets/layout/images/pages/asset-404.svg" alt="freya-layout" />
+			</div>
+		</div>
+		<div class="footer-copy-right">
+			<div class="copy-right text-center">
+				<h6>Copyright {{currentYear}} Ⓒ Easy Venue</h6>
+			</div>
+		</div>
+	</div>
+</div>
