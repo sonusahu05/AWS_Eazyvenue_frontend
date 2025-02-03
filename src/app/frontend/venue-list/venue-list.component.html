@@ -235,27 +235,34 @@
         </p-galleria>
         <div class="row">
             <div class="col-md-12 venue_listing latestVenue_listing">
-                <div *ngIf="finalVenueList.length>0" class="col-md-12">
-                    <div class="row" infiniteScroll (scrolled)="onScrollDown()">
-                        <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let item of finalVenueList">
-                            <div class="listing">
-                                <div class="listing-thumbnail">
-                                    <div class="mobile-view-gallery">
-                                        <p-galleria [(value)]="item.venueImage" [responsiveOptions]="responsiveOptions"
-                                            [containerStyle]="{'max-width': '100%;'}" [numVisible]="1" [circular]="true"
-                                            [showItemNavigators]="true" [showThumbnails]="true" [showIndicators]="false"
-                                            [showItemNavigatorsOnHover]="true" [showIndicatorsOnItem]="true">
-                                            <ng-template pTemplate="thumbnail" let-img>
-                                                <img *ngIf="!img.video" [src]="img.venue_image_src"
-                                                    (click)="getVenueDetails(item.metaUrl)"
-                                                    style="width: 100%; display: block;" />
-                                                <video *ngIf="img.video" muted controls loop>
-                                                    <source src="{{img.video}}" type="video/mp4">
-                                                    Your browser does not support the video tag.
-                                                </video>
-                                            </ng-template>
-
-                                        </p-galleria>
+                <div *ngIf="finalVenueList.length > 0" class="col-md-12">
+                  <div class="row" infiniteScroll (scrolled)="onScrollDown()">
+                    <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let item of finalVenueList">
+                      <div class="listing">
+                        <div class="listing-thumbnail">
+                          <div class="mobile-view-gallery" #galleryContainer>
+                            <p-galleria
+                              [(value)]="item.venueImage"
+                              [responsiveOptions]="responsiveOptions"
+                              [containerStyle]="{'max-width': '100%'}"
+                              [numVisible]="1"
+                              [circular]="true"
+                              [showItemNavigators]="true"
+                              [showThumbnails]="true"
+                              [showIndicators]="false"
+                              [showItemNavigatorsOnHover]="true"
+                              [showIndicatorsOnItem]="true">
+                              <ng-template pTemplate="thumbnail" let-img>
+                                <img *ngIf="!img.video"
+                                  [src]="img.venue_image_src"
+                                  (click)="getVenueDetails(item.metaUrl)"
+                                  style="width: 100%; display: block;" />
+                                <video *ngIf="img.video" muted controls loop>
+                                  <source [src]="img.video" type="video/mp4">
+                                  Your browser does not support the video tag.
+                                </video>
+                              </ng-template>
+                            </p-galleria>
                                     </div>
                                     <div class="desktop-view-gallery">
                                         <p-galleria [(value)]="item.venueImage" [responsiveOptions]="responsiveOptions"
@@ -660,7 +667,7 @@
                 <!-- <p-calendar [(ngModel)]="rangeDates" [showButtonBar]="true" selectionMode="range" (click)="onClickClear()"></p-calendar> -->
                 <p-calendar #searchCalendarMobileView dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
                 appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
-                [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
+                [numberOfMonths]="1">
                 <ng-template pTemplate="header">
                     <div class="ui-g">
                       <div class="ui-g-10">
