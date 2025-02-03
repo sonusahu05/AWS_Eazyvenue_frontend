@@ -169,7 +169,7 @@
             <!-- <p-calendar [(ngModel)]="rangeDates" [showButtonBar]="true" selectionMode="range" (click)="onClickClear()"></p-calendar> -->
             <p-calendar #searchCalendar dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
                 appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
-                [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
+                [numberOfMonths]="1">
                 <ng-template pTemplate="header">
                     <div class="ui-g">
                       <div class="ui-g-10">

@@ -116,7 +116,7 @@ export class FaqComponent implements OnInit, OnChanges {
                 this.title = `Banquet Halls in ${capitalizeWords(cityname)}`;
             }
         } else {
-            this.title = 'Banquet Halls';
+            this.title = 'Venue Not Available';
         }
     }
 
