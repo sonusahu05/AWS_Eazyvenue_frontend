@@ -1,0 +1,46 @@
+<div class="p-4">
+    <h2>Vendor Signup</h2>
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      <div class="grid gap-4">
+        <!-- First Name -->
+        <div class="col-12 md:col-6">
+          <label class="block mb-2">First Name *</label>
+          <input pInputText class="w-full" formControlName="firstName" />
+        </div>
+
+        <!-- Last Name -->
+        <div class="col-12 md:col-6">
+          <label class="block mb-2">Last Name *</label>
+          <input pInputText class="w-full" formControlName="lastName" />
+        </div>
+
+        <!-- Email -->
+        <div class="col-12">
+          <label class="block mb-2">Email *</label>
+          <input pInputText class="w-full" type="email" formControlName="email" />
+        </div>
+
+        <!-- Password -->
+        <div class="col-12 md:col-6">
+          <label class="block mb-2">Password *</label>
+          <input pInputText class="w-full" type="password" formControlName="password" />
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="col-12 md:col-6">
+          <label class="block mb-2">Confirm Password *</label>
+          <input pInputText class="w-full" type="password" formControlName="confirmPassword" />
+        </div>
+
+        <!-- Mobile Number -->
+        <div class="col-12">
+          <label class="block mb-2">Mobile Number *</label>
+          <input pInputText class="w-full" formControlName="mobileNumber" />
+        </div>
+
+        <div class="col-12">
+          <button pButton type="submit" label="Sign Up"></button>
+        </div>
+      </div>
+    </form>
+  </div>

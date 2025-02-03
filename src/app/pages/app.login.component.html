@@ -16,8 +16,7 @@
                 <input pPassword id="password" type="password" formControlName="password" placeholder="Password" />
 
                 <button pButton type="submit" label="LOGIN" [disabled]="!loginform.valid"></button>
-                <!-- <a href="#">forgot password?</a>
-                <p>Don’t you have an account, <a href="#">sign up</a></p> -->
+                <p>Don't have an account? <a [routerLink]="['/signup']">Sign up</a></p>
             </div>
             <!-- <div class="login-footer">
                 <h4>freya</h4>
