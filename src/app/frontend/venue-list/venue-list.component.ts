@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, Renderer2, ElementRef } from '@angular/core';
 // import data from '../../../assets/demo/data/navigation.json';
 import { ProductService } from '../../demo/service/productservice';
 import { Product } from '../../demo/domain/product';
@@ -73,6 +73,9 @@ export class VenueListComponent implements OnInit {
     otpthankyouPopup: boolean;
     regthankyouPopup: boolean;
     val1: number;
+    private startX = 0;
+    private startY = 0;
+    private touchThreshold = 10;
     val2: number = 3;
     val3: number = 5;
     val4: number = 5;
@@ -196,6 +199,7 @@ export class VenueListComponent implements OnInit {
     showOtpErrors: boolean = false;
     otpError = undefined;
     // @ViewChild('ngxotp') ngxotp: NgxOtpInputComponent;
+    @ViewChild('galleryWrapper') galleryWrapper: ElementRef;
     public config: NgxOtpInputConfig = {
         otpLength: 4,
         autofocus: true,
@@ -241,6 +245,9 @@ export class VenueListComponent implements OnInit {
     public forgotPassForm: FormGroup;
     public loginFormSubmitted: boolean = false;
     public birthYearRange;
+    selectedCityName: string = '';
+selectedSubareaName: string = '';
+selectedVenueNames:string = '';
     public birthYearDefaultDate;
     public birthMinValue: Date = new Date(environment.defaultDate);
     public birthMaxValue: Date = new Date(maxYearFunction());
@@ -475,7 +482,54 @@ export class VenueListComponent implements OnInit {
         this.meta.addTag({ name: 'robots', content: 'index, follow' });
 
     }
-    getAllVenueList() {
+
+    ngAfterViewInit() {
+        if (this.galleryWrapper) {
+          const element = this.galleryWrapper.nativeElement;
+
+          // Add touch event listeners
+          element.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+          element.addEventListener('touchmove', this.handleTouchMove, { passive: false });
+        }
+      }
+
+      ngOnDestroy() {
+        // Clean up event listeners to prevent memory leaks
+        if (this.galleryWrapper) {
+          const element = this.galleryWrapper.nativeElement;
+          element.removeEventListener('touchstart', this.handleTouchStart);
+          element.removeEventListener('touchmove', this.handleTouchMove);
+        }
+      }
+
+      handleTouchStart = (event: TouchEvent) => {
+        // Record the initial touch coordinates
+        if (event.touches.length === 1) {
+          this.startX = event.touches[0].clientX;
+          this.startY = event.touches[0].clientY;
+        }
+      }
+
+      handleTouchMove = (event: TouchEvent) => {
+        // Ensure we have a single touch point
+        if (event.touches.length !== 1) {
+          return;
+        }
+
+        const touch = event.touches[0];
+        const deltaX = touch.clientX - this.startX;
+        const deltaY = touch.clientY - this.startY;
+
+        // Check if movement is more vertical (scrolling) or horizontal (swiping)
+        if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > this.touchThreshold) {
+          // Vertical movement (scrolling) - allow default behavior
+          event.stopPropagation();
+        } else if (Math.abs(deltaX) > this.touchThreshold) {
+          // Horizontal movement (swiping) - prevent default to allow gallery navigation
+          event.preventDefault();
+        }
+      }
+         getAllVenueList() {
         let query = "filterByDisable=false&filterByStatus=true&filterByAssured=true";
         // &filterByCategory=" + this.selectedCategoryId;
         this.venueService.getVenueListAllVenues().subscribe(
@@ -534,6 +588,7 @@ export class VenueListComponent implements OnInit {
     private updateCurrentPage(currentPage: number): void {
         //setTimeout(() => this.paginator.changePage(currentPage));
     }
+
     showOfferDialog() {
         this.urlMode = "venue_list";
         if (this.selectedCategoryId == undefined) {
@@ -556,26 +611,48 @@ export class VenueListComponent implements OnInit {
             this.numberPopup = true;
             this.otpPopup = false;
             this.otpthankyouPopup = false;
-            // this.ngxotp.clear();
             this.otp = undefined;
         } else {
-            let selectedCities = JSON.stringify(this.selectedCities);
-            let selectedSubareaIds = JSON.stringify(this.selectedSubareaIds);
-            let selectedVenueIds = JSON.stringify(this.selectedVenueIds);
+            if (this.selectedVenueIds && this.selectedVenueIds.length > 0) {
+                let selectedCities = JSON.stringify(this.selectedCities);
+                let selectedSubareaIds = JSON.stringify(this.selectedSubareaIds);
+                let selectedVenueIds = JSON.stringify(this.selectedVenueIds);
 
-            this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-            this.router.onSameUrlNavigation = 'reload';
-            this.router.navigate(
-                ['/banquet-halls'],
-                {
-                    queryParams: {
-                        startDate: this.startDate, endDate: this.endDate, capacity: this.capacity, occasion: this.selectedCategoryId, city: selectedCities,
-                        area: selectedSubareaIds, venue: selectedVenueIds
+                this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+                this.router.onSameUrlNavigation = 'reload';
+                this.router.navigate(
+                    ['/banquet-halls'],
+                    {
+                        queryParams: {
+                            startDate: this.startDate,
+                            endDate: this.endDate,
+                            capacity: this.capacity,
+                            occasion: this.selectedCategoryId,
+                            city: selectedCities,
+                            area: selectedSubareaIds,
+                            venue: selectedVenueIds
+                        }
                     }
+                );
+            } else {
+                const occasionName = this.occasion?.slug || 'all';
+                const cityName = this.selectedCityName || 'mumbai';
+                const routeParams = [
+                    '/banquet-halls',
+                    occasionName.toLowerCase().replace(/\s+/g, '-'),
+                    cityName.toLowerCase().replace(/\s+/g, '-')
+                ];
+
+                // Only add subarea if it's not 'all'
+                if (this.selectedSubareaName && this.selectedSubareaName !== 'all') {
+                    routeParams.push(this.selectedSubareaName.toLowerCase().replace(/\s+/g, '-'));
                 }
-            );
+
+                this.router.navigate(routeParams);
+            }
         }
     }
+
     showDialogotp() {
         this.otpPopup = true;
         this.numberPopup = false;
@@ -1575,17 +1652,19 @@ export class VenueListComponent implements OnInit {
     onSelectSearch(event) {
         if (event.mode == 'venue') {
             this.selectedVenueIds.push(event.id);
+            this.selectedVenueNames = event.name;
         }
         if (event.mode == 'subarea') {
             this.selectedSubareaIds.push(event.id);
+            this.selectedSubareaName = event.name.split(',')[0].trim();
         }
         if (event.mode == 'city') {
             this.selectedCities.push(event.id);
+            this.selectedCityName = event.name.split(',')[0].trim();
         }
-        // this.finalVenueList = [];
-        // this.pageNumber = 1;
-        // this.getVenueList();
     }
+
+
     onClearResetAllData(event) {
         if (event.mode === 'venue') {
             let index = this.findVenueIndexById(event.id, this.selectedVenueIds);

@@ -138,6 +138,10 @@ import { CancellationComponent } from './frontend/cancellation/cancellation.comp
                             path: 'banquet-halls/:occasion/:city/:subarea',
                             component: VenueCategoryListComponent,
                         },
+                        {
+                            path: 'banquet-halls/:occasion/:city/:subarea/:venue',
+                            component: VenueCategoryListComponent,
+                        },
                         //vendor Details Screen
                         {
                             path: 'vendor-detail/:location/:category/:metaurl',

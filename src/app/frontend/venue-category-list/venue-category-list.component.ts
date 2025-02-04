@@ -111,6 +111,9 @@ export class VenueCategoryListComponent {
         },
     ];
     public selectedCategoryId: any[];
+    selectedCityName: string = '';
+    selectedSubareaName: string = '';
+    selectedVenueNames:string = '';
     public urlMode;
     public finalVenueList: any[] = [];
     public listingblock;
@@ -1192,17 +1195,18 @@ export class VenueCategoryListComponent {
     onSelectSearch(event) {
         if (event.mode == 'venue') {
             this.selectedVenueIds.push(event.id);
+            this.selectedVenueNames = event.name;
         }
         if (event.mode == 'subarea') {
             this.selectedSubareaIds.push(event.id);
+            this.selectedSubareaName = event.name.split(',')[0].trim();
         }
         if (event.mode == 'city') {
             this.selectedCities.push(event.id);
+            this.selectedCityName = event.name.split(',')[0].trim();
         }
-        // this.finalVenueList = [];
-        // this.pageNumber = 1;
-        // this.getVenueList(this.lazyLoadEvent, this.mode);
     }
+
     onClickClear() {
         this.rangeDates = null;
         this.startDate = undefined;
