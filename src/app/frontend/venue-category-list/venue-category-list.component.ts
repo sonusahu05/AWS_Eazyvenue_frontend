@@ -1230,30 +1230,42 @@ export class VenueCategoryListComponent {
         // this.getVenueList(this.lazyLoadEvent, this.mode);
     }
     onClickSearch() {
-        let selectedCities;
-        if (this.selectedCities.length > 0) {
-            if (this.selectedCities[0].id === undefined) {
-                selectedCities = JSON.stringify(this.selectedCities);
-            } else {
-                selectedCities = [this.selectedCities[0].id];
+        if (this.selectedVenueIds && this.selectedVenueIds.length > 0) {
+            let selectedCities;
+            if (this.selectedCities.length > 0) {
+                selectedCities = this.selectedCities[0].id ? [this.selectedCities[0].id] : JSON.stringify(this.selectedCities);
             }
+
+            let selectedSubareaIds = JSON.stringify(this.selectedSubareaIds);
+            let selectedVenueIds = JSON.stringify(this.selectedVenueIds);
+
+            this.router.navigate(['/banquet-halls'], {
+                queryParams: {
+                    startDate: this.startDate,
+                    endDate: this.endDate,
+                    capacity: this.capacity,
+                    occasion: this.selectedCategories,
+                    city: selectedCities,
+                    area: selectedSubareaIds,
+                    venue: selectedVenueIds
+                }
+            }).then(() => {
+                window.location.reload(); // Force page reload after navigation
+            });
+
+        } else {
+            const categoryName = this.selectedCategoriesNames[0]?.name?.toLowerCase().replace(/\s+/g, '-') || 'all';
+            const cityName = this.selectedCityName || 'mumbai';
+            const routeParams = ['/banquet-halls', categoryName, cityName.toLowerCase().replace(/\s+/g, '-')];
+
+            if (this.selectedSubareaName && this.selectedSubareaName !== 'all') {
+                routeParams.push(this.selectedSubareaName.toLowerCase().replace(/\s+/g, '-'));
+            }
+
+            this.router.navigate(routeParams).then(() => {
+                window.location.reload(); // Force page reload after navigation
+            });
         }
-        //  = JSON.stringify(this.selectedCities);
-        let selectedSubareaIds = JSON.stringify(this.selectedSubareaIds);
-        let selectedVenueIds = JSON.stringify(this.selectedVenueIds);
-        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-        this.router.onSameUrlNavigation = 'reload';
-        this.router.navigate(['/banquet-halls'], {
-            queryParams: {
-                startDate: this.startDate,
-                endDate: this.endDate,
-                capacity: this.capacity,
-                occasion: this.selectedCategories,
-                city: selectedCities,
-                area: selectedSubareaIds,
-                venue: selectedVenueIds,
-            },
-        });
     }
 
     onClearResetAllData(event) {
@@ -1268,6 +1280,7 @@ export class VenueCategoryListComponent {
             );
             let filterVenueIndex = this.findVenueIndexById(
                 event.id,
+
                 this.filterVenueIds
             );
             if (index !== -1) {
