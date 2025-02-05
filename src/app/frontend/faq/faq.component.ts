@@ -35,6 +35,8 @@ export class FaqComponent implements OnInit, OnChanges {
     fullDescription: string = '';
     initialDescription: string = '';
     isFullDescriptionVisible: boolean = false;
+    titlePrefix: string;
+    titleLocation: string;
 
     constructor(private route: ActivatedRoute, private router: Router) {}
 
@@ -94,30 +96,38 @@ export class FaqComponent implements OnInit, OnChanges {
                 )
                 .join(' ');
         };
+
+        // Initialize title parts
+        let prefix = 'Banquet Halls ln';
+        let location = '';
+
         // Check the route parameters first
         const subarea = this.route.snapshot.params['subarea'];
         const city = this.route.snapshot.params['city'];
 
         if (city && !subarea) {
-            // If only city is present in the route, use just the city
-            this.title = `Banquet Halls in ${capitalizeWords(city)}`;
+            // If only city is present in the route
+            location = capitalizeWords(city);
         } else if (subarea && city) {
-            // If both subarea and city are in the route, use them directly
-            this.title = `Banquet Halls in ${capitalizeWords(subarea)}`;
+            // If both subarea and city are in the route
+            location = capitalizeWords(subarea);
         } else if (this.selectedVenueList.length > 0) {
             const { subarea, cityname } = this.selectedVenueList[0];
 
             // Fallback to first venue details if route params are incomplete
             if (subarea) {
-                this.title = `Banquet Halls in ${capitalizeWords(
-                    subarea
-                )}, ${capitalizeWords(cityname)}`;
+                location = `${capitalizeWords(subarea)}, ${capitalizeWords(cityname)}`;
             } else {
-                this.title = `Banquet Halls in ${capitalizeWords(cityname)}`;
+                location = capitalizeWords(cityname);
             }
         } else {
-            this.title = 'Venue Not Available';
+            prefix = '';
+            location = 'Venue Not Available';
         }
+
+        // Store both parts separately for template use
+        this.titlePrefix = prefix;
+        this.titleLocation = location;
     }
 
     updateDescription(): void {
