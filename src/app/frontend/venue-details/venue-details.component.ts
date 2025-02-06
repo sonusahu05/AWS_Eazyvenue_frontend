@@ -1141,7 +1141,7 @@ export class VenueDetailsComponent implements OnInit {
                         this.decorArray.push({
                             name: 'Basic',
                             price: this.venueDetails.decor1Price,
-                            image: 'http://localhost:3006//uploads/venuePic/Hope_Hall_Bhayander_West_Mumbai_001.jpg',
+                            image: '/assets/images/icons/Basic.jpg',
                             selected: false,
                             decorImages: this.venueDetails.decor1Image,
                         });
@@ -1161,7 +1161,7 @@ export class VenueDetailsComponent implements OnInit {
                         this.decorArray.push({
                             name: 'Standard',
                             price: this.venueDetails.decor2Price,
-                            image: 'http://localhost:3006//uploads/venuePic/Hope_Hall_Bhayander_West_Mumbai_001.jpg',
+                            image: '/assets/images/icons/Standard.jpg',
                             selected: false,
                             decorImages: this.venueDetails.decor2Image,
                         });
@@ -1180,7 +1180,7 @@ export class VenueDetailsComponent implements OnInit {
                         this.decorArray.push({
                             name: 'Premium',
                             price: this.venueDetails.decor3Price,
-                            image: 'http://localhost:3006//uploads/venuePic/Hope_Hall_Bhayander_West_Mumbai_001.jpg',
+                            image: '/assets/images/icons/Premium.jpg',
                             selected: false,
                             decorImages: this.venueDetails.decor3Image,
                         });
