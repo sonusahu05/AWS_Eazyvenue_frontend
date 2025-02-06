@@ -772,50 +772,66 @@ h4.ng-star-inserted {
 }
 
 .venue-title {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     width: 100%;
-    margin: 3px auto;
+    margin: 20px auto;
     padding: 0 15px;
-}
-
-.venue-title .prefix {
-    display: block;
-    font-size: clamp(14px, 4vw, 24px);
-    line-height: 1.2;
-    color: #444;
-    margin-bottom: 5px;
-    margin-top: 30px;
-}
-
-.venue-title .location {
-    display: block;
-    font-size: clamp(16px, 5vw, 32px);
-    line-height: 1.2;
-    font-weight: 600;
     text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-    color: #333;
-}
+  }
 
-@media screen and (max-width: 768px) {
+  /* Desktop styles - single line */
+  @media screen and (min-width: 769px) {
     .venue-title {
-        margin: 4px auto;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
     }
 
     .venue-title .prefix {
-        font-size: clamp(34px, 3.5vw, 20px);
+      font-size: 50px;
+      line-height: 1.2;
+      color: #444;
     }
 
     .venue-title .location {
-        font-size: clamp(36px, 4vw, 24px);
+      font-size: 50px;
+      line-height: 1.2;
+      font-weight: 600;
+      color: #333;
     }
-}
+  }
+
+  /* Mobile styles - stacked */
+  @media screen and (max-width: 768px) {
+    .venue-title {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .venue-title .prefix {
+      display: block;
+      font-size: clamp(34px, 3.5vw, 20px);
+      line-height: 1.2;
+      color: #444;
+      margin-bottom: 5px;
+    }
+
+    .venue-title .location {
+      display: block;
+      font-size: clamp(36px, 4vw, 24px);
+      line-height: 1.2;
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      color: #333;
+    }
+  }
 
 .pageformat {
     align-items: center;
