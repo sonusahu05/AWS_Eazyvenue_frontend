@@ -45,12 +45,12 @@
                                 </li>
                                 <li class="one-list heading">Vendor Type</li>
                                 <li class="one-list heading">Rating</li>
-                               
+
                                 <li class="li-style bottom">
                                     <div class="heading"><span>Vendor Services</span></div>
-                                 
+
                                 </li>
-                                
+
                             </ul>
                         </div>
                     </div>
@@ -60,7 +60,7 @@
                                 <div class="row">
                                     <div class="col-3 compare-options" *ngFor="let vendor of compareVendorData">
                                         <div class="cd-table-column table-width">
-                                            <h2 class="venue-img"><img src="{{vendor.image}}" alt="{{vendor.imageAlt}}" 
+                                            <h2 class="venue-img"><img src="{{vendor.image}}" alt="{{vendor.imageAlt}}"
                                                     class="com-img"></h2>
                                             <ul class="compare-list">
                                                 <li class="venue-heading">
@@ -68,12 +68,12 @@
                                                     <p class="venue-add">{{vendor.location}}</p>
                                                 </li>
                                                 <li class="li-style">
-                                                   
+
                                                     <div class="one-list"><span class="compare-price">{{vendor.vendorType}}</span></div>
                                                 </li>
-                                               
+
                                                 <li>
-                                                    <div class="icon-review price-div"> 
+                                                    <div class="icon-review price-div">
                                                             <img src="assets/img/svg/google.png" alt="">
                                                         <i class="pi pi-star-fill" style="font-size: 12px;">
                                                             <span class="rating-style">
@@ -87,7 +87,7 @@
                                                         </i>
                                                         <!-- <p-rating [(ngModel)]="val4" readonly="true" [cancel]="false"></p-rating> -->
                                                     </div>
-                                                   
+
                                                 </li>
                                                 <li class="li-style">
                                                     <p *ngFor="let service of vendor.vendorServices" style="margin: 5px; padding: 5px;">
@@ -95,19 +95,19 @@
                                                     </p>
                                                 </li>
                                             </ul>
-                                            <!-- <div class="submit-btn text-center p-2 border-top">
+                                            <div class="submit-btn text-center p-2 border-top">
                                                 <button pButton pRipple type="button" (click)="onClickBookNow(venue.id)"
                                                     label="Book Now" class="float-end p-button-secondary"></button>
-                                            </div> -->
-                
-                                        </div>  
+                                            </div>
+
+                                        </div>
                                     </div>
                                 </div>
 
                             </div>
                         </div>
                     </div>
-                   
+
 
                 </div>
             </section> <!-- cd-table -->
