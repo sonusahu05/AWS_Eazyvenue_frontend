@@ -1513,197 +1513,92 @@ export class VenueCategoryListComponent {
     }
     onClickSeatingCapacity(capacity, event) {
         if (event.checked) {
-            if (capacity.id != undefined) {
+            if (capacity.id !== undefined) {
                 this.seatingCapacityId = capacity.id;
                 this.seatingCapacity = capacity.value;
-                this.seatingCapacityCondition = capacity.condition;
-                this.filterCapacityArray.forEach((element) => {
-                    let reportObj = {
-                        id: element.id,
-                        label: element.label,
-                        condition: element.condition,
-                        value: element.value,
-                        status: element.status,
-                    };
+                this.seatingCapacityCondition = capacity.condition || 'lte'; // Set default condition
+
+                // Reset all status flags first
+                this.filterCapacityArray.forEach(element => {
                     element.status = false;
-                    if (this.seatingCapacityId == element.id) {
-                        const index = this.findIndexById(
-                            element.id,
-                            this.filterCapacityArray
-                        );
-                        reportObj = {
-                            id: element.id,
-                            label: element.label,
-                            condition: element.condition,
-                            value: element.value,
-                            status: true,
-                        };
-                        this.filterCapacityArray[index] = reportObj;
-                        this.selectedSeatingCapacityNames = [
-                            {
-                                id: element.id,
-                                name: element.label,
-                                selected: true,
-                            },
-                        ];
-                    }
                 });
+
+                // Update only the selected capacity
+                const selectedIndex = this.findIndexById(capacity.id, this.filterCapacityArray);
+                if (selectedIndex !== -1) {
+                    this.filterCapacityArray[selectedIndex].status = true;
+                    this.selectedSeatingCapacityNames = [{
+                        id: capacity.id,
+                        name: this.filterCapacityArray[selectedIndex].label,
+                        selected: true
+                    }];
+                }
             } else {
                 this.seatingCapacity = capacity;
-                this.seatingCapacityCondition = '';
-                if (capacity > 1000) {
-                    this.capacityCondition = 'lte';
-                } else {
-                    this.capacityCondition = 'lte';
-                }
+                // Always use 'lte' for numerical capacity values
+                this.seatingCapacityCondition = 'lte';
             }
         } else {
-            this.filterCapacityArray.forEach((element) => {
-                let reportObj = {
-                    id: element.id,
-                    label: element.label,
-                    condition: element.condition,
-                    value: element.value,
-                    status: element.status,
-                };
+            // Clear selection
+            this.filterCapacityArray.forEach(element => {
                 element.status = false;
-                if (this.seatingCapacityId == element.id) {
-                    const index = this.findIndexById(
-                        element.id,
-                        this.filterCapacityArray
-                    );
-                    reportObj = {
-                        id: element.id,
-                        label: element.label,
-                        condition: element.condition,
-                        value: element.value,
-                        status: false,
-                    };
-                    this.filterCapacityArray[index] = reportObj;
-                    let selectedNameIndex = this.findIndexById(
-                        element.id,
-                        this.selectedSeatingCapacityNames
-                    );
-
-                    this.selectedSeatingCapacityNames.splice(
-                        selectedNameIndex,
-                        1
-                    );
-                }
             });
-            this.seatingCapacity = capacity;
+            this.selectedSeatingCapacityNames = [];
+            this.seatingCapacity = null;
             this.seatingCapacityCondition = '';
         }
+
+        // Reset and refresh venue list
         this.finalVenueList = [];
         this.pageNumber = 1;
         this.mode = 'seating_capacity';
         this.getVenueList(this.lazyLoadEvent, this.mode);
     }
+
     onClickGuestCount(capacity, event) {
         if (event.checked) {
-            if (capacity.id != undefined) {
+            if (capacity.id !== undefined) {
                 this.capacityId = capacity.id;
                 this.capacity = capacity.value;
-                // if (typeof this.capacity != 'number') {
-                //     console.log(typeof this.capacity);
-                //     return;
-                // }
-                this.capacityCondition = capacity.condition;
-                this.filterGuestArray.forEach((element) => {
-                    let reportObj = {
-                        id: element.id,
-                        label: element.label,
-                        condition: element.condition,
-                        value: element.value,
-                        status: element.status,
-                    };
+                this.capacityCondition = capacity.condition || 'lte'; // Set default condition
+
+                // Reset all status flags first
+                this.filterGuestArray.forEach(element => {
                     element.status = false;
-                    if (this.capacityId == element.id) {
-                        const index = this.findIndexById(
-                            element.id,
-                            this.filterGuestArray
-                        );
-                        reportObj = {
-                            id: element.id,
-                            label: element.label,
-                            condition: element.condition,
-                            value: element.value,
-                            status: true,
-                        };
-                        this.filterGuestArray[index] = reportObj;
-                        this.selectedFloatingCapacityNames = [
-                            {
-                                id: element.id,
-                                name: element.label,
-                                selected: true,
-                            },
-                        ];
-                    }
                 });
-            } else {
-                this.capacity = capacity.value;
-                this.capacityCondition = '';
-                if (capacity > 500) {
-                    this.capacityCondition = 'lte';
-                } else {
-                    this.capacityCondition = 'lte';
+
+                // Update only the selected capacity
+                const selectedIndex = this.findIndexById(capacity.id, this.filterGuestArray);
+                if (selectedIndex !== -1) {
+                    this.filterGuestArray[selectedIndex].status = true;
+                    this.selectedFloatingCapacityNames = [{
+                        id: capacity.id,
+                        name: this.filterGuestArray[selectedIndex].label,
+                        selected: true
+                    }];
                 }
+            } else {
+                this.capacity = capacity.value || capacity;
+                // Always use 'lte' for numerical capacity values
+                this.capacityCondition = 'lte';
             }
         } else {
-            if (capacity.value) {
-                this.capacity = capacity.value;
-            } else {
-                this.capacity = capacity;
-            }
-
-            this.capacityCondition = '';
-            // if (typeof this.capacity != 'number') {
-            //     console.log(typeof this.capacity);
-            //     return;
-            // }
-            this.filterGuestArray.forEach((element) => {
-                let reportObj = {
-                    id: element.id,
-                    label: element.label,
-                    condition: element.condition,
-                    value: element.value,
-                    status: element.status,
-                };
+            // Clear selection
+            this.filterGuestArray.forEach(element => {
                 element.status = false;
-                if (this.seatingCapacityId == element.id) {
-                    const index = this.findIndexById(
-                        element.id,
-                        this.filterGuestArray
-                    );
-                    reportObj = {
-                        id: element.id,
-                        label: element.label,
-                        condition: element.condition,
-                        value: element.value,
-                        status: false,
-                    };
-                    this.filterGuestArray[index] = reportObj;
-                    let selectedNameIndex = this.findIndexById(
-                        element.id,
-                        this.selectedFloatingCapacityNames
-                    );
-                    this.selectedFloatingCapacityNames.splice(
-                        selectedNameIndex,
-                        1
-                    );
-                }
             });
-            if (capacity > 500) {
-                this.capacityCondition = 'lte';
-            } else {
-                this.capacityCondition = 'lte';
-            }
+            this.selectedFloatingCapacityNames = [];
+            this.capacity = null;
+            this.capacityCondition = '';
         }
+
+        // Reset and refresh venue list
         this.finalVenueList = [];
         this.pageNumber = 1;
         this.mode = 'guest';
         this.getVenueList(this.lazyLoadEvent, this.mode);
     }
+
     onClickTopGuestCount(guestCount, event) {
         if (guestCount.value) {
             this.guestCount = guestCount.value;
@@ -2248,12 +2143,10 @@ export class VenueCategoryListComponent {
         if (mode == 'guest') {
             this.pageNumber = 1;
             rows = 10;
-            query +=
-                '&filterByGuestCondition=' +
-                this.capacityCondition +
-                '&filterByGuestCapacity=' +
-                this.capacity;
-            newQuery += '&guestCount=' + this.capacityCondition;
+            if (this.capacity && this.capacityCondition) {
+                newQuery += '&guestCount=' + this.capacity + '&guestCondition=' + this.capacityCondition;
+                query += '&filterByGuestCondition=' + this.capacityCondition + '&filterByGuestCapacity=' + this.capacity;
+            }
             if (this.selectedCategories.length > 0) {
                 newQuery += '&categoryId=' + this.selectedCategories[0];
                 query += '&filterByCategory=' + this.selectedCategories;
@@ -2299,11 +2192,10 @@ export class VenueCategoryListComponent {
         if (mode == 'seating_capacity') {
             this.pageNumber = 1;
             rows = 10;
-            query +=
-                '&filterBySeatingCapacityCondition=' +
-                this.seatingCapacityCondition +
-                '&filterBySeatingCapacity=' +
-                this.seatingCapacity;
+            if (this.seatingCapacity && this.seatingCapacityCondition) {
+                newQuery += '&seatingCapacity=' + this.seatingCapacity + '&seatingCondition=' + this.seatingCapacityCondition;
+                query += '&filterBySeatingCapacityCondition=' + this.seatingCapacityCondition + '&filterBySeatingCapacity=' + this.seatingCapacity;
+            }
             if (this.selectedCategories.length > 0) {
                 newQuery += '&categoryId=' + this.selectedCategories[0];
                 query += '&filterByCategory=' + this.selectedCategories;
