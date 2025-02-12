@@ -22,6 +22,7 @@ import { PostAvailabilityService } from 'src/app/services/postAvailability.servi
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { VenueOrderService } from 'src/app/services/venueOrder.service';
+import { HttpClient } from '@angular/common/http';
 import {
     FormBuilder,
     FormGroup,
@@ -71,9 +72,17 @@ interface City {
     ],
 })
 export class VenueDetailsComponent implements OnInit {
+    [x: string]: any;
     venueDetailSearch: boolean = false;
     responsiveOptions: any[] | undefined;
+    newReview = {
+        reviewtitle: '',
+        reviewdescription: '',
+        reviewrating: 5,
+        created_at: new Date()
+    };
     displayCustomAmountModal: boolean = false;
+    reviewForm: FormGroup;
 
     showVenueDetailSearch() {
         this.venueDetailSearch = true;
@@ -290,6 +299,7 @@ export class VenueDetailsComponent implements OnInit {
     @ViewChild('paginator', { static: true }) paginator: Paginator;
     @ViewChild('searchCalendar', { static: true }) datePicker;
     constructor(
+        private http: HttpClient,
         private renderer: Renderer2,
         private productService: ProductService,
         private BannerService: BannerService,
@@ -322,6 +332,7 @@ export class VenueDetailsComponent implements OnInit {
 
     ngOnInit() {
         const canonicalLink = this.renderer.createElement('link');
+        this.initReviewForm();
         this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
         this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
         this.renderer.appendChild(document.head, canonicalLink);
@@ -628,6 +639,54 @@ export class VenueDetailsComponent implements OnInit {
     }
     get h() {
         return this.mobileForm.controls;
+    }
+
+    submitReview() {
+        if (!this.venueDetails || !this.venueDetails.id) {
+            console.error('venueDetails is undefined or missing ID');
+            return;
+        }
+
+        this.venueService.addReview(this.venueDetails.id, this.newReview).subscribe({
+            next: (response: any) => {
+                if (!this.venueDetails.reviews) {
+                    this.venueDetails.reviews = [];
+                }
+                this.venueDetails.reviews.unshift(response);
+                this.newReview = {
+                    reviewtitle: '',
+                    reviewdescription: '',
+                    reviewrating: 5,
+                    created_at: new Date()
+                };
+            },
+            error: (error) => {
+                console.error('Error adding review:', error);
+            }
+        });
+    }
+
+
+    initReviewForm() {
+        this.reviewForm = this.fb.group({
+            reviewdescription: ['', Validators.required],
+            reviewrating: [5, Validators.required],
+            reviewtitle: ['', Validators.required],
+        });
+    }
+
+    setRating(rating: number) {
+        this.reviewForm.patchValue({ reviewrating: rating });
+    }
+
+    // Close modal without jQuery
+    closeModal() {
+        this.reviewPopup.nativeElement.style.display = 'none';
+    }
+
+    // Optional: Display all reviews
+    getAllReviews() {
+        return this.venueDetails.reviews || [];
     }
 
     onSubmitNumber(mode) {

@@ -788,11 +788,11 @@
                                                                 <div
                                                                     class="Ratings-point col-md-12"
                                                                 >
-                                                                    <h1
-                                                                        class="review-number"
-                                                                    >
-                                                                        4.5
-                                                                    </h1>
+                                                                <h5>
+                                                                    {{
+                                                                        venueDetails.revirerating
+                                                                    }}
+                                                                </h5>
                                                                 </div>
                                                                 <div
                                                                     class="rateing-star col-md-12"
@@ -840,7 +840,7 @@
                                                                         <h2
                                                                             class="reviews-number"
                                                                         >
-                                                                            (65
+                                                                            (3
                                                                             Reviews)
                                                                         </h2>
                                                                     </div>
@@ -1009,477 +1009,86 @@
                                                             </li>
                                                         </ul>
                                                     </div>
-                                                    <div
-                                                        class="col-md-4 rate-this-item"
-                                                    >
-                                                        <h5 class="rate-style">
-                                                            Rate this items
-                                                        </h5>
-                                                        <p>
-                                                            Share your opinon
-                                                            with other users
-                                                        </p>
-                                                        <p
-                                                            class="reviw-button-text"
-                                                        >
-                                                            <a
-                                                                href="#"
-                                                                class="write-button-review"
-                                                                data-toggle="modal"
-                                                                data-target="#review-popup"
-                                                                >Write review
-                                                                and rate</a
-                                                            >
-                                                        </p>
-                                                    </div>
                                                 </div>
                                             </div>
+                                             <!-- Add Review Form -->
+                                            <div class="review-form mb-4">
+                                                <form #reviewForm="ngForm" (ngSubmit)="submitReview()">
+                                                    <div class="form-group mb-3">
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            placeholder="Review Title"
+                                                            name="reviewTitle"
+                                                            [(ngModel)]="newReview.reviewtitle"
+                                                            required>
+                                                    </div>
+                                                    <div class="form-group mb-3">
+                                                        <select
+                                                            class="form-control"
+                                                            name="rating"
+                                                            [(ngModel)]="newReview.reviewrating"
+                                                            required>
+                                                            <option value="1">1 Star</option>
+                                                            <option value="2">2 Stars</option>
+                                                            <option value="3">3 Stars</option>
+                                                            <option value="4">4 Stars</option>
+                                                            <option value="5">5 Stars</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group mb-3">
+                                                        <textarea
+                                                            class="form-control"
+                                                            rows="3"
+                                                            placeholder="Write your review..."
+                                                            name="reviewDescription"
+                                                            [(ngModel)]="newReview.reviewdescription"
+                                                            required></textarea>
+                                                    </div>
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-primary"
+                                                        [disabled]="!reviewForm.valid">
+                                                        Submit Review
+                                                    </button>
+                                                </form>
+                                            </div>
                                             <!--rihgt-sidee section-->
-                                            <div
-                                                class="col-md-12 mian-li-review-details"
-                                            >
-                                                <h3
-                                                    style="
-                                                        font-weight: 600;
-                                                        font-size: 16px;
-                                                    "
-                                                >
-                                                    Reviews
-                                                </h3>
-                                                <!--Mian review list -->
+                                            <div class="col-md-12 mian-li-review-details">
+                                                <h3 style="font-weight: 600; font-size: 16px;">Reviews</h3>
+
+                                                <!--Main review list -->
                                                 <ul>
-                                                    <li class="reviw-user-main">
-                                                        <div
-                                                            class="review-comment-show"
-                                                        >
+                                                    <li class="reviw-user-main" *ngFor="let review of venueDetails.reviews">
+                                                        <div class="review-comment-show">
                                                             <div class="media">
-                                                                <img
-                                                                    class="align-self-center mr-3"
-                                                                    src="assets/images/category-icons/user-icon.svg"
-                                                                    alt="customer-profile"
-                                                                />
-                                                                <div
-                                                                    class="media-body reviews-comment"
-                                                                >
-                                                                    <div
-                                                                        class="customer-name"
-                                                                    >
-                                                                        <h4>
-                                                                            Ivonne
-                                                                            Andrea
-                                                                        </h4>
+                                                                <img class="align-self-center mr-3" src="assets/images/category-icons/user-icon.svg" alt="customer-profile"/>
+                                                                <div class="media-body reviews-comment">
+                                                                    <div class="customer-name">
+                                                                        <h4>{{review.reviewtitle}}</h4>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div
-                                                                class="rateing-star-customer"
-                                                            >
+                                                            <div class="rateing-star-customer">
                                                                 <ul>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
+                                                                    <li *ngFor="let star of [].constructor(review.reviewrating)">
+                                                                        <span><i class="pi pi-star-fill"></i></span>
                                                                     </li>
                                                                 </ul>
                                                             </div>
-                                                            <!--Customer-text-review-->
-                                                            .
-                                                            <div
-                                                                class="customer-comment"
-                                                            >
-                                                                <h5
-                                                                    class="reviews-heading"
-                                                                >
-                                                                    Venue
-                                                                    Ambiance &
-                                                                    Service
-                                                                </h5>
-                                                                <p>
-                                                                    We recently
-                                                                    hosted our
-                                                                    wedding at
-                                                                    <span
-                                                                        style="
-                                                                            font-weight: 500;
-                                                                        "
-                                                                        >{{
-                                                                            venueDetails.name
-                                                                        }}</span
-                                                                    >, and it
-                                                                    was
-                                                                    absolutely
-                                                                    stunning!
-                                                                    The ambiance
-                                                                    of the hall
-                                                                    was perfect,
-                                                                    and the
-                                                                    service from
-                                                                    the staff
-                                                                    was
-                                                                    exceptional.
-                                                                    Our guests
-                                                                    loved it!.
-                                                                </p>
+                                                            <div class="customer-comment">
+                                                                <span>{{review.reviewdescription}}</span>
                                                             </div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="reviw-user-main">
-                                                        <div
-                                                            class="review-comment-show"
-                                                        >
-                                                            <div class="media">
-                                                                <img
-                                                                    class="align-self-center mr-3"
-                                                                    src="assets/images/category-icons/user-icon.svg"
-                                                                    alt="customer-profile"
-                                                                />
-                                                                <div
-                                                                    class="media-body reviews-comment"
-                                                                >
-                                                                    <div
-                                                                        class="customer-name"
-                                                                    >
-                                                                        <h4>
-                                                                            Ivonne
-                                                                            Andrea
-                                                                        </h4>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div
-                                                                class="rateing-star-customer"
-                                                            >
-                                                                <ul>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <!--Customer-text-review-->
-                                                            <div
-                                                                class="customer-comment"
-                                                            >
-                                                                <h5
-                                                                    class="reviews-heading"
-                                                                >
-                                                                    Perfect for
-                                                                    Grand
-                                                                    Celebrations
-                                                                </h5>
-                                                                <p>
-                                                                    We chose
-                                                                    <span
-                                                                        style="
-                                                                            font-weight: 500;
-                                                                        "
-                                                                        >{{
-                                                                            venueDetails.name
-                                                                        }}</span
-                                                                    >
-                                                                    for our big
-                                                                    day, and we
-                                                                    couldn't be
-                                                                    happier! The
-                                                                    space was
-                                                                    huge, and
-                                                                    the decor
-                                                                    was exactly
-                                                                    how we
-                                                                    imagined.
-                                                                    Eazyvenue
-                                                                    made it
-                                                                    super easy
-                                                                    to
-                                                                    coordinate
-                                                                    everything
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="reviw-user-main">
-                                                        <div
-                                                            class="review-comment-show"
-                                                        >
-                                                            <div class="media">
-                                                                <img
-                                                                    class="align-self-center mr-3"
-                                                                    src="assets/images/category-icons/user-icon.svg"
-                                                                    alt="customer-profile"
-                                                                />
-                                                                <div
-                                                                    class="media-body reviews-comment"
-                                                                >
-                                                                    <div
-                                                                        class="customer-name"
-                                                                    >
-                                                                        <h4>
-                                                                            Ivonne
-                                                                            Andrea
-                                                                        </h4>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div
-                                                                class="rateing-star-customer"
-                                                            >
-                                                                <ul>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <!--Customer-text-review-->
-                                                            <div
-                                                                class="customer-comment"
-                                                            >
-                                                                <h5
-                                                                    class="reviews-heading"
-                                                                >
-                                                                    Excellent
-                                                                    Location &
-                                                                    Facilities
-                                                                </h5>
-                                                                <p>
-                                                                    We booked
-                                                                    <span
-                                                                        style="
-                                                                            font-weight: 500;
-                                                                        "
-                                                                        >{{
-                                                                            venueDetails.name
-                                                                        }}</span
-                                                                    >
-                                                                    for our
-                                                                    reception,
-                                                                    and it was
-                                                                    the perfect
-                                                                    venue. The
-                                                                    location was
-                                                                    easy to
-                                                                    access for
-                                                                    all our
-                                                                    guests, and
-                                                                    the
-                                                                    facilities
-                                                                    were
-                                                                    top-notch.
-                                                                    Highly
-                                                                    recommend it
-                                                                    for large
-                                                                    gatherings.
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li class="reviw-user-main">
-                                                        <div
-                                                            class="review-comment-show"
-                                                        >
-                                                            <div class="media">
-                                                                <img
-                                                                    class="align-self-center mr-3"
-                                                                    src="assets/images/category-icons/user-icon.svg"
-                                                                    alt="customer-profile"
-                                                                />
-                                                                <div
-                                                                    class="media-body reviews-comment"
-                                                                >
-                                                                    <div
-                                                                        class="customer-name"
-                                                                    >
-                                                                        <h4>
-                                                                            Ivonne
-                                                                            Andrea
-                                                                        </h4>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div
-                                                                class="rateing-star-customer"
-                                                            >
-                                                                <ul>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                    <li>
-                                                                        <span
-                                                                            ><i
-                                                                                class="pi pi-star-fill"
-                                                                            ></i
-                                                                        ></span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <!--Customer-text-review-->
-                                                            <div
-                                                                class="customer-comment"
-                                                            >
-                                                                <h5
-                                                                    class="reviews-heading"
-                                                                >
-                                                                    Great Value
-                                                                    for Money
-                                                                </h5>
-                                                                <p>
-                                                                    <span
-                                                                        style="
-                                                                            font-weight: 500;
-                                                                        "
-                                                                        >{{
-                                                                            venueDetails.name
-                                                                        }}</span
-                                                                    >
-                                                                    offers
-                                                                    amazing
-                                                                    value for
-                                                                    money! We
-                                                                    had a
-                                                                    beautiful
-                                                                    wedding,
-                                                                    complete
-                                                                    with
-                                                                    stunning
-                                                                    decor and an
-                                                                    elegant
-                                                                    setup, all
-                                                                    within our
-                                                                    budget.
-                                                                    Eazyvenue
-                                                                    made the
-                                                                    booking
-                                                                    process
-                                                                    effortless.
-                                                                </p>
+                                                            <div class="review-date">
+                                                                <small>{{review.created_at | date}}</small>
                                                             </div>
                                                         </div>
                                                     </li>
                                                 </ul>
-                                                <!--Mian review list close -->
-                                                <button
-                                                    type="button"
-                                                    name="button"
-                                                    class="reviw-more-button"
-                                                >
-                                                    See All Review
+                                                <!--Main review list close -->
+
+                                                <button type="button" name="button" class="reviw-more-button" *ngIf="venueDetails.reviews?.length > 3" (click)="seeAllReviews()">
+                                                    See All Reviews
                                                 </button>
                                             </div>
                                         </div>

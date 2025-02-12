@@ -93,6 +93,15 @@ export class VenueService {
             this.httpWithoutAuthOptions
         );
     }
+
+    addReview(venueId: string, review: any): Observable<any> {
+        return this.http.post<any>(
+            `${API_URL}s/${venueId}/reviews`,
+            review,
+            this.httpOptions
+        );
+    }
+
     getVenueDetails(id: string) {
         return this.http.get<any>(
             `${API_URL}/v1/${id}`,
