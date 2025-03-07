@@ -4,18 +4,43 @@ import {PrimeNGConfig} from 'primeng/api';
 import {AppComponent} from './app.component';
 import { TokenStorageService } from './services/token-storage.service';
 
-
 @Component({
     selector: 'app-main',
     templateUrl: './app.main.component.html',
+    styles: [`
+      /* Force mobile menu to appear */
+      @media screen and (max-width: 991px) {
+        :host ::ng-deep .layout-sidebar-active {
+          transform: translateX(0) !important;
+          left: 0 !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          z-index: 999 !important;
+          display: block !important;
+        }
+
+        :host ::ng-deep .blocked-scroll {
+          overflow: hidden;
+        }
+       /* Fix for text visibility */
+       :host ::ng-deep .layout-sidebar-active .layout-menu li a,
+        :host ::ng-deep .layout-sidebar-active .layout-menu li span,
+        :host ::ng-deep .layout-sidebar-active .layout-menu * {
+          color: #333333 !important;
+          visibility: visible !important;
+        }
+      }
+    `]
 })
+
 export class AppMainComponent {
     userData;
     userRole;
     isActiveCss = false;
     sidebarStatic: boolean;
 
-    sidebarActive = false;
+    // Changed to true by default for desktop
+    sidebarActive = window.innerWidth > 991;
 
     staticMenuMobileActive: boolean;
 
@@ -41,7 +66,7 @@ export class AppMainComponent {
 
     menuHoverActive = false;
 
-    constructor(    private tokenStorage: TokenStorageService,private menuService: MenuService, private primengConfig: PrimeNGConfig, public app: AppComponent) {
+    constructor(private tokenStorage: TokenStorageService, private menuService: MenuService, private primengConfig: PrimeNGConfig, public app: AppComponent) {
     }
 
     ngOnInit() {
@@ -51,7 +76,22 @@ export class AppMainComponent {
             this.isActiveCss = true;
         } else {
             this.isActiveCss = false;
+        }
 
+        // Add window resize listener to handle responsive behavior
+        window.addEventListener('resize', this.onResize.bind(this));
+    }
+
+    ngOnDestroy() {
+        // Remove event listener when component is destroyed
+        window.removeEventListener('resize', this.onResize.bind(this));
+    }
+
+    onResize() {
+        // Auto-adjust sidebar state based on screen size
+        if (this.isDesktop()) {
+            this.staticMenuMobileActive = false;
+            this.unblockBodyScroll();
         }
     }
 
@@ -73,12 +113,11 @@ export class AppMainComponent {
             this.rightPanelActive = false;
         }
 
-        if (!this.menuClick) {
-            if (this.staticMenuMobileActive) {
-                this.staticMenuMobileActive = false;
-            }
-
+        // Only close mobile menu when clicking outside menu area and on mobile
+        if (!this.menuClick && this.isMobile()) {
+            this.staticMenuMobileActive = false;
             this.menuHoverActive = false;
+            this.sidebarActive = false;
             this.unblockBodyScroll();
         }
 
@@ -98,8 +137,11 @@ export class AppMainComponent {
         this.topbarMenuActive = false;
         this.rightPanelActive = false;
 
+        // Fix for mobile view - always toggle mobile menu
         if (this.isMobile()) {
             this.staticMenuMobileActive = !this.staticMenuMobileActive;
+            this.sidebarActive = !this.sidebarActive;
+
             if (this.staticMenuMobileActive) {
                 this.blockBodyScroll();
             } else {
@@ -163,7 +205,7 @@ export class AppMainComponent {
     }
 
     onSidebarMouseLeave($event) {
-        if (this.app.menuMode === 'sidebar' && !this.sidebarStatic) {
+        if (this.app.menuMode === 'sidebar' && !this.sidebarStatic && !this.staticMenuMobileActive) {
             setTimeout(() => {
                 this.sidebarActive = false;
             }, 250);
