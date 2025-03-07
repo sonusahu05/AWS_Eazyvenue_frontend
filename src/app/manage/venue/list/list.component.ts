@@ -83,6 +83,7 @@ export class ListComponent implements OnInit {
     cmsmoduleView: any;
     cmsmoduleDelete: any;
     public venueList: any[];
+    isVenueOwner: boolean = false;
     errorMessage;
     private lastTableLazyLoadEvent: LazyLoadEvent;
     public totalRecords: 0;
@@ -142,12 +143,12 @@ export class ListComponent implements OnInit {
         ];
 
         this.userRoles = JSON.parse(sessionStorage.getItem('userRoles'));
+
+        // Check if user is a venue owner
+        const userData = this.tokenStorageService.getUser();
+        this.isVenueOwner = userData && userData.userdata && userData.userdata.rolename === 'venueowner';
+
         this.getCategory();
-        // console.log(this.userRoles.casestudy,"RRWW");
-        // this.cmsmoduleAdd = this.userRoles.cmsmodule.add;
-        // this.cmsmoduleEdit = this.userRoles.cmsmodule.edit;
-        // this.cmsmoduleView = this.userRoles.cmsmodule.view;
-        // this.cmsmoduleDelete = this.userRoles.cmsmodule.delete;
     }
 
     // clear() {
@@ -287,10 +288,18 @@ export class ListComponent implements OnInit {
         this.VenueService.getVenueListForFilter(queryString).subscribe(
             (data) => {
                 // Filter out disabled venues
-                this.venueList = data.data.items.filter(venue => !venue.disable);
-                this.totalRecords = data.data.totalCount;
+                let venues = data.data.items.filter(venue => !venue.disable);
 
-                // **Apply Client-side Sorting**
+                // If user is a venue owner, only show the first venue
+                if (this.isVenueOwner && venues.length > 0) {
+                    this.venueList = [venues[0]];
+                    this.totalRecords = data.data.totalCount > 0 ? data.data.totalCount : 0;
+                } else {
+                    this.venueList = venues;
+                    this.totalRecords = data.data.totalCount;
+                }
+
+                // Apply client-side sorting if needed
                 if (event.sortField && event.sortOrder) {
                     this.venueList.sort((a, b) => {
                         const valueA = a[event.sortField] || '';

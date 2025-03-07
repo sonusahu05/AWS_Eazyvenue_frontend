@@ -159,6 +159,7 @@
                     [columns]="cols"
                     [rows]="10"
                     [paginator]="true"
+                    [paginator]="!isVenueOwner"
                     [resizableColumns]="true"
                     class="p-mb-0"
                     [autoLayout]="true"
@@ -566,7 +567,7 @@
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="summary">
-                        <div class="p-d-flex p-ai-center p-jc-between">
+                        <div class="p-d-flex p-ai-center p-jc-between" *ngIf="!isVenueOwner">
                             In total there are {{ totalRecords }} Venues.
                         </div>
                     </ng-template>
