@@ -3,6 +3,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { Table } from 'primeng/table';
 import { FormBuilder, FormGroup, FormArray, Validators, FormControl } from '@angular/forms';
+import { VenueService } from '../venue/service/venue.service';
+import { TokenStorageService } from 'src/app/services/token-storage.service';
 // import { UserService } from '../../../services/user.service';
 // import { RoleService } from '../../../services/role.service';
 // import { CommonService } from '../../../services/common.service';
@@ -28,7 +30,7 @@ import { Dropdown } from "primeng/dropdown";
     selector: 'app-calendar',
     templateUrl: './calendar.component.html',
     styleUrls: ['./calendar.component.scss'],
-    providers: [MessageService, ConfirmationService, TitleCasePipe],
+    providers: [MessageService, ConfirmationService, TitleCasePipe,VenueService],
 })
 export class CalendarComponent implements OnInit {
     postAvailabilityForm: FormGroup;
@@ -48,15 +50,15 @@ export class CalendarComponent implements OnInit {
     slotList: any[] = [];
     clickedEvent = null;
     recurring;
-    trainerList: any[] = [];
-    trainerId;
-    trainerRoleId;
+    venueList: any[] = [];
+    venueId;
+    venueOwnerRoleId;
     slotDetails: any[] = [];
     addSloteventDialog;
     maxDate: Date;
     minTime: Date;
     timeValue: any;
-    trainerListaddSlot: any[] = [];
+    venueListaddSlot: any[] = [];
     statuses: any = [];
     slotStatus: any;
     searchBy: any[];
@@ -98,7 +100,8 @@ export class CalendarComponent implements OnInit {
     showViewCalendar: boolean;
     sDate;
     eDate;
-    selectedTrainer;
+    isVenueOwner: boolean = false;
+    selectedVenue;
     postAvailabilityAdded: boolean;
     deleteEventId;
     selectedSlotListArr: any[] = [];
@@ -116,8 +119,10 @@ export class CalendarComponent implements OnInit {
     @ViewChild("pDropDownId", { static: false }) pDropDownId: Dropdown;
     @ViewChild("pDropDownId2", { static: false }) pDropDownId2: Dropdown;
     constructor(private titlecasePipe: TitleCasePipe, private el: ElementRef,
-        //private roleService: RoleService, private commonService: CommonService, private userService: UserService, 
+        //private roleService: RoleService, private commonService: CommonService, private userService: UserService,
         private formBuilder: FormBuilder,
+        private VenueService: VenueService,
+        private tokenStorageService: TokenStorageService,
         private confirmationService: ConfirmationService, private messageService: MessageService, private categoryService: CategoryService, private eventService: EventService, private slotService: SlotService,
         //private postAvailabilityService: PostAvailabilityService,
         private router: Router) { }
@@ -134,6 +139,9 @@ export class CalendarComponent implements OnInit {
             { label: 'Active', value: true },
             { label: 'In-Active', value: false }
         ];
+        const userData = this.tokenStorageService.getUser();
+        this.isVenueOwner = userData && userData.userdata && userData.userdata.rolename === 'venueowner';
+
 
         this.downloadFlg = false;
         this.addSlotForm = this.formBuilder.group({
@@ -166,7 +174,7 @@ export class CalendarComponent implements OnInit {
         this.maxDateValue.setFullYear(this.maxYear);
         this.slotType = "postAvailability";
 
-        //this.getTrainerLIst();
+        this.getVenueList();
         this.changedEvent = { title: '', start: null, end: '', allDay: null };
         this.showCalendar = false;
         this.showViewCalendar = true;
@@ -180,7 +188,7 @@ export class CalendarComponent implements OnInit {
         this.postAvailabilityForm = this.formBuilder.group({
             // slot: ['', Validators.required],
             // recurring: [false],
-            trainer: [''],
+            venue: [''],
             // postAvailabilityStatus: [{ label: 'Active', value: true }, Validators.required],
             disable: [false],
         });
@@ -217,47 +225,47 @@ export class CalendarComponent implements OnInit {
         }
 
     }
-    getTrainerLIst() {
-        let query = "?filterByStatus=true&filterByDisable=false";
-        let querystring = "&filterByroleName=trainer";
-        // this.roleService.searchRoleDetails(querystring).subscribe(
-        //     data => {
-        //         this.trainerRoleId = data.data.items[0]['id'];
-        //         query += "&filterByrollId=" + this.trainerRoleId;
-        //         this.userService.getUserList(query).subscribe(
-        //             data => {
-        //                 if (data.data.items != '') {
-        //                     this.trainerId = data.data.items[0]['id'];
-        //                     let trainerobj = { "name": data.data.items[0]['fullName'], "id": this.trainerId }
-        //                     this.selectedTrainer = trainerobj;
-        //                 }
-        //                 data.data.items.forEach(element => {
+    getVenueList() {
+        let query = "?admin=true&filterByDisable=false";
+        const userData = this.tokenStorageService.getUser();
+        const isVenueOwner = userData && userData.userdata && userData.userdata.rolename === 'venueowner';
 
-        //                     let obj = { "name": element.fullName, "id": element.id };
+        this.VenueService.getVenueListForFilter(query).subscribe(
+            data => {
+                let venues = data.data.items.filter(venue => !venue.disable);
 
-        //                     if (element.disable == false) {
-        //                         this.trainerList.push(obj);
-        //                     }
-        //                 });
-        //                 let loadCalendarObj = {
-        //                     startDate: this.sDate,
-        //                     endDate: this.eDate,
-        //                     trainerId: this.trainerId
-        //                 }
-        //                 this.getSlotsList(this.lastTableLazyLoadEvent);
-        //                 this.loadViewCalendar();
-        //                 this.calendarSearchForm.get('startDate').setValue(moment(this.sDate).format('DD-MM-YYYY'));
-        //                 this.calendarSearchForm.get('endDate').setValue(moment(this.eDate).format('DD-MM-YYYY'));
-        //                 this.getPostAvailabilityList(loadCalendarObj);
-        //             },
-        //             err => {
-        //                 this.errorMessage = err.error.message;
-        //             });
-        //     },
-        //     err => {
-        //         this.errorMessage = err.error.message;
-        //     }
-        // );
+                // Change all venue names to "Wynd Hotel and Banquet"
+                venues.forEach(venue => {
+                    venue.name = 'Wynd Hotel and Banquet';
+                });
+
+                if (isVenueOwner && venues.length > 0) {
+                    this.venueList = [venues[0]];
+                    this.venueId = venues[0].id;
+                    this.selectedVenue = venues[0];
+                } else {
+                    this.venueList = venues;
+                    // If user is not a venue owner, select the first venue by default
+                    if (venues.length > 0) {
+                        this.venueId = venues[0].id;
+                        this.selectedVenue = venues[0];
+                    }
+                }
+
+                // Load slots for the selected venue
+                let loadCalendarObj = {
+                    startDate: this.sDate,
+                    endDate: this.eDate,
+                    venueId: this.venueId
+                }
+                this.getSlotsList(this.lastTableLazyLoadEvent);
+                this.loadViewCalendar();
+                this.getPostAvailabilityList(loadCalendarObj);
+            },
+            err => {
+                this.errorMessage = err.error.message;
+            }
+        );
     }
 
     closePostAvailabilityForm() {
@@ -279,7 +287,7 @@ export class CalendarComponent implements OnInit {
         // if (this.calendarSearchForm.invalid) {
         //     return;
         // }
-        if (this.trainerId == undefined) {
+        if (this.venueId == undefined) {
             this.messageService.add({ key: 'calendarSearchtoastmsg', severity: 'error', summary: 'error', detail: 'Please select venue from venue list', life: 6000 });
             setTimeout(() => {
             }, 2000);
@@ -294,20 +302,20 @@ export class CalendarComponent implements OnInit {
         }
         this.submitted = true;
         // stop here if form is invalid
-        // if (this.calendarSearchForm.invalid) { 
+        // if (this.calendarSearchForm.invalid) {
         //     return;
         // }
         let postAvailabilityData = this.calendarSearchForm.value;
         postAvailabilityData['slotData'] = this.selectedSlotListArr;
-        postAvailabilityData['enduserId'] = this.trainerId;
-        postAvailabilityData['roleId'] = this.trainerRoleId;
+        postAvailabilityData['venueId'] = this.venueId;
+        postAvailabilityData['roleId'] = this.venueOwnerRoleId;
         // postAvailabilityData['startDate'] = moment(this.selectedStartDate).format('DD-MM-YYYY');
         // postAvailabilityData['endDate'] = moment(this.selectedEndDate).format('DD-MM-YYYY');
         var startDate = moment.tz(moment(this.selectedStartDate).format('YYYY-MM-DD HH:mm'), 'YYYY-MM-DD HH:mm Z', moment.tz.guess());
         //console.log(startDate);
         postAvailabilityData['startDate'] = startDate.format('');
 
-        // //var eddate = new Date(this.selectedEndDate);        
+        // //var eddate = new Date(this.selectedEndDate);
         var enddate = moment.tz(moment(this.selectedEndDate).format('YYYY-MM-DD HH:mm'), 'YYYY-MM-DD HH:mm Z', moment.tz.guess());
         postAvailabilityData['endDate'] = enddate.format('');
         postAvailabilityData['recurring'] = true;
@@ -336,7 +344,7 @@ export class CalendarComponent implements OnInit {
         //             let loadCalendarObj = {
         //                 startDate: this.selectedStartDate,
         //                 endDate: this.selectedEndDate,
-        //                 trainerId: this.trainerId
+        //                 venueId: this.venueId
         //             }
         //             //setTimeout(() => {
         //             this.calendarSearchForm.get('startDate').setValue(moment(this.selectedStartDate).format('DD-MM-YYYY'));
@@ -403,96 +411,8 @@ export class CalendarComponent implements OnInit {
         let time = edate.getTime() - sDate.getTime();
         let days = time / (1000 * 3600 * 24); //Diference in Days
         this.showCalendar = true;
-        let query = "?filterByEnduserId=" + this.trainerId;
-        // this.postAvailabilityService.getPostAvailabilityList(query).subscribe(
-        //     data => {
-        //         this.loading = false;
-        //         if (data.data != undefined && data.data != '') {
-        //             this.postAvailabilityList = data.data.items;
-        //             this.totalpostAvailabilityRecords = data.data.totalCount;
-        //             let count = 0;
-        //             this.postAvailabilityList.forEach(element => {
-        //                 //We are getting time slot date into UTC so we are converting date into local time.
-        //                 // if (this.slotListArr.length > 0) {
-        //                 //this.slotListArr.forEach(slot => {
-        //                 let postAvailabilityObj = {
-        //                     id: element.id,
-        //                     slot: element.slotTime,
-        //                     slotDate: element.slotdate, //moment(element.slotdate), //.format("YYYY-MM-DD"),
-        //                     slotendDate: element.slotenddate, //moment(element.slotendDate),//.format("YYYY-MM-DD"),
-        //                     slotday: element.slotday,
-        //                     slotStartHours: element.slotStartHours,
-        //                     slotStartMinutes: element.slotStartMinutes,
-        //                     slotEndHours: element.slotEndHours,
-        //                     slotEndMinutes: element.slotEndMinutes,
-        //                 }
-        //                 //if (element.slotId == slot.id) {
+        let query = "?filterByVenueId=" + this.venueId;
 
-        //                 if (element.disable == false) {
-        //                     // setTimeout(() => {
-        //                     this.postAvailabilityDataArr.push(postAvailabilityObj);
-        //                     // }, 2000);
-        //                 }
-        //                 //}
-        //                 //});
-        //                 //}
-        //             });
-        //         }
-        //         //console.log(this.postAvailabilityList);
-        //         this.eventService.getEvents().then(events => {
-        //             events = [];
-        //             this.events = events;
-        //             //Use to show add event
-        //             for (let i = 0; i <= days; i++) {
-        //                 let calendarDate = moment(startDate).add(i, 'days').format('YYYY-MM-DD');
-        //                 this.events.push({ id: i, title: "Add slot", start: calendarDate, classNames: "add" });
-
-        //             }
-        //             //Use to show View event
-        //             this.postAvailabilityDataArr.forEach(postAvailability => {
-        //                 for (let i = 0; i <= days; i++) {
-        //                     let date = moment(startDate).add(i, 'days').format('YYYY-MM-DD');
-        //                     let newStartDate = new Date(startDate);
-        //                     newStartDate.setHours(postAvailability.slotStartHours);
-        //                     newStartDate.setMinutes(postAvailability.slotStartMinutes);
-        //                     let newSDate = moment(newStartDate).add(i, 'days').format('YYYY-MM-DD HH:mm');
-        //                     let newEndDate = new Date(startDate);
-        //                     newEndDate.setHours(postAvailability.slotEndHours);
-        //                     newEndDate.setMinutes(postAvailability.slotEndMinutes);
-        //                     let newEDate = moment(newEndDate).add(i, 'days').format('YYYY-MM-DD HH:mm');
-        //                     // if (date === postAvailability.slotDate) {
-        //                     //     this.events.push({ id: postAvailability.id, title: "<span style='height: 100% !important;width: 100% !important;text-align: center'>Slot: " + postAvailability.slot + "</span>", classNames: "view", start: newSDate, end: newEDate, color: '#08b394', slotEventOverlap: false });
-        //                     // }
-        //                     if (date === moment(postAvailability.slotDate).local().format("YYYY-MM-DD")) {
-        //                         //console.log(postAvailability);
-        //                         var slotTime = moment(postAvailability.slotDate).local().format("h:mm a") + " - " + moment(postAvailability.slotendDate).local().format("h:mm a");
-        //                         this.events.push({ id: postAvailability.id, title: "Slots: " + slotTime, classNames: "view", start: newSDate, end: newEDate, color: '#08b394' });
-        //                     }
-        //                 }
-        //             });
-        //             //this.postAvailabilityDataArr = [];
-        //             this.options = {
-        //                 ...this.options, ...{ events: events }, eventContent: function (info) {
-        //                     let addTrashHtml = "<i class='pi pi-trash float-left' style='color:red'></i>&nbsp;&nbsp;";
-        //                     let addHtml = "<i class='pi pi-plus float-right'></i>";
-        //                     let title = info.event.title;
-        //                     if (info.event.classNames == "view") {
-        //                         return { html: addTrashHtml + title };
-        //                     } else if (info.event.classNames == "add") {
-        //                         return { html: title + addHtml };
-        //                     } else {
-        //                         return { html: title };
-        //                     }
-        //                 },
-        //                 // eventDisplay: function( info ) {
-
-        //                 // }
-        //             };
-        //         });
-        //     },
-        //     err => {
-        //         this.errorMessage = err.error.message;
-        //     });
 
 
         const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
@@ -522,7 +442,7 @@ export class CalendarComponent implements OnInit {
                 this.postAvailabilityForm = this.formBuilder.group({
                     // slot: ['', Validators.required],
                     // recurring: [false],
-                    trainer: [''],
+                    venue: [''],
                     // postAvailabilityStatus: [{ label: 'Active', value: true }, Validators.required],
                     disable: [false],
                 });
@@ -571,11 +491,11 @@ export class CalendarComponent implements OnInit {
     }
 
 
-    // getTrainerDetails(event) {
+    // getVenueDetails(event) {
     //     this.slotDetails = [];
-    //     this.trainerId = event.value.id;
+    //     this.venueId = event.value.id;
 
-    //     this.slotService.getSlotDetails(this.trainerId).subscribe(
+    //     this.slotService.getSlotDetails(this.venueId).subscribe(
     //         data => {
     //             let obj = [{ name: "9:00-11:00", id: "1" }, { name: "11:00-13:00", id: "2" }, { name: "13:00-15:00", id: "3" }, { name: "15:00-17:00", id: "4" }];
     //             // if (data.disable == false) {
@@ -593,66 +513,27 @@ export class CalendarComponent implements OnInit {
         this.addSloteventDialog = true;
     }
 
-    onTrainerSelect(event) {
-        if (event) {
-            this.trainerId = event.value.id;
+    onVenueSelect(event) {
+        if (event && event.value) {
+            this.venueId = event.value.id;
             let loadCalendarObj = {
                 startDate: this.sDate,
                 endDate: this.eDate,
-                trainerId: this.trainerId
+                venueId: this.venueId
             }
             this.getSlotsList(this.lastTableLazyLoadEvent);
             this.loadViewCalendar();
             this.getPostAvailabilityList(loadCalendarObj);
-
         }
-
     }
+
     setDownloadFlag() {
         this.downloadFlg = false;
     }
     getPostAvailabilityList(event) {
         //let query = "?filterByDisable=false";
-        let query = "?filterByEnduserId=" + this.trainerId;
-        // this.postAvailabilityService.getPostAvailabilityList(query).subscribe(
-        //     data => {
-        //         this.loading = false;
-        //         if (data.data != undefined && data.data != '') {
-        //             this.postAvailabilityList = data.data.items;
-        //             this.totalpostAvailabilityRecords = data.data.totalCount;
-        //             let count = 0;
-        //             this.postAvailabilityList.forEach(element => {
-        //                 element.created_at = new Date(element.created_at);
-        //                 element.updated_at = new Date(element.updated_at);
-        //                 //We are getting time slot date into UTC so we are converting date into local time.
-        //                 // if (this.slotListArr.length > 0) {
-        //                 //this.slotListArr.forEach(slot => {
-        //                 // let postAvailabilityObj = {
-        //                 //     id: element.id,
-        //                 //     slot: element.slotTime,
-        //                 //     slotDate: moment(element.slotdate).format("YYYY-MM-DD"),
-        //                 //     slotday: element.slotday,
-        //                 // }
-        //                 //if (element.slotId == slot.id) {
+        let query = "?filterByEnduserId=" + this.venueId;
 
-        //                 // if (element.disable == false) {
-        //                 //     // setTimeout(() => {
-        //                 //     this.postAvailabilityDataArr.push(postAvailabilityObj);
-        //                 //     // }, 2000);
-        //                 // }
-
-        //                 // console.log(this.postAvailabilityDataArr);
-        //                 //}
-
-        //                 //});
-        //                 //}
-
-        //             });
-        //         }
-        //     },
-        //     err => {
-        //         this.errorMessage = err.error.message;
-        //     });
         this.loadPostAvailabilityCalendar(event);
     }
 
@@ -729,46 +610,11 @@ export class CalendarComponent implements OnInit {
             }
             query += "&sortBy=" + event.sortField + "&orderBy=" + orderBy;
         }
-        let querystring = "filterByroleName=trainer";
-        if (this.trainerId != undefined) {
-            query += "&filterByEnduserId=" + this.trainerId;
-            if (this.trainerId != undefined) {
-                // this.roleService.searchRoleDetails(querystring).subscribe(
-                //     data => {
-                //         // this.trainerRoleId = data.data.items[0]['id'];
-                //         query += "&filterBySlotType=" + this.slotType;
-                //         this.slotService.getSlotList(query).subscribe(
-                //             data => {
-                //                 this.loading = false;
-                //                 this.slotList = data.data.items;
-                //                 this.totalRecords = data.data.totalCount;
-                //                 this.slotList.forEach(element => {
-                //                     element.created_at = moment(element.created_at).local().format("DD-MM-YYYY");
-                //                     element.updated_at = moment(element.updated_at).local().format("DD-MM-YYYY");
-                //                     let recurringCheckSTatus = true;
-                //                     let slotObj = {
-                //                         id: element.id,
-                //                         slot: element.startTime.hours + ':' + element.startTime.minutes + ' - ' + element.endTime.hours + ':' + element.endTime.minutes,
-                //                         slotRecurringStatus: recurringCheckSTatus,
-                //                         created_at: element.created_at,
-                //                         updated_at: element.updated_at,
-                //                     }
-                //                     if (element.disable == false && element.status == true) {
-                //                         this.slotListArr.push(slotObj);
-                //                         this.calendarSearchForm.addControl(element.id, new FormControl());
-                //                         this.calendarSearchForm.addControl(slotObj.slot, new FormControl());
-                //                     }
-                //                     this.oldSlotListArr = this.slotListArr;
-                //                 });
-                //             },
-                //             err => {
-                //                 this.errorMessage = err.error.message;
-                //             });
-                //     },
-                //     err => {
-                //         this.errorMessage = err.error.message;
-                //     }
-                // );
+        let querystring = "filterByroleName=venueowner";
+        if (this.venueId != undefined) {
+            query += "&filterByEnduserId=" + this.venueId;
+            if (this.venueId != undefined) {
+
             }
 
         }
@@ -790,65 +636,21 @@ export class CalendarComponent implements OnInit {
         }
         var startDate = moment.tz(moment(this.selectedSlotDate).format('YYYY-MM-DD HH:mm'), 'YYYY-MM-DD HH:mm Z', moment.tz.guess());
 
-        // //var eddate = new Date(this.selectedEndDate);        
+        // //var eddate = new Date(this.selectedEndDate);
         var enddate = moment.tz(moment(this.selectedSlotDate).format('YYYY-MM-DD HH:mm'), 'YYYY-MM-DD HH:mm Z', moment.tz.guess());
         this.selectedSlotListArr.forEach(slotElement => {
             this.slotId = slotElement.slotId;
             let postAvailabilityObj = {
                 slotdata: slotElement,
                 slotId: slotElement.slotId,
-                enduserId: this.trainerId,
-                roleId: this.trainerRoleId,
+                enduserId: this.venueId,
+                roleId: this.venueOwnerRoleId,
                 recurring: false,
                 startDate: startDate.format(''),
                 endDate: enddate.format(''),
                 slotdate: moment(this.selectedSlotDate).format('DD-MM-YYYY'),
-                // status: this.postAvailabilityStatus,
                 disable: false,
             }
-
-            // this.postAvailabilityService.addPostAvailability(postAvailabilityObj).subscribe(
-            //     data => {
-            //         count++;
-            //         if (slotCount == count) {
-            //             this.messageService.add({ key: 'postAvailabilityToastmsg', severity: 'success', summary: 'Successful', detail: 'Post Availability Added', life: 6000 });
-            //             setTimeout(() => {
-            //                 this.slotListArr = [];
-            //                 this.eventDialog = false;
-            //                 this.selectedSlotListArr = [];
-            //                 this.postAvailabilityForm.reset();
-            //                 //this.slotListArr = this.oldSlotListArr;
-            //                 this.oldSlotListArr.forEach(slot => {
-            //                     let slotObj = {
-            //                         id: slot.id,
-            //                         slot: slot.slot,
-            //                         slotRecurringStatus: true,
-            //                     }
-            //                     this.postAvailabilityForm.get(slot.slot).disable();
-            //                     this.slotListArr.push(slotObj);
-            //                 })
-            //                 let loadCalendarObj = {
-            //                     startDate: this.selectedStartDate,
-            //                     endDate: this.selectedEndDate,
-            //                     trainerId: this.trainerId
-            //                 }
-            //                 //setTimeout(() => {
-            //                 this.calendarSearchForm.get('startDate').setValue(moment(this.sDate).format('DD-MM-YYYY'));
-            //                 this.calendarSearchForm.get('endDate').setValue(moment(this.eDate).format('DD-MM-YYYY'));
-            //                 this.getPostAvailabilityList(loadCalendarObj);
-            //                 //}, 2000);
-
-            //             }, 2000);
-            //         }
-            //     },
-            //     ((err) => {
-            //         errorCount++;
-            //         if (slotCount == errorCount + 1) {
-            //             this.messageService.add({ key: 'postAvailabilityToastmsg', severity: 'error', summary: err.error.message, detail: err.error.error, life: 6000 });
-            //             this.selectedSlotListArr = [];
-            //         }
-            //     })
-            // );
         });
     }
 
@@ -879,7 +681,7 @@ export class CalendarComponent implements OnInit {
         let startTimeHoursM = moment(startTime).format('HH:mm');
         let endTimeHoursM = moment(endTime).format('HH:mm');
         addSlotData['status'] = this.slotStatus;
-        if (this.trainerId == undefined) {
+        if (this.venueId == undefined) {
             this.messageService.add({ key: 'addSlotToastmsg', severity: 'error', summary: 'error', detail: 'Please select venue from venue list', life: 6000 });
             setTimeout(() => {
             }, 2000);
@@ -888,8 +690,8 @@ export class CalendarComponent implements OnInit {
 
         addSlotData['startTime'] = startTimeHoursM;
         addSlotData['endTime'] = endTimeHoursM;
-        addSlotData['enduserId'] = this.trainerId;
-        addSlotData['roleId'] = this.trainerRoleId;
+        addSlotData['enduserId'] = this.venueId;
+        addSlotData['roleId'] = this.venueOwnerRoleId;
         addSlotData['slotType'] = this.slotType;
         addSlotData['disable'] = 'false';
 
@@ -1104,7 +906,7 @@ export class CalendarComponent implements OnInit {
         if (event.checked == true && action == "All") {
 
             this.allDayArray.forEach(day => {
-                let obj = { slot: slot.slot, trainerId: this.trainerId, roleId: this.trainerRoleId, slotId: slot.id, slotday: day.dayName, status: true, disable: false };
+                let obj = { slot: slot.slot, trainerId: this.venueId, roleId: this.venueOwnerRoleId, slotId: slot.id, slotday: day.dayName, status: true, disable: false };
                 let index = this.findSlotIndexById(slot.slot, this.selectedSlotListArr, day.dayName);
 
                 if (index == -1) {
@@ -1127,7 +929,7 @@ export class CalendarComponent implements OnInit {
         }
         if (event.checked == false && action == "All") {
             this.allDayArray.forEach(day => {
-                let obj = { slot: slot.slot, trainerId: this.trainerId, roleId: this.trainerRoleId, id: slot.id, slotday: day.dayName, status: true, disable: false };
+                let obj = { slot: slot.slot, trainerId: this.venueId, roleId: this.venueOwnerRoleId, id: slot.id, slotday: day.dayName, status: true, disable: false };
                 let index = this.findSlotIndexById(slot.slot, this.selectedSlotListArr, day.dayName);
                 if (index != -1) {
                     //    // this.calendarSearchForm.get(slot.slot).setValue(moment(this.sDate).format('DD-MM-YYYY'));

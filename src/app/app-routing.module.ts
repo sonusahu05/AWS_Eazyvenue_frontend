@@ -79,6 +79,7 @@ import { VendorFilterListComponent } from './frontend/vendor-filter-list/vendor-
 import { VendorDetailsComponent } from './frontend/vendor-details/vendor-details.component';
 import { VendorCompareComponent } from './frontend/vendor-compare/vendor-compare.component';
 import { CancellationComponent } from './frontend/cancellation/cancellation.component';
+import { VendorSignupComponent } from './pages/admin-signup.component';
 @NgModule({
     imports: [
         RouterModule.forRoot(
@@ -191,6 +192,10 @@ import { CancellationComponent } from './frontend/cancellation/cancellation.comp
                         {
                             path: 'compare-vendor',
                             component: VendorCompareComponent,
+                        },
+                        {
+                            path: 'vendor-signup',
+                            component: VendorSignupComponent
                         },
                     ],
                 },

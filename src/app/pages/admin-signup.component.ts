@@ -12,7 +12,7 @@ import * as moment from 'moment-timezone';
     styleUrls: ['./admin-signup.component.scss'],
     providers: [MessageService]
 })
-export class AdminSignupComponent implements OnInit {
+export class VendorSignupComponent implements OnInit {
     signupForm: FormGroup;
     RoleId = '66c835408eb0b667ac3cf529';
     roleName = 'venueowner';
