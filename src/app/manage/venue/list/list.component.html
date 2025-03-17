@@ -270,8 +270,7 @@
                                     pInputText
                                     class="form-control"
                                     type="text"
-                                    (keyup.enter)="
-                                        setDownloadFlag();
+                                    (input)="
                                         dt.filter(
                                             $event.target.value,
                                             'name',
@@ -291,14 +290,13 @@
                                     pInputText
                                     class="form-control"
                                     type="text"
-                                    (keyup.enter)="
-                                        setDownloadFlag();
+                                    (input)="
                                         dt.filter(
                                             $event.target.value,
                                             'email',
                                             'contains'
                                         )
-                                    "
+                                        "
                                     [value]="
                                         dt.filters['email']
                                             ? dt.filters['email'].value
@@ -490,22 +488,43 @@
                             <td>
                                 <span class="p-column-title">Status</span>
                                 <span *ngIf="venue.status">
-                                    <p-tag styleClass="mr-2" severity="success" value="Active"></p-tag>
+                                    <p-tag
+                                        styleClass="mr-2"
+                                        severity="success"
+                                        value="Active"
+                                    ></p-tag>
                                 </span>
                                 <span *ngIf="!venue.status">
-                                    <p-tag severity="danger" value="In-Active"></p-tag>
+                                    <p-tag
+                                        severity="danger"
+                                        value="In-Active"
+                                    ></p-tag>
                                 </span>
-                                <p-inputSwitch [(ngModel)]="venue.status" (onChange)="changeStatus(venue)"></p-inputSwitch>
+                                <p-inputSwitch
+                                    [(ngModel)]="venue.status"
+                                    (onChange)="changeStatus(venue)"
+                                ></p-inputSwitch>
                             </td>
                             <td>
                                 <span class="p-column-title">Assured</span>
                                 <span *ngIf="venue.assured">
-                                    <p-tag styleClass="mr-2" severity="success" value="Assured"></p-tag>
+                                    <p-tag
+                                        styleClass="mr-2"
+                                        severity="success"
+                                        value="Assured"
+                                    ></p-tag>
                                 </span>
                                 <span *ngIf="!venue.assured">
-                                    <p-tag styleClass="mr-2" severity="danger" value="Not Assured"></p-tag>
+                                    <p-tag
+                                        styleClass="mr-2"
+                                        severity="danger"
+                                        value="Not Assured"
+                                    ></p-tag>
                                 </span>
-                                <p-inputSwitch [(ngModel)]="venue.assured" (onChange)="changeAssured(venue)"></p-inputSwitch>
+                                <p-inputSwitch
+                                    [(ngModel)]="venue.assured"
+                                    (onChange)="changeAssured(venue)"
+                                ></p-inputSwitch>
                             </td>
                             <td>
                                 <span class="p-column-title">Action</span>
@@ -567,7 +586,10 @@
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="summary">
-                        <div class="p-d-flex p-ai-center p-jc-between" *ngIf="!isVenueOwner">
+                        <div
+                            class="p-d-flex p-ai-center p-jc-between"
+                            *ngIf="!isVenueOwner"
+                        >
                             In total there are {{ totalRecords }} Venues.
                         </div>
                     </ng-template>

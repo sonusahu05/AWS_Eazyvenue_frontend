@@ -252,70 +252,111 @@ export class ListComponent implements OnInit {
         // }
     }
 
-    refreshVenueList(event: LazyLoadEvent) {
-        this.lastTableLazyLoadEvent = event;
+    // In list.component.ts, modify the refreshVenueList method
+refreshVenueList(event: LazyLoadEvent) {
+    this.lastTableLazyLoadEvent = event;
+    this.loading = true;
 
-        let query = new URLSearchParams({
-            admin: 'true',
-            pageSize: (event.rows || 10).toString(),
-            pageNumber: ((event.first || 0) / (event.rows || 10) + 2).toString(),
-            filterByDisable: 'false'
-        });
+    let query = new URLSearchParams({
+        admin: 'true',
+        pageSize: (event.rows || 10).toString(),
+        pageNumber: ((event.first || 0) / (event.rows || 10) + 1).toString(),
+        filterByDisable: 'false'
+    });
 
-        if (this.searchby && this.startDate && this.endDate) {
-            query.set('filterByDate', this.searchby.value);
-            query.set('filterByStartDate', moment(this.startDate).format('YYYY-MM-DD'));
-            query.set('filterByEndDate', moment(this.endDate).format('YYYY-MM-DD'));
-        }
-
-        const filterFields = [
-            'name', 'email', 'countryname', 'statename', 'cityname', 'zipcode', 'status', 'assured'
-        ];
-        filterFields.forEach((field) => {
-            if (event.filters && event.filters[field]) {
-                query.set(field, event.filters[field].value);
-            }
-        });
-
-        if (event.sortField && event.sortOrder) {
-            query.set('sortBy', event.sortField);
-            query.set('orderBy', event.sortOrder === 1 ? 'DESC' : 'ASC');
-        }
-
-        const queryString = '?' + query.toString();
-        console.log(queryString);
-
-        this.VenueService.getVenueListForFilter(queryString).subscribe(
-            (data) => {
-                // Filter out disabled venues
-                let venues = data.data.items.filter(venue => !venue.disable);
-
-                // If user is a venue owner, only show the first venue
-                if (this.isVenueOwner && venues.length > 0) {
-                    this.venueList = [venues[0]];
-                    this.totalRecords = data.data.totalCount > 0 ? data.data.totalCount : 0;
-                } else {
-                    this.venueList = venues;
-                    this.totalRecords = data.data.totalCount;
-                }
-
-                // Apply client-side sorting if needed
-                if (event.sortField && event.sortOrder) {
-                    this.venueList.sort((a, b) => {
-                        const valueA = a[event.sortField] || '';
-                        const valueB = b[event.sortField] || '';
-
-                        if (valueA < valueB) return event.sortOrder === 1 ? -1 : 1;
-                        if (valueA > valueB) return event.sortOrder === 1 ? 1 : -1;
-                        return 0;
-                    });
-                }
-            },
-            (err) => {
-                console.error('Error fetching venue list:', err);
-            }
-        );
+    // Handle search by date range if selected
+    if (this.searchby && this.startDate && this.endDate) {
+        query.set('filterByDate', this.searchby.value);
+        query.set('filterByStartDate', moment(this.startDate).format('YYYY-MM-DD'));
+        query.set('filterByEndDate', moment(this.endDate).format('YYYY-MM-DD'));
     }
+
+    // Process all filters
+    if (event.filters) {
+        Object.keys(event.filters).forEach(key => {
+            if (event.filters[key].value !== null && event.filters[key].value !== undefined) {
+                // Apply filter based on the field
+                switch (key) {
+                    case 'name':
+                        query.set('filterByName', event.filters[key].value);
+                        break;
+                    case 'email':
+                        query.set('filterByEmail', event.filters[key].value);
+                        break;
+                    case 'cityname':
+                        query.set('filterByCity', event.filters[key].value);
+                        break;
+                    case 'statename':
+                        query.set('filterByState', event.filters[key].value);
+                        break;
+                    case 'zipcode':
+                        query.set('filterByZipcode', event.filters[key].value);
+                        break;
+                    case 'status':
+                        if (event.filters[key].value !== null) {
+                            query.set('filterByStatus', event.filters[key].value);
+                        }
+                        break;
+                    case 'assured':
+                        if (event.filters[key].value !== null) {
+                            query.set('filterByAssured', event.filters[key].value);
+                        }
+                        break;
+                }
+            }
+        });
+    }
+
+    // Handle sorting
+    if (event.sortField && event.sortOrder) {
+        query.set('sortBy', event.sortField);
+        query.set('orderBy', event.sortOrder === 1 ? 'ASC' : 'DESC');
+    }
+
+    const queryString = '?' + query.toString();
+
+    this.VenueService.getVenueListForFilter(queryString).subscribe(
+        (data) => {
+            this.loading = false;
+
+            // Filter out disabled venues
+            let venues = data.data.items.filter(venue => !venue.disable);
+
+            // Apply client-side filtering if needed
+            if (event.filters) {
+                // Additional client-side filtering for more precise results
+                Object.keys(event.filters).forEach(key => {
+                    if (event.filters[key].value !== null && event.filters[key].value !== undefined) {
+                        const filterValue = event.filters[key].value.toString().toLowerCase();
+                        venues = venues.filter(venue => {
+                            if (venue[key] === undefined) return true;
+                            return venue[key].toString().toLowerCase().includes(filterValue);
+                        });
+                    }
+                });
+            }
+
+           if (this.isVenueOwner && venues.length > 0) {
+            this.venueList = [venues[0]];
+            this.totalRecords = data.data.totalCount > 0 ? data.data.totalCount : 0;
+        } else {
+            this.venueList = venues;
+            this.totalRecords = data.data.totalCount;
+        }
+        },
+        (err) => {
+            this.loading = false;
+            console.error('Error fetching venue list:', err);
+            this.messageService.add({
+                key: 'toastmsg',
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to load venue list',
+                life: 3000,
+            });
+        }
+    );
+}
     clear() {
         this.startDate = null;
         this.endDate = null;
