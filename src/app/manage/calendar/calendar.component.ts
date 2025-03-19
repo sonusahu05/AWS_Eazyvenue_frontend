@@ -234,11 +234,6 @@ export class CalendarComponent implements OnInit {
             data => {
                 let venues = data.data.items.filter(venue => !venue.disable);
 
-                // Change all venue names to "Wynd Hotel and Banquet"
-                venues.forEach(venue => {
-                    venue.name = 'Wynd Hotel and Banquet';
-                });
-
                 if (isVenueOwner && venues.length > 0) {
                     this.venueList = [venues[0]];
                     this.venueId = venues[0].id;

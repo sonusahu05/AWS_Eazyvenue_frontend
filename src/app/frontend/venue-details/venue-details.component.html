@@ -3163,7 +3163,7 @@
                                 <div *ngIf="paymentAmount === 'custom'" class="custom-amount-input mt-2">
                                     <p-inputNumber
                                         [(ngModel)]="customAmountValue"
-                                        [min]="0"
+                                        [min]="5000"
                                         [max]="totalVenuePrice"
                                         mode="currency"
                                         currency="INR"
