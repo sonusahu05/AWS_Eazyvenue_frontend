@@ -79,7 +79,7 @@ import { VendorFilterListComponent } from './frontend/vendor-filter-list/vendor-
 import { VendorDetailsComponent } from './frontend/vendor-details/vendor-details.component';
 import { VendorCompareComponent } from './frontend/vendor-compare/vendor-compare.component';
 import { CancellationComponent } from './frontend/cancellation/cancellation.component';
-import { VendorSignupComponent } from './pages/admin-signup.component';
+import { SignupComponent } from './pages/venue-signup.component';
 @NgModule({
     imports: [
         RouterModule.forRoot(
@@ -192,10 +192,6 @@ import { VendorSignupComponent } from './pages/admin-signup.component';
                         {
                             path: 'compare-vendor',
                             component: VendorCompareComponent,
-                        },
-                        {
-                            path: 'vendor-signup',
-                            component: VendorSignupComponent
                         },
                     ],
                 },
@@ -431,6 +427,7 @@ import { VendorSignupComponent } from './pages/admin-signup.component';
                 { path: 'access', component: AppAccessdeniedComponent },
                 { path: 'notfound', component: AppNotfoundComponent },
                 { path: 'manage/login', component: AppLoginComponent },
+                { path: 'signup', component: SignupComponent },
                 // { path: '**', redirectTo: '/notfound' },
                 { path: '**', redirectTo: '/' },
             ],

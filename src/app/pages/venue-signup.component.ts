@@ -1,25 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UserService } from '../../../services/user.service';
-import { RoleService } from '../../../services/role.service';
-import { CommonService } from '../../../services/common.service';
-import { MustMatch } from '../../../_helpers/must-match.validator';
+import { Router } from '@angular/router';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { UserService } from '../services/user.service';
+import { RoleService } from '../services/role.service';
+import { CommonService } from '../services/common.service';
+import { MustMatch } from '../_helpers/must-match.validator';
 import { CustomValidators } from 'ng2-validation';
-import { CalendarModule } from 'primeng/calendar';
-//import * as moment from 'moment';
 import * as moment from 'moment-timezone';
 import { environment } from 'src/environments/environment';
-import { maxYearFunction } from '../../../_helpers/utility';
+import { maxYearFunction } from '../_helpers/utility';
 
 @Component({
-    selector: 'app-admin-add',
-    templateUrl: './add.component.html',
-    styleUrls: ['./add.component.scss'],
+    selector: 'app-signup',
+    templateUrl: './venue-signup.component.html',
+    styleUrls: ['./vanue-signup.component.scss'],
     providers: [ConfirmationService, MessageService]
 })
-export class AdminAddComponent implements OnInit {
+export class SignupComponent implements OnInit {
     userForm: FormGroup;
     errorMessage = '';
     submitted = false;
@@ -30,7 +28,7 @@ export class AdminAddComponent implements OnInit {
     citylist: any = [];
     reader: FileReader;
     public profilepic;
-    adminRoleId;
+    venueOwnerRoleId;
     statuses: any = [];
     genders: any = [];
     userstatus: any;
@@ -42,16 +40,21 @@ export class AdminAddComponent implements OnInit {
     cityname;
     citycode;
     public defaultDate: Date = new Date(environment.defaultDate);
-    //dob: Date;
     minYear = environment.minYear;
     yearRange;
     timeZoneArray = [];
     timeZoneOffset;
     timeZone;
 
-    constructor(private roleService: RoleService, private commonService: CommonService, private userService: UserService, private formBuilder: FormBuilder,
-        private confirmationService: ConfirmationService, private messageService: MessageService,
-        private router: Router) { }
+    constructor(
+        private roleService: RoleService,
+        private commonService: CommonService,
+        private userService: UserService,
+        private formBuilder: FormBuilder,
+        private confirmationService: ConfirmationService,
+        private messageService: MessageService,
+        private router: Router
+    ) { }
 
     ngOnInit(): void {
         const timeZones = moment.tz.names();
@@ -96,6 +99,7 @@ export class AdminAddComponent implements OnInit {
         this.getCountry();
     }
 
+    // convenience getter for easy access to form fields
     get f() {
         return this.userForm.controls;
     }
@@ -105,17 +109,17 @@ export class AdminAddComponent implements OnInit {
             this.uploadedFiles.push(file);
             var reader = new FileReader();
             reader.readAsDataURL(this.uploadedFiles[0]);
-            reader.onload = () => { 
+            reader.onload = () => { // called once readAsDataURL is completed
                 this.profilepic = reader.result;
             }
         }
     }
 
     getRoleid() {
-        var querystring = "filterByroleName=admin";
+        var querystring = "filterByroleName=venueowner";
         this.roleService.searchRoleDetails(querystring).subscribe(
             data => {
-                this.adminRoleId = data.data.items[0]['id'];
+                this.venueOwnerRoleId = data.data.items[0]['id'];
             },
             err => {
                 this.errorMessage = err.error.message;
@@ -135,7 +139,6 @@ export class AdminAddComponent implements OnInit {
     }
 
     getStates(event) {
-        //var countrycode = event.value.code;
         this.countryname = event.value.name;
         this.countrycode = event.value.code;
         this.commonService.getStateList(this.countrycode).subscribe(
@@ -191,7 +194,7 @@ export class AdminAddComponent implements OnInit {
         }
         var userData = this.userForm.value;
         userData['profilepic'] = this.profilepic;
-        userData['role'] = this.adminRoleId;
+        userData['role'] = this.venueOwnerRoleId;
         userData['status'] = this.userstatus;
         userData['gender'] = this.usergender;
         userData['countrycode'] = this.countrycode;
@@ -204,21 +207,16 @@ export class AdminAddComponent implements OnInit {
         userData['timeZoneOffset'] = this.timeZoneOffset;
         userData['dob'] = moment(this.userForm.value.dob).format("YYYY-MM-DD");
 
-        //alert(this.countrycode+" "+this.countryname+"  "+this.statecode+" "+this.statename);
-        //display form values on success
-        console.log(JSON.stringify(this.userForm.value, null, 4));
-        //alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.userForm.value, null, 4));
-        //return;
         userData = JSON.stringify(userData, null, 4);
         this.userService.addUser(userData).subscribe(
             data => {
-                this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Admin Added', life: 6000 });
+                this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Registration Complete', life: 6000 });
                 setTimeout(() => {
-                    this.router.navigate(['/manage/admin']);
+                    this.router.navigate(['/login']);
                 }, 2000);
             },
             ((err) => {
-                this.messageService.add({ key: 'toastmsg', severity: 'error', summary: err.error.message, detail: 'Add Admin failed', life: 6000 });
+                this.messageService.add({ key: 'toastmsg', severity: 'error', summary: err.error.message, detail: 'Registration failed', life: 6000 });
             })
         );
     }
@@ -228,7 +226,7 @@ export class AdminAddComponent implements OnInit {
         this.userForm.reset();
     }
 
-    backLink() {
-        this.router.navigate(['/manage/admin']);
+    backToLogin() {
+        this.router.navigate(['/manage/login']);
     }
 }

@@ -209,7 +209,7 @@ import { VendorCompareComponent } from './frontend/vendor-compare/vendor-compare
 import { CancellationComponent } from './frontend/cancellation/cancellation.component';
 import { FaqComponent } from './frontend/faq/faq.component';
 import { HotMuhuratsComponent } from './frontend/hot-muhrats/muhrats.component';
-import { VendorSignupComponent } from './pages/admin-signup.component';
+import { SignupComponent } from './pages/venue-signup.component';
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
     timeGridPlugin,
@@ -316,7 +316,7 @@ FullCalendarModule.registerPlugins([
     ],
     declarations: [
         AboutUsComponent,
-        VendorSignupComponent,
+        SignupComponent,
         AppComponent,
         FaqComponent,
         AppMainComponent,
