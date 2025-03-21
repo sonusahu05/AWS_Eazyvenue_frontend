@@ -46,24 +46,24 @@
 			</div>
 			<!-- <div class="card">
 				<div class="p-fluid p-formgrid p-grid">
-                    <div class="p-field p-col-3"> 
+                    <div class="p-field p-col-3">
 						<label for="searchfield">Select Field</label>
 						<p-dropdown inputId="searchfield" [options]="searchBy" [(ngModel)]="searchby" placeholder="Select Field" optionLabel="label"></p-dropdown>
 					</div>
-					<div class="p-field p-col-3"> 
+					<div class="p-field p-col-3">
 						<label for="startdt">Start Date</label>
 						<p-calendar  monthNavigator="true" yearNavigator="true" yearRange="2022:2050"  [(ngModel)]="startDate" class="p-calendar" inputId="calendar" dateFormat="dd/mm/yy" [showIcon]="true" ></p-calendar>
 					</div>
-					<div class="p-field p-col-3"> 
+					<div class="p-field p-col-3">
 						<label for="enddt">End Date</label>
 						<p-calendar  monthNavigator="true" yearNavigator="true" yearRange="2022:2050"  [(ngModel)]="endDate" class="p-calendar" inputId="calendar"  dateFormat="dd/mm/yy" [showIcon]="true" ></p-calendar>
 					</div>
-					<div class="p-field p-col-1"> 						
+					<div class="p-field p-col-1">
 						<button pButton pRipple label="Search" class="p-button p-mr-1 p-mb-2" (click)="loadUsers($event)"></button>
 					</div>
 				</div>
 			</div> -->
-            <p-table class="p1-table-columns hide-columns" [scrollable]="true" scrollHeight="auto" scrollDirection="both" 
+            <p-table class="p1-table-columns hide-columns" [scrollable]="true" scrollHeight="auto" scrollDirection="both"
 			#dt [value]="userlist" [paginator]="true" [rows]="10" [lazy]="true" (onLazyLoad)="loadUsers($event)" [autoLayout]="true"
             [totalRecords]="totalRecords" [loading]="loading" [rowsPerPageOptions]="paginationOption" paginatorPosition="bottom" styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped">
 				<ng-template pTemplate="header" let-columns >
@@ -150,7 +150,7 @@
 							<div class="p-d-flex p-jc-between p-ai-center">
 								Action
 							</div>
-						</th>	
+						</th>
 					</tr>
 					<tr>
 						<th [ngSwitch]="fullName" class="col-width">
@@ -251,7 +251,7 @@
 								<p-tag severity="danger" value="In-Active"></p-tag>
 							  </span>
 							<p-inputSwitch [(ngModel)]="user.status" (onChange)="changeStatus(user)"></p-inputSwitch>
-						</td>					
+						</td>
 						<td class="col-width">
 							<button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-warning p-mr-2" (click)="viewAdmin(user.id)"></button>
 							<button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="editUser(user.id)"></button>
@@ -259,10 +259,10 @@
 						</td>
 					</tr>
 				</ng-template>
-				
+
 			</p-table>
-			<p-table class="p2-table-columns show-columns" #dt [value]="userlist" [paginator]="true" [rows]="10" [autoLayout]="true" 
-			[lazy]="true" (onLazyLoad)="loadUsers($event)" [totalRecords]="totalRecords" [loading]="loading" 
+			<p-table class="p2-table-columns show-columns" #dt [value]="userlist" [paginator]="true" [rows]="10" [autoLayout]="true"
+			[lazy]="true" (onLazyLoad)="loadUsers($event)" [totalRecords]="totalRecords" [loading]="loading"
 			[rowsPerPageOptions]="paginationOption" paginatorPosition="bottom" styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped">
 				<ng-template pTemplate="header" let-columns>
 					<tr>
@@ -334,7 +334,7 @@
 						<th>
 							<button pButton icon="pi pi-plus" class="p-button-rounded" (click)="addColumns()"></button>
 						</th>
-					</tr>		
+					</tr>
 				</ng-template>
 				<ng-template pTemplate="body" let-user>
 		  			<tr class="p-selectable-row">
@@ -381,10 +381,10 @@
 						In total there are {{totalRecords }} Users.
 					</div>
 				</ng-template>
-			
+
 			</p-table>
 		</div>
 		<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
-	</div>	
+	</div>
 </div>
 
