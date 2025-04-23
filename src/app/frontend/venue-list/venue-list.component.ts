@@ -1153,13 +1153,7 @@ selectedVenueNames:string = '';
 
         this.venueId = id;
         this.urlMode = "venue_details";
-        if (this.isLoggedIn == false) {
-            this.numberPopup = true;
-            this.otpPopup = false;
-            this.otpthankyouPopup = false;
-        } else {
-            this.router.navigateByUrl('/venue/' + id);
-        }
+        this.router.navigateByUrl('/venue/' + id);
     }
     getRoleDetails() {
         const querystring = "filterByroleId=" + this.userData.data.userdata.role;

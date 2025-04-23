@@ -1341,12 +1341,20 @@ export class VenueDetailsComponent implements OnInit {
                 this.getCategoryBySlug();
                 await this.getSubareas();
                 await this.getCities();
+                if (!this.isLoggedIn) {
+                    setTimeout(() => {
+                        this.numberPopup = true;
+                        this.otpPopup = false;
+                        this.otpthankyouPopup = false;
+                    }, 6000);
+                }
             },
             (err) => {
                 this.errorMessage = err.error.message;
             }
         );
     }
+
     isNumber(val: any): boolean {
         return typeof val === 'number';
     }
