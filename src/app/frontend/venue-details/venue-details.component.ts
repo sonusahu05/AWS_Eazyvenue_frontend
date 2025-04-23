@@ -96,7 +96,12 @@ export class VenueDetailsComponent implements OnInit {
     venueDetailfilter() {
         this.showVenueDetailFilter = true;
     }
+    venueSendquery() {
+        this.showVenuesendquery = true;
+    }
+
     showVenueDetailFilter: boolean = false;
+    showVenuesendquery:boolean = false;
     classToggled = false;
     availableClasses: string[] = ['light', 'normal-header'];
     currentClassIdx: number = 0;
@@ -282,6 +287,7 @@ export class VenueDetailsComponent implements OnInit {
     public sOccasion;
     public metaUrl: string;
     isBookingSummary: boolean = false;
+    isBookingenquerySummary: boolean = false;
     public numberPopup = false;
     public otpPopup = false;
     mobileForm: FormGroup;
@@ -333,6 +339,10 @@ export class VenueDetailsComponent implements OnInit {
     ngOnInit() {
         const canonicalLink = this.renderer.createElement('link');
         this.initReviewForm();
+        this.checkScreenSize();
+    window.addEventListener('resize', () => {
+      this.checkScreenSize();
+    });
         this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
         this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
         this.renderer.appendChild(document.head, canonicalLink);
@@ -688,6 +698,10 @@ export class VenueDetailsComponent implements OnInit {
     getAllReviews() {
         return this.venueDetails.reviews || [];
     }
+
+    checkScreenSize() {
+        this.isMobile = window.innerWidth <= 768;
+      }
 
     onSubmitNumber(mode) {
         this.submitted = true;
@@ -2443,6 +2457,64 @@ export class VenueDetailsComponent implements OnInit {
         this.offerPaymentValue25_percent = this.totalVenuePrice * 0.25;
         this.orderType = mode;
         this.isBookingSummary = true;
+        this.showVenueDetailFilter = false;
+    }
+    onClickSendfastquery(mode) {
+        if (this.isLoggedIn == false) {
+            this.numberPopup = true;
+            return;
+        }
+
+        if (
+            this.selectedOccasion === undefined ||
+            this.selectedOccasion === null
+        ) {
+            this.messageService.add({
+                key: 'toastMsg',
+                severity: 'error',
+                summary: 'error',
+                detail: 'Please select occasion.',
+                life: 6000,
+            });
+            return;
+        }
+        // if (this.selectedOccasion.length == 0) {
+        //     this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select occasion.', life: 6000 });
+        //     return;
+        // }
+        if (mode === 'book_now') {
+            if (this.selectedSlots.length == 0) {
+                this.messageService.add({
+                    key: 'toastMsg',
+                    severity: 'error',
+                    summary: 'error',
+                    detail: 'Please select Slot.',
+                    life: 6000,
+                });
+                return;
+            }
+        }
+        if (this.selectedVenueCapacity == undefined) {
+            this.messageService.add({
+                key: 'toastMsg',
+                severity: 'error',
+                summary: 'error',
+                detail: 'Please select Guest Capacity.',
+                life: 6000,
+            });
+            return;
+        }
+
+        // if (this.selectedDecor == undefined) {
+        //   this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Decor.', life: 6000 });
+        //   return;
+        // }
+        // if (this.selectedVendor.length == 0) {
+        //   this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Vendor.', life: 6000 });
+        //   return;
+        // }
+        this.orderType = mode;
+        this.isBookingenquerySummary = true;
         this.showVenueDetailFilter = false;
     }
     onClickBooking(mode) {

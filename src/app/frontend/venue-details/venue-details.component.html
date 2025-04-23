@@ -196,20 +196,29 @@
         <p-button *ngIf="showAvailabilityMessage" class="detailsfilter" (click)="venueDetailfilter()" label="Send Enquiries"></p-button>
     </div> -->
 </div>
-<p-button
-    *ngIf="!showAvailabilityMessage"
-    class="detailsfilter"
-    (click)="venueDetailfilter()"
->
-    Book Now</p-button
->
-<p-button
-    *ngIf="showAvailabilityMessage"
-    class="detailsfilter"
-    (click)="venueDetailfilter()"
->
-    Send Enquiries</p-button
->
+<div [ngStyle]="{
+    'display': 'flex',
+    'width': '100%',
+    'margin': '0',
+    'padding': '0',
+    'background-color': '#ff0018',
+    'position': isMobile ? 'fixed' : 'static',
+    'bottom': isMobile ? '0' : 'auto',
+    'left': isMobile ? '0' : 'auto',
+    'z-index': isMobile ? '999' : 'auto'
+  }">
+    <button
+      (click)="venueDetailfilter()"
+      style="flex: 1; border: none; outline: none; background-color: transparent; color: white; font-weight: 500; font-size: 16px; padding: 15px 0; cursor: pointer; font-family: Arial, sans-serif;">
+      Book Now
+    </button>
+    <div style="width: 1px; background-color: white;"></div>
+    <button
+      (click)="venueSendquery()"
+      style="flex: 1; border: none; outline: none; background-color: transparent; color: white; font-weight: 500; font-size: 16px; padding: 15px 0; cursor: pointer; font-family: Arial, sans-serif;">
+      Enquire Now
+    </button>
+  </div>
 
 <div class="section-venuelisting-details" *ngIf="venueDetails">
     <div class="section listing-wrapper">
@@ -2293,6 +2302,225 @@
 </p-dialog>
 
 <p-dialog
+    [(visible)]="showVenuesendquery"
+    header="Book Your Venue"
+    [modal]="true"
+    [style]="{ width: '90%', margin: '10px' }"
+    [draggable]="false"
+    [resizable]="false"
+>
+    <div class="sidebar-right">
+        <p-toast key="toastMsg"></p-toast>
+        <div class="sidebar sticky-sidebar">
+            <div class="sidebar-widget">
+                <span class="select-guest-count-text"
+                    >Select Guest Count and Date in the search</span
+                >
+                <!-- <div class="Price">
+                    <div class="real-rice">
+                        <h4>
+                            <del> ₹49, 372</del>
+                            <span *ngIf="isLoggedIn" class="original-price">
+                                {{venuePrice|currency:'INR'}}</span>
+                        </h4>
+                    </div>
+                    <div class="newdate disable">
+                        <h3>More than one day</h3>
+                        <p-inputSwitch [(ngModel)]="checked1"></p-inputSwitch>
+                    </div>
+                </div> -->
+                <div class="col-md-12 right-collapsed-form filter-div">
+                    <p-accordion [multiple]="true">
+                        <p-accordionTab header="Occasion" class="occasion-tab">
+                            <ng-template pTemplate="header">
+                                <!-- <div class="selected-list col-md-12 p-0"> -->
+                                <div
+                                    *ngFor="
+                                        let occasion of selectedOccasionNames
+                                    "
+                                    class="div selected-list"
+                                >
+                                    <span> : {{ occasion.name }}</span>
+                                </div>
+                                <!-- </div> -->
+                            </ng-template>
+                            <div class="occasion-list">
+                                <div class="col-md-12 p-0">
+                                    <div
+                                        *ngIf="occasionArray.length > 0"
+                                        class="div"
+                                    >
+                                        <p-carousel
+                                            [value]="occasionArray"
+                                            styleClass="custom-carousel"
+                                            [numVisible]="2"
+                                            [numScroll]="2"
+                                            [circular]="false"
+                                            [autoplayInterval]="3000"
+                                        >
+                                            <ng-template
+                                                let-occasion
+                                                pTemplate="item"
+                                            >
+                                                <div
+                                                    (click)="
+                                                        onClickOccasion(
+                                                            occasion
+                                                        )
+                                                    "
+                                                    class="product-item"
+                                                >
+                                                    <div
+                                                        [ngClass]="
+                                                            occasion.selected
+                                                                ? 'occasion-active-bottom'
+                                                                : ''
+                                                        "
+                                                        class="occasion-icon-top"
+                                                    >
+                                                        <p-avatarGroup
+                                                            styleClass="mb-4"
+                                                        >
+                                                            <p-avatar
+                                                                class="no-circle"
+                                                                image="{{
+                                                                    occasion.image_src
+                                                                }}"
+                                                                size=" large"
+                                                                pTooltip="{{
+                                                                    occasion.name
+                                                                }}"
+                                                                tooltipPosition="top"
+                                                                [style]="{
+                                                                    width: '37px',
+                                                                    height: '37px',
+                                                                    color: '#ffffff'
+                                                                }"
+                                                            ></p-avatar>
+                                                        </p-avatarGroup>
+                                                        <div class="div-title">
+                                                            <h5>
+                                                                {{
+                                                                    occasion.name
+                                                                }}
+                                                            </h5>
+                                                        </div>
+                                                        <!-- assets/images/category-icons/{{occasion.categoryImage}}.svg -->
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </p-carousel>
+                                    </div>
+                                </div>
+                                <div
+                                    *ngIf="occasionArray.length == 0"
+                                    class="div"
+                                >
+                                    Facilities at banquet not available.
+                                </div>
+                            </div>
+                        </p-accordionTab>
+
+                        <p-accordionTab header="Guest Count">
+                            <ng-template pTemplate="header">
+                                <div
+                                    *ngIf="selectedVenueCapacity != undefined"
+                                    class="p-0"
+                                >
+                                    <span class="selected-list">
+                                        : {{ selectedVenueCapacity }}</span
+                                    >
+                                </div>
+                            </ng-template>
+                            <p-dropdown
+                                class=""
+                                [options]="filterGuestArray"
+                                placeholder="Guest Count"
+                                optionLabel="label"
+                                [(ngModel)]="selectedVenueCapacity"
+                                (onChange)="onCapacitySelect($event.value)"
+                                [editable]="true"
+                                class="guest-count-dpd"
+                            ></p-dropdown>
+                        </p-accordionTab>
+                        <p-accordionTab
+                            header="Time Slot"
+                            class="time-slot-tab"
+                        >
+                            <ng-template pTemplate="header">
+                                <span class="selected-list">{{
+                                    selectedStartDate
+                                }}</span>
+                                <span
+                                    class="selected-list pl-0 pr-0"
+                                    *ngIf="selectedEndDate"
+                                    >-</span
+                                >
+                                <span
+                                    class="selected-list"
+                                    *ngIf="selectedEndDate"
+                                    >{{ selectedEndDate }}
+                                </span>
+                                <span class="selected-list">{{
+                                    selectedSlotsName
+                                }}</span>
+                            </ng-template>
+
+                            <div class="col-md-12 p-0 time-slots">
+                                <p-tabView
+                                    *ngIf="slotList.length > 0"
+                                    header="Time Slot"
+                                >
+                                    <div class="row text-center">
+                                        <div
+                                            class="col text-center"
+                                            *ngFor="let slot of slotList"
+                                        >
+                                            <h5
+                                                class="decor-name pb-1 slot-name"
+                                            >
+                                                {{ slot.slot }}
+                                            </h5>
+                                            <p-radioButton
+                                                [value]="slot"
+                                                [(ngModel)]="selectedSlot"
+                                                (click)="onSlotClick(slot)"
+                                            >
+                                            </p-radioButton>
+                                        </div>
+                                    </div>
+                                </p-tabView>
+                                <p-tabView
+                                    *ngIf="showAvailabilityMessage"
+                                    header="Time Slot"
+                                >
+                                    No slots available on this selected date
+                                    range. You can request for enquiries.
+                                </p-tabView>
+                            </div>
+                        </p-accordionTab>
+
+                    </p-accordion>
+                </div>
+
+                <div class="col-md-12 Send-btn">
+                    <button
+                        *ngIf="!showAvailabilityMessage"
+                        (click)="onClickSendfastquery('send_enquires')"
+                        pButton
+                        class="btn btn-custom w-100 price-btn"
+                    >
+                        Send Enquiries
+                        <!-- {{bookingPrice|currency:'INR'}} -->
+                    </button>
+                </div>
+                <!-- <p-button (click)="schedulevisit()" icon="pi pi-external-link" label="Show"></p-button> -->
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog
     [(visible)]="showVenueDetailFilter"
     header="Book Your Venue"
     [modal]="true"
@@ -3196,6 +3424,98 @@
                     class="btn btn-custom w-100 price-btn"
                 >
                     Check Availability
+                </button>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog
+    [header]="
+        orderType === 'book_now'
+            ? 'Venue Booking Summary'
+            : 'Venue Inquiry Summary'
+    "
+    [(visible)]="isBookingenquerySummary"
+    [modal]="true"
+    class="booking-modal"
+    [draggable]="false"
+    [resizable]="false"
+>
+    <div class="popupfilter sidebar Filter-siderbar sidebar-left popupfilter">
+        <div class="sidebar-widget">
+            <p-accordion [multiple]="true">
+                <p-accordionTab header="Venue :" class="ui-accordion">
+                    <ng-template pTemplate="header">
+                        <div *ngIf="sOccasion" class="div selected-list">
+                            <span style="font-weight: 500">{{
+                                venueDetails.name
+                            }}</span>
+                        </div>
+                    </ng-template>
+                </p-accordionTab>
+                <p-accordionTab header="Location :" class="ui-accordion">
+                    <ng-template pTemplate="header">
+                        <div *ngIf="sOccasion" class="div selected-list">
+                            <span style="font-weight: 500"
+                                >{{ venueDetails.subarea }},
+                                {{ venueDetails.cityname }}</span
+                            >
+                        </div>
+                    </ng-template>
+                </p-accordionTab>
+                <p-accordionTab header="Occasion:" class="ui-accordion">
+                    <ng-template pTemplate="header">
+                        <div *ngIf="sOccasion" class="div selected-list">
+                            <span style="font-weight: 500">{{
+                                sOccasion.name
+                            }}</span>
+                        </div>
+                    </ng-template>
+                </p-accordionTab>
+                <p-accordionTab header="Guest Count :" class="ui-accordion">
+                    <ng-template pTemplate="header">
+                        <div
+                            *ngIf="selectedVenueCapacity"
+                            class="div selected-list"
+                        >
+                            <span style="font-weight: 500">{{
+                                selectedVenueCapacity
+                            }}</span>
+                        </div>
+                    </ng-template>
+                </p-accordionTab>
+                <p-accordionTab header="Time Slot :" class="ui-accordion">
+                    <ng-template pTemplate="header">
+                        <span class="selected-list" style="font-weight: 500">{{
+                            selectedStartDate
+                        }}</span>
+                        <span
+                            class="selected-list pl-0 pr-0"
+                            *ngIf="selectedEndDate"
+                            style="font-weight: 500"
+                            >-</span
+                        >
+                        <span
+                            class="selected-list"
+                            *ngIf="selectedEndDate"
+                            style="font-weight: 500"
+                            >{{ selectedEndDate }}
+                        </span>
+                        <span class="selected-list" style="font-weight: 500">{{
+                            selectedSlotsName
+                        }}</span>
+                    </ng-template>
+                </p-accordionTab>
+            </p-accordion>
+            <div class="col-md-12 Send-btn">
+                <button
+                    *ngIf="orderType == 'send_enquires'"
+                    (click)="onClickBooking('send_enquires')"
+                    pButton
+                    class="btn btn-custom w-100 price-btn"
+                >
+                    Send Enquery
                 </button>
             </div>
         </div>
