@@ -138,6 +138,11 @@ export class VenueDetailsComponent implements OnInit {
     public finalVenueList: any[] = [];
     public rangeDates: Date[] | undefined;
     public filterGuestArray: any[] = [];
+    guestCountOptions = [
+        { label: '0-100', value: '0-100', selected: false },
+        { label: '100-200', value: '100-200', selected: false },
+        { label: '200+', value: '200+', selected: false }
+      ];
     public date12: Date;
     public date13: Date;
     public es: any;
@@ -1346,7 +1351,7 @@ export class VenueDetailsComponent implements OnInit {
                         this.numberPopup = true;
                         this.otpPopup = false;
                         this.otpthankyouPopup = false;
-                    }, 6000);
+                    }, 4000);
                 }
             },
             (err) => {
@@ -1691,27 +1696,88 @@ export class VenueDetailsComponent implements OnInit {
         }
         this.filteredCountries = filtered;
     }
+    get uniqueOccasions() {
+        // If occasionArray is not populated yet, return empty array
+        if (!this.occasionArray || this.occasionArray.length === 0) {
+            return [];
+        }
+
+        // Create a map to track unique occasions by name
+        const uniqueMap = new Map();
+
+        // Add only unique items to the map (by name)
+        this.occasionArray.forEach(occasion => {
+            if (!uniqueMap.has(occasion.name)) {
+                uniqueMap.set(occasion.name, occasion);
+            }
+        });
+
+        // Convert map values back to array
+        return Array.from(uniqueMap.values());
+    }
+
+    // Update the onCapacitySelect method to handle the new format
     onCapacitySelect(event) {
         if (event != undefined) {
             let venuePrice = 0;
             let totalVenuePrice = 0;
-            if (event.value != undefined) {
-                this.selectedVenueCapacity = event.value;
+
+            // Set the selected capacity label for display
+            this.selectedVenueCapacity = event.label;
+
+            // Handle the different condition types
+            if (event.condition === 'range') {
+                // For range values, you might want to use the max or a specific value
+                this.selectedGuestName = event.max;
             } else {
-                this.selectedVenueCapacity = event;
+                // For lte or gte, use the value directly
+                this.selectedGuestName = event.value;
             }
+
+            // Calculate prices if needed
             if (this.selectedFoodMenuType != undefined) {
                 venuePrice =
-                    Number(this.selectedVenueCapacity) *
+                    Number(this.selectedGuestName) *
                     Number(this.selectedFoodMenuType.value);
                 totalVenuePrice =
                     Number(this.selectedDecorPrice) + Number(venuePrice);
             }
+
             this.totalVenuePrice = totalVenuePrice;
-            this.selectedGuestName = event.value;
         }
     }
-    onClickEventDate(event) {
+
+    onGuestCountSelect(guestCount: string) {
+        // Deselect previously selected guest count
+        this.guestCountOptions.forEach(option => {
+          option.selected = option.value === guestCount;
+        });
+
+        // Set the selected venue capacity
+        this.selectedVenueCapacity = guestCount;
+
+        // Calculate numeric value for pricing
+        let calculatedGuestCount = 0;
+        if (guestCount === '0-100') {
+          calculatedGuestCount = 50; // Midpoint
+        } else if (guestCount === '100-200') {
+          calculatedGuestCount = 150; // Midpoint
+        } else if (guestCount === '200+') {
+          calculatedGuestCount = 200; // Minimum
+        }
+
+        // Calculate venue price if food menu type is selected
+        let venuePrice = 0;
+        let totalVenuePrice = 0;
+        if (this.selectedFoodMenuType != undefined) {
+          venuePrice = calculatedGuestCount * Number(this.selectedFoodMenuType.value);
+          totalVenuePrice = Number(this.selectedDecorPrice || 0) + Number(venuePrice);
+        }
+
+        this.totalVenuePrice = totalVenuePrice;
+        this.selectedGuestName = guestCount;
+      }
+  onClickEventDate(event) {
         this.selectedStartDate = this.rangeDates[0];
         this.selectedEndDate = this.rangeDates[1];
         let startDate = moment(this.selectedStartDate)

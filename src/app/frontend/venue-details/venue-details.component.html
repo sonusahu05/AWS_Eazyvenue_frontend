@@ -2330,19 +2330,22 @@
                     </div>
                 </div> -->
                 <div class="col-md-12 right-collapsed-form filter-div">
-                    <p-accordion [multiple]="true">
-                        <p-accordionTab header="Occasion" class="occasion-tab">
+                    <!-- Modified p-accordion to always stay open -->
+                    <p-accordion [multiple]="true" [activeIndex]="[0,1,2]" styleClass="no-accordion-arrows">
+                        <p-accordionTab header="Occasion" [selected]="true"  class="occasion-tab">
                             <ng-template pTemplate="header">
-                                <!-- <div class="selected-list col-md-12 p-0"> -->
-                                <div
-                                    *ngFor="
-                                        let occasion of selectedOccasionNames
-                                    "
-                                    class="div selected-list"
-                                >
-                                    <span> : {{ occasion.name }}</span>
+                                <div class="accordion-header">
+                                    <!-- <div class="selected-list col-md-12 p-0"> -->
+                                    <div
+                                        *ngFor="
+                                            let occasion of selectedOccasionNames
+                                        "
+                                        class="div selected-list"
+                                    >
+                                        <span> : {{ occasion.name }}</span>
+                                    </div>
+                                    <!-- </div> -->
                                 </div>
-                                <!-- </div> -->
                             </ng-template>
                             <div class="occasion-list">
                                 <div class="col-md-12 p-0">
@@ -2351,7 +2354,7 @@
                                         class="div"
                                     >
                                         <p-carousel
-                                            [value]="occasionArray"
+                                            [value]="uniqueOccasions"
                                             styleClass="custom-carousel"
                                             [numVisible]="2"
                                             [numScroll]="2"
@@ -2421,82 +2424,107 @@
                             </div>
                         </p-accordionTab>
 
-                        <p-accordionTab header="Guest Count">
+                        <p-accordionTab header="Guest Count" [selected]="true" >
                             <ng-template pTemplate="header">
-                                <div
-                                    *ngIf="selectedVenueCapacity != undefined"
-                                    class="p-0"
-                                >
-                                    <span class="selected-list">
-                                        : {{ selectedVenueCapacity }}</span
+                                <div class="accordion-header">
+                                    <div
+                                        *ngIf="selectedVenueCapacity != undefined"
+                                        class="p-0"
                                     >
+                                        <span class="selected-list">
+                                            : {{ selectedVenueCapacity }}</span
+                                        >
+                                    </div>
                                 </div>
                             </ng-template>
-                            <p-dropdown
-                                class=""
-                                [options]="filterGuestArray"
-                                placeholder="Guest Count"
-                                optionLabel="label"
-                                [(ngModel)]="selectedVenueCapacity"
-                                (onChange)="onCapacitySelect($event.value)"
-                                [editable]="true"
-                                class="guest-count-dpd"
-                            ></p-dropdown>
+                            <!-- Modified to show custom guest count ranges -->
+                            <div class="col-md-12 p-0 time-slots">
+                                <div class="row text-center">
+                                    <div class="col text-center">
+                                        <h5 class="decor-name pb-1 slot-name">0 to 100</h5>
+                                        <p-radioButton
+                                            [value]="{ id: 1, label: '0 to 100', condition: 'lte', value: 100, status: false }"
+                                            [(ngModel)]="selectedCapacity"
+                                            (click)="onCapacitySelect({ id: 1, label: '0 to 100', condition: 'lte', value: 100, status: false })"
+                                        ></p-radioButton>
+                                    </div>
+                                    <div class="col text-center">
+                                        <h5 class="decor-name pb-1 slot-name">100 to 150</h5>
+                                        <p-radioButton
+                                            [value]="{ id: 2, label: '100 to 150', condition: 'range', min: 100, max: 150, status: false }"
+                                            [(ngModel)]="selectedCapacity"
+                                            (click)="onCapacitySelect({ id: 2, label: '100 to 150', condition: 'range', min: 100, max: 150, status: false })"
+                                        ></p-radioButton>
+                                    </div>
+                                    <div class="col text-center">
+                                        <h5 class="decor-name pb-1 slot-name">250+</h5>
+                                        <p-radioButton
+                                            [value]="{ id: 3, label: '250+', condition: 'gte', value: 250, status: false }"
+                                            [(ngModel)]="selectedCapacity"
+                                            (click)="onCapacitySelect({ id: 3, label: '250+', condition: 'gte', value: 250, status: false })"
+                                        ></p-radioButton>
+                                    </div>
+                                </div>
+                            </div>
                         </p-accordionTab>
+
                         <p-accordionTab
                             header="Time Slot"
                             class="time-slot-tab"
+                            [selected]="true"
+
                         >
                             <ng-template pTemplate="header">
-                                <span class="selected-list">{{
-                                    selectedStartDate
-                                }}</span>
-                                <span
-                                    class="selected-list pl-0 pr-0"
-                                    *ngIf="selectedEndDate"
-                                    >-</span
-                                >
-                                <span
-                                    class="selected-list"
-                                    *ngIf="selectedEndDate"
-                                    >{{ selectedEndDate }}
-                                </span>
-                                <span class="selected-list">{{
-                                    selectedSlotsName
-                                }}</span>
+                                <div class="accordion-header">
+                                    <span class="selected-list">{{
+                                        selectedStartDate
+                                    }}</span>
+                                    <span
+                                        class="selected-list pl-0 pr-0"
+                                        *ngIf="selectedEndDate"
+                                        >-</span
+                                    >
+                                    <span
+                                        class="selected-list"
+                                        *ngIf="selectedEndDate"
+                                        >{{ selectedEndDate }}
+                                    </span>
+                                    <span class="selected-list">{{
+                                        selectedSlotsName
+                                    }}</span>
+                                </div>
                             </ng-template>
 
                             <div class="col-md-12 p-0 time-slots">
-                                <p-tabView
-                                    *ngIf="slotList.length > 0"
-                                    header="Time Slot"
-                                >
+                                <div *ngIf="slotList.length > 0">
                                     <div class="row text-center">
-                                        <div
-                                            class="col text-center"
-                                            *ngFor="let slot of slotList"
-                                        >
-                                            <h5
-                                                class="decor-name pb-1 slot-name"
+                                        <!-- Explicitly show only Full Day, Morning, Evening slots -->
+                                        <ng-container *ngFor="let slot of slotList">
+                                            <div
+                                                class="col text-center"
+                                                *ngIf="slot.slot === 'Full Day' || slot.slot === 'Morning' || slot.slot === 'Evening'"
                                             >
-                                                {{ slot.slot }}
-                                            </h5>
-                                            <p-radioButton
-                                                [value]="slot"
-                                                [(ngModel)]="selectedSlot"
-                                                (click)="onSlotClick(slot)"
-                                            >
-                                            </p-radioButton>
-                                        </div>
+                                                <h5
+                                                    class="decor-name pb-1 slot-name"
+                                                >
+                                                    {{ slot.slot }}
+                                                </h5>
+                                                <p-radioButton
+                                                    [value]="slot"
+                                                    [(ngModel)]="selectedSlot"
+                                                    (click)="onSlotClick(slot)"
+                                                >
+                                                </p-radioButton>
+                                            </div>
+                                        </ng-container>
                                     </div>
-                                </p-tabView>
-                                <p-tabView
+                                </div>
+                                <div
                                     *ngIf="showAvailabilityMessage"
-                                    header="Time Slot"
                                 >
                                     No slots available on this selected date
                                     range. You can request for enquiries.
-                                </p-tabView>
+                                </div>
                             </div>
                         </p-accordionTab>
 
