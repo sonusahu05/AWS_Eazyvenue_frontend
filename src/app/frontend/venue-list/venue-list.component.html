@@ -305,13 +305,6 @@
                         <div class="col-12 text-center" *ngIf="showMoreVisible">
                           <button (click)="showHomeSearch()" class="btn-custom btn-lg secondary show-more-btn">
                             <span *ngIf="!loading">Show More Venues</span>
-                            <span *ngIf="loading"><i class="pi pi-spin pi-spinner"></i> Loading...</span>
-                          </button>
-                        </div>
-
-                        <div class="col-12 text-center mt-3" *ngIf="displayedVenueList.length < totalRecords">
-                          <button (click)="showHomeSearch()" class="btn-custom btn-lg primary alternative-show-more-btn">
-                            Show More ({{displayedVenueList.length}}/{{totalRecords}})
                           </button>
                         </div>
                     </div>
@@ -328,18 +321,19 @@
                           clear: both;
                           margin-top: 30px;
                           margin-bottom: 30px;
+                          display: flex;
+                          justify-content: center;
                         }
 
                         .show-more-btn, .alternative-show-more-btn {
                           position: relative;
-                          z-index: 9999 !important; /* Maximum z-index to ensure visibility */
-                          margin: 20px auto;
+                          z-index: 1;
                           padding: 12px 30px;
+                          margin-left: 30px;
                           font-size: 16px;
                           font-weight: 600;
                           box-shadow: 0 4px 15px rgba(0,0,0,0.2);
                           transition: all 0.3s ease;
-                          display: block;
                           min-width: 200px;
                         }
 
@@ -352,7 +346,7 @@
                           transform: translateY(-2px);
                           box-shadow: 0 6px 20px rgba(0,0,0,0.25);
                         }
-                        </style>
+                      </style>
             </div>
         </div>
     </div>
