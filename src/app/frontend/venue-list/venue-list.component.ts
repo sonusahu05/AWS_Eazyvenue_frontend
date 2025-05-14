@@ -69,6 +69,7 @@ export class VenueListComponent implements OnInit {
     mobileForm: FormGroup;
     mobileNumber: any;
     submitted: boolean = false;
+    displayedVenueList = [];
     otpPopup: boolean = false;
     otpthankyouPopup: boolean;
     regthankyouPopup: boolean;
@@ -230,7 +231,8 @@ export class VenueListComponent implements OnInit {
     public parentCategoryId;
     public parentCategoryDetails;
     downloadFlg: boolean = false;
-    pageSize = 10;
+    pageSize = 30;
+    showMoreVisible = true;
     currentpage = 2;
     first;
     private lazyLoadEvent: LazyLoadEvent;
@@ -248,6 +250,7 @@ export class VenueListComponent implements OnInit {
     selectedCityName: string = '';
 selectedSubareaName: string = '';
 selectedVenueNames:string = '';
+displayLimit: number = 25;
     public birthYearDefaultDate;
     public birthMinValue: Date = new Date(environment.defaultDate);
     public birthMaxValue: Date = new Date(maxYearFunction());
@@ -767,6 +770,27 @@ selectedVenueNames:string = '';
         // this.pageNumber = 1;
         // this.getVenueList();
     }
+
+    updateDisplayedVenues() {
+        const startIndex = 0;
+        const endIndex = this.pageNumber * this.pageSize;
+        this.displayedVenueList = this.finalVenueList.slice(startIndex, endIndex);
+      }
+
+      // Load more venues when "Show More" button is clicked
+      loadMoreVenues() {
+        if (this.displayedVenueList.length < this.totalRecords) {
+          this.pageNumber++;
+
+          // If we already have more venues loaded, just display more of them
+          if (this.finalVenueList.length >= this.pageNumber * this.pageSize) {
+            this.updateDisplayedVenues();
+          } else {
+            // Otherwise fetch more venues from the server
+            this.getVenueList();
+          }
+        }
+      }
     getVenueList() {
         // console.log(this.selectedCategoryId);
         // console.log(this.selectedCities);
@@ -777,7 +801,7 @@ selectedVenueNames:string = '';
 
 
         let params = "";
-        let rows = 10;
+        let rows = 32;
         let query = "filterByDisable=false&filterByStatus=true&filterByAssured=true";
         if (this.selectedCategoryId !== undefined) {
             query += "&filterByCategory=" + this.selectedCategoryId;
@@ -831,7 +855,7 @@ selectedVenueNames:string = '';
 
 
 
-
+        this.loading = true;
         this.venueService.getVenueListForFilter(newQuery).subscribe(
         // this.venueService.getVenueListWithoutAuth(query).subscribe(
             data => {
@@ -895,6 +919,7 @@ selectedVenueNames:string = '';
                         element['minPrice'] = minPrice;
                     });
                     this.noVenueFlag = false;
+                    this.updateDisplayedVenues();
                 } else {
                     this.noVenueFlag = true;
                 }

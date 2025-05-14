@@ -8,53 +8,9 @@
 <p-toast key="event_planer_msg"></p-toast>
 <div class="col-md-12 p-0 banner-section banner-img">
     <img _ngcontent-llh-c234="" src="assets/images/bannerimage2.jpeg">
-    <!-- <p-carousel [value]="bannerImageList" [numVisible]="1" [numScroll]="1" [circular]="true" [showIndicators]="false"
-        [responsiveOptions]="carouselResponsiveOptions">
-        <ng-template let-banner pTemplate="item">
-            <div class="product-item">
-                <div class="product-item-content">
-
-                    <div class="p-mb-1 banner-item-main">
-                        <img [src]="banner.banner_image_src" class="product-image" />
-                        <div class="banner-details">
-                             <div class="details-heading">
-                                <h4 class="p-mb-1">Wedding venue Title</h4>
-                            </div>
-                            <div class="details-description">
-                                <p class="p-mb-1">Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat enim, id sit quaerat voluptate perspiciatis nobis nisi ullam esse animi recusandae, vitae fuga iusto.</p>
-                            </div>
-                            <div class="details-description">
-                                <button class="btn"> Book banquet now</button>
-                            </div>
-                           </div> -->
-                    <!-- </div>
-                </div>
-            </div>
-        </ng-template>
-    </p-carousel> -->
 </div>
-<!-- {{listingblock|json}} -->
 <app-venue-list> </app-venue-list>
-<!-- Single Vendor Start -->
 <app-category></app-category>
-<!-- <div class="section  vendor-section pb-0">
-    <div class="container-fluid">
-        <div class="acr-single-agent">
-            <div class="acr-single-agent-thumb">
-                <img src="assets/demo/images/venue/person.png">
-            </div>
-            <div class="acr-single-agent-body">
-                <h2 class="mb-6">I’m a personalised <br> <b>Event Planner</b></h2>
-                <button pButton (click)="onClickLetsConnect()">LET’S CONNECT</button>
-            </div>
-            <div class="planer-image-right">
-                <img src="assets/img/planer.png" alt="">
-            </div>
-        </div>
-    </div>
-</div> -->
-<!-- Single Vendor End -->
-
 <p-dialog header="Event Planner" [(visible)]="showEventPlannerDialog" [modal]="true" class="planner-popup "
     [style]="{width: '38vw', overflow: 'hidden' }" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
 
@@ -165,30 +121,6 @@
             <img src="assets/images/offer-images/offers-4.jpg" class="offe-img">
         </div>
       </div>
-      <!-- <p-button
-        type="button"
-        (click)="close()"
-        label="OK"
-        styleClass="p-button-danger">
-    </p-button> -->
-    <!-- <div class="row">
-        <div class="col-md-2">
-        </div>
-        <div class="col-md-2">
-
-        </div>
-        <div class="col-md-2">
-
-        </div>
-        <div class="col-md-2">
-
-        </div>
-        <div class="col-md-2">
-            <img src="assets/images/offer-images/offers-4.jpg" class="offe-img">
-        </div>
-        <div class="col-md-2">
-        </div>
-    </div>     -->
     </p-sidebar>
     <p-dialog header="Event Planner" [(visible)]="showModalOffer" [modal]="true" class="planner-popup"
     [style]="{width: '38vw', overflow: 'hidden' }" [baseZIndex]="10000" [draggable]="false" [resizable]="false">

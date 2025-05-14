@@ -2,10 +2,7 @@
 
 <div class="tint">
     <div class="search-bar-locations p-p-0">
-        <!-- <p class="animation-text-heading">Eaziest Way to discover and book venues&nbsp;</p>
-        <div class="verticalFlip">
-             <span *ngFor="let category of categoryMenuList">for {{category.name}}</span>
-          </div> -->
+
         <div class="row justify-content-center">
             <div class="col-lg-7 col-md-8 col-sm-12 animation-text-one">
                 <div class="verticalFlip mb-10">
@@ -57,12 +54,7 @@
                         (completeMethod)="filterCategory($event)"
                         field="name"
                     ></p-autoComplete>
-                    <!-- <p-dropdown [options]="categoryMenuList" [filter]="true" [(ngModel)]="selectedOccasion"
-                        placeholder="Occasion" optionLabel="name" [showClear]="true"
-                        (onChange)="onClickCategory($event.value)"></p-dropdown> -->
-                    <!-- <p-dropdown [options]="categoryMenuList" [(ngModel)]="selectedOccasion" placeholder="Occasion"
-                        optionLabel="name" [showClear]="true" (onChange)="onClickCategory($event.value)"
-                        class="occasion-drop"></p-dropdown> -->
+
                 </span>
             </div>
             <div class="serch-bar-field col-3 p-p-0">
@@ -114,8 +106,7 @@
                         [editable]="true"
                         (onChange)="onClickTopGuestCount($event.value, $event)"
                     ></p-dropdown>
-                    <!-- <p-button [label]="selectedProduct ? selectedProduct.name : 'Guest Count'"
-                        (click)="op.toggle($event)"></p-button> -->
+
                 </div>
                 <p-overlayPanel #op [showCloseIcon]="false">
                     <ng-template pTemplate>
@@ -229,13 +220,6 @@
                             </div>
                         </div>
                     </ng-template>
-                    <!-- <ng-template pTemplate="footer">
-                        <p-button label="Clear" icon="pi pi-filter-slash"
-                            styleClass="p-button-raised p-button-text p-button-danger p-button-sm clear-btn-bottom"
-                            (click)="onClickClear()"></p-button>
-                        <p-button label="Close" icon="pi pi-times" (click)="onClickCalendarClose()"
-                            styleClass="p-button-sm p-button-raised p-button-text p-button-danger close-btn-bottom"></p-button>
-                    </ng-template> -->
                 </p-calendar>
                 <button
                     (click)="onClickSearch()"
@@ -325,17 +309,6 @@
                                     >
                                 </div>
                             </div>
-                            <!-- <div class="col-3 filters-list-top">
-                                <h5 class="filter-page">Venue Filters</h5>
-                                <div class="clear-btn">
-                                    <p-button (onClick)="onClickClearAll()" label="Clear All"
-                                        styleClass="p-button-raised p-button-text"></p-button>
-                                </div>
-                                <div class="filter-btn">
-                                    <p-button class="venuelistfilter" (click)="venueListFilter()">
-                                        <i class="pi pi-filter" style="font-size: 1rem"></i> Filter</p-button>
-                                </div>
-                            </div> -->
                             <div class="col-9">
                                 <div class="row">
                                     <div class="col">
@@ -489,16 +462,6 @@
                                                 class="sortbydrop"
                                                 optionLabel="name"
                                             ></p-dropdown>
-                                            <!-- <a [routerLink]="'/venue-list'" class="Check-Enquiry">
-                                            <span class="mr-2">
-                                                <img src="../../../assets/img/listings-list/icons/Document.svg" alt="">
-                                            </span>Check
-                                            Enquiry
-                                        </a> -->
-                                            <!-- <a [routerLink]="'/venue-list'" class="Instant-Available"> <span class="mr-2">
-                                                <img src="../../../assets/img/listings-list/icons/Check.svg" alt="">
-                                            </span>Instant
-                                            Available</a> -->
                                         </div>
                                     </div>
                                 </div>
@@ -512,247 +475,6 @@
                     <div class="sidebar Filter-siderbar sidebar-left">
                         <div class="sidebar-widget">
                             <p-accordion>
-                                <!-- <p-accordionTab
-                                    header="Budget"
-                                    class="filter-head-text"
-                                    [selected]="true"
-                                    style="margin-top: -10px"
-                                > -->
-                                <!-- <ngx-slider [(value)]="minValue" [(highValue)]="maxValue"
-                                    [options]="priceSliderOptions"></ngx-slider> -->
-                                <!-- <div
-                                        *ngIf="
-                                            venuePriceRangeValues != undefined
-                                        "
-                                        class="min-max-price-heading"
-                                    >
-                                        <div class="min-heading">
-                                            <h5
-                                                style="
-                                                    font-size: 12px !important;
-                                                    font-weight: 500;
-                                                "
-                                            >
-                                                Min :
-                                                <span class="text-center"> -->
-                                <!-- {{' ₹ ' +  rangeValues[0]}} -->
-                                <!-- {{
-                                                        " ₹ " +
-                                                            venuePriceRangeValues[0]
-                                                    }}
-                                                </span>
-                                            </h5> -->
-                                <!-- </div> -->
-                                <!-- <div class="max-heading">
-                                            <h5
-                                                style="
-                                                    font-size: 12px !important;
-                                                    font-weight: 500;
-                                                "
-                                            >
-                                                Max :
-                                                <span class="text-center"> -->
-                                <!-- {{ ' ₹ ' + rangeValues[1]}} -->
-                                <!-- {{
-                                                        " ₹ " +
-                                                            venuePriceRangeValues[1]
-                                                    }}
-                                                </span>
-                                            </h5>
-                                        </div>
-                                    </div>
-                                    <p-slider
-                                        [(ngModel)]="rangeValues"
-                                        [range]="true"
-                                        [step]="1000"
-                                        [min]="venuePriceRangeValues[0]"
-                                        [max]="venuePriceRangeValues[1]"
-                                    ></p-slider> -->
-                                <!-- <p-slider [(ngModel)]="venuePriceRangeValues" [range]="true"></p-slider> -->
-                                <!-- <div class="price-input">
-                                         <form> -->
-                                <!-- <div class="form-row">
-                                            <div class="form-group col-md-6"> -->
-                                <!-- <input type="number" class="form-control" id="inputEmail4"
-                                                placeholder="{{ venuePriceRangeValues[0]}}" value="{{ venuePriceRangeValues[0]}}"> -->
-                                <!-- <input
-                                                    *ngIf="
-                                                        venuePriceRangeValues !=
-                                                        undefined
-                                                    "
-                                                    type="number"
-                                                    #minVenuePriceInput
-                                                    [style]="{ width: '100px' }"
-                                                    [value]="rangeValues[0]"
-                                                    [step]="1000"
-                                                    [min]="
-                                                        venuePriceRangeValues[0]
-                                                    "
-                                                    [max]="
-                                                        venuePriceRangeValues[1]
-                                                    "
-                                                    (change)="
-                                                        onVenuePriceChange()
-                                                    "
-                                                    style="
-                                                        margin-bottom: 18px;
-                                                        font-size: 14px;
-                                                        padding-left: 10px;
-                                                    "
-                                                />
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                <input
-                                                    *ngIf="
-                                                        venuePriceRangeValues !=
-                                                        undefined
-                                                    "
-                                                    type="number"
-                                                    #maxVenuePriceInput
-                                                    [style]="{ width: '100px' }"
-                                                    [value]="rangeValues[1]"
-                                                    [step]="1000"
-                                                    [min]="
-                                                        venuePriceRangeValues[0]
-                                                    "
-                                                    [max]="
-                                                        venuePriceRangeValues[1]
-                                                    "
-                                                    (change)="
-                                                        onVenuePriceChange()
-                                                    "
-                                                    style="
-                                                        margin-bottom: 18px;
-                                                        font-size: 14px;
-                                                        padding-left: 10px;
-                                                    "
-                                                />
-                                            </div>
-                                        </div> -->
-                                <!-- <h3
-                                        style="color: #69707a;font-size: 14px;text-align: center;margin-bottom: 0px;">
-                                        Per pax cost</h3> -->
-                                <!-- <div class="perpax-cost">
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <div class="min-heading">
-                                                        <h5
-                                                            style="
-                                                                font-size: 12px !important;
-                                                                font-weight: 500;
-                                                            "
-                                                        >
-                                                            MIN PER PAX COST
-                                                        </h5>
-                                                        <p
-                                                            style="
-                                                                text-align: center;
-                                                            "
-                                                        >
-                                                            <span
-                                                                *ngIf="
-                                                                    venuePriceRangeValues !=
-                                                                    undefined
-                                                                "
-                                                                class="text-center perpax-cost-price"
-                                                            >
-                                                                {{
-                                                                    " ₹ " +
-                                                                        (
-                                                                            rangeValues[0] /
-                                                                            guestCount
-                                                                        ).toFixed(
-                                                                            0
-                                                                        )
-                                                                }}</span
-                                                            >
-                                                        </p>
-                                                        {{' ₹ ' + venuePriceRangeValues[0]}} -->
-                                <!-- </div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div class="max-heading">
-                                                        <h5
-                                                            style="
-                                                                font-size: 12px !important;
-                                                                font-weight: 500;
-                                                            "
-                                                        >
-                                                            MAX PER PAX COST
-                                                        </h5>
-                                                        <p
-                                                            style="
-                                                                text-align: center;
-                                                            "
-                                                        >
-                                                            <span
-                                                                *ngIf="
-                                                                    venuePriceRangeValues !=
-                                                                    undefined
-                                                                "
-                                                                class="text-center perpax-cost-price"
-                                                                >{{
-                                                                    " ₹ " +
-                                                                        (
-                                                                            rangeValues[1] /
-                                                                            guestCount
-                                                                        ).toFixed(
-                                                                            0
-                                                                        )
-                                                                }}</span
-                                                            >
-                                                        </p> -->
-                                <!-- {{ ' ₹ ' + venuePriceRangeValues[1]}} -->
-                                <!-- </div>
-                                                </div>
-                                            </div>
-                                        </div> -->
-
-                                <!-- </form> -->
-                                <!-- </div>
-                                </p-accordionTab> -->
-                                <!-- <p-accordionTab header="Occasions" [selected]="true"> -->
-                                <!-- <div class="slider-Occasions">
-                                        <div class="Occasions-fillter">
-                                            <div class="image">
-                                                <img src="http://103.204.131.217:3006/uploads/categoryPic/wedding.png"
-                                                    alt="">
-                                            </div>
-                                            <h4 class="title">
-                                                Wedding
-                                            </h4>
-                                        </div>
-                                    </div> -->
-                                <!-- <div class="right-slider-filter">
-                                        <div class="col-md-12  col-xl-12  col-lg-12 col-md-12 p-p-0 pt-0 pb-0">
-                                            <p-carousel [value]=" categoryMenuList" [numVisible]="4" [numScroll]="4"
-                                                [circular]="false" [showIndicators]="false"
-                                                [responsiveOptions]="carouselResponsiveOptions">
-
-                                                <ng-template let-categoryMenu pTemplate="item">
-
-                                                    <div [ngClass]="categoryMenu.selected ? 'category-active' : ''"
-                                                        class="product-item">
-                                                        <div (click)="onClickCategory(categoryMenu)"
-                                                            class="product-item-content">
-                                                            <p-avatarGroup styleClass="mb-4">
-                                                                <p-avatar image="{{categoryMenu.categoryImage}}"
-                                                                    size=" large" shape="circle"
-                                                                    pTooltip={{categoryMenu.name}} tooltipPosition="top"
-                                                                    [style]="{'width':'50px', 'height':'50px','color': '#ffffff', 'background-color':'#fff' , 'box-shadow' : 'inset 0px 1px 2px #00000029, 0px 3px 6px #00000029'}"></p-avatar>
-                                                            </p-avatarGroup>
-                                                            <div>
-                                                                <h4 class="p-mb-1">{{categoryMenu.name}}</h4>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </ng-template>
-                                            </p-carousel>
-                                        </div>
-                                    </div>
-
-                                </p-accordionTab> -->
 
                                 <p-accordionTab header="Property Type">
                                     <div class="slider-Property">
@@ -1078,41 +800,6 @@
                     </div>
                 </div>
                 <div class="col-lg-9 col-md-12 venue-list">
-                    <!---->
-
-                    <!-- <div class="right-slider-filter">
-                        <div class="col-md-11  col-xl-11  col-lg-10 col-md-10  filter-slider">
-                            <p-carousel [value]="categoryMenuList" [numVisible]="12" [numScroll]="12" [circular]="false"
-                                [showIndicators]="false" [responsiveOptions]="carouselResponsiveOptions">
-
-                                <ng-template let-categoryMenu pTemplate="item">
-
-                                    <div class="product-item">
-                                        <div (click)="onClickCategory(categoryMenu)" class="product-item-content">
-                                            <div class="p-mb-1">
-                                                <img src="{{categoryMenu.categoryImage}}" [alt]="categoryMenu.name"
-                                                    class="product-image" />
-                                            </div>
-                                            <div>
-                                                <h4 class="p-mb-1">{{categoryMenu.name}}</h4>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </ng-template>
-                            </p-carousel>
-                        </div>
-                        <div class="slider">
-                            <div class="product-item-content">
-                                <div class="p-mb-1"><img class="product-image"
-                                        src="http://103.204.131.217:3006/uploads/categoryPic/wedding.png" alt="Wedding">
-                                </div>
-                                <div>
-                                    <h4 class="p-mb-1">Wedding</h4>
-                                </div>
-                            </div>
-                        </div>
-                </div> -->
                     <div class="desktop-view-gallery">
                         <p-galleria
                             [(value)]="venueImages"
@@ -1189,14 +876,6 @@
                             [showItemNavigators]="true"
                             [showThumbnails]="true"
                         >
-                            <!-- <ng-template pTemplate="item" let-img>
-                            <img *ngIf="!img.video" [src]="img.venue_image_src"
-                                style="width: 900px;height: 250px;display: block;" />
-                            <video *ngIf="img.video" style="width: 100%; display: block;" autoplay controls loop>
-                                <source src="{{img.video}}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        </ng-template> -->
                             <ng-template pTemplate="thumbnail" let-img>
                                 <img
                                     *ngIf="!img.video"
@@ -1333,21 +1012,6 @@
                                     </p-galleria>
                                 </div>
 
-                                <!-- <p-galleria [(value)]="venue.venueImage" [(visible)]="displayBasic"
-                                        [responsiveOptions]="responsiveOptions"
-                                        [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
-                                        [showItemNavigators]="true" [showThumbnails]="false" [showIndicators]="true"
-                                        [showItemNavigatorsOnHover]="true" [showIndicatorsOnItem]="true">
-                                        <ng-template pTemplate="item" let-iItem>
-                                            <img *ngIf="!iItem.video" (click)="open(venue.id)"
-                                                [src]="iItem.venue_image_src" style="width:100%; display: block;" />
-                                            <video *ngIf="iItem.video" style="width: 100%; display: block;" autoplay>
-                                                <source src="{{iItem.video}}" type="video/mp4">
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        </ng-template>
-
-                                    </p-galleria> -->
 
                                 <div class="flex align-items-center gap-1">
                                     <!-- <p-checkbox name="group1" value="{{venue.id}}" binary="true"
@@ -1800,18 +1464,6 @@
                                                                                     amenities.title
                                                                                 }}
                                                                             </h4>
-                                                                            <!-- <div *ngIf="amenities.details"
-                                                                            class="div class-status">
-                                                                            <span class="mr-2">Available</span> <img
-                                                                                src="assets/img/svg/check.svg" alt=""
-                                                                                class="icon">
-                                                                        </div> -->
-                                                                            <!-- <div *ngIf="!amenities.details"
-                                                                            class="div class-status">
-                                                                            <span class="mr-2"> Not Available</span> <img
-                                                                                src="assets/img/svg/check.svg" alt=""
-                                                                                class="icon">
-                                                                        </div> -->
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2191,48 +1843,6 @@
                         <!-- </form> -->
                     </div>
                 </p-accordionTab>
-                <!-- <p-accordionTab header="Occasions" [selected]="true"> -->
-                <!-- <div class="slider-Occasions">
-                            <div class="Occasions-fillter">
-                                <div class="image">
-                                    <img src="http://103.204.131.217:3006/uploads/categoryPic/wedding.png"
-                                        alt="">
-                                </div>
-                                <h4 class="title">
-                                    Wedding
-                                </h4>
-                            </div>
-                        </div> -->
-                <!-- <div class="right-slider-filter">
-                            <div class="col-md-12  col-xl-12  col-lg-12 col-md-12 p-p-0 pt-0 pb-0">
-                                <p-carousel [value]=" categoryMenuList" [numVisible]="4" [numScroll]="4"
-                                    [circular]="false" [showIndicators]="false"
-                                    [responsiveOptions]="carouselResponsiveOptions">
-
-                                    <ng-template let-categoryMenu pTemplate="item">
-
-                                        <div [ngClass]="categoryMenu.selected ? 'category-active' : ''"
-                                            class="product-item">
-                                            <div (click)="onClickCategory(categoryMenu)"
-                                                class="product-item-content">
-                                                <p-avatarGroup styleClass="mb-4">
-                                                    <p-avatar image="{{categoryMenu.categoryImage}}"
-                                                        size=" large" shape="circle"
-                                                        pTooltip={{categoryMenu.name}} tooltipPosition="top"
-                                                        [style]="{'width':'50px', 'height':'50px','color': '#ffffff', 'background-color':'#fff' , 'box-shadow' : 'inset 0px 1px 2px #00000029, 0px 3px 6px #00000029'}"></p-avatar>
-                                                </p-avatarGroup>
-                                                <div>
-                                                    <h4 class="p-mb-1">{{categoryMenu.name}}</h4>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </ng-template>
-                                </p-carousel>
-                            </div>
-                        </div>
-
-                    </p-accordionTab> -->
 
                 <p-accordionTab header="Property Type">
                     <div class="slider-Property">
@@ -2498,18 +2108,6 @@
                             src="assets/images/category-icons/celebration.svg"
                         />
                     </label>
-                    <!-- <p-dropdown [options]="categoryMenuList" [(ngModel)]="occasion" optionLabel="name"
-                        (onChange)="onClickCategory($event.value)" placeholder="Occasion" class="occasion-list home-search-popup">
-                    </p-dropdown> -->
-
-                    <!-- <p-autoComplete [(ngModel)]="selectedOccasion" (onSelect)="onClickCategory($event)"
-                            (onClear)="onClickCategory($event)" placeholder="Occasion" class="occasion-list"
-                            [dropdown]="true" [suggestions]="filterOccasion" (completeMethod)="filterCategory($event)"
-                            field="name"></p-autoComplete> -->
-                    <!-- <p-dropdown appendTo="body" [options]="categoryMenuList" [(ngModel)]="occasion" optionLabel="name"
-                            [showClear]="true" (onChange)="onClickCategory($event.value)" placeholder="Occasion"
-                            class="occasion-list home-search-popup">
-                        </p-dropdown> -->
                     <p-dropdown
                         [options]="categoryMenuList"
                         [(ngModel)]="selectedOccasion"
@@ -2692,13 +2290,6 @@
                             </div>
                         </div>
                     </ng-template>
-                    <!-- <ng-template pTemplate="footer">
-                                <p-button label="Clear" icon="pi pi-filter-slash"
-                                    styleClass="p-button-raised p-button-text p-button-danger p-button-sm clear-btn-bottom"
-                                    (click)="onClickClear()"></p-button>
-                                <p-button label="Close" icon="pi pi-times" (click)="onClickCalendarClose()"
-                                    styleClass="p-button-sm p-button-raised p-button-text p-button-danger close-btn-bottom"></p-button>
-                            </ng-template> -->
                 </p-calendar>
             </div>
             <div class="col-md-12 p-p-0 calendar-div">

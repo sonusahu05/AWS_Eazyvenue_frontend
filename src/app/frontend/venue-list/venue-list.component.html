@@ -11,17 +11,7 @@
                         <p-carousel [value]="categoryMenuList" [numVisible]="11" [numScroll]="14" [circular]="false"
                             [showIndicators]="false" [responsiveOptions]="carouselResponsiveOptions">
                             <ng-template let-categoryMenu pTemplate="item">
-                                <!-- <div (click)="onClickCategory(categoryMenu)" class="product-item {{categoryMenu.show}}">
-                                <div class="product-item-content">
-                                    <div class="p-mb-1">
-                                        <img src="{{categoryMenu.categoryImage}}" [alt]="categoryMenu.name"
-                                            class="product-image" />
-                                    </div>
-                                    <div>
-                                        <h4 class="p-mb-1">{{categoryMenu.name}}</h4>
-                                    </div>
-                                </div>
-                            </div> -->
+
                                 <div class="product-item">
                                     <div (click)="onClickCategory(categoryMenu)"
                                         class="product-item {{categoryMenu.show}}">
@@ -57,41 +47,15 @@
             <label for="" class="icons-image"> <img src="assets/images/category-icons/celebration.svg"> </label>
             <span class="p-fluid">
 
-                <!-- <p-dropdown appendTo="body" [options]="categoryMenuList" [(ngModel)]="occasion" optionLabel="name"
-                [showClear]="true" (onChange)="onClickCategory($event.value)" placeholder="Occasion"
-                class="occasion-dropdown">
-            </p-dropdown> -->
-                <!-- <p-autoComplete [(ngModel)]="occasion" [showEmptyMessage]="true" (onSelect)="onClickCategory($event)"
-                    appendTo="body" (onClear)="onClickCategory($event)" placeholder="Search For" class="occasion-list"
-                    [dropdown]="true" [suggestions]="filterOccasion" (completeMethod)="filterCategory($event)"
-                    field="name" style="position: relative;height: 25px;" #occasionAutoComplete
-                    (onFocus)="occasionAutoComplete.handleDropdownClick()">
-                </p-autoComplete> -->
+
                 <p-autoComplete [(ngModel)]="searchItem" [group]="true" [suggestions]="filteredGroups" field="name"
                     (onSelect)="onClickGroupedSearch($event)" (onClear)="onClickGroupedSearch($event)"
                     class="occasion-list" (completeMethod)="filterGroupedSearch($event)" [dropdown]="true"
                     placeholder="Search for*" #searechAutoComplete (onFocus)="searechAutoComplete.handleDropdownClick()"
                     style="position: relative;height: 25px;">
-                    <!-- <ng-template let-group pTemplate="group">
-                        <div class="flex align-items-center">
 
-                            <span>{{ group.name }}</span>
-                        </div>
-                    </ng-template> -->
                 </p-autoComplete>
-                <!-- <div class="row">
-                <div class="col-6">
-                    <label for="" class="icons-image"> <img src="assets/images/category-icons/celebration.svg"> </label>
-                    <p-autoComplete [suggestions]="filteredCountries" (completeMethod)="filterCountry($event)"></p-autoComplete>
-                </div>
 
-                <div class="col-6">
-                    <p-dropdown appendTo="body" [options]="categoryMenuList" [(ngModel)]="occasion"
-                     optionLabel="name" [showClear]="true" (onChange)="onClickCategory($event.value)"
-                    class="occasion-dropdown">
-                </p-dropdown>
-                </div>
-            </div> -->
             </span>
         </div>
 
@@ -122,8 +86,7 @@
                 <p-dropdown [editable]="true" class="guest-count" [options]="filterCapacityArray"
                     placeholder="Guest Count*" optionLabel="label" [(ngModel)]="venuecapacity" appendTo="body"
                     (onChange)="onClickGuestCount($event.value, $event)"></p-dropdown>
-                <!-- <p-button [label]="selectedProduct ? selectedProduct.name : 'Guest Count'"
-(click)="op.toggle($event)"></p-button> -->
+
             </div>
             <p-overlayPanel #op [showCloseIcon]="false">
                 <ng-template pTemplate>
@@ -183,16 +146,7 @@
                       </div>
                     </div>
                   </ng-template>
-                <!-- <ng-template pTemplate="footer">
-                <p-button label="Clear" icon="pi pi-filter-slash"
-                    styleClass="p-button-raised p-button-text p-button-danger p-button-sm clear-btn-bottom"
-                    (click)="onClickClear()"></p-button>
-                <p-button label="Close" icon="pi pi-times" (click)="onClickCalendarClose()"
-                    styleClass="p-button-sm p-button-raised p-button-text p-button-danger close-btn-bottom"></p-button>
-            </ng-template> -->
-                <!-- <p-button icon="pi pi-filter-slash" styleClass="p-button-rounded p-button-danger p-button-text p-button-raised clear-btn-bottom" (click)="onClickClear()"></p-button>
-                <p-button icon="pi pi-times" styleClass="p-button-rounded p-button-danger p-button-text p-button-raised close-btn-bottom"></p-button> -->
-                <!-- <button pButton class="p-button-rounded p-button-danger p-button-text p-button-raised" type="button" label="Close" [showButtonBar]="true"></button> -->
+
             </p-calendar>
             <button (click)="showOfferDialog()" pButton pRipple type="button" icon="pi pi-search"
                 class="p-button-rounded p-button-danger secondary btn-custom secondary"></button>
@@ -208,7 +162,6 @@
         </div>
     </div>
     <div class="container-fluid">
-        <!-- <button  type="button" icon="pi pi-external-link" label="Show" (click)="displayBasic = true"></button> -->
         <p-galleria [(value)]="venueImages" [(activeIndex)]="activeIndex" [(visible)]="displayBasic"
             [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '100%;' }" [numVisible]="7"
             [circular]="true" [fullScreen]="true" [showItemNavigators]="true" [showThumbnails]="true">
@@ -235,34 +188,34 @@
         </p-galleria>
         <div class="row">
             <div class="col-md-12 venue_listing latestVenue_listing">
-                <div *ngIf="finalVenueList.length > 0" class="col-md-12">
-                  <div class="row" infiniteScroll (scrolled)="onScrollDown()">
-                    <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let item of finalVenueList">
-                      <div class="listing">
-                        <div class="listing-thumbnail">
-                          <div class="mobile-view-gallery" #galleryContainer>
-                            <p-galleria
-                              [(value)]="item.venueImage"
-                              [responsiveOptions]="responsiveOptions"
-                              [containerStyle]="{'max-width': '100%'}"
-                              [numVisible]="1"
-                              [circular]="true"
-                              [showItemNavigators]="true"
-                              [showThumbnails]="true"
-                              [showIndicators]="false"
-                              [showItemNavigatorsOnHover]="true"
-                              [showIndicatorsOnItem]="true">
-                              <ng-template pTemplate="thumbnail" let-img>
-                                <img *ngIf="!img.video"
-                                  [src]="img.venue_image_src"
-                                  (click)="getVenueDetails(item.metaUrl)"
-                                  style="width: 100%; display: block;" />
-                                <video *ngIf="img.video" muted controls loop>
-                                  <source [src]="img.video" type="video/mp4">
-                                  Your browser does not support the video tag.
-                                </video>
-                              </ng-template>
-                            </p-galleria>
+                <div *ngIf="displayedVenueList.length > 0" class="col-md-12">
+                    <div class="row">
+                      <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let item of displayedVenueList">
+                        <div class="listing">
+                          <div class="listing-thumbnail">
+                            <div class="mobile-view-gallery" #galleryContainer>
+                                <p-galleria
+                                [(value)]="item.venueImage"
+                                [responsiveOptions]="responsiveOptions"
+                                [containerStyle]="{'max-width': '100%'}"
+                                [numVisible]="1"
+                                [circular]="true"
+                                [showItemNavigators]="true"
+                                [showThumbnails]="true"
+                                [showIndicators]="false"
+                                [showItemNavigatorsOnHover]="true"
+                                [showIndicatorsOnItem]="true">
+                                <ng-template pTemplate="thumbnail" let-img>
+                                  <img *ngIf="!img.video"
+                                    [src]="img.venue_image_src"
+                                    (click)="getVenueDetails(item.metaUrl)"
+                                    style="width: 100%; display: block;" />
+                                  <video *ngIf="img.video" muted controls loop>
+                                    <source [src]="img.video" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                  </video>
+                                </ng-template>
+                              </p-galleria>
                                     </div>
                                     <div class="desktop-view-gallery">
                                         <p-galleria [(value)]="item.venueImage" [responsiveOptions]="responsiveOptions"
@@ -281,21 +234,10 @@
                                             </ng-template>
                                         </p-galleria>
                                     </div>
-                                    <!-- (click)="open(item.id)" -->
                                     <div class="listing-badges">
-                                        <!-- <span class="listing-badge featured" *ngIf="item.star"> <i class="pi pi-star"></i>
-                                        </span> -->
                                         <span class="listing-badge Assured" *ngIf="item.assured"> <i
                                                 class="pi pi-check"></i> Assured</span>
-                                        <!-- <span class="listing-badge sale" *ngIf="item.assured">Assured</span> -->
-                                        <!-- <span class="listing-badge pending" *ngIf="item.pending">Pending</span>
-                                        <span class="listing-badge rent" *ngIf="item.courtmarriage">Court Marriage</span> -->
                                     </div>
-                                    <!-- <div class="listing-controls">
-                                        <a [ngClass]="item.wishlist?'wishlist-fill':''" (click)=" onClickWishlist(item)"
-                                            class="favorite"><i class="pi pi-heart"></i></a>
-                                        <a href=" #" class="compare"><i class="fas fa-sync-alt"></i></a>
-                                    </div> -->
                                 </div>
                                 <div class="listing-body">
                                     <h5 class="listing-title"> <a (click)="getVenueDetails(item.metaUrl)" [title]="item.name"
@@ -318,12 +260,6 @@
                                     <div class=" price-icons">
                                         <div class="price-div">
                                             <div class="acr-listing-icons pt-0">
-                                                <!-- <div class="acr-listing-icon" placement="top" ngbTooltip="Price">
-                                                    <i class="flaticon-price-tags"></i>
-                                                    <span class="acr-listing-icon-value" tooltipPosition="top"
-                                                        pTooltip="Price">₹{{item.venuePrice |
-                                                        number:'1.2-2'}}</span>
-                                                </div> -->
                                                 <div class="acr-listing-icon">
                                                     <!-- tooltipPosition="top" pTooltip="Guests" -->
                                                     <i class="pi pi-users"></i> Per Person:
@@ -337,18 +273,6 @@
                                             </div>
                                         </div>
                                         <div class="category-icon">
-                                            <!-- <div class="location">
-                                                <span class="icon">
-                                                    <img src="assets/img/svg/location-icon.svg">
-                                                </span>
-                                                <span class="city">{{item.cityname}}, {{item.subarea}}</span>
-                                            </div> -->
-                                            <!-- <p-avatarGroup label="P">
-                                            <p-avatar image="assets/demo/images/venue/wedding.png" shape="circle"  tooltipPosition="top"  pTooltip="Wedding"></p-avatar>
-                                            <p-avatar image="assets/demo/images/venue/eng.png" shape="circle" tooltipPosition="top"  pTooltip="Reception"></p-avatar>
-                                            <p-avatar image="assets/demo/images/venue/reception.png" shape="circle"  tooltipPosition="top"  pTooltip="Engagement"></p-avatar>
-                                            <p-avatar label="+2" shape="circle"></p-avatar>
-                                        </p-avatarGroup> -->
                                         </div>
                                     </div>
                                     <div class="listing-gallery-wrapper">
@@ -377,25 +301,64 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row mt-4 show-more-container">
+                        <div class="col-12 text-center" *ngIf="showMoreVisible">
+                          <button (click)="showHomeSearch()" class="btn-custom btn-lg secondary show-more-btn">
+                            <span *ngIf="!loading">Show More Venues</span>
+                            <span *ngIf="loading"><i class="pi pi-spin pi-spinner"></i> Loading...</span>
+                          </button>
+                        </div>
+
+                        <div class="col-12 text-center mt-3" *ngIf="displayedVenueList.length < totalRecords">
+                          <button (click)="showHomeSearch()" class="btn-custom btn-lg primary alternative-show-more-btn">
+                            Show More ({{displayedVenueList.length}}/{{totalRecords}})
+                          </button>
+                        </div>
+                    </div>
                 </div>
-                <div *ngIf="noVenueFlag">
-                    <h3 class="text-center">No venues matching your query found.</h3>
-                </div>
+
+                    <!-- No venues message -->
+                    <div *ngIf="noVenueFlag" class="col-md-12 text-center my-5">
+                      <h3>No venues found matching your criteria</h3>
+                    </div>
+                    <style>
+                        .show-more-container {
+                          position: relative;
+                          width: 100%;
+                          clear: both;
+                          margin-top: 30px;
+                          margin-bottom: 30px;
+                        }
+
+                        .show-more-btn, .alternative-show-more-btn {
+                          position: relative;
+                          z-index: 9999 !important; /* Maximum z-index to ensure visibility */
+                          margin: 20px auto;
+                          padding: 12px 30px;
+                          font-size: 16px;
+                          font-weight: 600;
+                          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                          transition: all 0.3s ease;
+                          display: block;
+                          min-width: 200px;
+                        }
+
+                        .alternative-show-more-btn {
+                          background-color: #ff5722;
+                          color: white;
+                        }
+
+                        .show-more-btn:hover, .alternative-show-more-btn:hover {
+                          transform: translateY(-2px);
+                          box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+                        }
+                        </style>
             </div>
-            <!-- <div class="col-md-12 text-center">
-                <button class="load-mo-btn btn-custom btn-sm secondary">Load More</button>
-            </div> -->
-            <!-- <div class="col-md-12 text-center mb-5">
-                <p-paginator [rows]="8" #paginator [totalRecords]="totalRecords" (onPageChange)="getVenueList($event)"
-                    [rowsPerPageOptions]=" pagination"></p-paginator>
-            </div> -->
         </div>
     </div>
 </div>
 
-<!-- photography search list start -->
-<!-- <app-vendor-filter-list *ngIf="vendorSelection" [selectedVendor]="occasion"></app-vendor-filter-list> -->
-<!-- photography search list start -->
+
 
 
 <p-dialog header="" [(visible)]="numberPopup" [modal]="true" class="offer-popup-login" [modal]="true"
@@ -457,10 +420,6 @@
                         <div class="">
                         <input type="text" pInputText [(ngModel)]="userLastName" name="userLastName" class="custom-input"  (input)="validateLastName()"  #userLastNameInput="ngModel" placeholder="Last name" required minlength="3">
                         <div *ngIf="lastNameError" style="font-size: 8px; color: red;margin: 0; padding: 0;">Last Name is required.</div>
-                        <!-- <div *ngIf="userLastNameInput.invalid && (userLastNameInput.dirty || userLastNameInput.touched)">
-                            <div *ngIf="userLastNameInput.errors.required" style="font-size: 8px; color: red;">Last Name is required.</div>
-                            <div *ngIf="userLastNameInput.errors.minlength" style="font-size: 8px; color: red;">Last Name must be at least 3 characters long.</div>
-                          </div> -->
                         </div>
                     </div>
                     <h5 class="otp-head" style="color:#9e9b9b;font-size: 12px !important; max-width: 550px; line-height: 1.2rem; text-align: center; font-weight: 500; margin-top: 8px !important;">Please insert OTP sent to your mobile number</h5>
@@ -472,10 +431,6 @@
                     </div>
                     <div class="col-8">
                         <div id="otp" class="inputs d-flex flex-row justify-content-center">
-                            <!-- <ng-otp-input #ngxotp [config]="config" (onInputChange)="onOtpChange($event)">
-                    </ng-otp-input> -->
-                            <!-- <ngx-otp-input #ngxotp [config]="config" (otpChange)="onOtpChange($event)">
-                            </ngx-otp-input>                             -->
                             <div class="otp-container">
                                 <div class="otp-box">
                                     <input type="text" #txt1 id="txt1" (input)="pastedEvent($event)" (keyup)="move($event, '', txt1, txt2, 0)">
@@ -502,17 +457,7 @@
                                 OTP</a>
                         </span>
                     </div>
-                    <!-- <div class="col-1"></div> -->
                 </div>
-                <!-- <div *ngIf="otpError !='undefined'" class="otp_error_msg">
-                    <span class="otoErrormsg"> {{otpError}} </span>
-                </div> -->
-                <!-- <input type="number" autocomplete="on" formControlName="phone"
-            placeholder="Enter otp" class="form-control">-->
-                <!-- <div class="invalid-feedback">
-            <div>Your new OTP has been send to your mobile number
-            </div>
-        </div> -->
             </div>
             <div class="popup-button">
                 <p-button type="submit" label="Submit" class="p-button-text secondary"></p-button>
@@ -542,54 +487,19 @@
     </div>
 </p-dialog>
 
-<!-- dialog filter for responsive/mobile search -->
-<!-- <p-dialog header="Search Venue" [(visible)]="homeSearch" [modal]="true" -->
 <p-dialog header="Search Category" [(visible)]="homeSearch" [modal]="true"
     [style]="{ width: '90%' , height: '345px', 'overflow':'visible' }" [responsive]="true" class="home_search_popup">
-    <!-- <h3 class="home-search-popup-heading">Search Venue</h3> -->
     <div class="home-search-fields">
         <div class="row justify-content-center search-bar search_bar_listing_page search-bar-popup">
             <div class="city-field col-md-12 p-p-0">
                 <label for="" class="icons-image"> <img src="assets/images/category-icons/celebration.svg"> </label>
                 <span class="p-fluid">
-                    <!-- removed -->
-                    <!-- <p-dropdown [options]="categoryMenuList" [(ngModel)]="occasion" optionLabel="name"
-                        (onChange)="onClickCategory($event.value)" placeholder="Occasion"
-                        class="occasion-list home-search-popup">
-                    </p-dropdown> -->
-
-                    <!-- added -->
-                    <!-- <p-autoComplete [(ngModel)]="searchItem" [group]="true" [suggestions]="filteredGroups" field="name"
-                        (onSelect)="onClickGroupedSearch($event)" (onClear)="onClickGroupedSearch($event)"
-                        class="occasion-list" (completeMethod)="filterGroupedSearch($event)" [dropdown]="true"
-                        placeholder="Search for" #mobileSearechAutoComplete
-                        (onFocus)="mobileSearechAutoComplete.handleDropdownClick()"
-                        style="position: relative;height: 25px;">
-                    </p-autoComplete> -->
                     <p-dropdown [options]="groupedMenuList" [(ngModel)]="searchItem" optionLabel="name"
                         (onChange)="onClickGroupedSearch($event.value)" placeholder="Search for"
                         [group]="true"
                         [showClear]="true" [filter]="true" [style]="{'width':'100%'}">
                     </p-dropdown>
 
-                    <!-- <p-autoComplete [(ngModel)]="occasion" (onSelect)="onClickCategory($event)"
-                        (onClear)="onClickCategory($event)" placeholder="Occasion"
-                        class="occasion-list home-search-popup" [dropdown]="true" [suggestions]="filterOccasion"
-                        (completeMethod)="filterCategory($event)" field="name">
-                    </p-autoComplete> -->
-                    <!-- <div class="row">
-                        <div class="col-6">
-                            <label for="" class="icons-image"> <img src="assets/images/category-icons/celebration.svg"> </label>
-                            <p-autoComplete [suggestions]="filteredCountries" (completeMethod)="filterCountry($event)"></p-autoComplete>
-                        </div>
-
-                        <div class="col-6">
-                            <p-dropdown appendTo="body" [options]="categoryMenuList" [(ngModel)]="occasion"
-                             optionLabel="name" [showClear]="true" (onChange)="onClickCategory($event.value)"
-                            class="occasion-dropdown">
-                        </p-dropdown>
-                        </div>
-                    </div> -->
                 </span>
             </div>
 
@@ -620,47 +530,7 @@
                     <p-dropdown [editable]="true" class="guest-count" [options]="filterCapacityArray"
                         placeholder="Guest Count" optionLabel="label" [(ngModel)]="venuecapacity"
                         (onChange)="onClickGuestCount($event.value, $event)"></p-dropdown>
-                    <!-- <p-button [label]="selectedProduct ? selectedProduct.name : 'Guest Count'"
-        (click)="op.toggle($event)"></p-button> -->
                 </div>
-                <!-- <p-overlayPanel #op [showCloseIcon]="false">
-                    <ng-template pTemplate>
-                        <div class="p-field p-col-12 p-md-12 gest-count-module">
-                            <div class="gets-count-list">
-                                <label for="horizontal">Adults</label>
-                                <p-inputNumber [(ngModel)]="value18" [showButtons]="true" buttonLayout="horizontal"
-                                    inputId="horizontal" spinnerMode="horizontal" [step]="10" decrementButtonClass="left-button"
-                                    incrementButtonClass="right-button" incrementButtonIcon="pi pi-plus"
-                                    decrementButtonIcon="pi pi-minus">
-                                </p-inputNumber>
-                            </div>
-                            <div class="gets-count-list">
-                                <label for="horizontal">Children</label>
-                                <p-inputNumber [(ngModel)]="value19" [showButtons]="true" buttonLayout="horizontal"
-                                    inputId="horizontal" spinnerMode="horizontal" [step]="10" decrementButtonClass="left-button"
-                                    incrementButtonClass="right-button" incrementButtonIcon="pi pi-plus"
-                                    decrementButtonIcon="pi pi-minus">
-                                </p-inputNumber>
-                            </div>
-                            <div class="gets-count-list">
-                                <label for="horizontal">Infants</label>
-                                <p-inputNumber [(ngModel)]="value20" [showButtons]="true" buttonLayout="horizontal"
-                                    inputId="horizontal" spinnerMode="horizontal" [step]="10" decrementButtonClass="left-button"
-                                    incrementButtonClass="right-button" incrementButtonIcon="pi pi-plus"
-                                    decrementButtonIcon="pi pi-minus">
-                                </p-inputNumber>
-                            </div>
-                            <div class="gets-count-list">
-                                <label for="horizontal">Pets</label>
-                                <p-inputNumber [(ngModel)]="value21" [showButtons]="true" buttonLayout="horizontal"
-                                    inputId="horizontal" spinnerMode="horizontal" [step]="10" decrementButtonClass="left-button"
-                                    incrementButtonClass="right-button" incrementButtonIcon="pi pi-plus"
-                                    decrementButtonIcon="pi pi-minus">
-                                </p-inputNumber>
-                            </div>
-                        </div>
-                    </ng-template>
-                </p-overlayPanel> -->
             </div>
             <div class="col-md-12 p-p-0 calendar-div">
                 <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg"></label>
@@ -681,18 +551,7 @@
                       </div>
                     </div>
                   </ng-template>
-                <!-- <ng-template pTemplate="footer">
-                <p-button label="Clear" icon="pi pi-filter-slash"
-                    styleClass="p-button-raised p-button-text p-button-danger p-button-sm clear-btn-bottom"
-                    (click)="onClickClear()"></p-button>
-                <p-button label="Close" icon="pi pi-times" (click)="onClickCalendarClose()"
-                    styleClass="p-button-sm p-button-raised p-button-text p-button-danger close-btn-bottom"></p-button>
-            </ng-template> -->
-                <!-- <p-button icon="pi pi-filter-slash" styleClass="p-button-rounded p-button-danger p-button-text p-button-raised clear-btn-bottom" (click)="onClickClear()"></p-button>
-                <p-button icon="pi pi-times" styleClass="p-button-rounded p-button-danger p-button-text p-button-raised close-btn-bottom"></p-button> -->
-                <!-- <button pButton class="p-button-rounded p-button-danger p-button-text p-button-raised" type="button" label="Close" [showButtonBar]="true"></button> -->
             </p-calendar>
-
             </div>
             <div class="col-md-12 p-p-0 calendar-div">
                 <button (click)="showOfferDialog()" pButton pRipple type="button" (click)="homeSearch = false"

@@ -475,27 +475,6 @@ export class VenueDetailsComponent implements OnInit {
             ],
         });
 
-        // this.forgotPassForm = new FormGroup({
-        //     email: new FormControl("", [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")])
-        // });
-        // this.loginForm = this.formBuilder.group({
-        //     email: ['', [Validators.required, Validators.email, CustomValidators.email]],
-        //     password: ['', [Validators.required, Validators.minLength(6)]],
-        // });
-        // this.signUpForm = this.formBuilder.group({
-        //     name: ['', [Validators.required, Validators.pattern("([a-zA-Z',.-]+( [a-zA-Z',.-]+)*){2,30}")]],
-        //     //lastName: ['', [Validators.required, Validators.pattern('[A-Za-z][A-Za-z]*$')]],
-        //     email: ['', [Validators.required, Validators.email, CustomValidators.email]],
-        //     password: ['', [Validators.required,get hValidators.pattern("^(?=[^A-Z\n]*[A-Z])(?=[^a-z\n]*[a-z])(?=[^0-9\n]*[0-9])(?=[^#?!@$%^&*\n-]*[#?!@$%^&*-]).{6,}$")]],
-        //     confirmPassword: ['', Validators.required],
-        //     //gender: ['', Validators.required],
-        //     dob: ['',],
-        //     mobileNumber: ['', [Validators.required, Validators.pattern("[0-9 ]{10}")]],
-        //     role: ['user'],
-        //     userType: ['user']
-        // }, {
-        //     validator: MustMatch('password', 'confirmPassword')
-        // });
         this.defaultDate = new Date();
         let today = new Date();
         //this.defaultDate.setDate(today.getDate() + environment.defaultDays);
@@ -864,39 +843,14 @@ export class VenueDetailsComponent implements OnInit {
                 );
                 let selectedVenueIds = JSON.stringify(this.selectedVenueIds);
                 window.location.reload();
-                // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-                // this.router.onSameUrlNavigation = 'reload';
-                // let currentUrl = "/";
-                // if (this.urlMode === 'venue_list') {
-                //     currentUrl = "/banquet-halls";
-                //     this.router.navigate(
-                //         [currentUrl],
-                //         {
-                //             queryParams: {
-                //                 startDate: this.startDate, endDate: this.endDate, capacity: this.capacity, occasion: this.selectedCategoryId, city: selectedCities,
-                //                 area: selectedSubareaIds, venue: selectedVenueIds
-                //             }
-                //         }
-                //     );
-                //     return;
-                // }
-                // if (this.urlMode === 'venue_details') {
-                //     currentUrl = '/venue/' + this.venueId;
-                //     this.router.navigate(
-                //         [currentUrl],
-                //     );
-                //     return;
-                // }
+
             },
             (err) => {
                 this.otpError = err.error.error;
                 // this.messageService.add({ key: 'usertoastmsg', severity: 'error', summary: err.error.error, detail: err.error.error, life: 6000 });
             }
         );
-        // if (this.otp === '4321' && this.mobileNumber) {
-        //     this.otpPopup = false;
-        //     this.router.navigate(['/venue-list']);
-        // }
+       
     }
     resendOtp() {
         this.otp = '';
@@ -1933,118 +1887,6 @@ export class VenueDetailsComponent implements OnInit {
             }
         );
     }
-    // onSubmit(): void {
-    //     this.loginFormSubmitted = true;
-    //     //stop here if form is invalid
-    //     if (this.loginForm.invalid) {
-    //         return;
-    //     }
-    //     const username = this.loginForm.value.email;
-    //     const password = this.loginForm.value.password;
-    //     this.userType = 'user';
-    //     //this.http.get("http://api.ipify.org/?format=json").subscribe((res: any) => {
-    //     //this.ipAddress = res.ip;
-    //     this.authService.login(username, password, this.userType).subscribe(
-    //         data => {
-    //             this.userData = data;
-    //             this.tokenStorageService.saveToken(this.userData.data.access_token);
-    //             this.tokenStorageService.saveUser(this.userData.data);
-    //             this.tokenStorageService.getAuthStatus(this.userData.data);
-    //             this.isLoginFailed = false;
-    //             this.isLoggedIn = true;
-    //             this.roles = this.tokenStorageService.getUser().roles;
-    //             this.getRoleDetails();
-    //             this.getRoleList();
-    //             let currentUrl = '/venue/' + this.id;
-    //             this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    //             this.router.onSameUrlNavigation = 'reload';
-    //             this.router.navigate([currentUrl]);
-    //             this.loginRegisterModal = false;
-    //         },
-    //         err => {
-    //             this.errorMessage = 'Login failed: Please check your login credentials...! ';
-    //             this.isLoginFailed = true;
-    //         }
-    //     );
-    //     //});
-    // }
-    // onSignupSubmit(): void {
-    //     this.submitted = true;
-    //     //stop here if form is invalid
-    //     if (this.signUpForm.invalid) {
-    //         return;
-    //     }
-    //     let userData = this.signUpForm.value;
-    //     // if (this.selectedGender == null) {
-    //     //   this.showGenderError = true;
-    //     //   return;
-    //     // }
-    //     userData['gender'] = '';
-    //     userData['role'] = 'user';
-    //     userData['name'] = userData['name'].split(" ", 2);
-    //     let firstName = userData['name'][0];
-    //     let lastName = userData['name'][1];
-    //     userData['firstName'] = firstName;
-    //     userData['lastName'] = lastName;
-    //     this.authService.signUp(userData).subscribe(
-    //         data => {
-    //             this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'User Added', life: 3000 });
-    //             this.signUpForm.reset();
-    //             this.submitted = false;
-    //             this.loginRegisterModal = false;
-    //             setTimeout(() => {
-    //                 this.loginRegisterModal = true;
-    //                 this.activeIndex = Number(0);
-    //             }, 2000);
-    //         },
-    //         ((err) => {
-    //             this.showMessage = true;
-    //             this.message = err.error.error;
-    //             this.messageService.add({ key: 'usertoastmsg', severity: 'error', summary: err.error.error, detail: 'Add User Failed', life: 6000 });
-    //         })
-    //     );
-    // }
-    // showLoginRegisterDialog() {
-    //     if (this.isLoggedIn == true) {
-    //         this.loginRegisterModal = false;
-    //     } else {
-    //         this.loginRegisterModal = true;
-    //     }
-    // }
-    // signOut() {
-    //     window.sessionStorage.clear();
-    //     this.tokenStorageService.isLoggedOut();
-    //     let currentUrl = '/';
-    //     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    //     this.router.onSameUrlNavigation = 'reload';
-    //     this.router.navigate([currentUrl]);
-    //     return false;
-    // }
-    // onClickShowForgotPasswordDialog() {
-    //     this.showForgotPasswordDialog = true;
-    //     this.loginRegisterModal = false;
-    // }
-    // onForgotPassSubmit() {
-    //     this.submitted = true;
-    //     if (this.forgotPassForm.valid) {
-    //         this.userService.requestPassword(this.forgotPassForm.value).subscribe(res => {
-    //             this.submitted = false;
-    //             if (res['errors']) {
-    //                 this.errorMessage = res['errors'];
-    //                 this.successMessage = '';
-    //             } else {
-    //                 this.successMessage = res;
-    //                 this.errorMessage = '';
-    //             }
-    //             this.showMessage = true;
-    //         },
-    //             err => {
-    //                 this.successMessage = '';
-    //                 this.showMessage = true;
-    //                 this.errorMessage = err.error.data.errors;
-    //             });
-    //     }
-    // }
     onClickClear() {
         this.rangeDates = null;
         this.selectedDate = null;
