@@ -103,7 +103,39 @@
 
 <div class="col-md-12 text-center">
     <button type="button" (click)="sidebarVisible4 = true" class="offer-btn btn-custom btn-sm secondary">
-        Receive 20% off on our Photography now!</button>
+        Receive 20% off on our Photography now!
+        <div class="col-md-12 text-center">
+            <div class="d-flex justify-content-center gap-3">
+              <!-- Instagram -->
+              <a href="https://www.instagram.com/yourprofile" target="_blank" class="btn-custom btn-sm secondary mx-2" aria-label="Instagram">
+                <svg width="24" height="24" viewBox="0 0 448 512" fill="currentColor">
+                  <path d="M224,202a53,53,0,1,0,53,53A53,53,0,0,0,224,202Zm124-41a24,24,0,1,1-24-24A24,24,0,0,1,348,161ZM224,138c-47.6,0-86,38.4-86,86s38.4,86,86,86,86-38.4,86-86S271.6,138,224,138Zm124-82H316c-44.2,0-80,35.8-80,80v32H172V136c0-44.2-35.8-80-80-80H100c-44.2,0-80,35.8-80,80v32c0,44.2,35.8,80,80,80h32v64H100c-44.2,0-80,35.8-80,80v32c0,44.2,35.8,80,80,80h32c44.2,0,80-35.8,80-80V336h64v32c0,44.2,35.8,80,80,80h32c44.2,0,80-35.8,80-80V336c0-44.2-35.8-80-80-80H348V192h32c44.2,0,80-35.8,80-80V80C432,35.8,396.2,0,352,0Z"/>
+                </svg>
+              </a>
+
+              <!-- Facebook -->
+              <a href="https://www.facebook.com/yourprofile" target="_blank" class="btn-custom btn-sm secondary mx-2" aria-label="Facebook">
+                <svg width="24" height="24" viewBox="0 0 320 512" fill="currentColor">
+                  <path d="M279.14 288l14.22-92.66h-88.91V132.1c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S293.71 0 262.12 0c-73.13 0-121.08 44.38-121.08 124.72v70.62H89.09V288h52.06v224h100.2V288z"/>
+                </svg>
+              </a>
+
+              <!-- LinkedIn -->
+              <a href="https://www.linkedin.com/in/yourprofile" target="_blank" class="btn-custom btn-sm secondary mx-2" aria-label="LinkedIn">
+                <svg width="24" height="24" viewBox="0 0 448 512" fill="currentColor">
+                  <path d="M100.28 448H7.4V148.9h92.88zm-46.44-340C24.15 108 0 83.85 0 54.15a54.15 54.15 0 11108.3 0c0 29.7-24.15 53.85-54.46 53.85zM447.9 448h-92.4V302.4c0-34.7-.7-79.4-48.4-79.4-48.4 0-55.8 37.8-55.8 76.9V448h-92.4V148.9h88.7v40.8h1.3c12.3-23.3 42.4-48 87.2-48 93.2 0 110.3 61.3 110.3 141.1V448z"/>
+                </svg>
+              </a>
+
+              <!-- Threads (Custom SVG since no official icon) -->
+              <a href="https://www.threads.net/@yourprofile" target="_blank" class="btn-custom btn-sm secondary mx-2" aria-label="Threads">
+                <svg width="24" height="24" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="M410.6 173.1c-9.4-28.1-23.4-52.1-42-70.6C342.3 75.4 305.4 64 256 64c-47.6 0-85.7 11.4-112.6 34.1C118 117.8 104.6 142.6 96 171.5c-7.9 26.3-10.5 54.6-7.9 83.8 2.5 27.9 10.1 54.1 22.3 77.8 12.3 24.1 28.8 43.5 48.9 57.5C178.4 410.7 210.6 416 256 416c12.9 0 23.4-.8 32-2.3l.3-.1c36.1-6.3 66.8-24.5 91-54.1 23.4-28.5 38.7-64.4 44.4-106.5 1.3-9.2-5.1-17.8-14.3-19.1s-17.8 5.1-19.1 14.3c-8.2 59.2-38.3 98.9-84.2 107.1 22.9-19.9 34.3-47.2 34.3-82.3 0-27.1-7.5-49.7-22.2-66.8-14.3-16.6-35.7-25.7-60.4-25.7-19.7 0-35.9 6.4-48 18.9-11.5 11.9-17.4 27.2-17.4 44.8 0 18.3 5.6 32.9 16.8 43.3 11 10.3 25.9 15.6 44.4 15.6 9.6 0 18.5-1.5 26.4-4.3-3.6 13.4-9.7 23.7-18.5 31-10.7 8.9-26.3 13.6-46.1 13.6-33.1 0-59.4-13.3-78.1-39.4-10.7-15.3-17.7-34.1-20.5-55.6-2.7-21-1.1-42.1 4.5-62.6 6.1-22.3 15.7-39.8 28.5-51.9C184.1 107.9 214.8 96 256 96c37.5 0 66.5 8.3 86.2 24.6 15.3 12.6 26.9 30.7 34.3 53.5 2.9 8.7 12.2 13.4 21 10.5s13.4-12.2 10.5-21z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+    </button>
 </div>
 
 <p-sidebar [(visible)]="sidebarVisible4" position="bottom" class="offer-popup">
