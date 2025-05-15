@@ -105,7 +105,20 @@ export class AddComponent implements OnInit {
     public venueImagesArray: any;
     public decor2ImagesArray: any;
     public decor3ImagesArray: any;
-    //public deletedImages: any[] = [];
+    public foodMenuType = {
+        "veg_food": [
+            { "slug": "3X3", "value": "1800" },
+        ],
+        "non_veg": [
+            { "slug": "3X3", "value": "1800" },
+        ],
+        "mixFood": [
+            { "slug": "3X3", "value": "1800" },
+        ]
+    };
+    public metaUrl: string;
+public metaKeywords: string;
+public metaDescription: string;
     public deletedDecor1Images: any[] = [];
     public deletedDecor2Images: any[] = [];
     public deletedDecor3Images: any[] = [];
@@ -162,6 +175,9 @@ export class AddComponent implements OnInit {
             eazyVenueRating: ['', [Validators.required]],
             peopleBooked: ['', [Validators.required]],
             minRevenue: ['', [Validators.required]],
+            metaUrl: ['', [Validators.required]],
+    metaKeywords: ['', [Validators.required]],
+    metaDescription: ['', [Validators.required]],
             mobileNumber: ['', [Validators.required, Validators.pattern("^[0-9]*$")]],
             capacity: ['', [Validators.required]],
             area: ['', [Validators.required]],
@@ -443,6 +459,7 @@ export class AddComponent implements OnInit {
             this.updateVenue();
         }
     }
+
     addVenue() {
         this.submitted = true;
         if (this.venueForm.valid) {
@@ -495,8 +512,11 @@ export class AddComponent implements OnInit {
 
                 });
             }
+            venueData['metaUrl'] = this.venueForm.get('metaUrl').value;
+        venueData['metaKeywords'] = this.venueForm.get('metaKeywords').value;
+        venueData['metaDescription'] = this.venueForm.get('metaDescription').value;
             venueData['decor3Image'] = this.decor3ImagesArray;
-
+            venueData['foodMenuType'] = this.foodMenuType;
             venueData['venueVideo'] = this.venueVideo;
             venueData['countrycode'] = this.countrycode;
             venueData['statecode'] = this.statecode;
@@ -511,7 +531,6 @@ export class AddComponent implements OnInit {
             venueData['googleRating'] = this.selectedGoogleRating;
             venueData = JSON.stringify(venueData, null, 4);
             // console.log('venueData', venueData);
-            // return;
             this.VenueService.addVenue(this.venueForm.value).subscribe(
                 data => {
                     this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Venue Added', life: 6000 });
