@@ -4,7 +4,7 @@
             <h5 class="admin-heading">
                 {{pagetitle}}
             </h5>
-            <!-- <button pButton pRipple label="Back" icon="pi pi-arrow-left" class="p-button-primary" 
+            <!-- <button pButton pRipple label="Back" icon="pi pi-arrow-left" class="p-button-primary"
                 (click)="backLink()"></button> -->
         </div>
 
@@ -163,120 +163,6 @@
                     <div class="p-field p-col-12">
                         <label for="featured">Assured</label>
                         <p-inputSwitch formControlName="assured"></p-inputSwitch>
-                    </div>
-                </div>
-                <div class="p-fluid p-formgrid p-grid pare_margin">
-                    <div class="p-field p-col-12  p-mt-3">
-                        <p-fieldset legend="Venue Owner">
-                            <div class="p-fluid p-formgrid p-grid pare_margin">
-                                <div class="p-field p-col-4">
-                                    <label for="ownerfirstName">Owner First Name <span
-                                            class="mandatory-fields">*</span></label>
-                                    <input formControlName="ownerfirstName" type="text" pInputText class="form-control"
-                                        [ngClass]="{ 'is-invalid': submitted && f.ownerfirstName.errors }">
-                                    <div *ngIf="submitted && f.ownerfirstName.errors" class="invalid-feedback">
-                                        <div *ngIf="f.ownerfirstName.errors.required">Owner First Name is required
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="p-field p-col-4">
-                                    <label for="title">Owner Last Name <span class="mandatory-fields">*</span></label>
-                                    <input formControlName="ownerlastName" type="text" pInputText class="form-control"
-                                        [ngClass]="{ 'is-invalid': submitted && f.ownerlastName.errors }">
-                                    <div *ngIf="submitted && f.ownerlastName.errors" class="invalid-feedback">
-                                        <div *ngIf="f.ownerlastName.errors.required">Owner Last Name is required
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="p-field p-col-4">
-                                    <label for="title">Owner Email Id <span class="mandatory-fields">*</span></label>
-                                    <input formControlName="owneremailId" type="text" pInputText class="form-control"
-                                        [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
-                                    <div *ngIf="submitted && f.owneremailId.errors" class="invalid-feedback">
-                                        <div *ngIf="f.owneremailId.errors.required">Owner Emailid is required</div>
-                                    </div>
-                                </div>
-                                <div class="p-field p-col-4">
-                                    <label for="textarea">Current Password</label>
-                                    <input formControlName="currentPassword" (keypress)="newPasswordValidation($event)"
-                                        placeholder="Enter Current Password" minlength="5" maxlength="12"
-                                        type="password" pInputText class="form-control">
-                                    <div class="form-group col-md-12">
-                                        <div *ngIf="cpassword" class="invalid-feedback">
-                                            <div *ngIf="cpassword">Current Password required</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="p-field p-col-4">
-                                    <label>Owner New Password <span class="mandatory-fields">*</span></label>
-                                    <input type="password" formControlName="password" pInputText
-                                        [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
-                                        (keypress)="newPassword($event)" />
-                                    <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-                                        <div *ngIf="f.password.errors">Password should contains at least 1 digit, 1
-                                            lowercase, 1 uppercase, 1 symbol.
-                                            Length between 6 to 20.</div>
-                                    </div>
-                                    <div *ngIf="newPasswordCheck" class="invalid-feedback">
-                                        <div *ngIf="newPasswordCheck"> Password is required</div>
-                                    </div>
-                                </div>
-                                <div class="p-field p-col-4">
-                                    <label for="confirmPassword">Owner Confirm Password <span
-                                            class="mandatory-fields">*</span></label>
-                                    <input type="password" class="form-control" [style]="{'width':'100%'}"
-                                        formControlName="confirmPassword" pInputText placeholder="Re-Enter New Password"
-                                        [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }"
-                                        (keypress)="newRePassword($event)" />
-                                    <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
-                                        <div *ngIf="f.confirmPassword.errors.mustMatch">Passwords must match</div>
-                                    </div>
-                                    <div *ngIf="renewPasswordCheck" class="invalid-feedback">
-                                        <div *ngIf="renewPasswordCheck"> Re-enter Password is required</div>
-                                    </div>
-                                </div>
-                                <div class="p-field p-col-4">
-                                    <label for="ownermobileNumber">Owner Mobile Number <span
-                                            class="mandatory-fields">*</span></label>
-                                    <input formControlName="ownermobileNumber" minlength="10" maxlength="12" type="text"
-                                        pInputText class="form-control"
-                                        [ngClass]="{ 'is-invalid': submitted && f.ownermobileNumber.errors }">
-                                    <div *ngIf="submitted && f.ownermobileNumber.errors" class="invalid-feedback">
-                                        <div *ngIf="f.ownermobileNumber.errors.required">Owner Mobile Number is
-                                            required</div>
-                                        <div *ngIf="f.ownermobileNumber.errors">Please Check Owner Mobile Number
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="p-field p-col-4">
-                                    <label for="textarea">Owner Gender <span class="mandatory-fields">*</span></label>
-                                    <p-dropdown inputId="ownergender" [options]="genders" formControlName="ownergender"
-                                        placeholder="Select Owner Gender" optionLabel="name"
-                                        (ngModelChange)="onGenderSelect($event)"
-                                        [ngClass]="{ 'is-invalid': submitted && f.ownergender.errors }"></p-dropdown>
-                                    <div *ngIf="submitted && f.ownergender.errors" class="invalid-feedback">
-                                        <div *ngIf="f.ownergender.errors.required">Please Select Owner Gender</div>
-                                    </div>
-                                </div>
-                                <!-- <div class="p-field p-col-4">
-                    <label for="portfolioimg">Owner Profile</label>
-                    <p-fileUpload chooseLabel="Upload Owner Profile Photo" uploadLabel="Show data" cancelLabel="Cancel"
-                      accept="image/*" maxFileSize="{{imageSize}}" auto="auto" customUpload="true"
-                      (uploadHandler)="picVenueOwnerUploader($event)">
-                      <ng-template pTemplate="content">
-
-                      </ng-template>
-                    </p-fileUpload>
-                    <div *ngIf="notprofile" class="invalid-feedback">
-                      <div *ngIf="notprofile">Please upload vendor Profile </div>
-                    </div>
-                  </div>
-                  <div class="p-field p-col-4" *ngIf="showUploadedpic">
-                    <img src="{{ imageProfile }}" alt="freya-layout" height="100px" />
-                  </div> -->
-
-                            </div>
-                        </p-fieldset>
                     </div>
                 </div>
                 <div class="p-fluid p-formgrid p-grid pare_margin">
