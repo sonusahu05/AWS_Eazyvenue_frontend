@@ -62,6 +62,17 @@ export class EditComponent implements OnInit {
             },
         ]
     };
+    public foodMenuType = {
+        "veg_food": [
+            { "slug": "3X3", "value": "1800" },
+        ],
+        "non_veg": [
+            { "slug": "3X3", "value": "1800" },
+        ],
+        "mixFood": [
+            { "slug": "3X3", "value": "1800" },
+        ]
+    };
     uploadedFiles: any[] = [];
     videoFiles: any[] = [];
     catList: any[] = [];
@@ -167,6 +178,9 @@ export class EditComponent implements OnInit {
             peopleBooked: ['', [Validators.required]],
             views: [''],
             minRevenue: ['', [Validators.required]],
+            metaUrl: ['', [Validators.required]],
+  metaKeywords: ['', [Validators.required]],
+  metaDescription: ['', [Validators.required]],
             mobileNumber: ['', [Validators.required, Validators.pattern("^[0-9]*$")]],
             capacity: ['', [Validators.required]],
             area: ['', [Validators.required]],
@@ -240,6 +254,9 @@ export class EditComponent implements OnInit {
                 this.venueForm.controls.decorationdetails.setValue(res['decorationdetails']);
                 this.venueForm.controls.peopleBooked.setValue(res['peopleBooked']);
                 this.venueForm.controls.minRevenue.setValue(res['minRevenue']);
+                this.venueForm.controls.metaUrl.setValue(res['metaUrl']);
+this.venueForm.controls.metaKeywords.setValue(res['metaKeywords']);
+this.venueForm.controls.metaDescription.setValue(res['metaDescription']);
                 this.venueForm.controls.views.setValue(res['views']);
                 this.venueForm.controls.amenities.setValue(res['amenities']);
                 this.venueForm.controls.eazyVenueRating.setValue({ name: res['eazyVenueRating'], value: res['eazyVenueRating'] });
@@ -650,6 +667,7 @@ export class EditComponent implements OnInit {
             venueData.decor1Price = this.venueForm.get('decor1Price').value;
             venueData.decor2Price = this.venueForm.get('decor2Price').value;
             venueData.decor3Price = this.venueForm.get('decor3Price').value;
+            venueData['foodMenuType'] = this.foodMenuType;
 
             this.decor1ImagesArray = [];
             if (this.decor1Image != undefined) {

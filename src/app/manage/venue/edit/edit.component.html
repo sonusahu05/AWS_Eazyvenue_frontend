@@ -114,6 +114,42 @@
                             <div *ngIf="f.foodType.errors.required">Please, Select Food Type</div>
                         </div>
                     </div>
+                    <div class="p-field p-col-12">
+                        <label>Food Menu Types</label>
+                    </div>
+
+                    <!-- Vegetarian Food Menu Section -->
+                    <div class="p-field p-col-4">
+                        <label for="vegFoodMenu">Vegetarian Food Menu</label>
+                        <div class="p-inputgroup" *ngFor="let item of foodMenuType.veg_food; let i = index">
+                            <span class="p-inputgroup-addon">{{item.slug}}</span>
+                            <p-inputNumber [(ngModel)]="foodMenuType.veg_food[i].value"
+                                [ngModelOptions]="{standalone: true}" placeholder="Enter price">
+                            </p-inputNumber>
+                        </div>
+                    </div>
+
+                    <!-- Non-Vegetarian Food Menu Section -->
+                    <div class="p-field p-col-4">
+                        <label for="nonVegFoodMenu">Non-Vegetarian Food Menu</label>
+                        <div class="p-inputgroup" *ngFor="let item of foodMenuType.non_veg; let i = index">
+                            <span class="p-inputgroup-addon">{{item.slug}}</span>
+                            <p-inputNumber [(ngModel)]="foodMenuType.non_veg[i].value"
+                                [ngModelOptions]="{standalone: true}" placeholder="Enter price">
+                            </p-inputNumber>
+                        </div>
+                    </div>
+
+                    <!-- Mixed Food Menu Section -->
+                    <div class="p-field p-col-4">
+                        <label for="mixedFoodMenu">Mixed Food Menu</label>
+                        <div class="p-inputgroup" *ngFor="let item of foodMenuType.mixFood; let i = index">
+                            <span class="p-inputgroup-addon">{{item.slug}}</span>
+                            <p-inputNumber [(ngModel)]="foodMenuType.mixFood[i].value"
+                                [ngModelOptions]="{standalone: true}" placeholder="Enter price">
+                            </p-inputNumber>
+                        </div>
+                    </div>
                     <div class="p-field p-col-4">
                         <label for="minRevenue">Minimum Revenue<span class="mandatory-fields">*</span></label>
                         <p-inputNumber inputId="minRevenue" formControlName="minRevenue"
@@ -307,6 +343,33 @@
                         <angular-editor id="description" formControlName="description" [(ngModel)]="htmlContent"
                             [config]="config">
                         </angular-editor>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="metaUrl">Meta URL <span class="mandatory-fields">*</span></label>
+                        <input id="metaUrl" type="text" pInputText formControlName="metaUrl"
+                            placeholder="Enter meta URL"
+                            [ngClass]="{ 'is-invalid': submitted && f.metaUrl.errors }">
+                        <div *ngIf="submitted && f.metaUrl.errors" class="invalid-feedback">
+                            <div *ngIf="f.metaUrl.errors.required">Please enter meta URL</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="metaKeywords">Meta Keywords <span class="mandatory-fields">*</span></label>
+                        <textarea id="metaKeywords" pInputTextarea formControlName="metaKeywords"
+                            placeholder="Enter meta keywords (comma separated)"
+                            [ngClass]="{ 'is-invalid': submitted && f.metaKeywords.errors }"></textarea>
+                        <div *ngIf="submitted && f.metaKeywords.errors" class="invalid-feedback">
+                            <div *ngIf="f.metaKeywords.errors.required">Please enter meta keywords</div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col-4">
+                        <label for="metaDescription">Meta Description <span class="mandatory-fields">*</span></label>
+                        <textarea id="metaDescription" pInputTextarea formControlName="metaDescription"
+                            placeholder="Enter meta description"
+                            [ngClass]="{ 'is-invalid': submitted && f.metaDescription.errors }"></textarea>
+                        <div *ngIf="submitted && f.metaDescription.errors" class="invalid-feedback">
+                            <div *ngIf="f.metaDescription.errors.required">Please enter meta description</div>
+                        </div>
                     </div>
 
                     <p-fieldset legend="Venue image & Videos" class="col-md-12 p-mb-4">

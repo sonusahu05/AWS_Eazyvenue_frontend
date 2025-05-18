@@ -10,7 +10,7 @@
         <form [formGroup]="bannerForm">
           <div class="p-fluid p-formgrid p-grid pare_margin">
             <!-- <div class="p-fluid"> -->
-          
+
             <!-- </div> -->
 
             <div class="p-field p-col-4">
@@ -41,10 +41,10 @@
                 <div *ngIf="f.slug.errors">Only Alphabets and _ Allowed</div>
               </div>
             </div>
-           
+
             <div class="p-field p-col-1">
               <label class="mb-0">Status</label>
-              <p-inputSwitch class="checkbox-mt-10 d-block" formControlName="status" 
+              <p-inputSwitch class="checkbox-mt-10 d-block" formControlName="status"
                 [ngClass]="{ 'is-invalid': submitted && f.status.errors }"></p-inputSwitch>
 
               <div *ngIf="submitted && f.status.errors" class="invalid-feedback">
