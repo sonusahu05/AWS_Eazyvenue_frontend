@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { tap } from 'rxjs/operators';
 const USER_API = environment.apiUrl;
 
 @Injectable({
@@ -10,9 +11,16 @@ const USER_API = environment.apiUrl;
 export class BannerService {
   constructor(private http: HttpClient) { }
 
-  getBanner(query): Observable<any> {
-    return this.http.get(USER_API+"banner"+query);
+  getBanner(query: string = ''): Observable<any> {
+    return this.http.get(USER_API + "banner" + query)
+      .pipe(
+        tap(
+          response => console.log('Banner API response:', response),
+          error => console.error('Banner API error:', error)
+        )
+      );
   }
+
 
   getBannerDetails(id): Observable<any> {
     return this.http.get(USER_API+"banner/"+id);
@@ -37,6 +45,5 @@ export class BannerService {
   }
   deleteBanner(desId:string){
     return this.http.delete(USER_API + 'banner/'+desId);
-  }  
+  }
 }
-  

@@ -1,164 +1,282 @@
 <div class="container-fluid px-0">
-    <!-- Hero Banner -->
-    <section class="hero-banner">
-        <div class="overlay"></div>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 mx-auto text-center mt-16">
-                    <h1 class="display-4 fw-bold">Best Budget-Friendly Destination Wedding Places</h1>
-                    <p class="lead">Your dream wedding doesn't have to break the bank. Discover stunning venues near Maharashtra.</p>
-                    <a href="#destinations" class="btn btn-primary btn-lg">Explore Destinations</a>
-                </div>
-            </div>
+    <!-- Hero Banner with featured post -->
+    <section class="hero-banner" *ngIf="featuredPosts.length > 0">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 mx-auto text-center mt-4 py-5">
+            <h1 class="display-4 fw-bold">{{featuredPosts[0].banner_title}}</h1>
+            <p class="lead">{{featuredPosts[0].banner_content || 'Explore our latest stories and updates'}}</p>
+            <a href="#blog-posts" class="btn btn-primary btn-lg">Read More</a>
+          </div>
         </div>
+      </div>
     </section>
 
-    <!-- Latest Instagram Video -->
-    <section class="featured-video py-5 bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-4">
-                    <h2 class="section-title">Latest Wedding Highlight</h2>
-                    <p class="text-muted">Check out our most recent wedding video from Instagram</p>
-                </div>
-                <div class="col-lg-8 mx-auto">
-                    <div class="ratio ratio-16x9 shadow rounded overflow-hidden" *ngIf="latestVideo">
-                        <iframe [src]="featuredVideoUrl"
-                                title="Latest Wedding Video"
-                                allowfullscreen></iframe>
-                    </div>
-                    <div class="text-center mt-3" *ngIf="latestVideo">
-                        <p>{{latestVideo.caption}}</p>
-                        <a [href]="latestVideo.link" class="btn btn-sm btn-outline-primary" target="_blank">
-                            <i class="fab fa-instagram me-2"></i>View on Instagram
-                        </a>
-                    </div>
-                </div>
-            </div>
+    <!-- Loading spinner -->
+    <div *ngIf="loading" class="container mt-5">
+      <div class="row">
+        <div class="col-12 text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- No posts message -->
+    <div *ngIf="!loading && blogPosts?.length === 0" class="container mt-5">
+      <div class="row">
+        <div class="col-12 text-center py-5">
+          <h3>No blog posts available at the moment.</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Posts Section -->
+    <section class="featured-posts py-5 bg-light" *ngIf="!loading && featuredPosts?.length > 0">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center mb-4">
+            <h2 class="section-title">Featured Posts</h2>
+            <p class="text-muted">Check out our most popular content</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 mb-4" *ngFor="let post of featuredPosts">
+            <div class="card h-100 shadow-sm">
+              <div class="blog-image">
+                <ng-container *ngIf="post.banner_image && post.banner_image.length > 0">
+                  <img [src]="getImageUrl(post.banner_image[0].banner_image_src)"
+                       [alt]="post.banner_image[0].alt || post.banner_title"
+                       class="card-img-top">
+                </ng-container>
+                <ng-container *ngIf="!post.banner_image || post.banner_image.length === 0">
+                  <img src="assets/layout/images/no-image.jpg" alt="No image available" class="card-img-top">
+                </ng-container>
+                <div class="post-badge">
+                  <span>{{formatSlug(post.slug)}}</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">{{post.banner_title}}</h3>
+                <p class="card-text">{{post.banner_content || truncateText('No content available')}}</p>
+                <a href="#" class="btn btn-sm btn-primary mt-3">Read More</a>
+              </div>
+              <div class="card-footer bg-white text-muted">
+                <small>Posted: {{post.created_at | date:'mediumDate'}}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Main Content -->
-    <section id="destinations" class="destinations py-5">
-        <div class="container">
-            <!-- Tab Navigation -->
-            <div class="destination-tabs mb-5">
-                <ul class="nav nav-pills justify-content-center">
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           [class.active]="activeTab === 'all'"
-                           (click)="setActiveTab('all')">All Destinations</a>
-                    </li>
-                    <li class="nav-item" *ngFor="let destination of destinations">
-                        <a class="nav-link"
-                           [class.active]="activeTab === destination.id"
-                           (click)="setActiveTab(destination.id)">{{destination.name}}</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Destination Cards -->
-            <div class="row">
-                <div class="col-md-6 col-lg-6 mb-4"
-                     *ngFor="let destination of destinations"
-                     [hidden]="activeTab !== 'all' && activeTab !== destination.id">
-                    <div class="card destination-card h-100 shadow-sm">
-                        <div class="destination-image">
-                            <img [src]="destination.imageUrl" class="card-img-top" [alt]="destination.name + ' wedding destination'">
-                            <div class="destination-badge">
-                                <span>{{destination.whyChoose}}</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h3 class="card-title">{{destination.name}}</h3>
-                            <p class="card-text">{{destination.description}}</p>
-
-                            <h5 class="venue-title">Best Budget Venues:</h5>
-                            <ul class="venue-list">
-                                <li *ngFor="let venue of destination.venues">
-                                    <a [href]="venue.link" target="_blank">{{venue.name}}</a>
-                                </li>
-                            </ul>
-
-                            <div class="ideal-for mt-3">
-                                <strong>Ideal For:</strong> {{destination.idealFor}}
-                            </div>
-
-                            <a href="#" class="btn btn-primary mt-3">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Main Blog Posts -->
+    <section id="blog-posts" class="blog-posts py-5">
+      <div class="container">
+        <!-- Category Tabs -->
+        <div class="category-tabs mb-5">
+          <ul class="nav nav-pills justify-content-center">
+            <li class="nav-item">
+              <a class="nav-link"
+                 [class.active]="activeTab === 'all'"
+                 (click)="setActiveTab('all')">All Posts</a>
+            </li>
+            <li class="nav-item" *ngFor="let category of getCategories()">
+              <a class="nav-link"
+                 [class.active]="activeTab === category.id"
+                 (click)="setActiveTab(category.id)">{{category.name}}</a>
+            </li>
+          </ul>
         </div>
+
+        <!-- Blog Post Cards -->
+        <div class="row">
+          <div class="col-md-6 col-lg-4 mb-4"
+               *ngFor="let post of getFilteredPosts()"
+               [hidden]="activeTab !== 'all' && activeTab !== post.slug">
+            <div class="card blog-card h-100 shadow-sm">
+              <div class="blog-image">
+                <ng-container *ngIf="post.banner_image && post.banner_image.length > 0">
+                  <img [src]="getImageUrl(post.banner_image[0].banner_image_src)"
+                       [alt]="post.banner_image[0].alt || post.banner_title"
+                       class="card-img-top">
+                </ng-container>
+                <ng-container *ngIf="!post.banner_image || post.banner_image.length === 0">
+                  <img src="assets/layout/images/no-image.jpg" alt="No image available" class="card-img-top">
+                </ng-container>
+                <div class="category-badge">
+                  <span>{{formatSlug(post.slug)}}</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">{{post.banner_title}}</h3>
+                <p class="card-text">{{truncateText(post.banner_content || 'No content available')}}</p>
+                <a href="#" class="btn btn-primary mt-3">Read More</a>
+              </div>
+              <div class="card-footer bg-white text-muted">
+                <small>Posted: {{post.created_at | date:'mediumDate'}}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Instagram Feed -->
-    <section class="instagram-feed py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-4">
-                    <h2 class="section-title">Follow Our Journey on Instagram</h2>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4 col-lg-4 mb-4" *ngFor="let post of instagramPosts">
-                    <a [href]="post.link" class="instagram-post" target="_blank">
-                        <div class="card h-100 shadow-sm">
-                            <img [src]="post.imageUrl" class="card-img-top" [alt]="post.caption">
-                            <div class="card-img-overlay">
-                                <div class="instagram-overlay">
-                                    <i *ngIf="post.isVideo" class="fas fa-play-circle"></i>
-                                    <i *ngIf="!post.isVideo" class="fas fa-heart"></i>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <p class="card-text">{{post.caption}}</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="text-center mt-4">
-                <a href="https://instagram.com/dreamyweddings" target="_blank" class="btn btn-outline-primary">
-                    <i class="fab fa-instagram me-2"></i>Follow Us
-                </a>
-            </div>
+    <section class="instagram-feed py-5 bg-light" *ngIf="instagramPosts.length > 0">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center mb-4">
+            <h2 class="section-title">Follow Our Journey</h2>
+          </div>
         </div>
+        <div class="row">
+          <div class="col-md-4 col-lg-4 mb-4" *ngFor="let post of instagramPosts">
+            <a href="#" class="instagram-post">
+              <div class="card h-100 shadow-sm">
+                <img [src]="post.imageUrl" class="card-img-top" [alt]="post.caption">
+                <div class="card-img-overlay">
+                  <div class="instagram-overlay">
+                    <i *ngIf="post.isVideo" class="fas fa-play-circle"></i>
+                    <i *ngIf="!post.isVideo" class="fas fa-heart"></i>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">{{post.caption}}</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="text-center mt-4">
+          <a href="#" class="btn btn-outline-primary">
+            <i class="fab fa-instagram me-2"></i>Follow Us
+          </a>
+        </div>
+      </div>
     </section>
 
     <!-- Contact Form -->
     <section class="contact-section py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-4">
-                    <h2 class="section-title">Get in Touch</h2>
-                    <p class="text-muted">Have questions about planning your budget wedding? Let's chat!</p>
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center mb-4">
+            <h2 class="section-title">Get in Touch</h2>
+            <p class="text-muted">Have questions or comments? Let us know!</p>
+          </div>
+          <div class="col-lg-8 mx-auto">
+            <form class="contact-form">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <input type="text" class="form-control" placeholder="Your Name">
                 </div>
-                <div class="col-lg-8 mx-auto">
-                    <form class="contact-form">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Your Name">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="tel" class="form-control" placeholder="Your Mobile Number">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="email" class="form-control" placeholder="Your Email Address">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Your City">
-                            </div>
-                            <div class="col-12">
-                                <textarea class="form-control" rows="4" placeholder="Tell us about your wedding plans"></textarea>
-                            </div>
-                            <div class="col-12 text-center">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
-                        </div>
-                    </form>
+                <div class="col-md-6">
+                  <input type="email" class="form-control" placeholder="Your Email Address">
                 </div>
-            </div>
+                <div class="col-12">
+                  <textarea class="form-control" rows="4" placeholder="Your Message"></textarea>
+                </div>
+                <div class="col-12 text-center">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </section>
-</div>
+  </div>
+
+  <!-- Minimal inline CSS to enhance the blog appearance -->
+  <style>
+    .hero-banner {
+      position: relative;
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('assets/layout/images/banner-bg.jpg') no-repeat center center;
+      background-size: cover;
+      color: white;
+      padding: 80px 0;
+    }
+
+    .hero-banner .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .blog-image {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-img-top {
+      height: 200px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .blog-card:hover .card-img-top {
+      transform: scale(1.05);
+    }
+
+    .category-badge, .post-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+
+    .instagram-overlay {
+      background: rgba(0, 0, 0, 0.3);
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .instagram-post:hover .instagram-overlay {
+      opacity: 1;
+    }
+
+    .instagram-overlay i {
+      color: white;
+      font-size: 2rem;
+    }
+
+    .section-title {
+      position: relative;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    .section-title:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 3px;
+      background-color: #007bff;
+    }
+
+    .nav-pills .nav-link {
+      cursor: pointer;
+      margin: 0 5px;
+    }
+
+    .nav-pills .nav-link.active {
+      background-color: #007bff;
+    }
+  </style>
