@@ -56,8 +56,26 @@
 
   .banner-cta {
     position: absolute;
-    bottom: 20px;
+    bottom: 100px;
     right: 20px;
+  }
+
+  .mobile-video {
+    width: 96%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  .mobile-banner-popup-dialog {
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 1rem;
+  }
+
+  .mobile-banner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   @media (max-width: 768px) {
@@ -67,7 +85,7 @@
       right: auto;
       margin-top: 10px;
       text-align: center;
-      padding: 10px;
+      padding: 0px;
     }
   }
 

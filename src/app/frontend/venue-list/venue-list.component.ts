@@ -301,6 +301,7 @@ displayLimit: number = 25;
     public selectedCity3: string;
     public selectedCountry: string;
     public countries: any[];
+    isMobileView = false;
     public item: string;
     public date12: Date;
     public date13: Date;
@@ -387,8 +388,10 @@ displayLimit: number = 25;
         this.renderer.appendChild(document.head, canonicalLink);
         this.minDateValue = new Date();
         timer(3000).subscribe(() => {
-            this.showBannerPopup();
+            this.openBannerPopup();
           });
+          this.checkIfMobile();
+  window.addEventListener('resize', this.checkIfMobile.bind(this));
           if (this.bannerVideo && this.bannerVideo.nativeElement) {
             this.bannerVideo.nativeElement.play();
           }
@@ -557,14 +560,20 @@ displayLimit: number = 25;
         );
     }
 
-    showBannerPopup() {
+    checkIfMobile() {
+        this.isMobileView = window.innerWidth <= 768;
+        console.log('isMobileView:', this.isMobileView, 'Width:', window.innerWidth);
+      }
+
+      openBannerPopup() {
+        this.checkIfMobile(); // Update screen size state
         this.bannerPopupVisible = true;
 
-        // Ensure video plays when popup becomes visible
+        // For desktop autoplay
         setTimeout(() => {
-          if (this.bannerVideo && this.bannerVideo.nativeElement) {
+          if (!this.isMobileView && this.bannerVideo?.nativeElement) {
             this.bannerVideo.nativeElement.play()
-              .catch(error => console.log('Auto-play prevented by browser:', error));
+              .catch(err => console.log('Autoplay error:', err));
           }
         }, 100);
       }

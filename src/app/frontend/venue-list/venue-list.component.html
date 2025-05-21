@@ -85,44 +85,6 @@
                 </p-autoComplete>
             </span>
         </div>
-        <p-dialog
-            [(visible)]="bannerPopupVisible"
-            [modal]="true"
-            [closable]="true"
-            [showHeader]="false"
-            [baseZIndex]="9999"
-            [style]="{ width: '80vw', maxWidth: '800px' }"
-            [draggable]="false"
-            [resizable]="false"
-            styleClass="banner-popup-dialog"
-        >
-            <div class="banner-container">
-                <button class="close-banner-btn" (click)="closeBannerPopup()">
-                    <i class="pi pi-times"></i>
-                </button>
-                <video
-                    #bannerVideo
-                    autoplay
-                    loop
-                    muted
-                    playsinline
-                    preload="auto"
-                    class="dubai-fullscreen-video"
-                >
-                    <source src="assets/Dubai_3.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
-
-                <div class="banner-cta">
-                    <button
-                        pButton
-                        label="Enquiry Now"
-                        class="p-button-rounded p-button-danger secondary btn-custom"
-                        (click)="closeBannerPopup()"
-                    ></button>
-                </div>
-            </div>
-        </p-dialog>
 
         <div class="serch-bar-field col-md-3 p-p-0">
             <span class="p-fluid">
@@ -640,6 +602,81 @@
                         </div>
                     </div>
                 </div>
+
+                <p-dialog
+[visible]="bannerPopupVisible && !isMobileView"
+[modal]="true"
+[closable]="true"
+[showHeader]="false"
+[baseZIndex]="9999"
+[style]="{ width: '80vw', maxWidth: '800px' }"
+[draggable]="false"
+[resizable]="false"
+styleClass="banner-popup-dialog"
+>
+<div class="banner-container">
+    <button class="close-banner-btn" (click)="closeBannerPopup()">
+        <i class="pi pi-times"></i>
+    </button>
+    <video
+        #bannerVideo
+        autoplay
+        loop
+        muted
+        playsinline
+        preload="auto"
+        class="dubai-fullscreen-video"
+    >
+        <source src="assets/Dubai_3.mp4" type="video/mp4" />
+    </video>
+    <div class="banner-cta">
+        <button
+            pButton
+            label="Enquiry Now"
+            class="p-button-rounded p-button-danger secondary btn-custom"
+            (click)="handleEnquiry()"
+        ></button>
+    </div>
+</div>
+</p-dialog>
+
+<!-- Mobile Dialog -->
+<p-dialog
+[visible]="bannerPopupVisible && isMobileView"
+[modal]="true"
+[closable]="true"
+[showHeader]="false"
+[baseZIndex]="9999"
+[style]="{ width: '90vw', maxWidth: '360px' }"
+[draggable]="false"
+[resizable]="false"
+styleClass="mobile-banner-popup-dialog"
+>
+<div class="mobile-banner-container">
+    <button class="close-banner-btn" (click)="closeBannerPopup()">
+        <i class="pi pi-times"></i>
+    </button>
+    <video
+        autoplay
+        loop
+        muted
+        playsinline
+        preload="auto"
+        class="mobile-video"
+    >
+        <source src="assets/Dubai_4.mp4" type="video/mp4" />
+    </video>
+    <div class="banner-cta">
+        <button
+            pButton
+            label="Enquiry"
+            class="p-button-sm p-button-success"
+            (click)="handleEnquiry()"
+        ></button>
+    </div>
+</div>
+</p-dialog>
+
 
                 <!-- No venues message -->
                 <div *ngIf="noVenueFlag" class="col-md-12 text-center my-5">
