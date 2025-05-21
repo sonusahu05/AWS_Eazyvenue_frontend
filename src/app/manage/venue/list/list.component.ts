@@ -306,15 +306,24 @@ export class ListComponent implements OnInit {
             (data) => {
                 this.loading = false;
 
-                // Filter out disabled venues
-                let venues = data.data.items.filter(venue => !venue.disable);
+                // First, get all non-disabled venues from the response
+                let allEnabledVenues = data.data.items.filter(venue => !venue.disable);
 
+                // Then apply our status filter if needed
+                let venues = allEnabledVenues.filter(venue => {
+                    // If there's a status filter active, respect it
+                    if (event.filters && event.filters.status && event.filters.status.value !== null) {
+                        return venue.status === event.filters.status.value;
+                    }
 
-                // Apply client-side filtering if needed
+                    // Otherwise, only show active venues by default
+                    return venue.status === true;
+                });
+
+                // Apply other client-side filtering if needed
                 if (event.filters) {
-                    // Additional client-side filtering for more precise results
                     Object.keys(event.filters).forEach(key => {
-                        if (event.filters[key].value !== null && event.filters[key].value !== undefined) {
+                        if (key !== 'status' && event.filters[key].value !== null && event.filters[key].value !== undefined) {
                             const filterValue = event.filters[key].value.toString().toLowerCase();
                             venues = venues.filter(venue => {
                                 if (venue[key] === undefined) return true;
@@ -332,13 +341,14 @@ export class ListComponent implements OnInit {
                     });
                 }
 
+                // Handle venue owner special case
                 if (this.isVenueOwner && venues.length > 0) {
                     this.venueList = [venues[0]];
-                    this.totalRecords = data.data.totalCount > 0 ? 0 : 0;
+                    this.totalRecords = 0;
                 } else {
-                    this.venueList = venues;
+                    // Apply sorting if needed
                     if (event.sortField && event.sortOrder) {
-                        this.venueList.sort((a, b) => {
+                        venues.sort((a, b) => {
                             const valueA = a[event.sortField] || '';
                             const valueB = b[event.sortField] || '';
                             if (valueA < valueB) return event.sortOrder === 1 ? -1 : 1;
@@ -346,7 +356,15 @@ export class ListComponent implements OnInit {
                             return 0;
                         });
                     }
-                    this.totalRecords = data.data.totalCount;
+
+                    this.venueList = venues;
+
+                    // Set the totalRecords to the actual filtered count
+                    // This ensures pagination properly reflects what's actually displayed
+                    this.totalRecords = venues.length;
+
+                    // Log for debugging
+                    console.log(`Showing ${venues.length} venues out of ${allEnabledVenues.length} enabled and ${data.data.totalCount} total`);
                 }
             },
             (err) => {
@@ -654,58 +672,95 @@ export class ListComponent implements OnInit {
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                var updateData = '{"status":' + venue.status + '}';
-                // console.log(cmsmodule._id);
+                // Create the proper update data object - if setting to inactive, also set assured to false
+                const updateData = {
+                    status: venue.status,
+                    // When setting to inactive, automatically set assured to false as well
+                    ...(venue.status === false && { assured: false })
+                };
+
                 this.VenueService.updateVenue(venue.id, updateData).subscribe(
                     (data) => {
                         this.messageService.add({
                             key: 'toastmsg',
                             severity: 'success',
                             summary: 'Successful',
-                            detail: 'Venue Status Updated',
+                            detail: venue.status ?
+                                'Venue Status Updated to Active' :
+                                'Venue Status Updated to Inactive and Unassured',
                             life: 3000,
                         });
+
+                        // If status is false (inactive), update assured status and remove from the list
+                        if (!venue.status) {
+                            venue.assured = false; // Update local state too
+                            this.venueList = this.venueList.filter(v => v.id !== venue.id);
+                            this.totalRecords--;
+                        }
+                        // Otherwise refresh the data to show updated status
+                        else {
+                            this.refreshVenueList(this.lastTableLazyLoadEvent);
+                        }
                     },
                     (err) => {
                         this.errorMessage = err.error.message;
+                        // Revert the toggle if there was an error
+                        venue.status = !venue.status;
+                        this.messageService.add({
+                            key: 'toastmsg',
+                            severity: 'error',
+                            summary: 'Error',
+                            detail: 'Failed to update venue status',
+                            life: 3000,
+                        });
                     }
                 );
-                this.refreshVenueList(this.lastTableLazyLoadEvent);
             },
             reject: () => {
-                this.refreshVenueList(this.lastTableLazyLoadEvent);
+                // Revert the toggle if rejected
+                venue.status = !venue.status;
             },
         });
     }
+
     changeAssured(venue) {
         this.confirmationService.confirm({
             message:
                 'Are you sure you want to mark ' +
                 this.titlecasePipe.transform(venue.name) +
-                ' as Assured?',
+                (venue.assured ? ' as Assured?' : ' as Not Assured?'),
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                var updateData = '{"assured":' + venue.assured + '}';
-                // console.log(cmsmodule._id);
+                // Create the proper update data object
+                const updateData = { assured: venue.assured };
+
                 this.VenueService.updateVenue(venue.id, updateData).subscribe(
                     (data) => {
                         this.messageService.add({
                             key: 'toastmsg',
                             severity: 'success',
                             summary: 'Successful',
-                            detail: 'Venue marked as Assured',
+                            detail: venue.assured ? 'Venue marked as Assured' : 'Venue marked as Not Assured',
                             life: 3000,
                         });
+
+                        // Update the venue directly in the list to reflect changes immediately
+                        const index = this.venueList.findIndex(v => v.id === venue.id);
+                        if (index !== -1) {
+                            this.venueList[index].assured = venue.assured;
+                        }
                     },
                     (err) => {
                         this.errorMessage = err.error.message;
+                        // Revert the toggle if there was an error
+                        venue.assured = !venue.assured;
                     }
                 );
-                this.refreshVenueList(this.lastTableLazyLoadEvent);
             },
             reject: () => {
-                this.refreshVenueList(this.lastTableLazyLoadEvent);
+                // Revert the toggle if rejected
+                venue.assured = !venue.assured;
             },
         });
     }

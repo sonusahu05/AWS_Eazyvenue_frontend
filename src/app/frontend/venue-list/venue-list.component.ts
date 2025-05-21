@@ -66,6 +66,7 @@ export class VenueListComponent implements OnInit {
     showvenuecityerror = false;
     venuecityname: any;
     numberPopup: boolean = false;
+    bannerPopupVisible: boolean = false;
     mobileForm: FormGroup;
     mobileNumber: any;
     submitted: boolean = false;
@@ -201,6 +202,7 @@ export class VenueListComponent implements OnInit {
     otpError = undefined;
     // @ViewChild('ngxotp') ngxotp: NgxOtpInputComponent;
     @ViewChild('galleryWrapper') galleryWrapper: ElementRef;
+    @ViewChild('bannerVideo') bannerVideo: ElementRef<HTMLVideoElement>;
     public config: NgxOtpInputConfig = {
         otpLength: 4,
         autofocus: true,
@@ -231,7 +233,7 @@ export class VenueListComponent implements OnInit {
     public parentCategoryId;
     public parentCategoryDetails;
     downloadFlg: boolean = false;
-    pageSize = 30;
+    pageSize = 32;
     showMoreVisible = true;
     currentpage = 2;
     first;
@@ -384,6 +386,12 @@ displayLimit: number = 25;
         this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
         this.renderer.appendChild(document.head, canonicalLink);
         this.minDateValue = new Date();
+        timer(3000).subscribe(() => {
+            this.showBannerPopup();
+          });
+          if (this.bannerVideo && this.bannerVideo.nativeElement) {
+            this.bannerVideo.nativeElement.play();
+          }
         this.filterCapacityArray = [
             {
                 'id': 1, 'label': "50", condition: 'lte', value: 50, status: false
@@ -547,6 +555,37 @@ displayLimit: number = 25;
                 this.errorMessage = err.error.message;
             }
         );
+    }
+
+    showBannerPopup() {
+        this.bannerPopupVisible = true;
+
+        // Ensure video plays when popup becomes visible
+        setTimeout(() => {
+          if (this.bannerVideo && this.bannerVideo.nativeElement) {
+            this.bannerVideo.nativeElement.play()
+              .catch(error => console.log('Auto-play prevented by browser:', error));
+          }
+        }, 100);
+      }
+
+      closeBannerPopup() {
+        this.bannerPopupVisible = false;
+      }
+
+      handleEnquiry() {
+        console.log('Enquiry button clicked');
+        this.closeBannerPopup();
+      }
+
+      handleShowMoreClick(): void {
+        const isMobile = window.innerWidth <= 768; // You can adjust this breakpoint
+
+        if (isMobile) {
+          this.showHomeSearch(); // Call your mobile-specific function
+        } else {
+          window.location.href = 'https://eazyvenue.com/banquet-halls/wedding/mumbai';
+        }
     }
     getCategoryListNew(){
         this.venueService.getOccastionCategoryList().subscribe(
@@ -1052,14 +1091,6 @@ displayLimit: number = 25;
             this.occasion = category;
             this.categoryService.categoryid(category.id);
             this.selectedCategoryId = category.id;
-            // this.groupedMenuList.forEach(element => {
-            //     element.items.map((x:any) => x.show = 'false')
-            // })
-            // // this.categoryMenuList.map(x => x.show = 'false');
-            // var index = this.categoryMenuList.findIndex(x => x.id === this.selectedCategoryId);
-            // if (index != -1) {
-            //     this.categoryMenuList[index]['show'] = 'active';
-            // }
         } else {
             this.selectedCategoryId = [];
             this.categoryMenuList.forEach(element => {
