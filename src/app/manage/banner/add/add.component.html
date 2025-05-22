@@ -79,6 +79,7 @@
                 <p-inputSwitch class="checkbox-mt-10 d-block" formControlName="status"></p-inputSwitch>
               </div>
 
+              <!-- Content Editor - Fixed -->
               <div class="p-field p-col-12">
                 <label>Content<span class="mandatory-feilds">*</span></label>
                 <p-editor formControlName="banner_content"
@@ -96,19 +97,32 @@
                     </span>
                   </ng-template>
                 </p-editor>
-                <div class="p-field p-col-3" *ngIf="bannerForm.get('reading_time').value">
-                    <label>Reading Time</label>
-                    <input [value]="bannerForm.get('reading_time').value" type="text" pInputText readonly>
+                <div class="p-field p-col-12">
+                    <label>Content<span class="mandatory-feilds">*</span></label>
+                    <textarea formControlName="banner_content"
+                              (input)="calculateReadingTime()"
+                              placeholder="Enter your content here..."
+                              rows="8"
+                              pInputTextarea
+                              [ngClass]="{ 'is-invalid': submitted && f.banner_content.errors }">
+                    </textarea>
+                    <div *ngIf="submitted && f.banner_content.errors" class="invalid-feedback">
+                      <div *ngIf="f.banner_content.errors.required">Content is required</div>
+                    </div>
                   </div>
-                <div *ngIf="submitted && f.banner_content.errors" class="invalid-feedback">
-                  <div *ngIf="f.banner_content.errors.required">Content is required</div>
-                </div>
               </div>
+
+              <!-- Reading Time Display - Fixed -->
+              <div class="p-field p-col-3" *ngIf="bannerForm.get('reading_time')?.value">
+                <label>Reading Time</label>
+                <input [value]="bannerForm.get('reading_time')?.value" type="text" pInputText readonly>
+              </div>
+
             </div>
           </div>
 
           <!-- Featured Post Settings -->
-          <div class="form-section" *ngIf="bannerForm.get('post_type').value === 'featured'">
+          <div class="form-section" *ngIf="bannerForm.get('post_type')?.value === 'featured'">
             <h6 class="section-title">Featured Post Settings</h6>
             <div class="p-fluid p-formgrid p-grid pare_margin">
               <div class="p-field p-col-3">
@@ -122,7 +136,7 @@
           </div>
 
           <!-- Instagram Post Settings -->
-          <div class="form-section" *ngIf="bannerForm.get('post_type').value === 'instagram'">
+          <div class="form-section" *ngIf="bannerForm.get('post_type')?.value === 'instagram'">
             <h6 class="section-title">Instagram Settings</h6>
             <div class="p-fluid p-formgrid p-grid pare_margin">
               <div class="p-field p-col-6">

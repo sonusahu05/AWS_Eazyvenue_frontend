@@ -8,6 +8,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { environment } from "./../../../../environments/environment";
 import { Observable } from 'rxjs';
+
 @Component({
   selector: 'app-banner-add',
   templateUrl: './add.component.html',
@@ -58,6 +59,7 @@ export class BannerAddComponent implements OnInit {
   ];
   selectedbannername: any = this.banners[0].value;
   bannerForm: FormGroup;
+
   constructor(
     private BannerService: BannerService,
     private router: Router,
@@ -69,57 +71,63 @@ export class BannerAddComponent implements OnInit {
     private messageService: MessageService,
     private elementRef: ElementRef
   ) { }
+
   @ViewChild('fileInput') fileInput: FileUpload;
+
   ngOnInit() {
     this.staticPath = environment.uploadUrl;
-  this.pagetitle = 'Add Banner';
-  this.id = this.route.snapshot.paramMap.get("id");
-  this.isAddMode = !this.id;
+    this.pagetitle = 'Add Banner';
+    this.id = this.route.snapshot.paramMap.get("id");
+    this.isAddMode = !this.id;
 
-  this.statuses = [
-    { name: 'Active', code: 'Active' },
-    { name: 'In-Active', code: 'In-Active' }
-  ];
+    this.statuses = [
+      { name: 'Active', code: 'Active' },
+      { name: 'In-Active', code: 'In-Active' }
+    ];
 
-  // Create form only once
-  this.bannerForm = this.formBuilder.group({
-    banner_title: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9_ ][A-Za-z0-9_ ]*$')]],
-    slug: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9_-][A-Za-z0-9_-]*$')]],
-    banner_content: ['', Validators.required],
-    status: [true, Validators.required],
-    disable: [false],
+    // Create form - Fixed form creation
+    this.bannerForm = this.formBuilder.group({
+      banner_title: ['', [Validators.required]],
+      slug: ['', [Validators.required]],
+      banner_content: ['', Validators.required],
+      status: [true, Validators.required],
+      disable: [false],
 
-    // New fields
-    post_type: ['regular', Validators.required],
-    category: ['', Validators.required],
-    tags: [[]],
-    author: ['', Validators.required],
-    reading_time: [''],
-    meta_description: [''],
+      // New fields
+      post_type: ['regular', Validators.required],
+      category: ['', Validators.required],
+      tags: [[]],
+      author: ['', Validators.required],
+      reading_time: [''],
+      meta_description: [''],
 
-    // Featured post specific
-    is_featured: [false],
-    featured_order: [0],
+      // Featured post specific
+      is_featured: [false],
+      featured_order: [0],
 
-    // Instagram specific
-    instagram_url: [''],
-    instagram_caption: [''],
-    is_video: [false],
+      // Instagram specific
+      instagram_url: [''],
+      instagram_caption: [''],
+      is_video: [false],
 
-    // SEO fields
-    seo_title: [''],
-    seo_keywords: [''],
+      // SEO fields
+      seo_title: [''],
+      seo_keywords: [''],
 
-    // Publishing
-    publish_date: [new Date()],
-    is_published: [true]
-  });
+      // Publishing
+      publish_date: [new Date()],
+      is_published: [true]
+    });
 
-  // Load existing data if editing
-  if (!this.isAddMode) {
-    this.loadBannerData();
+    // Load existing data if editing
+    if (!this.isAddMode) {
+      this.loadBannerData();
+    }
+
+    // Set initial reading time calculation
+    this.calculateReadingTime();
   }
-  }
+
   get f() {
     return this.bannerForm.controls;
   }
@@ -153,6 +161,9 @@ export class BannerAddComponent implements OnInit {
           if (data.banner_image && data.banner_image.length > 0) {
             this.setUploadedFiles(data.banner_image.map(img => img.banner_image_src));
           }
+
+          // Calculate reading time after loading content
+          this.calculateReadingTime();
         }
       },
       error => {
@@ -167,6 +178,7 @@ export class BannerAddComponent implements OnInit {
       }
     );
   }
+
   onPostTypeChange(event) {
     const postType = event.value;
 
@@ -204,7 +216,7 @@ export class BannerAddComponent implements OnInit {
   }
 
   generateSlug() {
-    const title = this.bannerForm.get('banner_title').value;
+    const title = this.bannerForm.get('banner_title')?.value;
     if (title) {
       const slug = title.toLowerCase()
         .replace(/[^a-z0-9 -]/g, '')
@@ -215,15 +227,24 @@ export class BannerAddComponent implements OnInit {
     }
   }
 
+  // Fixed calculateReadingTime method
   calculateReadingTime() {
-    const content = this.bannerForm.get('banner_content').value;
-    if (content) {
+    const content = this.bannerForm.get('banner_content')?.value;
+    if (content && typeof content === 'string' && content.trim().length > 0) {
       const wordsPerMinute = 200;
-      const wordCount = content.trim().split(/\s+/).length;
-      const readingTime = Math.ceil(wordCount / wordsPerMinute);
+      // Remove HTML tags and count words
+      const textContent = content.replace(/<[^>]*>/g, '').trim();
+      const wordCount = textContent.split(/\s+/).filter(word => word.length > 0).length;
+      const readingTime = Math.max(1, Math.ceil(wordCount / wordsPerMinute));
       this.bannerForm.patchValue({ reading_time: `${readingTime} min read` });
+    } else {
+      this.bannerForm.patchValue({ reading_time: '' });
     }
+
+    // Trigger change detection to update the UI
+    this.changeDetectorRef.detectChanges();
   }
+
   onUpload(event, frmCrl, form) {
     this.uploadedFiles = []
     for (let file of event.files) {
@@ -232,11 +253,13 @@ export class BannerAddComponent implements OnInit {
     this.isUpload = true;
     this.changeDetectorRef.detectChanges();
   }
+
   deleteFile(list, index) {
     this.deletedattachments.push(this.uploadedFiles[index]);
     this.uploadedFiles.splice(index, 1);
     this.fileInput.files.splice(index, 1);
   }
+
   setUploadedFiles(fileData: any = '') {
     fileData.forEach(file => {
       console.log(file);
@@ -248,21 +271,23 @@ export class BannerAddComponent implements OnInit {
       });
     });
   }
+
   loadFile(filepath): Observable<Blob> {
     return this.httpClient.get(filepath, {
       responseType: "blob"
     });
   }
+
   onSubmit() {
     this.submitted = true;
 
     // Generate SEO fields if empty
-    if (!this.bannerForm.get('seo_title').value) {
-      this.bannerForm.patchValue({ seo_title: this.bannerForm.get('banner_title').value });
+    if (!this.bannerForm.get('seo_title')?.value) {
+      this.bannerForm.patchValue({ seo_title: this.bannerForm.get('banner_title')?.value });
     }
 
-    if (!this.bannerForm.get('meta_description').value) {
-      const content = this.bannerForm.get('banner_content').value;
+    if (!this.bannerForm.get('meta_description')?.value) {
+      const content = this.bannerForm.get('banner_content')?.value;
       if (content) {
         // Remove HTML tags and truncate
         const textContent = content.replace(/<[^>]*>/g, '');
@@ -271,10 +296,18 @@ export class BannerAddComponent implements OnInit {
       }
     }
 
-    // Calculate reading time
+    // Calculate reading time before submission
     this.calculateReadingTime();
 
     if (this.bannerForm.invalid) {
+      // Log form errors for debugging
+      Object.keys(this.bannerForm.controls).forEach(key => {
+        const control = this.bannerForm.get(key);
+        if (control && control.invalid) {
+          console.log(`${key} is invalid:`, control.errors);
+        }
+      });
+
       this.messageService.add({
         key: 'toastmsg',
         severity: 'error',
@@ -337,11 +370,13 @@ export class BannerAddComponent implements OnInit {
     this.selectedbannername = event.value.value;
     this.changeDetectorRef.detectChanges();
   }
+
   onStatusSelect(event) {
     if (event) {
       this.bannerstatus = event.name;
     }
   }
+
   picUploader(event) {
     this.bannerImage = [];
     let index = 0;
@@ -350,20 +385,29 @@ export class BannerAddComponent implements OnInit {
       let reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-        console.log(file.name);// called once readAsDataURL is completed
+        console.log(file.name);
         if (reader.result != null) {
           this.bannerImage.push({ 'file': reader.result });
           index++;
-          //let bannerImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .banner-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=banner_image_' + index + '> <label>Default:</label> <input type="radio" id=banner_default_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
-          //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
         }
       }
     }
   }
+
   onReset() {
     this.submitted = false;
     this.bannerForm.reset();
+    this.tags = [];
+    // Reset to default values
+    this.bannerForm.patchValue({
+      post_type: 'regular',
+      status: true,
+      is_published: true,
+      publish_date: new Date(),
+      disable: false
+    });
   }
+
   backLink() {
     this.router.navigate(['/manage/banner']);
   }
