@@ -1,282 +1,276 @@
-<div class="container-fluid px-0">
-    <!-- Hero Banner with featured post -->
-    <section class="hero-banner" *ngIf="featuredPosts.length > 0">
-      <div class="overlay"></div>
+<!-- Loading State -->
+<div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading blog posts...</p>
+  </div>
+
+  <!-- Main Blog Container -->
+  <div *ngIf="!loading" class="blog-container">
+
+    <!-- Hero Section -->
+    <section class="hero-section">
       <div class="container">
-        <div class="row">
-          <div class="col-md-8 mx-auto text-center mt-4 py-5">
-            <h1 class="display-4 fw-bold">{{featuredPosts[0].banner_title}}</h1>
-            <p class="lead">{{featuredPosts[0].banner_content || 'Explore our latest stories and updates'}}</p>
-            <a href="#blog-posts" class="btn btn-primary btn-lg">Read More</a>
-          </div>
-        </div>
+        <h1 class="hero-title">Our Blog</h1>
+        <p class="hero-subtitle">Discover stories, insights, and inspiration</p>
       </div>
     </section>
 
-    <!-- Loading spinner -->
-    <div *ngIf="loading" class="container mt-5">
-      <div class="row">
-        <div class="col-12 text-center py-5">
-          <div class="spinner-border text-primary" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
+    <!-- Navigation Tabs -->
+    <section class="blog-navigation">
+      <div class="container">
+        <div class="nav-tabs">
+          <button
+            class="nav-tab"
+            [class.active]="activeTab === 'all'"
+            (click)="setActiveTab('all')">
+            All Posts
+          </button>
+          <button
+            class="nav-tab"
+            [class.active]="activeTab === 'featured'"
+            (click)="setActiveTab('featured')">
+            Featured
+          </button>
+          <button
+            class="nav-tab"
+            [class.active]="activeTab === 'instagram'"
+            (click)="setActiveTab('instagram')">
+            Instagram
+          </button>
+          <button
+            class="nav-tab"
+            [class.active]="activeTab === 'regular'"
+            (click)="setActiveTab('regular')">
+            Latest Posts
+          </button>
         </div>
       </div>
-    </div>
-
-    <!-- No posts message -->
-    <div *ngIf="!loading && blogPosts?.length === 0" class="container mt-5">
-      <div class="row">
-        <div class="col-12 text-center py-5">
-          <h3>No blog posts available at the moment.</h3>
-        </div>
-      </div>
-    </div>
+    </section>
 
     <!-- Featured Posts Section -->
-    <section class="featured-posts py-5 bg-light" *ngIf="!loading && featuredPosts?.length > 0">
+    <section *ngIf="activeTab === 'all' || activeTab === 'featured'" class="featured-section">
       <div class="container">
-        <div class="row">
-          <div class="col-12 text-center mb-4">
-            <h2 class="section-title">Featured Posts</h2>
-            <p class="text-muted">Check out our most popular content</p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4 mb-4" *ngFor="let post of featuredPosts">
-            <div class="card h-100 shadow-sm">
-              <div class="blog-image">
-                <ng-container *ngIf="post.banner_image && post.banner_image.length > 0">
-                  <img [src]="getImageUrl(post.banner_image[0].banner_image_src)"
-                       [alt]="post.banner_image[0].alt || post.banner_title"
-                       class="card-img-top">
-                </ng-container>
-                <ng-container *ngIf="!post.banner_image || post.banner_image.length === 0">
-                  <img src="assets/layout/images/no-image.jpg" alt="No image available" class="card-img-top">
-                </ng-container>
-                <div class="post-badge">
-                  <span>{{formatSlug(post.slug)}}</span>
+        <h2 class="section-title">Featured Posts</h2>
+        <div class="featured-grid" *ngIf="featuredPosts.length > 0">
+          <article
+            *ngFor="let post of featuredPosts; let i = index"
+            class="featured-card"
+            [class.large]="i === 0">
+
+            <div class="card-image">
+                <img [src]="getImageUrl(post.banner_image && post.banner_image.length > 0 ? post.banner_image[0].banner_image_src : '')"
+                [alt]="post.banner_title"
+                loading="lazy">
+              <div class="post-badge">Featured</div>
+            </div>
+
+            <div class="card-content">
+              <div class="post-meta">
+                <span class="category">{{formatCategoryName(post.category)}}</span>
+                <span class="date">{{post.publish_date | date:'MMM dd, yyyy'}}</span>
+                <span class="reading-time" *ngIf="post.reading_time">{{post.reading_time}}</span>
+              </div>
+
+              <h3 class="post-title">{{post.banner_title}}</h3>
+              <p class="post-excerpt">{{truncateText(post.banner_content, 120)}}</p>
+
+              <div class="post-footer">
+                <div class="author">
+                  <span>By {{post.author}}</span>
+                </div>
+                <div class="post-tags" *ngIf="getPostTags(post).length > 0">
+                  <span class="tag" *ngFor="let tag of getPostTags(post).slice(0, 2)">
+                    {{tag}}
+                  </span>
                 </div>
               </div>
-              <div class="card-body">
-                <h3 class="card-title">{{post.banner_title}}</h3>
-                <p class="card-text">{{post.banner_content || truncateText('No content available')}}</p>
-                <a href="#" class="btn btn-sm btn-primary mt-3">Read More</a>
+
+              <div class="post-actions">
+                <button class="read-more-btn" [routerLink]="['/blog', post.slug]">
+                  Read More
+                </button>
+                <div class="share-buttons">
+                  <button (click)="sharePost(post, 'facebook')" class="share-btn facebook">
+                    <i class="pi pi-facebook"></i>
+                  </button>
+                  <button (click)="sharePost(post, 'twitter')" class="share-btn twitter">
+                    <i class="pi pi-twitter"></i>
+                  </button>
+                  <button (click)="sharePost(post, 'linkedin')" class="share-btn linkedin">
+                    <i class="pi pi-linkedin"></i>
+                  </button>
+                </div>
               </div>
-              <div class="card-footer bg-white text-muted">
-                <small>Posted: {{post.created_at | date:'mediumDate'}}</small>
+            </div>
+          </article>
+        </div>
+
+        <div *ngIf="featuredPosts.length === 0" class="no-posts">
+          <p>No featured posts available.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Instagram Posts Section -->
+    <section *ngIf="activeTab === 'all' || activeTab === 'instagram'" class="instagram-section">
+      <div class="container">
+        <h2 class="section-title">From Instagram</h2>
+        <div class="instagram-grid" *ngIf="instagramPosts.length > 0">
+          <div
+            *ngFor="let post of instagramPosts"
+            class="instagram-card"
+            (click)="openInstagramPost(post.instagram_url)">
+
+            <div class="instagram-image">
+              <img
+                [src]="getImageUrl(post.banner_image && post.banner_image[0] ? post.banner_image[0].banner_image_src : '')"
+                [alt]="post.banner_title"
+                loading="lazy">
+              <div class="instagram-overlay">
+                <div class="instagram-icon">
+                  <i class="pi pi-instagram"></i>
+                </div>
+                <div class="instagram-stats" *ngIf="post.is_video">
+                  <i class="pi pi-play"></i>
+                </div>
               </div>
+            </div>
+
+            <div class="instagram-caption">
+              <p>{{truncateText(post.instagram_caption || post.banner_title, 60)}}</p>
             </div>
           </div>
         </div>
+
+        <div *ngIf="instagramPosts.length === 0" class="no-posts">
+          <p>No Instagram posts available.</p>
+        </div>
       </div>
     </section>
 
-    <!-- Main Blog Posts -->
-    <section id="blog-posts" class="blog-posts py-5">
+    <!-- Regular Posts Section -->
+    <section *ngIf="activeTab === 'all' || activeTab === 'regular'" class="regular-posts-section">
       <div class="container">
-        <!-- Category Tabs -->
-        <div class="category-tabs mb-5">
-          <ul class="nav nav-pills justify-content-center">
-            <li class="nav-item">
-              <a class="nav-link"
-                 [class.active]="activeTab === 'all'"
-                 (click)="setActiveTab('all')">All Posts</a>
-            </li>
-            <li class="nav-item" *ngFor="let category of getCategories()">
-              <a class="nav-link"
-                 [class.active]="activeTab === category.id"
-                 (click)="setActiveTab(category.id)">{{category.name}}</a>
-            </li>
-          </ul>
-        </div>
+        <div class="section-header">
+          <h2 class="section-title">Latest Posts</h2>
 
-        <!-- Blog Post Cards -->
-        <div class="row">
-          <div class="col-md-6 col-lg-4 mb-4"
-               *ngFor="let post of getFilteredPosts()"
-               [hidden]="activeTab !== 'all' && activeTab !== post.slug">
-            <div class="card blog-card h-100 shadow-sm">
-              <div class="blog-image">
-                <ng-container *ngIf="post.banner_image && post.banner_image.length > 0">
-                  <img [src]="getImageUrl(post.banner_image[0].banner_image_src)"
-                       [alt]="post.banner_image[0].alt || post.banner_title"
-                       class="card-img-top">
-                </ng-container>
-                <ng-container *ngIf="!post.banner_image || post.banner_image.length === 0">
-                  <img src="assets/layout/images/no-image.jpg" alt="No image available" class="card-img-top">
-                </ng-container>
-                <div class="category-badge">
-                  <span>{{formatSlug(post.slug)}}</span>
-                </div>
-              </div>
-              <div class="card-body">
-                <h3 class="card-title">{{post.banner_title}}</h3>
-                <p class="card-text">{{truncateText(post.banner_content || 'No content available')}}</p>
-                <a href="#" class="btn btn-primary mt-3">Read More</a>
-              </div>
-              <div class="card-footer bg-white text-muted">
-                <small>Posted: {{post.created_at | date:'mediumDate'}}</small>
-              </div>
+          <!-- Search and Filter Controls -->
+          <div class="controls-row">
+            <div class="search-box">
+              <input
+                type="text"
+                [(ngModel)]="searchTerm"
+                (input)="onSearch()"
+                placeholder="Search posts..."
+                class="search-input">
+              <i class="pi pi-search search-icon"></i>
+            </div>
+
+            <div class="category-filter">
+              <select
+                [(ngModel)]="selectedCategory"
+                (change)="setActiveCategory($event.target.value)"
+                class="category-select">
+                <option value="all">All Categories</option>
+                <option *ngFor="let category of categories" [value]="category.id">
+                  {{category.name}}
+                </option>
+              </select>
             </div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Instagram Feed -->
-    <section class="instagram-feed py-5 bg-light" *ngIf="instagramPosts.length > 0">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 text-center mb-4">
-            <h2 class="section-title">Follow Our Journey</h2>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4 col-lg-4 mb-4" *ngFor="let post of instagramPosts">
-            <a href="#" class="instagram-post">
-              <div class="card h-100 shadow-sm">
-                <img [src]="post.imageUrl" class="card-img-top" [alt]="post.caption">
-                <div class="card-img-overlay">
-                  <div class="instagram-overlay">
-                    <i *ngIf="post.isVideo" class="fas fa-play-circle"></i>
-                    <i *ngIf="!post.isVideo" class="fas fa-heart"></i>
-                  </div>
+        <!-- Posts Grid -->
+        <div class="posts-grid" *ngIf="getFilteredPosts().length > 0">
+          <article *ngFor="let post of getFilteredPosts()" class="post-card">
+            <div class="card-image">
+              <img
+                [src]="getImageUrl(post.banner_image && post.banner_image[0] ? post.banner_image[0].banner_image_src : '')"
+                [alt]="post.banner_title"
+                loading="lazy">
+            </div>
+
+            <div class="card-content">
+              <div class="post-meta">
+                <span class="category">{{formatCategoryName(post.category)}}</span>
+                <span class="date">{{post.publish_date | date:'MMM dd, yyyy'}}</span>
+                <span class="reading-time" *ngIf="post.reading_time">{{post.reading_time}}</span>
+              </div>
+
+              <h3 class="post-title">
+                <a [routerLink]="['/blog', post.slug]">{{post.banner_title}}</a>
+              </h3>
+
+              <p class="post-excerpt">{{truncateText(post.banner_content, 150)}}</p>
+
+              <div class="post-footer">
+                <div class="author">
+                  <span>By {{post.author}}</span>
                 </div>
-                <div class="card-body">
-                  <p class="card-text">{{post.caption}}</p>
+
+                <div class="post-tags" *ngIf="getPostTags(post).length > 0">
+                  <span class="tag" *ngFor="let tag of getPostTags(post).slice(0, 3)">
+                    {{tag}}
+                  </span>
                 </div>
               </div>
-            </a>
-          </div>
-        </div>
-        <div class="text-center mt-4">
-          <a href="#" class="btn btn-outline-primary">
-            <i class="fab fa-instagram me-2"></i>Follow Us
-          </a>
-        </div>
-      </div>
-    </section>
 
-    <!-- Contact Form -->
-    <section class="contact-section py-5">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 text-center mb-4">
-            <h2 class="section-title">Get in Touch</h2>
-            <p class="text-muted">Have questions or comments? Let us know!</p>
-          </div>
-          <div class="col-lg-8 mx-auto">
-            <form class="contact-form">
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <input type="text" class="form-control" placeholder="Your Name">
-                </div>
-                <div class="col-md-6">
-                  <input type="email" class="form-control" placeholder="Your Email Address">
-                </div>
-                <div class="col-12">
-                  <textarea class="form-control" rows="4" placeholder="Your Message"></textarea>
-                </div>
-                <div class="col-12 text-center">
-                  <button type="submit" class="btn btn-primary">Submit</button>
+              <div class="post-actions">
+                <button class="read-more-btn" [routerLink]="['/blog', post.slug]">
+                  Read More
+                </button>
+                <div class="share-buttons">
+                  <button (click)="sharePost(post, 'facebook')" class="share-btn">
+                    <i class="pi pi-facebook"></i>
+                  </button>
+                  <button (click)="sharePost(post, 'twitter')" class="share-btn">
+                    <i class="pi pi-twitter"></i>
+                  </button>
                 </div>
               </div>
-            </form>
+            </div>
+          </article>
+        </div>
+
+        <!-- No Posts Message -->
+        <div *ngIf="getFilteredPosts().length === 0 && !loading" class="no-posts">
+          <div class="no-posts-content">
+            <i class="pi pi-search no-posts-icon"></i>
+            <h3>No posts found</h3>
+            <p *ngIf="searchTerm">No posts match your search for "{{searchTerm}}"</p>
+            <p *ngIf="selectedCategory !== 'all' && !searchTerm">No posts found in this category</p>
+            <p *ngIf="selectedCategory === 'all' && !searchTerm">No posts available at the moment</p>
           </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" *ngIf="getTotalPages() > 1">
+          <button
+            class="page-btn prev"
+            [disabled]="currentPage === 1"
+            (click)="prevPage()">
+            <i class="pi pi-chevron-left"></i>
+            Previous
+          </button>
+
+          <div class="page-numbers">
+            <button
+              *ngFor="let page of [].constructor(getTotalPages()); let i = index"
+              class="page-number"
+              [class.active]="currentPage === i + 1"
+              (click)="goToPage(i + 1)">
+              {{i + 1}}
+            </button>
+          </div>
+
+          <button
+            class="page-btn next"
+            [disabled]="currentPage === getTotalPages()"
+            (click)="nextPage()">
+            Next
+            <i class="pi pi-chevron-right"></i>
+          </button>
         </div>
       </div>
     </section>
   </div>
-
-  <!-- Minimal inline CSS to enhance the blog appearance -->
-  <style>
-    .hero-banner {
-      position: relative;
-      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('assets/layout/images/banner-bg.jpg') no-repeat center center;
-      background-size: cover;
-      color: white;
-      padding: 80px 0;
-    }
-
-    .hero-banner .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .blog-image {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card-img-top {
-      height: 200px;
-      object-fit: cover;
-      transition: transform 0.3s ease;
-    }
-
-    .blog-card:hover .card-img-top {
-      transform: scale(1.05);
-    }
-
-    .category-badge, .post-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #007bff;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 3px;
-      font-size: 12px;
-    }
-
-    .instagram-overlay {
-      background: rgba(0, 0, 0, 0.3);
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .instagram-post:hover .instagram-overlay {
-      opacity: 1;
-    }
-
-    .instagram-overlay i {
-      color: white;
-      font-size: 2rem;
-    }
-
-    .section-title {
-      position: relative;
-      padding-bottom: 15px;
-      margin-bottom: 20px;
-    }
-
-    .section-title:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      height: 3px;
-      background-color: #007bff;
-    }
-
-    .nav-pills .nav-link {
-      cursor: pointer;
-      margin: 0 5px;
-    }
-
-    .nav-pills .nav-link.active {
-      background-color: #007bff;
-    }
-  </style>

@@ -11,12 +11,18 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class BlogComponent implements OnInit {
   blogPosts: any[] = [];
   featuredPosts: any[] = [];
+  instagramPosts: any[] = [];
+  regularPosts: any[] = [];
+  categories: any[] = [];
+  selectedCategory: string = 'all';
+  searchTerm: string = '';
+  currentPage: number = 1;
+  postsPerPage: number = 6;
   loading: boolean = true;
   staticPath: string;
   activeTab: string = 'all';
 
   // For Instagram-like section
-  instagramPosts: any[] = [];
 
   constructor(
     private bannerService: BannerService,
@@ -26,23 +32,37 @@ export class BlogComponent implements OnInit {
   ngOnInit() {
     this.staticPath = environment.uploadUrl;
     this.loadBlogPosts();
+
+  // Add this debug code temporarily
+  setTimeout(() => {
+    console.log('Current blogPosts:', this.blogPosts);
+    console.log('Featured posts:', this.featuredPosts);
+    console.log('Regular posts:', this.regularPosts);
+  }, 2000);
   }
 
   loadBlogPosts() {
     this.loading = true;
-    this.bannerService.getBanner().subscribe(
+    this.bannerService.getBanner('').subscribe(
       (response) => {
-        // Access the nested items array in the response
-        this.blogPosts = response.data?.items || [];
+        console.log('API Response:', response); // Debug log
 
-        // Set featured posts (first 3 active posts)
-        this.featuredPosts = this.blogPosts
-          .filter(post => post.status)
-          .slice(0, 3);
+        // Handle different response structures
+        if (Array.isArray(response)) {
+            this.blogPosts = response;
+          } else if (response.items && Array.isArray(response.items)) {
+            this.blogPosts = response.items;
+          } else if (response.data && response.data.items && Array.isArray(response.data.items)) {
+            this.blogPosts = response.data.items;
+          } else {
+            this.blogPosts = [];
+            console.error('Unexpected response format:', response);
+          }
 
-        // Create Instagram-like posts for display (using same data)
-        this.createInstagramPosts();
+        console.log('Processed blogPosts:', this.blogPosts); // Debug log
 
+        this.categorizePosts();
+        this.extractCategories();
         this.loading = false;
       },
       (error) => {
@@ -50,6 +70,171 @@ export class BlogComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+  categorizePosts() {
+    // Ensure blogPosts is an array
+    if (!Array.isArray(this.blogPosts)) {
+      console.error('blogPosts is not an array:', this.blogPosts);
+      this.blogPosts = [];
+      return;
+    }
+
+    this.featuredPosts = this.blogPosts
+      .filter(post => post.post_type === 'featured' && (post.is_published || post.status))
+      .sort((a, b) => (a.featured_order || 0) - (b.featured_order || 0))
+      .slice(0, 6);
+
+    this.instagramPosts = this.blogPosts
+      .filter(post => post.post_type === 'instagram' && (post.is_published || post.status))
+      .sort((a, b) => new Date(b.publish_date || b.created_at).getTime() - new Date(a.publish_date || a.created_at).getTime())
+      .slice(0, 9);
+
+    this.regularPosts = this.blogPosts
+      .filter(post => (post.post_type === 'regular' || !post.post_type) && (post.is_published || post.status))
+      .sort((a, b) => new Date(b.publish_date || b.created_at).getTime() - new Date(a.publish_date || a.created_at).getTime());
+
+    console.log('Categorized posts:', {
+      featured: this.featuredPosts.length,
+      instagram: this.instagramPosts.length,
+      regular: this.regularPosts.length
+    });
+  }
+
+  extractCategories() {
+    const categorySet = new Set();
+    this.blogPosts.forEach(post => {
+      if (post.category) {
+        categorySet.add(post.category);
+      }
+    });
+
+    this.categories = Array.from(categorySet).map(cat => ({
+      id: cat,
+      name: this.formatCategoryName(cat as string)
+    }));
+  }
+
+  formatCategoryName(category: string): string {
+    return category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, ' ');
+  }
+
+  getFilteredPosts() {
+    let filtered = this.regularPosts;
+
+    // Apply category filter
+    if (this.selectedCategory !== 'all') {
+      filtered = filtered.filter(post => post.category === this.selectedCategory);
+    }
+
+    // Apply search filter
+    if (this.searchTerm) {
+      const searchLower = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(post =>
+        post.banner_title.toLowerCase().includes(searchLower) ||
+        post.banner_content.toLowerCase().includes(searchLower) ||
+        post.author.toLowerCase().includes(searchLower) ||
+        (post.tags && post.tags.some(tag => tag.toLowerCase().includes(searchLower)))
+      );
+    }
+
+    // Apply pagination
+    const startIndex = (this.currentPage - 1) * this.postsPerPage;
+    return filtered.slice(startIndex, startIndex + this.postsPerPage);
+  }
+
+  getTotalPages(): number {
+    const filtered = this.getFilteredPostsCount();
+    return Math.ceil(filtered / this.postsPerPage);
+  }
+
+  getFilteredPostsCount(): number {
+    let filtered = this.regularPosts;
+
+    if (this.selectedCategory !== 'all') {
+      filtered = filtered.filter(post => post.category === this.selectedCategory);
+    }
+
+    if (this.searchTerm) {
+      const searchLower = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(post =>
+        post.banner_title.toLowerCase().includes(searchLower) ||
+        post.banner_content.toLowerCase().includes(searchLower) ||
+        post.author.toLowerCase().includes(searchLower)
+      );
+    }
+
+    return filtered.length;
+  }
+
+  setActiveCategory(category: string) {
+    this.selectedCategory = category;
+    this.currentPage = 1; // Reset to first page
+  }
+
+  onSearch() {
+    this.currentPage = 1; // Reset to first page
+  }
+
+  nextPage() {
+    if (this.currentPage < this.getTotalPages()) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  goToPage(page: number) {
+    this.currentPage = page;
+  }
+
+  openInstagramPost(instagramUrl: string) {
+    if (instagramUrl) {
+      window.open(instagramUrl, '_blank');
+    }
+  }
+
+  getPostTags(post: any): string[] {
+    return post.tags || [];
+  }
+
+  getRelatedPosts(currentPost: any, limit: number = 3): any[] {
+    return this.regularPosts
+      .filter(post =>
+        post.id !== currentPost.id &&
+        post.category === currentPost.category
+      )
+      .slice(0, limit);
+  }
+
+  sharePost(post: any, platform: string) {
+    const url = encodeURIComponent(window.location.origin + '/blog/' + post.slug);
+    const title = encodeURIComponent(post.banner_title);
+    const text = encodeURIComponent(post.meta_description || post.banner_content.substring(0, 100));
+
+    let shareUrl = '';
+
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+        break;
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+        break;
+      case 'whatsapp':
+        shareUrl = `https://wa.me/?text=${title} ${url}`;
+        break;
+    }
+
+    if (shareUrl) {
+      window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
   }
 
   getImageUrl(imagePath: string): string {
@@ -100,10 +285,4 @@ export class BlogComponent implements OnInit {
   }
 
   // Filter posts by category (slug)
-  getFilteredPosts() {
-    if (this.activeTab === 'all') {
-      return this.blogPosts;
-    }
-    return this.blogPosts.filter(post => post.slug === this.activeTab);
-  }
 }

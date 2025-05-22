@@ -17,6 +17,25 @@ import { Observable } from 'rxjs';
 export class BannerAddComponent implements OnInit {
   uploadedFiles: any[] = [];
   banner_image: FormArray;
+
+  postTypes: any[] = [
+    { name: 'Regular Post', value: 'regular' },
+    { name: 'Featured Post', value: 'featured' },
+    { name: 'Instagram Post', value: 'instagram' }
+  ];
+
+  categories: any[] = [
+    { name: 'Technology', value: 'technology' },
+    { name: 'Lifestyle', value: 'lifestyle' },
+    { name: 'Travel', value: 'travel' },
+    { name: 'Food', value: 'food' },
+    { name: 'Fashion', value: 'fashion' },
+    { name: 'Business', value: 'business' }
+  ];
+
+  tags: string[] = [];
+  availableTags: string[] = ['trending', 'popular', 'new', 'featured', 'sponsored'];
+
   deletedattachments: any[] = [];
   filename: any = '';
   staticPath: string;
@@ -53,25 +72,157 @@ export class BannerAddComponent implements OnInit {
   @ViewChild('fileInput') fileInput: FileUpload;
   ngOnInit() {
     this.staticPath = environment.uploadUrl;
-    this.pagetitle = 'Add Banner';
-    this.id = this.route.snapshot.paramMap.get("id");
-    this.isAddMode = !this.id;
-    this.statuses = [
-      { name: 'Active', code: 'Active' },
-      { name: 'In-Active', code: 'In-Active' }
-    ];
-    //this.bannerstatus = "Active";
-    this.bannerForm = this.formBuilder.group({
-      banner_title: ['', [Validators.required, Validators.pattern('^[A-Za-z_ ][A-Za-z_ ]*$')]],
-      slug: ['', [Validators.required, Validators.pattern('^[A-Za-z_][A-Za-z_]*$')]],
-      // banner_content: [''],
-      // banner_url: ['', [Validators.required, Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
-      status: [true, Validators.required],
-      disable: [false],
-    });
+  this.pagetitle = 'Add Banner';
+  this.id = this.route.snapshot.paramMap.get("id");
+  this.isAddMode = !this.id;
+
+  this.statuses = [
+    { name: 'Active', code: 'Active' },
+    { name: 'In-Active', code: 'In-Active' }
+  ];
+
+  // Create form only once
+  this.bannerForm = this.formBuilder.group({
+    banner_title: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9_ ][A-Za-z0-9_ ]*$')]],
+    slug: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9_-][A-Za-z0-9_-]*$')]],
+    banner_content: ['', Validators.required],
+    status: [true, Validators.required],
+    disable: [false],
+
+    // New fields
+    post_type: ['regular', Validators.required],
+    category: ['', Validators.required],
+    tags: [[]],
+    author: ['', Validators.required],
+    reading_time: [''],
+    meta_description: [''],
+
+    // Featured post specific
+    is_featured: [false],
+    featured_order: [0],
+
+    // Instagram specific
+    instagram_url: [''],
+    instagram_caption: [''],
+    is_video: [false],
+
+    // SEO fields
+    seo_title: [''],
+    seo_keywords: [''],
+
+    // Publishing
+    publish_date: [new Date()],
+    is_published: [true]
+  });
+
+  // Load existing data if editing
+  if (!this.isAddMode) {
+    this.loadBannerData();
+  }
   }
   get f() {
     return this.bannerForm.controls;
+  }
+
+  loadBannerData() {
+    this.BannerService.getBannerDetails(this.id).subscribe(
+      data => {
+        if (data) {
+          this.bannerForm.patchValue({
+            banner_title: data.banner_title,
+            slug: data.slug,
+            banner_content: data.banner_content,
+            status: data.status,
+            post_type: data.post_type || 'regular',
+            category: data.category,
+            author: data.author,
+            reading_time: data.reading_time,
+            meta_description: data.meta_description,
+            seo_title: data.seo_title,
+            seo_keywords: data.seo_keywords,
+            featured_order: data.featured_order || 0,
+            instagram_url: data.instagram_url,
+            instagram_caption: data.instagram_caption,
+            is_video: data.is_video || false,
+            publish_date: data.publish_date ? new Date(data.publish_date) : new Date(),
+            is_published: data.is_published !== undefined ? data.is_published : true
+          });
+
+          this.tags = data.tags || [];
+
+          if (data.banner_image && data.banner_image.length > 0) {
+            this.setUploadedFiles(data.banner_image.map(img => img.banner_image_src));
+          }
+        }
+      },
+      error => {
+        console.error('Error loading banner data:', error);
+        this.messageService.add({
+          key: 'toastmsg',
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load banner data',
+          life: 6000
+        });
+      }
+    );
+  }
+  onPostTypeChange(event) {
+    const postType = event.value;
+
+    if (postType === 'featured') {
+      this.bannerForm.patchValue({ is_featured: true });
+      this.bannerForm.get('featured_order').setValidators([Validators.required]);
+    } else {
+      this.bannerForm.patchValue({ is_featured: false });
+      this.bannerForm.get('featured_order').clearValidators();
+    }
+
+    if (postType === 'instagram') {
+      this.bannerForm.get('instagram_url').setValidators([Validators.required, Validators.pattern('https?://.+')]);
+      this.bannerForm.get('instagram_caption').setValidators([Validators.required]);
+    } else {
+      this.bannerForm.get('instagram_url').clearValidators();
+      this.bannerForm.get('instagram_caption').clearValidators();
+    }
+
+    this.bannerForm.get('featured_order').updateValueAndValidity();
+    this.bannerForm.get('instagram_url').updateValueAndValidity();
+    this.bannerForm.get('instagram_caption').updateValueAndValidity();
+  }
+
+  addTag(tag: string) {
+    if (tag && !this.tags.includes(tag)) {
+      this.tags.push(tag);
+      this.bannerForm.patchValue({ tags: this.tags });
+    }
+  }
+
+  removeTag(index: number) {
+    this.tags.splice(index, 1);
+    this.bannerForm.patchValue({ tags: this.tags });
+  }
+
+  generateSlug() {
+    const title = this.bannerForm.get('banner_title').value;
+    if (title) {
+      const slug = title.toLowerCase()
+        .replace(/[^a-z0-9 -]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim('-');
+      this.bannerForm.patchValue({ slug: slug });
+    }
+  }
+
+  calculateReadingTime() {
+    const content = this.bannerForm.get('banner_content').value;
+    if (content) {
+      const wordsPerMinute = 200;
+      const wordCount = content.trim().split(/\s+/).length;
+      const readingTime = Math.ceil(wordCount / wordsPerMinute);
+      this.bannerForm.patchValue({ reading_time: `${readingTime} min read` });
+    }
   }
   onUpload(event, frmCrl, form) {
     this.uploadedFiles = []
@@ -104,44 +255,84 @@ export class BannerAddComponent implements OnInit {
   }
   onSubmit() {
     this.submitted = true;
-    // stop here if form is invalid
+
+    // Generate SEO fields if empty
+    if (!this.bannerForm.get('seo_title').value) {
+      this.bannerForm.patchValue({ seo_title: this.bannerForm.get('banner_title').value });
+    }
+
+    if (!this.bannerForm.get('meta_description').value) {
+      const content = this.bannerForm.get('banner_content').value;
+      if (content) {
+        // Remove HTML tags and truncate
+        const textContent = content.replace(/<[^>]*>/g, '');
+        const metaDesc = textContent.length > 150 ? textContent.substring(0, 150) + '...' : textContent;
+        this.bannerForm.patchValue({ meta_description: metaDesc });
+      }
+    }
+
+    // Calculate reading time
+    this.calculateReadingTime();
+
     if (this.bannerForm.invalid) {
+      this.messageService.add({
+        key: 'toastmsg',
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Please fill all required fields',
+        life: 6000
+      });
       return;
     }
-    var bannerData = this.bannerForm.value;
-    //bannerData['status'] =this.bannerstatus;
-    //console.log(this.bannerImage);
-    this.bannerImagesArray = [];
-    if (this.bannerImage != undefined) {
-      this.bannerImage.forEach((element, index) => {
-        index = index + 1;
-        let bannerImageAlt;
-        let bannerImageDefault;
-        // let bannerImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .banner-images #banner_image_" + index).value;
-        // let bannerImageDefault = this.elementRef.nativeElement.querySelector(".p-fileupload-content .banner-images #banner_default_" + index).checked;
-        this.bannerImagesArray.push({ 'file': element.file, 'alt': bannerImageAlt, 'default': bannerImageDefault });
 
+    var bannerData = this.bannerForm.value;
+
+    // Handle image uploads
+    this.bannerImagesArray = [];
+    if (this.bannerImage && this.bannerImage.length > 0) {
+      this.bannerImage.forEach((element, index) => {
+        this.bannerImagesArray.push({
+          'file': element.file,
+          'alt': bannerData.banner_title,
+          'default': index === 0
+        });
       });
     }
-    //console.log('this.bannerImagesArray', this.bannerImagesArray);
 
     bannerData['banner_images'] = this.bannerImagesArray;
-    //console.log(bannerData['banner_images']); return;
-    //display form values on success
-    // console.log(JSON.stringify(this.bannerForm.value, null, 4));
-    bannerData = JSON.stringify(bannerData, null, 4);
-    this.BannerService.addBanner(bannerData).subscribe(
+    bannerData['tags'] = this.tags;
+
+    const apiCall = this.isAddMode
+      ? this.BannerService.addBanner(JSON.stringify(bannerData))
+      : this.BannerService.updateBanner(this.id, JSON.stringify(bannerData));
+
+    apiCall.subscribe(
       data => {
-        this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Banner Added Successfully!!', life: 6000 });
+        const message = this.isAddMode ? 'Banner Added Successfully!!' : 'Banner Updated Successfully!!';
+        this.messageService.add({
+          key: 'toastmsg',
+          severity: 'success',
+          summary: 'Successful',
+          detail: message,
+          life: 6000
+        });
         setTimeout(() => {
           this.router.navigate(['/manage/banner']);
         }, 2000);
       },
-      ((err) => {
-        this.messageService.add({ key: 'toastmsg', severity: 'error', summary: "Error", detail: err.error.message, life: 6000 });
-      })
+      error => {
+        console.error('Submit error:', error);
+        this.messageService.add({
+          key: 'toastmsg',
+          severity: 'error',
+          summary: "Error",
+          detail: error.error?.message || 'An error occurred',
+          life: 6000
+        });
+      }
     );
   }
+
   onchangeSelect(event) {
     this.selectedbannername = event.value.value;
     this.changeDetectorRef.detectChanges();

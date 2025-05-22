@@ -12,7 +12,8 @@ export class BannerService {
   constructor(private http: HttpClient) { }
 
   getBanner(query: string = ''): Observable<any> {
-    return this.http.get(USER_API + "banner" + query)
+    const url = query ? USER_API + "banner" + query : USER_API + "banner";
+    return this.http.get(url)
       .pipe(
         tap(
           response => console.log('Banner API response:', response),
