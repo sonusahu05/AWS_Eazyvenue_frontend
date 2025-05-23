@@ -69,7 +69,7 @@ export class ListComponent implements OnInit {
     minYear = environment.minYear;
     startDate: Date;
     endDate: Date;
-    rowsPerPageOptions: number[] = [10, 50, 100];
+    rowsPerPageOptions: number[] = [17, 50, 100];
     statuses: any[];
     assuredlist: any[];
     cmsmoduleDialog: boolean;
