@@ -27,12 +27,11 @@ export class AboutUsComponent implements OnInit {
   public cmsBottomContentData;
   public errorMessage: string;
   public bannerList: any[];
-  public totalBanners = 0;
+  public totalRecords: number = 0;
   submitted: boolean;
   public customOptions1;
   public bannerImageList: any[] = [];
   public venueList: any[] = [];
-  public totalRecords: 0;
   carouselResponsiveOptions: any[] = [
     {
       breakpoint: '1024px',
@@ -43,7 +42,7 @@ export class AboutUsComponent implements OnInit {
     {
       breakpoint: '768px',
       numVisible: 2,
-      numScroll: 2, 
+      numScroll: 2,
       margin: 20,
     },
     {
@@ -52,7 +51,7 @@ export class AboutUsComponent implements OnInit {
       numScroll: 1
     }
   ];
-  
+
 
   constructor(private cmsmoduleService: CmsmoduleService,
     private bannerService: BannerService,
@@ -63,7 +62,7 @@ export class AboutUsComponent implements OnInit {
     this.changeBodyClass();
    }
 
-   
+
  changeBodyClass() {
   // get html body element
   const bodyElement = document.body;
@@ -149,7 +148,7 @@ getNextClassIdx(): number {
       });
   }
 
-  
+
   getBanner() {
     let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=about_us";
     this.bannerService.getbannerList(query).subscribe(
@@ -159,7 +158,7 @@ getNextClassIdx(): number {
         this.totalRecords = data.data.totalCount;
         this.bannerList.forEach(element => {
           this.bannerImageList = element.banner_image;
-        });        
+        });
       },
       err => {
         this.errorMessage = err.error.message;

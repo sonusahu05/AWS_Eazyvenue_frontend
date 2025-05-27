@@ -65,7 +65,7 @@ export class HomeComponent implements OnInit {
   public bannerImageList: any[] = [];
   image :any;
   public venueList: any[] = [];
-  public totalRecords: 0;
+  public totalRecords: number = 0;
   public showEventPlannerDialog: boolean = false;
   public filterCapacityArray: any[] = [];
   public selectedCapacity;
@@ -150,7 +150,7 @@ export class HomeComponent implements OnInit {
         this.totalRecords = data.data.totalCount;
         this.bannerList.forEach(element => {
           this.bannerImageList = element.banner_image;
-          this.image = this.bannerImageList[0].banner_image_src;          
+          this.image = this.bannerImageList[0].banner_image_src;
         });
       },
       err => {

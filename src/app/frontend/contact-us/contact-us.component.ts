@@ -28,9 +28,8 @@ export class ContactUsComponent implements OnInit {
   public cmsBottomContentData;
   public errorMessage: string;
   public bannerList: any[];
-  public totalBanners = 0;
   public bannerImageList: any[] = [];
-  public totalRecords: 0;
+  public totalRecords: number = 0;
   public customOptions1;
   carouselResponsiveOptions: any[] = [
     {
@@ -42,7 +41,7 @@ export class ContactUsComponent implements OnInit {
     {
       breakpoint: '768px',
       numVisible: 2,
-      numScroll: 2, 
+      numScroll: 2,
       margin: 20,
     },
     {
@@ -111,7 +110,7 @@ export class ContactUsComponent implements OnInit {
       this.bodyClass = nextClass;
     }
   }
-  
+
   getPrevClassIdx(): number {
     return this.currentClassIdx === 0
       ? this.availableClasses.length - 1
@@ -180,8 +179,8 @@ export class ContactUsComponent implements OnInit {
         this.totalRecords = data.data.totalCount;
         this.bannerList.forEach(element => {
           this.bannerImageList = element.banner_image;
-        });    
-        console.log(this.bannerImageList);    
+        });
+        console.log(this.bannerImageList);
       },
       err => {
         this.errorMessage = err.error.message;
