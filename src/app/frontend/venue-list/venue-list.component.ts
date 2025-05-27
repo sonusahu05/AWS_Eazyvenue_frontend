@@ -584,14 +584,14 @@ displayLimit: number = 25;
 
       handleEnquiry() {
         console.log('Enquiry button clicked');
-        this.closeBannerPopup();
+        window.location.href = 'https://eazyvenue.com/banquet-halls/wedding/dubai';
       }
 
       handleShowMoreClick(): void {
-        const isMobile = window.innerWidth <= 768; // You can adjust this breakpoint
+        const isMobile = window.innerWidth <= 768;
 
         if (isMobile) {
-          this.showHomeSearch(); // Call your mobile-specific function
+          this.showHomeSearch();
         } else {
           window.location.href = 'https://eazyvenue.com/banquet-halls/wedding/mumbai';
         }
@@ -1085,12 +1085,9 @@ displayLimit: number = 25;
         this.filteredGroups = filteredGroups;
     }
     onClickGroupedSearch(category) {
-        // console.log(category);
-        // searchItem
         if (category != null) {
             this.vendorSelection = category.name === "Photographer";
             if (category.name === "Photographer" || category.name === "Decorater") {
-                // this.router.navigateByUrl("vendor-list")
 
 
                 this.router.navigateByUrl("/vendor/"+category.slug, { state: category })
@@ -1264,15 +1261,12 @@ displayLimit: number = 25;
     }
     onSubmit(): void {
         this.loginFormSubmitted = true;
-        //stop here if form is invalid
         if (this.loginForm.invalid) {
             return;
         }
         const username = this.loginForm.value.email;
         const password = this.loginForm.value.password;
         this.userType = 'user';
-        //this.http.get("http://api.ipify.org/?format=json").subscribe((res: any) => {
-        //this.ipAddress = res.ip;
         this.authService.login(username, password, this.userType).subscribe(
             data => {
                 this.userData = data;
@@ -1291,7 +1285,7 @@ displayLimit: number = 25;
                 this.loginRegisterModal = false;
             },
             err => {
-                this.errorMessage = 'Login failed: Please check your login credentials...! ';
+                this.errorMessage = 'Login failed: Please check your login credentials...!';
                 this.isLoginFailed = true;
             }
         );
@@ -1299,15 +1293,10 @@ displayLimit: number = 25;
     }
     onSignupSubmit(): void {
         this.submitted = true;
-        //stop here if form is invalid
         if (this.signUpForm.invalid) {
             return;
         }
         let userData = this.signUpForm.value;
-        // if (this.selectedGender == null) {
-        //   this.showGenderError = true;
-        //   return;
-        // }
         userData['gender'] = '';
         userData['role'] = 'user';
         userData['name'] = userData['name'].split(" ", 2);
