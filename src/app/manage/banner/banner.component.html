@@ -1,207 +1,431 @@
 <div class="p-grid">
-    <div class="p-col-12 banner-main-section manage-product-section ">        
+    <div class="p-col-12 banner-main-section manage-product-section">
         <div class="card">
-			<h1 class="page-title">Banner Management</h1>
+            <h1 class="page-title">Content Management</h1>
             <p-toolbar styleClass="p-mb-4">
                 <ng-template pTemplate="left">
-                    <button pButton pRipple label="Add Banner" title="Add New Banner" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="addNewBanner()"></button>
-					<button pButton label="Clear Filters" title="Clear Filters" class="p-button-outlined p-mr-2" icon="pi pi-filter-slash" (click)="clear()"></button>
-                <!--    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger p-mb-2" (click)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length"></button> -->
+                    <button pButton pRipple label="Add New Post" title="Add New Content" icon="pi pi-plus"
+                            class="p-button-success p-mr-2" (click)="addNewBanner()"></button>
+                    <button pButton label="Clear Filters" title="Clear Filters"
+                            class="p-button-outlined p-mr-2" icon="pi pi-filter-slash" (click)="clear()"></button>
                 </ng-template>
 
                 <ng-template pTemplate="right">
-                    <!-- <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" class="p-mr-2 p-mb-2 p-d-inline-block"></p-fileUpload>
-                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help p-mb-2" (click)="dt.exportCSV()"></button> -->
+                    <p-dropdown [options]="postTypeFilter" [(ngModel)]="selectedPostType"
+                                placeholder="Filter by Post Type" [showClear]="true"
+                                (onChange)="onPostTypeFilter($event)" styleClass="p-mr-2">
+                    </p-dropdown>
                 </ng-template>
             </p-toolbar>
-			<!-- <p-table #dt [value]="venueList" [columns]="cols" [rows]="10" [paginator]="true" [resizableColumns]="true"
-			class="p-mb-0" [autoLayout]="true" scrollDirection="both" [rowHover]="true" dataKey="_id"
-			styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped"
-			[rowsPerPageOptions]="paginationOption" [lazy]="true" (onLazyLoad)="refreshVenueList($event)"
-			[totalRecords]="totalRecords" [loading]="loading"> -->
 
-            <p-table #dt [value]="bannerlist" [columns]="cols" [paginator]="true" [rows]="10" [lazy]="true" 
-			[resizableColumns]="true" 
-			class="p-mb-0" [autoLayout]="true" scrollDirection="both" [rowHover]="true" dataKey="_id" 
-			(onLazyLoad)="loadBanners($event)" 
-            [totalRecords]="totalRecords"  [rowsPerPageOptions]="[5,10,15,20]" 
-			styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped">
-				<!-- <ng-template pTemplate="caption">
-					<div class="p-d-flex p-flex-column p-flex-md-row table-header">						
-						<span class="p-input-icon-right">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
-						    placeholder="Global Search"/>
-                        </span>                        
-					</div>
-				</ng-template> -->
-				<ng-template pTemplate="header" let-columns>
-					<tr>
-						<tr>
-							<th pSortableColumn="banner_title" class="p-element p-frozen-column col-80 text-nowrap">
-								<div class="p-d-flex p-jc-between p-ai-center">
-									Banner Title
-									<p-sortIcon field="banner_title"></p-sortIcon>
-								</div>
-							</th>
-	
-							<th class="col-width text-nowrap">
-								<div class="p-d-flex p-jc-between p-ai-center">
-									Banner Image
-								</div>
-							</th>
+            <p-table #dt [value]="bannerlist" [columns]="cols" [paginator]="true" [rows]="10" [lazy]="true"
+                     [resizableColumns]="true" class="p-mb-0" [autoLayout]="true" scrollDirection="both"
+                     [rowHover]="true" dataKey="_id" (onLazyLoad)="loadBanners($event)"
+                     [totalRecords]="totalRecords" [rowsPerPageOptions]="[5,10,15,20]"
+                     styleClass="p-datatable-customers p-datatable-gridlines p-datatable-striped">
 
-							<th pSortableColumn="banner_url" class="text-nowrap col-100">
-								<div class="p-d-flex p-jc-between p-ai-center">
-									Banner Url
-									<p-sortIcon field="banner_url"></p-sortIcon>
-								</div>
-							</th>
-							<th pSortableColumn="banner_content" class="col-width">
-								<div class="p-d-flex p-jc-between p-ai-center">
-									Banner Content
-									<p-sortIcon field="banner_content"></p-sortIcon>
-								</div>
-							</th>
-							<th pSortableColumn="status" class="text-nowrap col-100">
-								<div class="p-d-flex p-jc-between p-ai-center">
-									Status
-									<p-sortIcon field="status"></p-sortIcon>
-								</div>
-							</th>
-							
-							<th pSortableColumn="created_at" class="text-nowrap col-100">
-								<div class="p-d-flex p-jc-between p-ai-center">
-									Date of Creation
-									<p-sortIcon field="created_at"></p-sortIcon>
-									<!-- <p-columnFilter type="date" field="created_at" display="menu" class="p-ml-auto"></p-columnFilter> -->
-								</div>
-							</th>
-							<th pSortableColumn="created_by" class="text-nowrap col-100">
-								<div class="p-d-flex p-jc-between p-ai-center">
-									Created By
-									<p-sortIcon field="created_by"></p-sortIcon>
-								</div>
-							</th>
-							<th pSortableColumn="updated_at" class="text-nowrap col-100">
-								<div class="p-d-flex p-jc-between p-ai-center">
-									Modified On
-									<p-sortIcon field="updated_at"></p-sortIcon>
-								</div>
-							</th>
-							<th pSortableColumn="updated_by" class="text-nowrap col-100">
-								<div class="p-d-flex p-jc-between p-ai-center">
-									Modified By
-									<p-sortIcon field="updated_by"></p-sortIcon>
-								</div>
-							</th>
-							
-							<th class="text-nowrap col-100">
-								<div class="p-d-flex p-jc-between p-ai-center">
-									Action
-								</div>
-							</th>	
-  
-					</tr>
-					<tr>
-						<!-- <th *ngFor="let col of columns" [ngSwitch]="col.field">
-						  <input  pInputText type="text"
-							(input)="dt.filter($event.target.value, col.field, 'contains')" />
-						</th> -->
-						<th [ngSwitch]="banner_title" >
-							<input  pInputText type="text" (keyup.enter)="dt.filter($event.target.value, 'banner_title', 'contains')" style="width: 100%;" [value]="dt.filters['banner_title'] ? dt.filters['banner_title'].value : ''" />
-						</th>
-						<th>
-							
-						</th>
-						<th [ngSwitch]="banner_url">
-							<input  pInputText type="text" (keyup.enter)="dt.filter($event.target.value, 'banner_url', 'contains')" style="width: 100%;" [value]="dt.filters['banner_url'] ? dt.filters['banner_url'].value : ''" />
-						</th>
-						<th [ngSwitch]="banner_content">
-							<input  pInputText type="text" (keyup.enter)="dt.filter($event.target.value, 'banner_content', 'contains')" style="width: 100%;" [value]="dt.filters['banner_content'] ? dt.filters['banner_content'].value : ''" />
-						</th>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th pSortableColumn="banner_title" class="p-element p-frozen-column col-200 text-nowrap">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Post Title
+                                <p-sortIcon field="banner_title"></p-sortIcon>
+                            </div>
+                        </th>
 
-						<th [ngSwitch]="status">
-							<p-dropdown #pDropDownId [options]="statuses" appendTo="body" (onChange)="dt.filter($event.value, 'status', 'equals')" styleClass="p-column-filter" placeholder="Select Status" [showClear]="true">
-								<ng-template let-option pTemplate="item" >
-								 <span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
-								</ng-template>
-						   </p-dropdown>
-						</th>
-						
-						<th [ngSwitch]="created_at">
-							<p-calendar #pCalendarId  placeholder="DD/MM/YYYY" appendTo="body" monthNavigator="true" class="mb-2" readonlyInput="true" yearNavigator="true" yearRange="1950:2050" class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy" (onSelect)="dt.filter($event,'created_at', 'dateIs')" [showIcon]="true"  [(ngModel)]="calvalue" ></p-calendar>
-						</th>
-						<th [ngSwitch]="createdby">
-							<input  pInputText type="text"  (keyup.enter)="dt.filter($event.target.value, 'createdby', 'contains')" style="width: 100%;" [value]="dt.filters['createdby'] ? dt.filters['createdby'].value : ''" />
-						</th>
-						<th [ngSwitch]="updated_at">
-							<p-calendar #pCalendarId placeholder="DD/MM/YYYY" monthNavigator="true" class="mb-2" readonlyInput="true" yearNavigator="true" yearRange="1950:2050"  class="p-column-filter" appendTo="body" inputId="calendar" dateFormat="dd/mm/yy" (onSelect)="dt.filter($event,'updated_at', 'dateIs')" [showIcon]="true"  [(ngModel)]="ucalvalue" ></p-calendar>
-						</th>
-						<th [ngSwitch]="updatedby">
-							<input  pInputText type="text" (keyup.enter)="dt.filter($event.target.value, 'updatedby', 'contains')" style="width: 100%;" [value]="dt.filters['updatedby'] ? dt.filters['updatedby'].value : ''" />
-						</th>
-					
-						<th>
-						</th>
-					  </tr>
-				</ng-template>
-				<ng-template pTemplate="body" let-banner>
-					<tr class="p-selectable-row">
-						<td>
-							{{banner.banner_title}}
-						</td>
-						<td>	
-							<p-galleria [effect]="slide"  [(value)]="banner.banner_image" [(visible)]="banner.bannerVisible" [responsiveOptions]="responsiveOptions" [containerStyle]="{'max-width': '850px'}" [numVisible]="7" [circular]="true" [fullScreen]="true" [showItemNavigators]="true" [showThumbnails]="false" [baseZIndex]="100000">
-								<ng-template pTemplate="item" let-item>
-									<img  [src]="item.banner_image_src" style="width:100%; height:100%; display: block;"/>	
-								</ng-template>		
-							</p-galleria>
-							<button pButton *ngIf="banner.banner_image.length>0" type="button" icon="pi pi-external-link" label="View" (click)="banner.bannerVisible=true"></button>
-						</td>
-						<td>
-							<a target="_blank" href="{{banner.banner_url}}">{{banner.banner_url}}</a>
-						</td>
-						<td>
-							{{banner.banner_content}}
-						</td>
-						
+                        <th class="col-80 text-nowrap">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Post Type
+                            </div>
+                        </th>
+
+                        <th pSortableColumn="category" class="col-100 text-nowrap">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Category
+                                <p-sortIcon field="category"></p-sortIcon>
+                            </div>
+                        </th>
+
+                        <th class="col-width text-nowrap">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Featured Image
+                            </div>
+                        </th>
+
+                        <th pSortableColumn="author" class="col-100 text-nowrap">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Author
+                                <p-sortIcon field="author"></p-sortIcon>
+                            </div>
+                        </th>
+
+                        <th class="col-80 text-nowrap">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Reading Time
+                            </div>
+                        </th>
+
+                        <th class="col-100 text-nowrap">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Tags
+                            </div>
+                        </th>
+
+                        <th pSortableColumn="is_published" class="col-80 text-nowrap">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Published
+                                <p-sortIcon field="is_published"></p-sortIcon>
+                            </div>
+                        </th>
+
+                        <th pSortableColumn="status" class="text-nowrap col-80">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Status
+                                <p-sortIcon field="status"></p-sortIcon>
+                            </div>
+                        </th>
+
+                        <th pSortableColumn="publish_date" class="text-nowrap col-120">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Publish Date
+                                <p-sortIcon field="publish_date"></p-sortIcon>
+                            </div>
+                        </th>
+
+                        <th pSortableColumn="created_at" class="text-nowrap col-120">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Created On
+                                <p-sortIcon field="created_at"></p-sortIcon>
+                            </div>
+                        </th>
+
+                        <th pSortableColumn="created_by" class="text-nowrap col-100">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Created By
+                                <p-sortIcon field="created_by"></p-sortIcon>
+                            </div>
+                        </th>
+
+                        <th class="text-nowrap col-150">
+                            <div class="p-d-flex p-jc-between p-ai-center">
+                                Actions
+                            </div>
+                        </th>
+                    </tr>
+
+                    <!-- Filter Row -->
+                    <tr>
+                        <th>
+                            <input pInputText type="text"
+                                   (keyup.enter)="dt.filter($event.target.value, 'banner_title', 'contains')"
+                                   style="width: 100%;"
+                                   [value]="dt.filters['banner_title'] ? dt.filters['banner_title'].value : ''"
+                                   placeholder="Search title..." />
+                        </th>
+                        <th>
+                            <p-dropdown [options]="postTypes" appendTo="body"
+                                        (onChange)="dt.filter($event.value, 'post_type', 'equals')"
+                                        styleClass="p-column-filter" placeholder="All Types"
+                                        [showClear]="true" optionLabel="name" optionValue="value">
+                            </p-dropdown>
+                        </th>
+                        <th>
+                            <p-dropdown [options]="categories" appendTo="body"
+                                        (onChange)="dt.filter($event.value, 'category', 'equals')"
+                                        styleClass="p-column-filter" placeholder="All Categories"
+                                        [showClear]="true" optionLabel="name" optionValue="value">
+                            </p-dropdown>
+                        </th>
+                        <th></th>
+                        <th>
+                            <input pInputText type="text"
+                                   (keyup.enter)="dt.filter($event.target.value, 'author', 'contains')"
+                                   style="width: 100%;"
+                                   [value]="dt.filters['author'] ? dt.filters['author'].value : ''"
+                                   placeholder="Search author..." />
+                        </th>
+                        <th></th>
+                        <th></th>
+                        <th>
+                            <p-dropdown [options]="publishedStatuses" appendTo="body"
+                                        (onChange)="dt.filter($event.value, 'is_published', 'equals')"
+                                        styleClass="p-column-filter" placeholder="All"
+                                        [showClear]="true">
+                                <ng-template let-option pTemplate="item">
+                                    <span [class]="'status-badge ' + (option.value ? 'status-published' : 'status-draft')">
+                                        {{option.label}}
+                                    </span>
+                                </ng-template>
+                            </p-dropdown>
+                        </th>
+                        <th>
+                            <p-dropdown [options]="statuses" appendTo="body"
+                                        (onChange)="dt.filter($event.value, 'status', 'equals')"
+                                        styleClass="p-column-filter" placeholder="All Status"
+                                        [showClear]="true">
+                                <ng-template let-option pTemplate="item">
+                                    <span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+                                </ng-template>
+                            </p-dropdown>
+                        </th>
+                        <th>
+                            <p-calendar placeholder="DD/MM/YYYY" appendTo="body" monthNavigator="true"
+                                        readonlyInput="true" yearNavigator="true" yearRange="1950:2050"
+                                        class="p-column-filter" dateFormat="dd/mm/yy"
+                                        (onSelect)="dt.filter($event,'publish_date', 'dateIs')"
+                                        [showIcon]="true" [(ngModel)]="publishCalvalue">
+                            </p-calendar>
+                        </th>
+                        <th>
+                            <p-calendar placeholder="DD/MM/YYYY" appendTo="body" monthNavigator="true"
+                                        readonlyInput="true" yearNavigator="true" yearRange="1950:2050"
+                                        class="p-column-filter" dateFormat="dd/mm/yy"
+                                        (onSelect)="dt.filter($event,'created_at', 'dateIs')"
+                                        [showIcon]="true" [(ngModel)]="calvalue">
+                            </p-calendar>
+                        </th>
+                        <th>
+                            <input pInputText type="text"
+                                   (keyup.enter)="dt.filter($event.target.value, 'createdby', 'contains')"
+                                   style="width: 100%;"
+                                   [value]="dt.filters['createdby'] ? dt.filters['createdby'].value : ''"
+                                   placeholder="Search creator..." />
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-banner>
+                    <tr class="p-selectable-row">
                         <td>
-							{{banner.status}}
-							
-						</td>
-						<td>
-							{{banner.created_at | date: 'MM/dd/yyyy'}}
-						</td>
-						<td>
-							{{banner.createdBy}}
-						</td>
-						<td>
-							{{banner.updated_at | date: 'MM/dd/yyyy'}}
-						</td>
-						<td>
-							{{banner.updatedBy}}
-						</td>
-						
-						
-						<td>
-                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" title="Edit Banner" (click)="editBanner(banner.id)" pTooltip="Edit Banner" tooltipPosition="bottom"></button>
-                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-denger" title="Delete Banner" (click)="deleteBanner(banner)" pTooltip="Delete Banner" tooltipPosition="bottom"></button>
+                            <div class="post-title-cell">
+                                <strong>{{banner.banner_title}}</strong>
+                                <div class="post-slug" *ngIf="banner.slug">
+                                    <small class="text-muted">{{banner.slug}}</small>
+                                </div>
+                                <div class="post-excerpt" *ngIf="banner.meta_description">
+                                    <small>{{banner.meta_description | slice:0:80}}...</small>
+                                </div>
+                            </div>
                         </td>
-					</tr>
-				</ng-template>
-				<ng-template pTemplate="emptymessage">
-					<tr>
-						<td colspan="12">No Banners found.</td>
-					</tr>
-				</ng-template>
-				<ng-template pTemplate="summary">
+
+                        <td>
+                            <p-tag [value]="getPostTypeLabel(banner.post_type)"
+                                   [severity]="getPostTypeSeverity(banner.post_type)"
+                                   [icon]="getPostTypeIcon(banner.post_type)">
+                            </p-tag>
+                            <div *ngIf="banner.post_type === 'featured' && banner.featured_order"
+                                 class="featured-order">
+                                <small>Order: {{banner.featured_order}}</small>
+                            </div>
+                        </td>
+
+                        <td>
+                            <p-tag [value]="getCategoryLabel(banner.category)"
+                                   severity="info" *ngIf="banner.category">
+                            </p-tag>
+                        </td>
+
+                        <td>
+                            <p-galleria [value]="banner.banner_image" [(visible)]="banner.bannerVisible"
+                                        [responsiveOptions]="responsiveOptions"
+                                        [containerStyle]="{'max-width': '850px'}"
+                                        [numVisible]="7" [circular]="true" [fullScreen]="true"
+                                        [showItemNavigators]="true" [showThumbnails]="false"
+                                        [baseZIndex]="100000" *ngIf="banner.banner_image?.length > 0">
+                                <ng-template pTemplate="item" let-item>
+                                    <img [src]="item.banner_image_src"
+                                         style="width:100%; height:100%; display: block;"
+                                         alt="{{banner.banner_title}}"/>
+                                </ng-template>
+                            </p-galleria>
+                            <button pButton *ngIf="banner.banner_image?.length > 0"
+                                    type="button" icon="pi pi-external-link"
+                                    label="View Images" styleClass="p-button-sm p-button-outlined"
+                                    (click)="banner.bannerVisible=true">
+                            </button>
+                            <span *ngIf="!banner.banner_image?.length" class="text-muted">
+                                <i class="pi pi-image"></i> No image
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="author-cell">
+                                <i class="pi pi-user"></i>
+                                {{banner.author || 'N/A'}}
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="reading-time" *ngIf="banner.reading_time">
+                                <i class="pi pi-clock"></i>
+                                {{banner.reading_time}}
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="tags-cell" *ngIf="banner.tags?.length > 0">
+                                <p-chip *ngFor="let tag of banner.tags | slice:0:3"
+                                        [label]="tag" styleClass="p-mr-1 p-mb-1 tag-chip">
+                                </p-chip>
+                                <small *ngIf="banner.tags.length > 3" class="text-muted">
+                                    +{{banner.tags.length - 3}} more
+                                </small>
+                            </div>
+                            <span *ngIf="!banner.tags?.length" class="text-muted">No tags</span>
+                        </td>
+
+                        <td>
+                            <p-tag [value]="banner.is_published ? 'Published' : 'Draft'"
+                                   [severity]="banner.is_published ? 'success' : 'warning'"
+                                   [icon]="banner.is_published ? 'pi pi-check' : 'pi pi-pencil'">
+                            </p-tag>
+                        </td>
+
+                        <td>
+                            <p-tag [value]="banner.status ? 'Active' : 'Inactive'"
+                                   [severity]="banner.status ? 'success' : 'danger'">
+                            </p-tag>
+                        </td>
+
+                        <td>
+                            <div class="date-cell">
+                                {{banner.publish_date | date: 'MMM dd, yyyy'}}
+                                <div *ngIf="banner.publish_date > today" class="scheduled-indicator">
+                                    <small class="text-warning">
+                                        <i class="pi pi-calendar"></i> Scheduled
+                                    </small>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            {{banner.created_at | date: 'MMM dd, yyyy'}}
+                        </td>
+
+                        <td>
+                            {{banner.createdBy || 'N/A'}}
+                        </td>
+
+                        <td>
+                            <div class="action-buttons">
+                                <!-- Preview Button -->
+                                <button pButton pRipple icon="pi pi-eye"
+                                        class="p-button-rounded p-button-info p-button-sm p-mr-1"
+                                        title="Preview Post" (click)="previewBanner(banner)"
+                                        pTooltip="Preview" tooltipPosition="bottom">
+                                </button>
+
+                                <!-- Edit Button -->
+                                <button pButton pRipple icon="pi pi-pencil"
+                                        class="p-button-rounded p-button-success p-button-sm p-mr-1"
+                                        title="Edit Post" (click)="editBanner(banner.id)"
+                                        pTooltip="Edit" tooltipPosition="bottom">
+                                </button>
+
+                                <!-- Duplicate Button -->
+                                <button pButton pRipple icon="pi pi-copy"
+                                        class="p-button-rounded p-button-secondary p-button-sm p-mr-1"
+                                        title="Duplicate Post" (click)="duplicateBanner(banner)"
+                                        pTooltip="Duplicate" tooltipPosition="bottom">
+                                </button>
+
+                                <!-- Instagram Link (if Instagram post) -->
+                                <button pButton pRipple icon="pi pi-instagram"
+                                        class="p-button-rounded p-button-help p-button-sm p-mr-1"
+                                        title="View on Instagram"
+                                        *ngIf="banner.post_type === 'instagram' && banner.instagram_url"
+                                        (click)="openInstagramPost(banner.instagram_url)"
+                                        pTooltip="View on Instagram" tooltipPosition="bottom">
+                                </button>
+
+                                <!-- Delete Button -->
+                                <button pButton pRipple icon="pi pi-trash"
+                                        class="p-button-rounded p-button-danger p-button-sm"
+                                        title="Delete Post" (click)="deleteBanner(banner)"
+                                        pTooltip="Delete" tooltipPosition="bottom">
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="13" class="text-center p-p-4">
+                            <div class="empty-state">
+                                <i class="pi pi-file-o" style="font-size: 3rem; color: #ccc;"></i>
+                                <h4 class="p-mt-3 p-mb-2">No Content Found</h4>
+                                <p class="text-muted">Create your first post to get started</p>
+                                <button pButton label="Add New Post" icon="pi pi-plus"
+                                        class="p-button-success p-mt-3" (click)="addNewBanner()">
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="summary">
                     <div class="p-d-flex p-ai-center p-jc-between">
-                        In total there are {{totalRecords }} Banners.
+                        <span>Total: {{totalRecords}} posts</span>
+                        <div class="summary-stats">
+                            <span class="p-mr-3">
+                                <i class="pi pi-check-circle text-success"></i>
+                                Published: {{getPublishedCount()}}
+                            </span>
+                            <span class="p-mr-3">
+                                <i class="pi pi-clock text-warning"></i>
+                                Drafts: {{getDraftCount()}}
+                            </span>
+                            <span>
+                                <i class="pi pi-star text-info"></i>
+                                Featured: {{getFeaturedCount()}}
+                            </span>
+                        </div>
                     </div>
                 </ng-template>
-			</p-table>
+            </p-table>
         </div>
-		<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+        <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+        <p-toast key="toastmsg"></p-toast>
+
+        <!-- Preview Dialog -->
+        <p-dialog header="Post Preview" [(visible)]="showPreviewDialog"
+                  [style]="{width: '80vw', height: '80vh'}" [modal]="true"
+                  [resizable]="true" [draggable]="false">
+            <div class="preview-content" *ngIf="previewPost">
+                <div class="preview-header p-mb-4">
+                    <h2>{{previewPost.banner_title}}</h2>
+                    <div class="preview-meta p-mt-2">
+                        <span class="p-mr-3">
+                            <i class="pi pi-user"></i> {{previewPost.author}}
+                        </span>
+                        <span class="p-mr-3">
+                            <i class="pi pi-calendar"></i> {{previewPost.publish_date | date: 'fullDate'}}
+                        </span>
+                        <span *ngIf="previewPost.reading_time">
+                            <i class="pi pi-clock"></i> {{previewPost.reading_time}}
+                        </span>
+                    </div>
+                    <div class="preview-tags p-mt-2" *ngIf="previewPost.tags?.length">
+                        <p-chip *ngFor="let tag of previewPost.tags"
+                                [label]="tag" styleClass="p-mr-1">
+                        </p-chip>
+                    </div>
+                </div>
+
+                <div class="preview-content-body">
+                    <div [innerHTML]="previewPost.banner_content"></div>
+                </div>
+
+                <div class="preview-instagram" *ngIf="previewPost.post_type === 'instagram'">
+                    <h4>Instagram Details</h4>
+                    <p><strong>URL:</strong> {{previewPost.instagram_url}}</p>
+                    <p><strong>Caption:</strong> {{previewPost.instagram_caption}}</p>
+                    <p><strong>Type:</strong> {{previewPost.is_video ? 'Video' : 'Image'}}</p>
+                </div>
+            </div>
+        </p-dialog>
     </div>
 </div>
