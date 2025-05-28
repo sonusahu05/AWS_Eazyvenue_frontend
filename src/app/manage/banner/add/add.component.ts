@@ -40,7 +40,7 @@ export class BannerAddComponent implements OnInit {
   deletedattachments: any[] = [];
   filename: any = '';
   staticPath: string;
-  bannerImage: any;
+  bannerImage: any[] = [];
   statuses: any;
   submitted = false;
   id: string;
@@ -70,7 +70,9 @@ export class BannerAddComponent implements OnInit {
     private httpClient: HttpClient,
     private messageService: MessageService,
     private elementRef: ElementRef
-  ) { }
+) {
+  this.bannerImage = [];
+}
 
   @ViewChild('fileInput') fileInput: FileUpload;
 
@@ -254,21 +256,70 @@ export class BannerAddComponent implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  deleteFile(list, index) {
-    this.deletedattachments.push(this.uploadedFiles[index]);
-    this.uploadedFiles.splice(index, 1);
-    this.fileInput.files.splice(index, 1);
+  deleteFile(index: number) {
+    if (index >= 0 && index < this.uploadedFiles.length) {
+      // Remove from uploaded files
+      this.uploadedFiles.splice(index, 1);
+
+      // Remove from banner images
+      if (this.bannerImage && index < this.bannerImage.length) {
+        this.bannerImage.splice(index, 1);
+      }
+
+      // Remove from file input if exists
+      if (this.fileInput && this.fileInput.files) {
+        this.fileInput.files.splice(index, 1);
+      }
+
+      console.log('File deleted, remaining files:', this.uploadedFiles.length);
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
-  setUploadedFiles(fileData: any = '') {
-    fileData.forEach(file => {
-      console.log(file);
-      let filePath = environment.uploadUrl + file;
-      this.loadFile(filePath).subscribe(i => {
-        var file = new File([i], filePath.split("/").pop(), { type: i.type, lastModified: Date.now() });
-        this.fileInput.files.push(file);
-        this.uploadedFiles.push(file);
-      });
+  // Fixed setUploadedFiles for edit mode
+  setUploadedFiles(fileData: any[] = []) {
+    if (!Array.isArray(fileData)) {
+      console.log('No file data or invalid format');
+      return;
+    }
+
+    this.uploadedFiles = [];
+    this.bannerImage = [];
+
+    fileData.forEach((fileUrl, index) => {
+      console.log('Loading existing file:', fileUrl);
+      let filePath = environment.uploadUrl + fileUrl;
+
+      this.loadFile(filePath).subscribe(
+        blob => {
+          var file = new File([blob], filePath.split("/").pop() || `image_${index}`, {
+            type: blob.type,
+            lastModified: Date.now()
+          });
+
+          if (this.fileInput && this.fileInput.files) {
+            this.fileInput.files.push(file);
+          }
+
+          this.uploadedFiles.push(file);
+
+          // Convert to base64 for bannerImage array
+          let reader = new FileReader();
+          reader.onload = (e: any) => {
+            this.bannerImage.push({
+              'file': e.target.result,
+              'name': file.name,
+              'size': file.size,
+              'type': file.type
+            });
+            this.changeDetectorRef.detectChanges();
+          };
+          reader.readAsDataURL(file);
+        },
+        error => {
+          console.error('Error loading file:', filePath, error);
+        }
+      );
     });
   }
 
@@ -289,18 +340,15 @@ export class BannerAddComponent implements OnInit {
     if (!this.bannerForm.get('meta_description')?.value) {
       const content = this.bannerForm.get('banner_content')?.value;
       if (content) {
-        // Remove HTML tags and truncate
         const textContent = content.replace(/<[^>]*>/g, '');
         const metaDesc = textContent.length > 150 ? textContent.substring(0, 150) + '...' : textContent;
         this.bannerForm.patchValue({ meta_description: metaDesc });
       }
     }
 
-    // Calculate reading time before submission
     this.calculateReadingTime();
 
     if (this.bannerForm.invalid) {
-      // Log form errors for debugging
       Object.keys(this.bannerForm.controls).forEach(key => {
         const control = this.bannerForm.get(key);
         if (control && control.invalid) {
@@ -320,20 +368,32 @@ export class BannerAddComponent implements OnInit {
 
     var bannerData = this.bannerForm.value;
 
-    // Handle image uploads
+    // Fixed: Handle image uploads properly
     this.bannerImagesArray = [];
+
+    console.log('Processing banner images:', this.bannerImage);
+
     if (this.bannerImage && this.bannerImage.length > 0) {
       this.bannerImage.forEach((element, index) => {
         this.bannerImagesArray.push({
           'file': element.file,
-          'alt': bannerData.banner_title,
-          'default': index === 0
+          'alt': bannerData.banner_title || 'Banner Image',
+          'default': index === 0,
+          'name': element.name || `image_${index}`,
+          'type': element.type || 'image/jpeg'
         });
       });
+
+      console.log('Prepared banner images array:', this.bannerImagesArray);
+    } else {
+      console.log('No banner images to process');
     }
 
+    // Add images to banner data
     bannerData['banner_images'] = this.bannerImagesArray;
     bannerData['tags'] = this.tags;
+
+    console.log('Final banner data being sent:', bannerData);
 
     const apiCall = this.isAddMode
       ? this.BannerService.addBanner(JSON.stringify(bannerData))
@@ -341,6 +401,7 @@ export class BannerAddComponent implements OnInit {
 
     apiCall.subscribe(
       data => {
+        console.log('Success response:', data);
         const message = this.isAddMode ? 'Banner Added Successfully!!' : 'Banner Updated Successfully!!';
         this.messageService.add({
           key: 'toastmsg',
@@ -378,20 +439,53 @@ export class BannerAddComponent implements OnInit {
   }
 
   picUploader(event) {
+    console.log('picUploader called with:', event);
+
+    // Clear previous uploads
     this.bannerImage = [];
-    let index = 0;
-    for (let file of event.files) {
-      this.uploadedFiles.push(file);
-      let reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        console.log(file.name);
-        if (reader.result != null) {
-          this.bannerImage.push({ 'file': reader.result });
-          index++;
-        }
-      }
+    this.uploadedFiles = [];
+
+    if (!event.files || event.files.length === 0) {
+      console.log('No files selected');
+      return;
     }
+
+    console.log('Files to process:', event.files.length);
+
+    // Process each file
+    for (let file of event.files) {
+      console.log('Processing file:', file.name);
+
+      // Add to uploaded files for display
+      this.uploadedFiles.push(file);
+
+      // Create FileReader to convert to base64
+      let reader = new FileReader();
+      reader.onload = (e: any) => {
+        console.log('File read successfully:', file.name);
+
+        // Store the base64 result
+        this.bannerImage.push({
+          'file': e.target.result, // base64 string
+          'name': file.name,
+          'size': file.size,
+          'type': file.type
+        });
+
+        console.log('Current bannerImage array:', this.bannerImage);
+        this.changeDetectorRef.detectChanges();
+      };
+
+      reader.onerror = (error) => {
+        console.error('Error reading file:', error);
+      };
+
+      // Read file as data URL (base64)
+      reader.readAsDataURL(file);
+    }
+
+    // Set upload flag
+    this.isUpload = true;
   }
 
   onReset() {

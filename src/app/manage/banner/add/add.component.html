@@ -223,19 +223,59 @@
             </div>
           </div>
 
-          <!-- Image Upload Section -->
           <div class="form-section">
             <h6 class="section-title">Images</h6>
             <div class="p-fluid p-formgrid p-grid pare_margin">
               <div class="p-field p-col-12">
                 <label>Featured Image</label>
-                <p-fileUpload multiple="multiple" chooseLabel="Upload Images"
-                            accept="image/*" maxFileSize="10000000"
-                            customUpload="true" (uploadHandler)="picUploader($event)">
+                <p-fileUpload
+                  #fileInput
+                  multiple="true"
+                  chooseLabel="Upload Images"
+                  accept="image/*"
+                  maxFileSize="10000000"
+                  customUpload="true"
+                  (uploadHandler)="picUploader($event)"
+                  (onSelect)="picUploader($event)"
+                  [showUploadButton]="false"
+                  [showCancelButton]="false">
+
                   <ng-template pTemplate="content">
-                    <div class="banner-images"></div>
+                    <div class="image-preview-container" *ngIf="uploadedFiles.length > 0">
+                      <div class="image-preview" *ngFor="let file of uploadedFiles; let i = index">
+                        <img [src]="sanitizer.bypassSecurityTrustUrl(bannerImage[i]?.file || '')"
+                             [alt]="file.name"
+                             class="preview-image">
+                        <div class="image-overlay">
+                          <button type="button"
+                                  class="delete-btn p-button p-button-danger p-button-sm"
+                                  (click)="deleteFile(i)"
+                                  pButton
+                                  icon="pi pi-times">
+                          </button>
+                        </div>
+                        <div class="image-info">
+                          <small>{{file.name}}</small>
+                          <small>{{(file.size / 1024 / 1024).toFixed(2)}} MB</small>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="upload-placeholder" *ngIf="uploadedFiles.length === 0">
+                      <i class="pi pi-cloud-upload" style="font-size: 2rem; color: #6c757d;"></i>
+                      <p>Click "Upload Images" to add banner images</p>
+                      <small>Accepted formats: JPG, PNG, GIF (Max: 10MB each)</small>
+                    </div>
                   </ng-template>
                 </p-fileUpload>
+
+                <!-- Debug info (remove in production) -->
+                <div class="debug-info" *ngIf="uploadedFiles.length > 0" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                  <small><strong>Debug Info:</strong></small><br>
+                  <small>Uploaded files: {{uploadedFiles.length}}</small><br>
+                  <small>Banner images: {{bannerImage.length}}</small><br>
+                  <small>Upload status: {{isUpload ? 'Ready' : 'Not ready'}}</small>
+                </div>
               </div>
             </div>
           </div>
