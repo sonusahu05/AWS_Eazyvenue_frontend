@@ -196,16 +196,17 @@
         <p-button *ngIf="showAvailabilityMessage" class="detailsfilter" (click)="venueDetailfilter()" label="Send Enquiries"></p-button>
     </div> -->
 </div>
-<div *ngIf="ismobile"
-    style="display: flex;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: #ff0018;
-    position:fixed;
-    bottom:0;
-    left: 0;
-    z-index: 999;">
+<div [ngStyle]="{
+    'display': 'flex',
+    'width': '100%',
+    'margin': '0',
+    'padding': '0',
+    'background-color': '#ff0018',
+    'position': isMobile ? 'fixed' : 'static',
+    'bottom': isMobile ? '0' : 'auto',
+    'left': isMobile ? '0' : 'auto',
+    'z-index': isMobile ? '999' : 'auto'
+  }">
     <button
       (click)="venueDetailfilter()"
       style="flex: 1; border: none; outline: none; background-color: transparent; color: white; font-weight: 500; font-size: 16px; padding: 15px 0; cursor: pointer; font-family: Arial, sans-serif;">
@@ -2690,31 +2691,31 @@
                                     </div>
                                 </div>
                             </ng-template>
-                            <!-- Display ranges but send specific values to backend -->
+                            <!-- Modified to show custom guest count ranges -->
                             <div class="col-md-12 p-0 time-slots">
                                 <div class="row text-center">
                                     <div class="col text-center">
                                         <h5 class="decor-name pb-1 slot-name">0 to 100</h5>
                                         <p-radioButton
-                                            [value]="{ id: 1, label: '0 to 100', value: 100, status: false }"
+                                            [value]="{ id: 1, label: '100', condition: 'lte', value: 100, status: false }"
                                             [(ngModel)]="selectedCapacity"
-                                            (click)="onCapacitySelect({ id: 1, label: '0 to 100', value: 100, status: false })"
+                                            (click)="onCapacitySelect({ id: 1, label: '100', condition: 'lte', value: 100, status: false })"
                                         ></p-radioButton>
                                     </div>
                                     <div class="col text-center">
                                         <h5 class="decor-name pb-1 slot-name">100 to 300</h5>
                                         <p-radioButton
-                                            [value]="{ id: 2, label: '100 to 300', value: 300, status: false }"
+                                            [value]="{ id: 2, label: '300', condition: 'lte', value: 300, status: false }"
                                             [(ngModel)]="selectedCapacity"
-                                            (click)="onCapacitySelect({ id: 2, label: '100 to 300', value: 300, status: false })"
+                                            (click)="onCapacitySelect({ id: 2, label: '300', condition: 'lte', value: 300, status: false })"
                                         ></p-radioButton>
                                     </div>
                                     <div class="col text-center">
-                                        <h5 class="decor-name pb-1 slot-name">300+</h5>
+                                        <h5 class="decor-name pb-1 slot-name">350+</h5>
                                         <p-radioButton
-                                            [value]="{ id: 3, label: '300+', value: 500, status: false }"
+                                            [value]="{ id: 3, label: '500', condition: 'gte', value: 500, status: false }"
                                             [(ngModel)]="selectedCapacity"
-                                            (click)="onCapacitySelect({ id: 3, label: '300+', value: 500, status: false })"
+                                            (click)="onCapacitySelect({ id: 3, label: '500', condition: 'gte', value: 500, status: false })"
                                         ></p-radioButton>
                                     </div>
                                 </div>
