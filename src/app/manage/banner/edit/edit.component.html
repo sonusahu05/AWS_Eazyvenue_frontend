@@ -1,99 +1,408 @@
 <div class="p-grid">
     <div class="p-col-12 banner-edit-main-section">
-        <div class="title-area">
-            <h5 class="admin-heading">
-                Edit Banner
-            </h5>
-            <!-- <button pButton pRipple label="Back" icon="pi pi-arrow-left" class="p-button-primary" 
-                (click)="backLink()"></button> -->
-        </div>
-       
-        <div class="card p-pt-3">
-            <p-toast key="toastmsg" position="top-right"></p-toast>
-            <form [formGroup]="bannerForm" *ngIf="this.bannerForm" (ngSubmit)="onSubmit()">
-                <div class="p-fluid p-formgrid p-grid pare_margin">
-                    
-                    <div class="p-field p-col-4">
-                        <label for="banner_title">Banner Title<span class="mandatory-feilds">*</span></label>
-                        <input formControlName="banner_title" type="text" placeholder="Enter Banner Title" pInputText
-                            class="form-control" [ngClass]="{ 'is-invalid': submitted && f.banner_title.errors }">
-                        <div *ngIf="submitted && f.banner_title.errors" class="invalid-feedback">
-                            <div *ngIf="f.banner_title.errors.required">Banner Title is required</div>
-                            <div *ngIf="f.banner_title.errors">Only Alphabets Allowed</div>
-                        </div>
-                    </div>
-                    <div class="p-field p-col-4">
-                        <label>Banner Slug</label>
-                        <input placeholder="Enter Banner Slug" formControlName="slug" type="text" pInputText
-                            [ngClass]="{ 'is-invalid': submitted && f.slug.errors }">
-                        <div *ngIf="submitted && f.slug.errors" class="invalid-feedback">
-                            <div *ngIf="f.slug.errors.required">Banner Slug is required</div>
-                            <div *ngIf="f.slug.errors">Only Alphabets and _ Allowed</div>
-                        </div>
-                    </div>
-                    <div class="p-field p-col-4">
-                        <label for="status" class="p-col-12 p-0">Status</label>
-                        <p-inputSwitch class="checkbox-mt-10" formControlName="status"
-                            [ngClass]="{ 'is-invalid': submitted && f.status.errors }"></p-inputSwitch>
-                        <div *ngIf="submitted && f.status.errors" class="invalid-feedback">
-                            <div *ngIf="f.status.errors.required">Please Select Status</div>
-                        </div>
-                    </div>
-                </div>
+      <div class="title-area">
+        <h5 class="admin-heading">{{pagetitle}}</h5>
+      </div>
 
+      <div class="card p-pt-3">
+        <p-toast key="toastmsg"></p-toast>
 
-                <div class="p-fluid p-formgrid p-grid baner-image-update">
-                    <div class="p-field p-col-4" *ngIf="showProfile">
-                        <p-galleria [(value)]="bannerImages" [responsiveOptions]="responsiveOptions"
-                            [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
-                             [showThumbnails]="false">
-                            <ng-template pTemplate="item" let-item>
-                                <img [src]="item.banner_image_src" style="width:100%; display: block;" />
-                            </ng-template>
-                        </p-galleria>
-                        <p-fileUpload name="myfiles[]" multiple="multiple" chooseLabel="Upload Banner Image" class="banner-upload"
-                            uploadLabel="Show data" cancelLabel="Cancel" accept="image/*" maxFileSize="10000000"
-                            auto="auto" customUpload="true" (uploadHandler)="picUploader($event)">
-                            <!-- <ng-template pTemplate="content">
-                                <div class="banner-images">
+        <form [formGroup]="bannerForm" *ngIf="bannerForm">
+          <!-- Basic Information Section -->
+          <div class="form-section">
+            <h6 class="section-title">Basic Information</h6>
+            <div class="p-fluid p-formgrid p-grid pare_margin">
 
-                                </div>
-                            </ng-template> -->
-                        </p-fileUpload>
-                    </div>
-                    <div class="p-field p-col-4">
-                            <div *ngFor="let item of bannerImages; let indexOfElement=index;"
-                                class="column banner-images">
-                                <button type="button" class="banner_trash-btn" pButton pRipple icon="pi pi-trash"
-                                    (click)="removeBannerImages(item.banner_image_src)" title="Delete"></button>
-                                <img class="banner-image" [src]="item.banner_image_src" />
-                            </div>
-                    </div>
+              <div class="p-field p-col-6">
+                <label>Post Type<span class="mandatory-feilds">*</span></label>
+                <p-dropdown [options]="postTypes" formControlName="post_type"
+                            optionLabel="name" optionValue="value"
+                            (onChange)="onPostTypeChange($event)"
+                            placeholder="Select Post Type"
+                            [ngClass]="{ 'is-invalid': submitted && f.post_type.errors }">
+                </p-dropdown>
+                <div *ngIf="submitted && f.post_type.errors" class="invalid-feedback">
+                  <div *ngIf="f.post_type.errors.required">Post Type is required</div>
                 </div>
-               
-                <!-- <div class="p-field p-col-4">
-                    <p-fileUpload name="myfiles[]" fileLimit="3" multiple="multiple" chooseLabel="Upload Banner Image" uploadLabel="Show data" cancelLabel="Cancel" accept="image/*"
-                    maxFileSize="1000000" auto="auto" customUpload="true" (uploadHandler)="picUploader($event)">
-                        <ng-template pTemplate="content">
-                        </ng-template>
-                    </p-fileUpload>
-                </div> -->
-                <div class="button-set p-col-12 d-flex p-fluid p-jc-md-end">
-                    <div class="p-formgrid p-grid">
-                        <button pButton pRipple label="Save" class="p-button-success p-mr-2" icon="pi pi-check" 
-                            style="width: auto"></button>
-                        <button pButton pRipple label="Reset" icon="pi pi-refresh" type="reset" (click)="onReset()" style="width: auto" class="p-button-info mr-2"></button>
-                        <button pButton pRipple type="button"  icon="pi pi-arrow-left" label="Back" class="p-button-denger" (click)="backLink()"
-                            style="width: auto"></button>
-                    </div>
+              </div>
+
+              <div class="p-field p-col-6">
+                <label>Category<span class="mandatory-feilds">*</span></label>
+                <p-dropdown [options]="categories" formControlName="category"
+                            optionLabel="name" optionValue="value"
+                            placeholder="Select Category"
+                            [ngClass]="{ 'is-invalid': submitted && f.category.errors }">
+                </p-dropdown>
+                <div *ngIf="submitted && f.category.errors" class="invalid-feedback">
+                  <div *ngIf="f.category.errors.required">Category is required</div>
                 </div>
-            </form>
-        </div>
-        <div class="button-set back">
-            <div class="p-fluid p-formgrid">
-                <p-toast></p-toast>
+              </div>
+
+              <div class="p-field p-col-8">
+                <label>Post Title<span class="mandatory-feilds">*</span></label>
+                <input id="banner_title" placeholder="Enter Post Title"
+                       formControlName="banner_title" type="text" pInputText
+                       (blur)="generateSlug()"
+                       [ngClass]="{ 'is-invalid': submitted && f.banner_title.errors }">
+                <div *ngIf="submitted && f.banner_title.errors" class="invalid-feedback">
+                  <div *ngIf="f.banner_title.errors.required">Post Title is required</div>
+                </div>
+              </div>
+
+              <div class="p-field p-col-4">
+                <label>Slug<span class="mandatory-feilds">*</span></label>
+                <input placeholder="post-slug" formControlName="slug" type="text" pInputText
+                       [ngClass]="{ 'is-invalid': submitted && f.slug.errors }">
+                <div *ngIf="submitted && f.slug.errors" class="invalid-feedback">
+                  <div *ngIf="f.slug.errors.required">Slug is required</div>
+                </div>
+              </div>
+
+              <div class="p-field p-col-6">
+                <label>Author<span class="mandatory-feilds">*</span></label>
+                <input placeholder="Author Name" formControlName="author" type="text" pInputText
+                       [ngClass]="{ 'is-invalid': submitted && f.author.errors }">
+              </div>
+
+              <div class="p-field p-col-3">
+                <label>Publish Date</label>
+                <p-calendar formControlName="publish_date" dateFormat="dd/mm/yy"></p-calendar>
+              </div>
+
+              <div class="p-field p-col-1">
+                <label class="mb-0">Published</label>
+                <p-inputSwitch class="checkbox-mt-10 d-block" formControlName="is_published"></p-inputSwitch>
+              </div>
+
+              <div class="p-field p-col-1">
+                <label class="mb-0">Status</label>
+                <p-inputSwitch class="checkbox-mt-10 d-block" formControlName="status"></p-inputSwitch>
+              </div>
+
+              <!-- Content Editor -->
+              <div class="p-field p-col-12">
+                <label>Content<span class="mandatory-feilds">*</span></label>
+                <p-editor formControlName="banner_content"
+                          (onTextChange)="calculateReadingTime()"
+                          [style]="{'height':'200px'}"
+                          [ngClass]="{ 'is-invalid': submitted && f.banner_content.errors }">
+                  <ng-template pTemplate="header">
+                    <span class="ql-formats">
+                      <button class="ql-bold" aria-label="Bold"></button>
+                      <button class="ql-italic" aria-label="Italic"></button>
+                      <button class="ql-underline" aria-label="Underline"></button>
+                      <button class="ql-list" value="ordered" aria-label="Ordered List"></button>
+                      <button class="ql-list" value="bullet" aria-label="Unordered List"></button>
+                      <button class="ql-link" aria-label="Link"></button>
+                    </span>
+                  </ng-template>
+                </p-editor>
+                <div *ngIf="submitted && f.banner_content.errors" class="invalid-feedback">
+                  <div *ngIf="f.banner_content.errors.required">Content is required</div>
+                </div>
+              </div>
+
+              <!-- Reading Time Display -->
+              <div class="p-field p-col-3" *ngIf="bannerForm.get('reading_time')?.value">
+                <label>Reading Time</label>
+                <input [value]="bannerForm.get('reading_time')?.value" type="text" pInputText readonly>
+              </div>
+
             </div>
-        </div>
+          </div>
+
+          <!-- Featured Post Settings -->
+          <div class="form-section" *ngIf="bannerForm.get('post_type')?.value === 'featured'">
+            <h6 class="section-title">Featured Post Settings</h6>
+            <div class="p-fluid p-formgrid p-grid pare_margin">
+              <div class="p-field p-col-3">
+                <label>Featured Order<span class="mandatory-feilds">*</span></label>
+                <p-inputNumber formControlName="featured_order" [min]="1" [max]="10"
+                             [ngClass]="{ 'is-invalid': submitted && f.featured_order.errors }">
+                </p-inputNumber>
+                <small>Lower numbers appear first</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instagram Post Settings -->
+          <div class="form-section" *ngIf="bannerForm.get('post_type')?.value === 'instagram'">
+            <h6 class="section-title">Instagram Settings</h6>
+            <div class="p-fluid p-formgrid p-grid pare_margin">
+              <div class="p-field p-col-6">
+                <label>Instagram URL<span class="mandatory-feilds">*</span></label>
+                <input placeholder="https://instagram.com/p/..." formControlName="instagram_url"
+                       type="url" pInputText
+                       [ngClass]="{ 'is-invalid': submitted && f.instagram_url.errors }">
+                <div *ngIf="submitted && f.instagram_url.errors" class="invalid-feedback">
+                  <div *ngIf="f.instagram_url.errors.required">Instagram URL is required</div>
+                  <div *ngIf="f.instagram_url.errors.pattern">Please enter a valid URL</div>
+                </div>
+              </div>
+
+              <div class="p-field p-col-2">
+                <label class="mb-0">Is Video?</label>
+                <p-inputSwitch class="checkbox-mt-10 d-block" formControlName="is_video"></p-inputSwitch>
+              </div>
+
+              <div class="p-field p-col-12">
+                <label>Instagram Caption<span class="mandatory-feilds">*</span></label>
+                <textarea formControlName="instagram_caption" pInputTextarea
+                          placeholder="Instagram post caption..." rows="3"
+                          [ngClass]="{ 'is-invalid': submitted && f.instagram_caption.errors }">
+                </textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tags Section -->
+          <div class="form-section">
+            <h6 class="section-title">Tags</h6>
+            <div class="p-fluid p-formgrid p-grid pare_margin">
+              <div class="p-field p-col-12">
+                <label>Available Tags</label>
+                <div class="tag-buttons">
+                  <p-button *ngFor="let tag of availableTags"
+                            [label]="tag"
+                            styleClass="p-button-outlined p-button-sm p-mr-2 p-mb-2"
+                            (onClick)="addTag(tag)"
+                            [disabled]="tags.includes(tag)">
+                  </p-button>
+                </div>
+              </div>
+
+              <div class="p-field p-col-12" *ngIf="tags.length > 0">
+                <label>Selected Tags</label>
+                <div class="selected-tags">
+                  <p-chip *ngFor="let tag of tags; let i = index"
+                          [label]="tag"
+                          [removable]="true"
+                          (onRemove)="removeTag(i)"
+                          styleClass="p-mr-2 p-mb-2">
+                  </p-chip>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEO Section -->
+          <div class="form-section">
+            <h6 class="section-title">SEO Settings</h6>
+            <div class="p-fluid p-formgrid p-grid pare_margin">
+              <div class="p-field p-col-8">
+                <label>SEO Title</label>
+                <input placeholder="SEO optimized title" formControlName="seo_title"
+                       type="text" pInputText>
+                <small>Leave empty to use post title</small>
+              </div>
+
+              <div class="p-field p-col-4">
+                <label>SEO Keywords</label>
+                <input placeholder="keyword1, keyword2, keyword3" formControlName="seo_keywords"
+                       type="text" pInputText>
+              </div>
+
+              <div class="p-field p-col-12">
+                <label>Meta Description</label>
+                <textarea formControlName="meta_description" pInputTextarea
+                          placeholder="Brief description for search engines..."
+                          rows="2" maxlength="160">
+                </textarea>
+                <small>Leave empty to auto-generate from content (max 160 characters)</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Images Section -->
+          <div class="form-section">
+            <h6 class="section-title">Images</h6>
+            <div class="p-fluid p-formgrid p-grid pare_margin">
+              <div class="p-field p-col-12">
+                <label>Featured Image</label>
+                <p-fileUpload
+                  #fileInput
+                  multiple="true"
+                  chooseLabel="Upload Images"
+                  accept="image/*"
+                  maxFileSize="10000000"
+                  customUpload="true"
+                  (uploadHandler)="picUploader($event)"
+                  (onSelect)="picUploader($event)"
+                  [showUploadButton]="false"
+                  [showCancelButton]="false">
+
+                  <ng-template pTemplate="content">
+                    <div class="image-preview-container" *ngIf="uploadedFiles.length > 0">
+                      <div class="image-preview" *ngFor="let file of uploadedFiles; let i = index">
+                        <img [src]="sanitizer.bypassSecurityTrustUrl(bannerImage[i]?.file || '')"
+                             [alt]="file.name"
+                             class="preview-image">
+                        <div class="image-overlay">
+                          <button type="button"
+                                  class="delete-btn p-button p-button-danger p-button-sm"
+                                  (click)="deleteFile(i)"
+                                  pButton
+                                  icon="pi pi-times">
+                          </button>
+                        </div>
+                        <div class="image-info">
+                          <small>{{file.name}}</small>
+                          <small>{{(file.size / 1024 / 1024).toFixed(2)}} MB</small>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="upload-placeholder" *ngIf="uploadedFiles.length === 0">
+                      <i class="pi pi-cloud-upload" style="font-size: 2rem; color: #6c757d;"></i>
+                      <p>Click "Upload Images" to add banner images</p>
+                      <small>Accepted formats: JPG, PNG, GIF (Max: 10MB each)</small>
+                    </div>
+                  </ng-template>
+                </p-fileUpload>
+
+                <!-- Debug info (remove in production) -->
+                <div class="debug-info" *ngIf="uploadedFiles.length > 0" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                  <small><strong>Debug Info:</strong></small><br>
+                  <small>Uploaded files: {{uploadedFiles.length}}</small><br>
+                  <small>Banner images: {{bannerImage.length}}</small><br>
+                  <small>Upload status: {{isUpload ? 'Ready' : 'Not ready'}}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="button-set p-col-12 d-flex p-fluid p-jc-md-end">
+            <div class="p-formgrid p-grid">
+              <button type="button" (click)="onSubmit()" pButton
+                      icon="pi pi-check" label="Update & Publish"
+                      class="p-button-success p-mr-2" style="width: auto">
+              </button>
+
+              <button pButton pRipple label="Save as Draft"
+                      icon="pi pi-save" type="button"
+                      (click)="onSubmit()"
+                      style="width: auto" class="p-button-info p-mr-2">
+              </button>
+
+              <button pButton pRipple label="Reset"
+                      icon="pi pi-refresh" type="reset"
+                      (click)="onReset()"
+                      style="width: auto" class="p-button-warning p-mr-2">
+              </button>
+
+              <button pButton pRipple type="button"
+                      icon="pi pi-arrow-left" label="Back"
+                      class="p-button-secondary"
+                      (click)="backLink()" style="width: auto">
+              </button>
+            </div>
+          </div>
+
+          <input formControlName="disable" type="hidden" value="false">
+        </form>
+      </div>
     </div>
-    <p-confirmDialog [style]="{width:'450px'}"></p-confirmDialog>
-</div>
+  </div>
+
+  <style>
+    .form-section {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+    }
+
+    .section-title {
+      color: #495057;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #007bff;
+    }
+
+    .tag-buttons .p-button {
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .selected-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .mandatory-feilds {
+      color: #dc3545;
+    }
+
+    .invalid-feedback {
+      display: block;
+      width: 100%;
+      margin-top: 0.25rem;
+      font-size: 0.875em;
+      color: #dc3545;
+    }
+
+    .is-invalid {
+      border-color: #dc3545 !important;
+    }
+
+    .image-preview-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .image-preview {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .preview-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-overlay {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }
+
+    .delete-btn {
+      width: 30px !important;
+      height: 30px !important;
+      border-radius: 50% !important;
+    }
+
+    .image-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 5px;
+      font-size: 10px;
+    }
+
+    .upload-placeholder {
+      text-align: center;
+      padding: 2rem;
+      border: 2px dashed #dee2e6;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    .upload-placeholder p {
+      margin: 0.5rem 0;
+      color: #6c757d;
+    }
+  </style>
