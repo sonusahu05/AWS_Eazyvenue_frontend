@@ -98,13 +98,13 @@ export class SubscriptionComponent {
 
   private initiatePayment(plan: SubscriptionPlan): void {
     const options = {
-      key: 'YOUR_RAZORPAY_KEY_ID', // Replace with your actual Razorpay key
-      amount: plan.price, // Amount in paise (already in correct format from your data)
+      key: 'rzp_live_oyCHow0OxfS8oL',
+      amount: plan.price,
       currency: 'INR',
       name: 'EazyVenue.com',
       description: `${plan.name} - Lead Generation for Banquet Owners`,
-      image: '/assets/logo.png', // Add your logo path
-      order_id: '', // Generate this from your backend
+      image: '/assets/images/logo.png',
+      order_id: '',
       handler: (response: any) => {
         this.handlePaymentSuccess(response, plan);
       },
