@@ -1,0 +1,553 @@
+// Variables
+:root {
+    --primary-orange: #FF6B35;
+    --primary-red: #E74C3C;
+    --primary-blue: #3498DB;
+    --gradient-orange: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+    --gradient-red: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+    --gradient-blue: linear-gradient(135deg, #3498DB 0%, #2980B9 100%);
+    --dark-blue: #1a1f3a;
+    --darker-blue: #0f1419;
+    --white: #1a1f3a;
+    --light-gray: #0f1419;
+    --text-gray: #6c757d;
+    --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
+    --shadow-heavy: 0 15px 35px rgba(0, 0, 0, 0.2);
+  }
+
+  .subscription-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--dark-blue) 0%, var(--darker-blue) 100%);
+    position: relative;
+    overflow-x: hidden;
+    z-index: -1;
+
+    // Animated background elements
+    &::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 25% 25%, rgba(255, 107, 53, 0.1) 0%, transparent 25%),
+                  radial-gradient(circle at 75% 75%, rgba(52, 152, 219, 0.1) 0%, transparent 25%),
+                  radial-gradient(circle at 50% 10%, rgba(231, 76, 60, 0.1) 0%, transparent 25%);
+      animation: backgroundFloat 20s ease-in-out infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
+  }
+
+  @keyframes backgroundFloat {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(-2%, -1%) rotate(1deg); }
+    66% { transform: translate(1%, -2%) rotate(-1deg); }
+  }
+
+  // Header Section
+  .header-section {
+    text-align: center;
+    padding: 2rem 1rem 3rem;
+    position: relative;
+    z-index: 2;
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+
+      .logo {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+      }
+
+      h1 {
+        color: var(--dark-blue);
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.5px;
+      }
+    }
+
+    .header-content {
+      max-width: 600px;
+      margin: 0 auto;
+
+      h2 {
+        color: black;
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin: 80px 0 0.5rem;
+        letter-spacing: -1px;
+      }
+
+      h3 {
+        background: var(--gradient-orange);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 1.5rem;
+        letter-spacing: 2px;
+      }
+
+      p {
+        color: rgba(3, 3, 3, 0.8);
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin: 0;
+      }
+    }
+  }
+
+  // Pricing Section
+  .pricing-section {
+    padding: 0 1rem 4rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .pricing-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow-medium);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    border: 2px solid transparent;
+    z-index: 1; // Lower z-index for cards
+
+    // Make card a flex container to push button to bottom
+    display: flex;
+    flex-direction: column;
+    min-height: 600px; // Ensure consistent minimum height
+
+    &:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: var(--shadow-heavy);
+      z-index: 2; // Slightly higher on hover, but still low
+
+      .card-overlay {
+        opacity: 1;
+      }
+    }
+
+    &.popular {
+      transform: scale(1.05);
+      border: 2px solid var(--primary-red);
+      z-index: 2; // Slightly higher for popular card
+
+      &:hover {
+        transform: translateY(-8px) scale(1.08);
+        z-index: 3; // Higher on hover for popular card
+      }
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--gradient-red);
+      color: black;
+      padding: 0.5rem 1.5rem;
+      border-radius: 0 0 12px 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      z-index: 1; // Relative to card
+      box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+    }
+
+    .card-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 1; // Above card content but below interactive elements
+    }
+  }
+
+  // Card Header Styles
+  .card-header {
+    padding: 3rem 1.5rem 1rem;
+    text-align: center;
+    position: relative;
+    flex-shrink: 0; // Don't shrink
+
+    &.orange-header {
+      background: var(--gradient-orange);
+    }
+
+    &.red-header {
+      background: var(--gradient-red);
+    }
+
+    &.blue-header {
+      background: var(--gradient-blue);
+    }
+
+    .price-section {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+
+      .currency {
+        color: rgba(0, 0, 0, 0.9);
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .price {
+        color: rgb(0, 0, 0);
+        font-size: 3rem;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .plus {
+        color: rgb(0, 0, 0);
+        font-size: 2rem;
+        font-weight: 600;
+      }
+    }
+
+    .leads-text {
+      color: rgba(0, 0, 0, 0.9);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin: 0;
+    }
+  }
+
+  // Card Body - Make it flexible to push CTA to bottom
+  .card-body {
+    padding: 1.5rem;
+    flex: 1; // Take up available space
+    display: flex;
+    flex-direction: column;
+  }
+
+  .duration-section {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    flex-shrink: 0; // Don't shrink
+
+    &.orange-duration {
+      background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(247, 147, 30, 0.1) 100%);
+      border: 1px solid rgba(255, 107, 53, 0.2);
+    }
+
+    &.red-duration {
+      background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%);
+      border: 1px solid rgba(231, 76, 60, 0.2);
+    }
+
+    &.blue-duration {
+      background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%);
+      border: 1px solid rgba(52, 152, 219, 0.2);
+    }
+
+    .duration {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--dark-blue);
+    }
+  }
+
+  .leads-breakdown {
+    margin-bottom: 1.5rem;
+    flex-shrink: 0; // Don't shrink
+
+    .lead-item {
+      background: var(--light-gray);
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--dark-blue);
+      text-align: center;
+      border-left: 4px solid var(--primary-orange);
+    }
+  }
+
+  .total-leads {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0; // Don't shrink
+
+    &.orange-total {
+      background: var(--dark-blue);
+      color: rgb(0, 0, 0);
+    }
+
+    &.red-total {
+      background: var(--dark-blue);
+      color: rgb(0, 0, 0);
+    }
+
+    &.blue-total {
+      background: var(--dark-blue);
+      color: rgb(0, 0, 0);
+    }
+
+    .total-number {
+      display: block;
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .total-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+  }
+
+  // Features Section - Make it flexible
+  .features-section {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    flex: 1; // Take up remaining space
+    display: flex;
+    flex-direction: column;
+  }
+
+  .features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1; // Take up available space
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+      color: var(--dark-blue);
+      font-weight: 500;
+
+      .check-icon {
+        width: 20px;
+        height: 20px;
+        color: #22c55e;
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  // CTA Section - Always at bottom
+  .cta-section {
+    padding: 1.5rem;
+    margin-top: auto; // Push to bottom
+    flex-shrink: 0; // Don't shrink
+  }
+
+  .cta-button {
+    width: 100%;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 2; // Above overlay
+
+    &.orange-button {
+      background: var(--gradient-orange);
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5);
+      }
+    }
+
+    &.red-button {
+      background: var(--gradient-red);
+      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
+      }
+    }
+
+    &.blue-button {
+      background: var(--gradient-blue);
+      box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(52, 152, 219, 0.5);
+      }
+    }
+  }
+
+  // Footer Section
+  .footer-section {
+    text-align: center;
+    padding: 4rem 1rem;
+    position: relative;
+    z-index: 2;
+
+    .footer-text {
+      color: rgba(0, 0, 0, 0.8);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .security-badges {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+
+      .badge {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        color: rgb(0, 0, 0);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+
+  // Responsive Design
+  @media (max-width: 768px) {
+    .header-section {
+      padding: 1rem 1rem 2rem;
+
+      .brand-logo {
+        flex-direction: column;
+        gap: 0.5rem;
+
+        h1 {
+          font-size: 1.5rem;
+        }
+      }
+
+      .header-content {
+        h2 {
+          font-size: 2rem;
+        }
+
+        h3 {
+          font-size: 1.5rem;
+        }
+
+        p {
+          font-size: 1rem;
+        }
+      }
+    }
+
+    .pricing-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 0;
+    }
+
+    .pricing-card {
+      min-height: 550px; // Smaller minimum height on mobile
+
+      &.popular {
+        transform: none;
+
+        &:hover {
+          transform: translateY(-4px) scale(1.02);
+        }
+      }
+
+      .card-header .price-section .price {
+        font-size: 2.5rem;
+      }
+    }
+
+    .security-badges {
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .pricing-section {
+      padding: 0 0.5rem 2rem;
+    }
+
+    .pricing-card {
+      min-height: 500px; // Even smaller on very small screens
+    }
+
+    .card-header {
+      padding: 3.5rem 1rem 1rem;
+
+      .price-section .price {
+        font-size: 2rem;
+      }
+    }
+
+    .card-body,
+    .features-section,
+    .cta-section {
+      padding: 1rem;
+    }
+
+    .total-leads .total-number {
+      font-size: 2rem;
+    }
+  }
+
+  // Loading animation for Razorpay
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  .loading {
+    .cta-button {
+      animation: pulse 1.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+  }

@@ -1,0 +1,91 @@
+<div class="subscription-container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="header-content mt-10">
+        <h2>Lead Generation</h2>
+        <h3>BANQUET OWNERS</h3>
+        <p>A easy lead generation pricing with 3 leads per month for Banquet owners with more than other 10.</p>
+      </div>
+    </div>
+
+    <!-- Pricing Cards Section -->
+    <div class="pricing-section">
+      <div class="pricing-grid">
+        <div
+          *ngFor="let plan of subscriptionPlans"
+          class="pricing-card"
+          [class.popular]="plan.popular"
+          [attr.data-color]="plan.color"
+          (click)="selectPlan(plan)"
+        >
+          <!-- Popular Badge -->
+          <div *ngIf="plan.popular" class="popular-badge mb-10">
+            <span>Most Popular</span>
+          </div>
+
+          <!-- Card Header -->
+          <div class="card-header" [ngClass]="plan.color + '-header'">
+            <div class="price-section">
+              <span class="currency">INR</span>
+              <span class="price">{{ formatPrice(plan.price) }}</span>
+              <span class="plus">+</span>
+            </div>
+            <p class="leads-text">for Leads</p>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body">
+            <!-- Duration -->
+            <div class="duration-section" [ngClass]="plan.color + '-duration'">
+              <span class="duration">{{ plan.duration }}</span>
+            </div>
+
+            <!-- Lead Details -->
+            <div class="leads-breakdown">
+              <div class="lead-item" *ngFor="let feature of plan.features.slice(0, 2)">
+                {{ feature }}
+              </div>
+            </div>
+
+            <!-- Total Leads -->
+            <div class="total-leads" [ngClass]="plan.color + '-total'">
+              <span class="total-number">{{ plan.totalLeads }}</span>
+              <span class="total-text">Leads</span>
+            </div>
+          </div>
+
+          <!-- Features List -->
+          <div class="features-section">
+            <ul class="features-list">
+              <li *ngFor="let feature of plan.features.slice(2)" class="feature-item">
+                <svg class="check-icon" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                {{ feature }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- CTA Button -->
+          <div class="cta-section">
+            <button class="cta-button" [ngClass]="plan.color + '-button'">
+              Choose {{ plan.name }}
+            </button>
+          </div>
+
+          <!-- Hover Effect Overlay -->
+          <div class="card-overlay"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer-section">
+      <p class="footer-text">All plans include basic customer support and lead verification</p>
+      <div class="security-badges">
+        <span class="badge">🔒 Secure Payment</span>
+        <span class="badge">✅ Instant Activation</span>
+        <span class="badge">📞 24/7 Support</span>
+      </div>
+    </div>
+  </div>
