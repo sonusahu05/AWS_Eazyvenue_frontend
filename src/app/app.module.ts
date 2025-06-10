@@ -140,6 +140,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { PrivacypolicyComponent } from './frontend/privacy-policy/privacy-policy.component';
 import { PolicyComponent } from './frontend/policy/policy.component';
+import { SubscriptionComponent } from './frontend/subscription/subscription.component';
 import { ServicesComponent } from './frontend/services/services.component';
 import { LoaderService } from './services/loader.service';
 import { LoaderInterceptor } from './_helpers/loader-interceptor.service';
@@ -391,6 +392,7 @@ FullCalendarModule.registerPlugins([
         SubcategoryViewComponent,
         UserComponent,
         PrivacypolicyComponent,
+        SubscriptionComponent,
         PolicyComponent,
         TermsComponent,
         HotMuhuratsComponent,

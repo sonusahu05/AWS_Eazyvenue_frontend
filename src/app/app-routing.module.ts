@@ -24,6 +24,7 @@ import { HomeComponent } from './frontend/home/home.component';
 import { FrontendComponent } from './frontend/frontend.component';
 import { PrivacypolicyComponent } from './frontend/privacy-policy/privacy-policy.component';
 import { PolicyComponent } from './frontend/policy/policy.component';
+import { SubscriptionComponent } from './frontend/subscription/subscription.component';
 import { TermsComponent } from './frontend/terms/terms.component';
 import { HotMuhuratsComponent } from './frontend/hot-muhrats/muhrats.component';
 import { ServicesComponent } from './frontend/services/services.component';
@@ -102,6 +103,10 @@ import { SignupComponent } from './pages/venue-signup.component';
                         {
                             path: 'privacy-policy',
                             component: PrivacypolicyComponent,
+                        },
+                        {
+                            path: 'subscribe',
+                            component: SubscriptionComponent,
                         },
                         { path: 'terms', component: TermsComponent },
                         {
