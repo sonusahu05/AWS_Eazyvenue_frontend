@@ -575,7 +575,7 @@ displayLimit: number = 25;
             this.bannerVideo.nativeElement.play()
               .catch(err => console.log('Autoplay error:', err));
           }
-        }, 100);
+        }, 3000);
       }
 
       closeBannerPopup() {
