@@ -21,9 +21,8 @@
     background: linear-gradient(135deg, var(--dark-blue) 0%, var(--darker-blue) 100%);
     position: relative;
     overflow-x: hidden;
-    z-index: -1;
+    z-index: 1;
 
-    // Animated background elements
     &::before {
       content: '';
       position: absolute;
@@ -36,7 +35,7 @@
                   radial-gradient(circle at 50% 10%, rgba(231, 76, 60, 0.1) 0%, transparent 25%);
       animation: backgroundFloat 20s ease-in-out infinite;
       pointer-events: none;
-      z-index: -1;
+      z-index: 1;
     }
   }
 
@@ -425,7 +424,7 @@
     text-align: center;
     padding: 4rem 1rem;
     position: relative;
-    z-index: 2;
+    z-index: -1;
 
     .footer-text {
       color: rgba(0, 0, 0, 0.8);
