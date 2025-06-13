@@ -29,6 +29,7 @@ import { timer, Subscription } from 'rxjs';
 import { take, filter, elementAt } from 'rxjs/operators';
 import { NgxOtpInputComponent, NgxOtpInputConfig } from 'ngx-otp-input';
 import { Meta, Title } from '@angular/platform-browser';
+import { GeolocationService } from 'src/app/services/geolocation.service';
 
 interface City {
     name: string,
@@ -67,6 +68,10 @@ export class VenueListComponent implements OnInit {
     venuecityname: any;
     numberPopup: boolean = false;
     bannerPopupVisible: boolean = false;
+    userLocation: any = null;
+    isLocationLoaded: boolean = false;
+    locationBasedFilter: boolean = true;
+    pendingLocationFilter: any = null;
     mobileForm: FormGroup;
     mobileNumber: any;
     submitted: boolean = false;
@@ -353,6 +358,7 @@ displayLimit: number = 25;
         private filterService: FilterService,
         private photoService: PhotoService,
         private productService: ProductService,
+        private geolocationService: GeolocationService,
         private BannerService: BannerService,
         private venueService: VenueService,
         private router: Router,
@@ -485,10 +491,13 @@ displayLimit: number = 25;
         // })
         this.getSubareas();
         this.getCities();
-        // this.getVenues();
-        //this.getVenueList(this.selectedCategoryId);
+        this.getUserLocation();
         this.getVenueList();
         this.getAllVenueList();
+
+        // this.getVenues();
+        //this.getVenueList(this.selectedCategoryId);
+
         this.title.setTitle("Find the Right Banquet Halls Near You at EazyVenue.com")
         this.meta.addTag({name:"title",content:"Find the Right Banquet Halls Near You at EazyVenue.com"})
         this.meta.addTag({name:"description",content:"Discover Your Perfect Event Venue with EazyVenue.com, Explore exquisite banquet halls specially curated for weddings, parties, and corporate gatherings. Our diverse spaces ensure your events are unforgettable."})
@@ -496,6 +505,221 @@ displayLimit: number = 25;
         this.meta.addTag({ name: 'robots', content: 'index, follow' });
 
     }
+
+    async getUserLocation() {
+        try {
+          // First try to get precise location via GPS
+          const position = await this.geolocationService.getCurrentLocation();
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+
+          this.geolocationService.getLocationDetails(lat, lng).subscribe(
+            locationData => {
+              this.userLocation = locationData;
+              this.isLocationLoaded = true;
+              console.log('User location detected:', this.userLocation);
+
+              // Apply location-based filtering
+              this.applyLocationFilter();
+            },
+            error => {
+              console.error('Error getting location details:', error);
+              this.fallbackToIPLocation();
+            }
+          );
+        } catch (error) {
+          console.error('GPS location error:', error);
+          this.fallbackToIPLocation();
+        }
+      }
+
+      fallbackToIPLocation() {
+        // Fallback to IP-based location
+        this.geolocationService.getLocationByIP().subscribe(
+          locationData => {
+            this.userLocation = locationData;
+            this.isLocationLoaded = true;
+            console.log('Fallback IP location:', this.userLocation);
+
+            // Apply location-based filtering
+            this.applyLocationFilter();
+          },
+          error => {
+            console.error('IP location error:', error);
+            this.isLocationLoaded = true;
+            // Continue without location filtering
+            this.getVenueList();
+          }
+        );
+      }
+
+      applyLocationFilter() {
+        if (this.userLocation && this.locationBasedFilter) {
+          const detectedCity = this.userLocation.city.toLowerCase().trim();
+          const detectedSubarea = this.userLocation.subarea.toLowerCase().trim();
+
+          console.log('Detected city:', detectedCity);
+          console.log('CityList length:', this.cityList.length);
+
+          // If cityList is empty, wait for it to load
+          if (this.cityList.length === 0) {
+            console.log('CityList is empty, waiting for it to load...');
+            // Store the detected location and apply filter after cities are loaded
+            this.pendingLocationFilter = {
+              city: detectedCity,
+              subarea: detectedSubarea
+            };
+            return;
+          }
+
+          this.applyLocationFilterWithCities(detectedCity, detectedSubarea);
+        } else {
+          this.getVenueList();
+        }
+      }
+
+      applyLocationFilterWithCities(detectedCity: string, detectedSubarea: string) {
+        console.log('Available cities in cityList:', this.cityList.map(c => ({name: c.name, code: c.code || c.id})));
+
+        // Find matching city with more precise matching
+        let matchingCity = null;
+
+        // First try exact match
+        matchingCity = this.cityList.find(city => {
+          const cityName = city.name.toLowerCase().trim();
+          return cityName === detectedCity;
+        });
+
+        // If no exact match, try to find city that starts with detected city
+        if (!matchingCity) {
+          matchingCity = this.cityList.find(city => {
+            const cityName = city.name.toLowerCase().trim();
+            // Extract just the city name (before comma) for comparison
+            const cityNameOnly = cityName.split(',')[0].trim();
+
+            // FIXED: More precise matching - must be exact or start with detected city
+            // and length difference should be very small to avoid Thane->Thanesar matches
+            return (cityNameOnly === detectedCity ||
+                    (cityNameOnly.startsWith(detectedCity) &&
+                     Math.abs(cityNameOnly.length - detectedCity.length) <= 1));
+          });
+        }
+
+        // Enhanced third match with stricter conditions
+        if (!matchingCity) {
+          matchingCity = this.cityList.find(city => {
+            const cityName = city.name.toLowerCase().trim();
+            const cityNameOnly = cityName.split(',')[0].trim();
+
+            // FIXED: Much stricter matching - only allow if:
+            // 1. Detected city is contained in city name AND
+            // 2. City name is contained in detected city (bidirectional check) AND
+            // 3. Length difference is minimal (max 1 character)
+            // 4. OR exact match after removing common suffixes/prefixes
+
+            const normalizedCityName = cityNameOnly.replace(/\s+(city|town|district)$/i, '');
+            const normalizedDetectedCity = detectedCity.replace(/\s+(city|town|district)$/i, '');
+
+            return (normalizedCityName === normalizedDetectedCity) ||
+                   (cityNameOnly === detectedCity) ||
+                   (cityNameOnly.includes(detectedCity) &&
+                    detectedCity.includes(cityNameOnly.substring(0, detectedCity.length)) &&
+                    Math.abs(cityNameOnly.length - detectedCity.length) <= 1);
+          });
+        }
+
+        console.log('Matching city found:', matchingCity);
+
+        if (matchingCity) {
+          // Verify the match is actually correct by double-checking
+          const cityNameParts = matchingCity.name.toLowerCase().split(',')[0].trim();
+
+          // Additional verification: if detected city is "thane" and matched city starts with "thane"
+          // but is much longer, it's likely a false positive
+          if (detectedCity === 'thane' && cityNameParts.startsWith('thane') && cityNameParts !== 'thane') {
+            console.log('Potential false positive detected for Thane, skipping match');
+            console.log('Detected:', detectedCity, 'Matched:', cityNameParts);
+
+            // Try to find exact "Thane" match instead
+            const exactThaneMatch = this.cityList.find(city => {
+              const cityName = city.name.toLowerCase().split(',')[0].trim();
+              return cityName === 'thane';
+            });
+
+            if (exactThaneMatch) {
+              matchingCity = exactThaneMatch;
+              console.log('Found exact Thane match:', exactThaneMatch);
+            } else {
+              matchingCity = null;
+              console.log('No exact Thane match found, will show all venues');
+            }
+          }
+        }
+
+        if (matchingCity) {
+          // Clear previous selections
+          this.selectedCities = [];
+          this.selectedSubareaIds = [];
+          this.selectedVenueIds = [];
+
+          // Set the detected city
+          this.selectedCities = [matchingCity.code || matchingCity.id];
+          this.selectedCityName = matchingCity.name;
+
+          console.log('Selected cities after location filter:', this.selectedCities);
+          console.log('Selected city name:', this.selectedCityName);
+
+          // Reset pagination for new filter
+          this.finalVenueList = [];
+          this.pageNumber = 1;
+
+          // Load venues with city filter immediately (don't wait for subarea)
+          console.log('Loading venues with city filter - City:', this.selectedCities);
+          this.getVenueList();
+
+          // Try to find matching subarea but don't wait for it
+          this.getSubareas();
+          setTimeout(() => {
+            const matchingSubarea = this.subareaList?.find(subarea => {
+              const subareaName = subarea.name.toLowerCase().trim();
+              return subareaName === detectedSubarea ||
+                     subareaName.includes(detectedSubarea) ||
+                     detectedSubarea.includes(subareaName);
+            });
+
+            if (matchingSubarea) {
+              this.selectedSubareaIds = [matchingSubarea.id];
+              this.selectedSubareaName = matchingSubarea.name;
+              console.log('Selected subarea:', this.selectedSubareaName);
+
+              // Reload venues with both city and subarea filter
+              this.finalVenueList = [];
+              this.pageNumber = 1;
+              this.getVenueList();
+            }
+          }, 1000);
+        } else {
+          console.log('No matching city found for:', detectedCity);
+          console.log('Available city names:', this.cityList.map(c => c.name.toLowerCase()));
+
+          // If no exact city match, still load all venues but prioritize by detected city
+          this.finalVenueList = [];
+          this.pageNumber = 1;
+          this.getVenueList();
+        }
+      }
+
+      // Also add this method to disable location filtering
+      disableLocationFilter() {
+        this.locationBasedFilter = false;
+        this.selectedCities = [];
+        this.selectedSubareaIds = [];
+        this.selectedCityName = '';
+        this.selectedSubareaName = '';
+        this.finalVenueList = [];
+        this.pageNumber = 1;
+        this.getVenueList();
+      }
 
     ngAfterViewInit() {
         if (this.galleryWrapper) {
@@ -735,16 +959,24 @@ displayLimit: number = 25;
     getCities() {
         // let query = "?filterByDisable=false&filterByStatus=true";
         this.cityService.getcityList("list=true").subscribe(
-            data => {
-                // console.log(data);
+          data => {
+            this.cityList = data.data.items;
 
-                this.cityList = data.data.items;
-            },
-            err => {
-                this.errorMessage = err.error.message;
+            // Check if there's a pending location filter to apply
+            if (this.pendingLocationFilter) {
+              console.log('Applying pending location filter...');
+              this.applyLocationFilterWithCities(
+                this.pendingLocationFilter.city,
+                this.pendingLocationFilter.subarea
+              );
+              this.pendingLocationFilter = null; // Clear the pending filter
             }
+          },
+          err => {
+            this.errorMessage = err.error.message;
+          }
         );
-    }
+      }
     async getWishlist() {
         let query = "?filterByStatus=true&filterByCustomerId=" + this.userId;
         this.wishlistService.getWishlist(query).subscribe(
@@ -905,11 +1137,14 @@ displayLimit: number = 25;
 
         this.loading = true;
         this.venueService.getVenueListForFilter(newQuery).subscribe(
-        // this.venueService.getVenueListWithoutAuth(query).subscribe(
             data => {
-                //if (data.data.items.length > 0) {
-                this.loading = false;
-                this.tmpVenueList = data.data.items;
+              this.loading = false;
+              this.tmpVenueList = data.data.items;
+
+              // Apply location-based sorting if user location is available
+              if (this.userLocation && this.locationBasedFilter) {
+                this.tmpVenueList = this.sortVenuesByLocation(this.tmpVenueList);
+              }
                 this.tmpVenueList.forEach(tElement => {
                     if (tElement.venueVideo !== '') {
                         tElement.venueImage.push({ video: tElement.venueVideo });
@@ -977,6 +1212,44 @@ displayLimit: number = 25;
                 this.errorMessage = err.error.message;
             });
     }
+
+    sortVenuesByLocation(venues: any[]): any[] {
+        if (!this.userLocation) return venues;
+
+        const userCity = this.userLocation.city.toLowerCase();
+        const userSubarea = this.userLocation.subarea.toLowerCase();
+
+        return venues.sort((a, b) => {
+          const aCity = (a.cityname || '').toLowerCase();
+          const aSubarea = (a.subarea || '').toLowerCase();
+          const bCity = (b.cityname || '').toLowerCase();
+          const bSubarea = (b.subarea || '').toLowerCase();
+
+          // Priority scoring
+          let aScore = 0;
+          let bScore = 0;
+
+          // Exact subarea match gets highest priority
+          if (aSubarea.includes(userSubarea) || userSubarea.includes(aSubarea)) aScore += 10;
+          if (bSubarea.includes(userSubarea) || userSubarea.includes(bSubarea)) bScore += 10;
+
+          // City match gets medium priority
+          if (aCity.includes(userCity) || userCity.includes(aCity)) aScore += 5;
+          if (bCity.includes(userCity) || userCity.includes(bCity)) bScore += 5;
+
+          return bScore - aScore; // Sort in descending order of score
+        });
+    }
+
+    requestLocationPermission() {
+        if (confirm('Allow location access to find venues near you?')) {
+          this.getUserLocation();
+        } else {
+          this.isLocationLoaded = true;
+          this.getVenueList();
+        }
+      }
+
     onClickGuestCount(capacity, event) {
         if (capacity.id != undefined) {
             this.capacityId = capacity.id;

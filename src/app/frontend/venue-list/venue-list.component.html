@@ -275,6 +275,18 @@
             <h2 class="title">Top Assured Venues Near You</h2>
         </div>
     </div>
+    <div class="location-status" *ngIf="userLocation && locationBasedFilter">
+        <small class="text-muted">
+          <i class="pi pi-map-marker"></i>
+          Showing venues near: {{ userLocation.subarea ? userLocation.subarea + ', ' : '' }}{{ userLocation.city }}
+          <span *ngIf="selectedCityName && selectedCityName !== userLocation.city">
+            (Filtered by: {{ selectedCityName }})
+          </span>
+          <button class="btn btn-link btn-sm" (click)="disableLocationFilter()">
+            Show all venues
+          </button>
+        </small>
+      </div>
     <div class="container-fluid">
         <p-galleria
             [(value)]="venueImages"
