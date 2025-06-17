@@ -10,12 +10,27 @@
         </div>
 
         <div class="calendar-section">
+          <!-- Year Navigation -->
+          <div class="year-navigation">
+            <select class="year-selector" (change)="onYearChange(+$event.target.value)" [value]="currentYear">
+              <option *ngFor="let year of getAvailableYears()" [value]="year">{{ year }}</option>
+            </select>
+          </div>
+
           <div class="calendars">
             <div class="calendar" *ngIf="displayedMonths[currentMonthIndex]">
                 <div class="middle-calender">
-                    <span class="arrow-button previous" (click)="previousMonths()">&#9664;</span>
+                    <span class="arrow-button previous"
+                          (click)="previousMonths()"
+                          [class.disabled]="currentYear === minYear && currentMonthIndex === 0">
+                      &#9664;
+                    </span>
                     <h3 class="month-name">{{ displayedMonths[currentMonthIndex].name }}</h3>
-                    <span class="arrow-button next" (click)="nextMonths()">&#9654;</span>
+                    <span class="arrow-button next"
+                          (click)="nextMonths()"
+                          [class.disabled]="currentYear === maxYear && currentMonthIndex === 11">
+                      &#9654;
+                    </span>
                 </div>
               <table>
                 <thead>

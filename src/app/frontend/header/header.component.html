@@ -54,12 +54,16 @@
                                         <li class="nav-item">
                                             <a class="nav-link border-end" [class.active]="activeRoute === 'vendor'" routerLink="/vendor">VENDORS</a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link border-end" [class.active]="activeRoute === 'subscribe'" routerLink="/subscribe">Subscription</a>
+                                        </li>
                                         <div class="hot-muhurats-container">
                                             <li class="nav-item">
                                               <a class="nav-link" (click)="toggleHotMuhurats()">HOT MUHURATS</a>
                                             </li>
                                             <app-muhrats [isOpen]="isHotMuhuratsOpen" (closeDrawer)="closeHotMuhurats()"></app-muhrats>
                                           </div>
+
 
                                         <li class="nav-item">
                                             <!-- <a class="nav-link" href="#" (click)="showDialogoffer()">COUPLE DATE</a> -->
@@ -203,6 +207,7 @@
                             </div>
                             <a class="nav-link" [class.active]="activeRoute === 'venue'" routerLink="/">Venues<span class="sr-only">(current)</span></a>
                             <a class="nav-link" [class.active]="activeRoute === 'venodr'" routerLink="/vendor">Vendors</a>
+                            <a class="nav-link" [class.active]="activeRoute === 'subscribe'" routerLink="/subscribe">Subscription</a>
                                 <a class="nav-link" (click)="toggleHotMuhurats()">HOT MUHURATS</a>
                               <app-muhrats [isOpen]="isHotMuhuratsOpen" (closeDrawer)="closeHotMuhurats()"></app-muhrats>
                             <!-- <a class="nav-link" style="color: gray;" pTooltip="Coming Soon" >Couple Date</a>
