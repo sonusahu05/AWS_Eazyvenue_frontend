@@ -263,6 +263,22 @@ this.venueForm.controls.metaDescription.setValue(res['metaDescription']);
                 this.venueForm.controls.googleRating.setValue({ name: res['googleRating'], value: res['googleRating'] });
                 //this.venueForm.controls.featured.setValue(res['featured']);
                 this.venueForm.controls.assured.setValue(res['assured']);
+                if (res['foodMenuType']) {
+                    this.foodMenuType = res['foodMenuType'];
+                } else {
+                    // Keep default values if no saved data exists
+                    this.foodMenuType = {
+                        "veg_food": [
+                            { "slug": "3X3", "value": "1800" },
+                        ],
+                        "non_veg": [
+                            { "slug": "3X3", "value": "1800" },
+                        ],
+                        "mixFood": [
+                            { "slug": "3X3", "value": "1800" },
+                        ]
+                    };
+                }
                 this.venueForm.get('password').disable()
                 this.venueForm.get('confirmPassword').disable()
                 this.venueForm.controls.venuePrice.setValue(res['venuePrice']);

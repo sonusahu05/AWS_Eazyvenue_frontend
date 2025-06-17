@@ -1152,6 +1152,36 @@ displayLimit: number = 25;
                 })
                 this.finalVenueList = [...this.venueList, ...this.tmpVenueList];
                 this.totalRecords = data.data.totalCount;
+if (this.finalVenueList.length < 5 && this.locationBasedFilter && this.selectedCities.length > 0) {
+    // Check if current city is not Mumbai
+    const currentCityName = this.selectedCityName?.toLowerCase();
+    if (currentCityName && !currentCityName.includes('mumbai')) {
+        // Find Mumbai city in cityList
+        const mumbaiCity = this.cityList.find(city =>
+            city.name.toLowerCase().includes('mumbai')
+        );
+
+        if (mumbaiCity) {
+            // Fetch Mumbai venues as fallback
+            let mumbaiQuery = newQuery.replace(/&citycode=[^&]*/g, '') + "&citycode=" + (mumbaiCity.code || mumbaiCity.id);
+
+            this.venueService.getVenueListForFilter(mumbaiQuery).subscribe(
+                mumbaiData => {
+                    const mumbaiVenues = mumbaiData.data.items || [];
+                    // Add Mumbai venues that aren't already in the list
+                    const existingIds = this.finalVenueList.map(v => v.id);
+                    const newMumbaiVenues = mumbaiVenues.filter(v => !existingIds.includes(v.id));
+
+                    // Limit to avoid too many results
+                    const venuesNeeded = Math.max(0, 10 - this.finalVenueList.length);
+                    this.finalVenueList = [...this.finalVenueList, ...newMumbaiVenues.slice(0, venuesNeeded)];
+
+                    this.updateDisplayedVenues();
+                }
+            );
+        }
+    }
+}
                 if (this.finalVenueList.length > 0) {
                     this.finalVenueList.forEach(element => {
                         this.allFoodMenuPriceArray = [];

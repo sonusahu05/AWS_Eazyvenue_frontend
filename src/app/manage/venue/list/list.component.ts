@@ -232,154 +232,242 @@ export class ListComponent implements OnInit {
             );
         }
     }
-    refreshVenueList(event: LazyLoadEvent) {
-        this.lastTableLazyLoadEvent = event;
-        this.loading = true;
+ // Enhanced refreshVenueList method with improved client-side filtering
+refreshVenueList(event: LazyLoadEvent) {
+    this.lastTableLazyLoadEvent = event;
+    this.loading = true;
 
-        // Get user data
-        const userData = this.tokenStorageService.getUser();
-        const isVenueOwner = userData && userData.userdata && userData.userdata.rolename === 'venueowner';
+    // Get user data and check if user is venue owner
+    const userData = this.tokenStorageService.getUser();
+    console.log('User data:', userData);
 
-        let query = new URLSearchParams({
-            admin: 'true',
-            pageSize: (event.rows || 10).toString(),
-            pageNumber: ((event.first || 0) / (event.rows || 10) + 1).toString(),
-            filterByDisable: 'false'
-        });
+    const isVenueOwner = userData && userData.userdata && userData.userdata.rolename === 'venueowner';
+    console.log('Is venue owner:', isVenueOwner);
 
-        // Handle search by date range if selected
-        if (this.searchby && this.startDate && this.endDate) {
-            query.set('filterByDate', this.searchby.value);
-            query.set('filterByStartDate', moment(this.startDate).format('YYYY-MM-DD'));
-            query.set('filterByEndDate', moment(this.endDate).format('YYYY-MM-DD'));
-        }
+    let userEmail = '';
+    if (isVenueOwner && userData.userdata.email) {
+        userEmail = userData.userdata.email.trim();
+        console.log('User email (original):', userEmail);
+    }
 
-        // Process all filters normally first
-        if (event.filters) {
-            Object.keys(event.filters).forEach(key => {
-                if (event.filters[key].value !== null && event.filters[key].value !== undefined) {
-                    switch (key) {
-                        case 'name':
+    // Build query parameters - Remove email filtering from server side for venue owners
+    // Let server return all venues and we'll filter client-side
+    let query = new URLSearchParams({
+        admin: 'true',
+        pageSize: '1000', // Get more records to ensure we catch all venues for this owner
+        pageNumber: '1',
+        filterByDisable: 'false'
+    });
+
+    // Handle search by date range if selected
+    if (this.searchby && this.startDate && this.endDate) {
+        query.set('filterByDate', this.searchby.value);
+        query.set('filterByStartDate', moment(this.startDate).format('YYYY-MM-DD'));
+        query.set('filterByEndDate', moment(this.endDate).format('YYYY-MM-DD'));
+    }
+
+    // Process filters - but skip email filter for venue owners (we'll handle it client-side)
+    if (event.filters) {
+        Object.keys(event.filters).forEach(key => {
+            if (event.filters[key].value !== null && event.filters[key].value !== undefined) {
+                switch (key) {
+                    case 'name':
+                        // For venue owners, don't send name filter to server, handle client-side
+                        if (!isVenueOwner) {
                             query.set('filterByName', event.filters[key].value);
-                            break;
-                        case 'email':
+                        }
+                        break;
+                    case 'email':
+                        // Never send email filter to server for venue owners
+                        if (!isVenueOwner) {
                             query.set('filterByEmail', event.filters[key].value);
-                            break;
-                        case 'cityname':
+                        }
+                        break;
+                    case 'cityname':
+                        if (!isVenueOwner) {
                             query.set('filterByCity', event.filters[key].value);
-                            break;
-                        case 'statename':
+                        }
+                        break;
+                    case 'statename':
+                        if (!isVenueOwner) {
                             query.set('filterByState', event.filters[key].value);
-                            break;
-                        case 'zipcode':
+                        }
+                        break;
+                    case 'zipcode':
+                        if (!isVenueOwner) {
                             query.set('filterByZipcode', event.filters[key].value);
-                            break;
-                        case 'status':
-                            if (event.filters[key].value !== null) {
-                                query.set('filterByStatus', event.filters[key].value);
-                            }
-                            break;
-                        case 'assured':
-                            if (event.filters[key].value !== null) {
-                                query.set('filterByAssured', event.filters[key].value);
-                            }
-                            break;
-                    }
+                        }
+                        break;
+                    case 'status':
+                        if (event.filters[key].value !== null && !isVenueOwner) {
+                            query.set('filterByStatus', event.filters[key].value);
+                        }
+                        break;
+                    case 'assured':
+                        if (event.filters[key].value !== null && !isVenueOwner) {
+                            query.set('filterByAssured', event.filters[key].value);
+                        }
+                        break;
                 }
-            });
-        }
+            }
+        });
+    }
 
-        // If user is a venue owner, override any email filter with their email
-        if (isVenueOwner && userData.userdata.email) {
-            query.set('filterByEmail', userData.userdata.email);
-        }
+    // Handle sorting
+    if (event.sortField && event.sortOrder) {
+        query.set('sortBy', event.sortField);
+        query.set('orderBy', event.sortOrder === 1 ? 'ASC' : 'DESC');
+    }
 
-        // Handle sorting
-        if (event.sortField && event.sortOrder) {
-            query.set('sortBy', event.sortField);
-            query.set('orderBy', event.sortOrder === 1 ? 'ASC' : 'DESC');
-        }
+    const queryString = '?' + query.toString();
+    console.log('Final query string:', queryString);
 
-        const queryString = '?' + query.toString();
+    this.VenueService.getVenueListForFilter(queryString).subscribe(
+        (data) => {
+            this.loading = false;
+            console.log('API Response:', data);
 
-        this.VenueService.getVenueListForFilter(queryString).subscribe(
-            (data) => {
-                this.loading = false;
+            // Get all venues from response
+            let venues = data.data.items || [];
 
-                // First, get all non-disabled venues from the response
-                let allEnabledVenues = data.data.items.filter(venue => !venue.disable);
+            // Filter out disabled venues
+            venues = venues.filter(venue => !venue.disable);
 
-                // Then apply our status filter if needed
-                let venues = allEnabledVenues.filter(venue => {
-                    // If there's a status filter active, respect it
-                    if (event.filters && event.filters.status && event.filters.status.value !== null) {
-                        return venue.status === event.filters.status.value;
+            // CRITICAL: Client-side email filtering for venue owners FIRST
+            if (isVenueOwner && userEmail) {
+
+                venues = venues.filter(venue => {
+                    if (!venue.email) {
+                        console.log(`Venue ${venue.name} has no email`);
+                        return false;
                     }
 
-                    // Otherwise, only show active venues by default
-                    return venue.status === true;
+                    const venueEmail = venue.email.trim();
+                    const userEmailLower = userEmail.toLowerCase();
+                    const venueEmailLower = venueEmail.toLowerCase();
+
+                    const matches = userEmailLower === venueEmailLower;
+                    if (matches) {
+                        console.log(`✓ MATCH FOUND: ${venue.name}`);
+                    }
+
+                    return matches;
                 });
 
-                // Apply other client-side filtering if needed
-                if (event.filters) {
-                    Object.keys(event.filters).forEach(key => {
-                        if (key !== 'status' && event.filters[key].value !== null && event.filters[key].value !== undefined) {
-                            const filterValue = event.filters[key].value.toString().toLowerCase();
-                            venues = venues.filter(venue => {
-                                if (venue[key] === undefined) return true;
-                                return venue[key].toString().toLowerCase().includes(filterValue);
-                            });
+                if (venues.length === 0) {
+                    console.log('No venues found for email:', userEmail);
+                    console.log('Available venue emails:', data.data.items.map(v => v.email).filter(e => e));
+                }
+            }
+
+            // Apply status filter (show only active by default unless status filter is explicitly set)
+            if (event.filters && event.filters.status && event.filters.status.value !== null) {
+                venues = venues.filter(venue => venue.status === event.filters.status.value);
+            } else {
+                venues = venues.filter(venue => venue.status === true);
+            }
+
+            if (event.filters) {
+                Object.keys(event.filters).forEach(key => {
+                    if (event.filters[key].value !== null && event.filters[key].value !== undefined) {
+                        const filterValue = event.filters[key].value.toString().toLowerCase();
+
+                        switch (key) {
+                            case 'name':
+                                if (isVenueOwner || !query.has('filterByName')) {
+                                    venues = venues.filter(venue => {
+                                        if (!venue.name) return false;
+                                        return venue.name.toLowerCase().includes(filterValue);
+                                    });
+                                }
+                                break;
+                            case 'cityname':
+                                if (isVenueOwner || !query.has('filterByCity')) {
+                                    venues = venues.filter(venue => {
+                                        if (!venue.cityname) return false;
+                                        return venue.cityname.toLowerCase().includes(filterValue);
+                                    });
+                                }
+                                break;
+                            case 'statename':
+                                if (isVenueOwner || !query.has('filterByState')) {
+                                    venues = venues.filter(venue => {
+                                        if (!venue.statename) return false;
+                                        return venue.statename.toLowerCase().includes(filterValue);
+                                    });
+                                }
+                                break;
+                            case 'zipcode':
+                                if (isVenueOwner || !query.has('filterByZipcode')) {
+                                    venues = venues.filter(venue => {
+                                        if (!venue.zipcode) return false;
+                                        return venue.zipcode.toString().includes(filterValue);
+                                    });
+                                }
+                                break;
+                            case 'assured':
+                                if (isVenueOwner || !query.has('filterByAssured')) {
+                                    venues = venues.filter(venue => venue.assured === event.filters[key].value);
+                                }
+                                break;
                         }
-                    });
-                }
-
-                // Additional filter for venue owners
-                if (isVenueOwner && userData.userdata.email) {
-                    const userEmail = userData.userdata.email.toLowerCase();
-                    venues = venues.filter(venue => {
-                        return venue.email && venue.email.toLowerCase() === userEmail;
-                    });
-                }
-
-                // Handle venue owner special case
-                if (this.isVenueOwner && venues.length > 0) {
-                    this.venueList = [venues[0]];
-                    this.totalRecords = 0;
-                } else {
-                    // Apply sorting if needed
-                    if (event.sortField && event.sortOrder) {
-                        venues.sort((a, b) => {
-                            const valueA = a[event.sortField] || '';
-                            const valueB = b[event.sortField] || '';
-                            if (valueA < valueB) return event.sortOrder === 1 ? -1 : 1;
-                            if (valueA > valueB) return event.sortOrder === 1 ? 1 : -1;
-                            return 0;
-                        });
                     }
-
-                    this.venueList = venues;
-
-                    // Set the totalRecords to the actual filtered count
-                    // This ensures pagination properly reflects what's actually displayed
-                    this.totalRecords = venues.length;
-
-                    // Log for debugging
-                    console.log(`Showing ${venues.length} venues out of ${allEnabledVenues.length} enabled and ${data.data.totalCount} total`);
-                }
-            },
-            (err) => {
-                this.loading = false;
-                console.error('Error fetching venue list:', err);
-                this.messageService.add({
-                    key: 'toastmsg',
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'Failed to load venue list',
-                    life: 3000,
                 });
             }
-        );
-    }
+
+            // Handle client-side sorting if needed
+            if (event.sortField && event.sortOrder) {
+                venues.sort((a, b) => {
+                    const valueA = a[event.sortField] || '';
+                    const valueB = b[event.sortField] || '';
+
+                    // Handle different data types
+                    if (typeof valueA === 'string' && typeof valueB === 'string') {
+                        if (valueA.toLowerCase() < valueB.toLowerCase()) return event.sortOrder === 1 ? -1 : 1;
+                        if (valueA.toLowerCase() > valueB.toLowerCase()) return event.sortOrder === 1 ? 1 : -1;
+                    } else {
+                        if (valueA < valueB) return event.sortOrder === 1 ? -1 : 1;
+                        if (valueA > valueB) return event.sortOrder === 1 ? 1 : -1;
+                    }
+                    return 0;
+                });
+            }
+
+            // Apply client-side pagination for venue owners
+            const startIndex = (event.first || 0);
+            const endIndex = startIndex + (event.rows || 10);
+            const paginatedVenues = isVenueOwner ? venues.slice(startIndex, endIndex) : venues;
+
+            this.venueList = paginatedVenues;
+            this.totalRecords = venues.length; // Total after filtering
+
+
+            // Special handling for venue owners - show message if no venues found
+            if (isVenueOwner && venues.length === 0) {
+                this.messageService.add({
+                    key: 'toastmsg',
+                    severity: 'info',
+                    summary: 'No Venues Found',
+                    detail: `No venues found for email: ${userEmail}. Please contact support if you believe this is an error.`,
+                    life: 8000,
+                });
+            } else if (isVenueOwner && venues.length > 0) {
+                console.log(`SUCCESS: Found ${venues.length} venue(s) for venue owner`);
+            }
+        },
+        (err) => {
+            this.loading = false;
+            console.error('Error fetching venue list:', err);
+            this.messageService.add({
+                key: 'toastmsg',
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to load venue list',
+                life: 3000,
+            });
+        }
+    );
+}
 
     clear() {
         this.startDate = null;
