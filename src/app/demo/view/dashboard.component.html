@@ -1,515 +1,255 @@
+<!-- dashboard.component.html -->
 <div class="layout-dashboard">
     <div class="p-grid">
         <div class="p-col-12">
             <div class="notification">
-                <h6>👋  Hello! Welcome to Eazyvenue</h6>
+                <h6>👋 Hello! Welcome to Eazyvenue</h6>
             </div>
         </div>
+    </div>
 
-        <!-- <div class="p-col-12">
-            <div class="p-grid" style="margin: -1rem;">
-                <div class="p-col">
-                    <div class="card overview-box white">
-                        <div class="overview-info">
-                            <h6>Graphics</h6>
-                            <h1>18%</h1>
-                        </div>
-                        <i class="pi pi-image"></i>
-                    </div>
-                </div>
-                <div class="p-col">
-                    <div class="card overview-box blue">
-                        <div class="overview-info">
-                            <h6>New users (Today)</h6>
-                            <h1>32</h1>
-                        </div>
-                        <i class="pi pi-users"></i>
-                    </div>
-                </div>
-                <div class="p-col">
-                    <div class="card overview-box gray">
-                        <div class="overview-info">
-                            <h6>Uptime</h6>
-                            <h1>5h12m</h1>
-                        </div>
-                        <i class="pi pi-globe"></i>
-                    </div>
-                </div>
-                <div class="p-col">
-                    <div class="card overview-box darkgray">
-                        <div class="overview-info">
-                            <h6>Text coverage</h6>
-                            <h1>96%</h1>
-                        </div>
-                        <i class="pi pi-th-large"></i>
-                    </div>
-                </div>
-                <div class="p-col">
-                    <div class="card overview-box orange">
-                        <div class="overview-info">
-                            <h6>Cloud users</h6>
-                            <h1>4216</h1>
-                        </div>
-                        <i class="pi pi-cloud"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Admin-only section for pending venue approvals -->
+    <div class="p-grid" *ngIf="isAdmin">
+        <div class="p-col-12">
+            <div class="card">
+                <h5>
+                    <i class="pi pi-clock"></i>
+                    Pending Venue Approvals
+                    <span class="p-tag p-tag-warning" *ngIf="pendingVenues.length > 0">
+                        {{ pendingVenues.length }}
+                    </span>
+                </h5>
 
-        <div class="p-col-12 p-md-6 p-xl-3">
-            <div class="card timeline">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h6>Timeline</h6>
-                        <p class="subtitle">All servers</p>
-                    </div>
+                <div *ngIf="loading" class="p-text-center p-p-4">
+                    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+                    <p>Loading pending venues...</p>
                 </div>
-                <ul>
-                    <li class="blue">
-                        <i class="pi pi-circle-on"></i>
-                        <div class="event-content">
-                            <span class="event-title">New Sale</span>
-                            <span>Richard Jones has purchased a blue t-shirt for $79.</span>
-                            <span class="time">3 mins ago</span>
-                        </div>
-                    </li>
-                    <li class="blue">
-                        <i class="pi pi-circle-on"></i>
-                        <div class="event-content">
-                            <span class="event-title">Log</span>
-                            <span>AWS settings are updated by admin@freya.com</span>
-                            <span class="time">12 mins ago</span>
-                        </div>
-                    </li>
-                    <li class="green">
-                        <i class="pi pi-circle-on"></i>
-                        <div class="event-content">
-                            <span class="event-title">Capacity</span>
-                            <span>Reached 80% CPU capacity in Ireland. Automatic
-                                        capacity increase initiated.</span>
-                            <span class="time">1:30PM</span>
-                        </div>
-                    </li>
-                    <li class="orange">
-                        <i class="pi pi-circle-on"></i>
-                        <div class="event-content">
-                            <span class="event-title">Capacity</span>
-                            <span>Reached 60% CPU capacity in Ireland.</span>
-                            <span class="time">9:40AM</span>
-                        </div>
-                    </li>
-                    <li class="blue">
-                        <i class="pi pi-circle-on"></i>
-                        <div class="event-content">
-                            <span class="event-title">Billing</span>
-                            <span>Upgraded plan, 10users yearly to 20users yearly</span>
-                            <span class="time">7:42AM</span>
-                        </div>
-                    </li>
-                    <li class="blue">
-                        <i class="pi pi-circle-on"></i>
-                        <div class="event-content">
-                            <span class="event-title">New Sale</span>
-                            <span>Richard Jones has purchased a blue t-shirt for $79.</span>
-                            <span class="time">3 mins ago</span>
-                        </div>
-                    </li>
-                </ul>
-                <a href="#">See all</a>
-            </div>
-        </div>
 
+                <div *ngIf="!loading && pendingVenues.length === 0" class="p-text-center p-p-4">
+                    <i class="pi pi-check-circle" style="font-size: 3rem; color: #4CAF50;"></i>
+                    <h6>No pending approvals</h6>
+                    <p class="p-text-secondary">All venues have been reviewed!</p>
+                </div>
 
-        <div class="p-col-12 p-md-6">
-            <div class="p-grid">
-                <div class="p-col-12">
-                    <div class="card device-status">
-                        <div class="p-grid">
-                            <div class="p-col-12 p-xl-9">
-                                <div class="card-header">
-                                    <div class="card-title">
-                                        <h6>Total connected device change for last 4 days</h6>
-                                        <p class="subtitle">Line graph</p>
+                <div *ngIf="!loading && pendingVenues.length > 0">
+                    <p-dataView
+                        [value]="pendingVenues"
+                        layout="grid"
+                        [paginator]="true"
+                        [rows]="6"
+                        [sortField]="'createdAt'"
+                        [sortOrder]="-1">
+
+                        <ng-template let-venue pTemplate="gridItem">
+                            <div class="p-col-12 p-md-6 p-lg-4 p-mb-3">
+                                <div class="venue-approval-card p-shadow-2 p-border-round">
+                                    <div class="venue-approval-header p-p-3 p-pb-0">
+                                        <div class="p-d-flex p-jc-between p-ai-center">
+                                            <h6 class="p-m-0">{{ venue.name }}</h6>
+                                            <span class="p-tag p-tag-warning">
+                                                <i class="pi pi-clock p-mr-1"></i>
+                                                Pending
+                                            </span>
+                                        </div>
+                                        <small class="p-text-secondary">
+                                            Submitted: {{ venue.createdAt | date:'medium' }}
+                                        </small>
                                     </div>
-                                </div>
-                                <p class="content">Labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud ercitation ullamco laboris nisi..</p>
-                                <div class="progress active">
-                                    <span>Today</span>
-                                    <p-progressBar [value]="100" [showValue]="false"></p-progressBar>
-                                    <span>2100</span>
-                                </div>
-                                <div class="progress">
-                                    <span>Fri</span>
-                                    <p-progressBar [value]="20" [showValue]="false"></p-progressBar>
-                                    <span>1100</span>
-                                </div>
-                                <div class="progress">
-                                    <span>Thu</span>
-                                    <p-progressBar [value]="50" [showValue]="false"></p-progressBar>
-                                    <span>1203</span>
-                                </div>
-                                <div class="progress">
-                                    <span>Wed</span>
-                                    <p-progressBar [value]="100" [showValue]="false"></p-progressBar>
-                                    <span>1316</span>
-                                </div>
-                                <a href="#">More</a>
-                            </div>
-                            <div class="p-col-12 p-xl-3">
-                                <div class="card-header">
-                                    <div class="card-title">
-                                        <h6>Devices</h6>
-                                        <p class="subtitle">Type</p>
-                                    </div>
-                                </div>
-                                <div class="p-grid p-nogutter">
-                                    <div class="p-col-3 p-xl-12">
-                                        <div class="device">
-                                            <span><span>1</span> iPhone</span>
-                                            <span class="status">22%</span>
+
+                                    <div class="venue-approval-content p-p-3">
+                                        <div class="p-mb-2">
+                                            <strong>Owner:</strong> {{ venue.ownerfirstName }} {{ venue.ownerlastName }}
+                                        </div>
+                                        <div class="p-mb-2">
+                                            <strong>Email:</strong> {{ venue.email }}
+                                        </div>
+                                        <div class="p-mb-2">
+                                            <strong>Location:</strong> {{ venue.cityname }}, {{ venue.statename }}
+                                        </div>
+                                        <div class="p-mb-2">
+                                            <strong>Capacity:</strong> {{ venue.capacity }} people
+                                        </div>
+                                        <div class="p-mb-3">
+                                            <strong>Price:</strong> ₹{{ venue.venuePrice | number }}
                                         </div>
                                     </div>
-                                    <div class="p-col-3 p-xl-12">
-                                        <div class="device">
-                                            <span><span>2</span> Galaxy S20</span>
-                                            <span class="status">18%</span>
+
+                                    <div class="venue-approval-actions p-p-3 p-pt-0">
+                                        <div class="p-d-flex p-jc-between p-ai-center">
+                                            <p-button
+                                                label="View Details"
+                                                icon="pi pi-eye"
+                                                class="p-button-text p-button-sm"
+                                                (onClick)="viewVenueDetails(venue)">
+                                            </p-button>
+
+                                            <div class="p-d-flex p-ai-center">
+                                                <p-button
+                                                    label="Reject"
+                                                    icon="pi pi-times"
+                                                    class="p-button-danger p-button-sm p-mr-2"
+                                                    (onClick)="rejectVenue(venue)">
+                                                </p-button>
+
+                                                <p-button
+                                                    label="Approve"
+                                                    icon="pi pi-check"
+                                                    class="p-button-success p-button-sm"
+                                                    (onClick)="approveVenue(venue)">
+                                                </p-button>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="p-col-3 p-xl-12">
-                                        <div class="device">
-                                            <span><span>3</span> Macbook</span>
-                                            <span class="status">13%</span>
-                                        </div>
-                                    </div>
-                                    <div class="p-col-3 p-xl-12">
-                                        <div class="device">
-                                            <span><span>4</span> Macbook Air</span>
-                                            <span class="status">11%</span>
-                                        </div>
-                                    </div>
-                                    <a href="#">See all</a>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </ng-template>
+                    </p-dataView>
                 </div>
-                <div class="p-col-12  desktop-teams">
-                    <div class="card team">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <h6>Team</h6>
-                                <p class="subtitle">22 People</p>
-                            </div>
-                        </div>
-                        <div class="peoples">
-                            <img src="assets/demo/images/dashboard/avatar/avatar-1.png" alt="freya-layout" />
-                            <img src="assets/demo/images/dashboard/avatar/avatar-2.png" alt="freya-layout" />
-                            <img src="assets/demo/images/dashboard/avatar/avatar-3.png" alt="freya-layout" />
-                            <img src="assets/demo/images/dashboard/avatar/avatar-4.png" alt="freya-layout" />
-                            <img src="assets/demo/images/dashboard/avatar/avatar-5.png" alt="freya-layout" />
-                            <img src="assets/demo/images/dashboard/avatar/avatar-6.png" alt="freya-layout" />
-                            <div class="no-picture" style="background: #BAE6FF;"><span>AT</span></div>
-                            <img src="assets/demo/images/dashboard/avatar/avatar-7.png" alt="freya-layout" />
-                            <img src="assets/demo/images/dashboard/avatar/avatar-7.png" alt="freya-layout" />
-                            <div class="no-picture "><span>+18</span></div>
-                        </div>
-                    </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other dashboard content can go here -->
+    <div class="p-grid">
+        <div class="p-col-12 p-md-6 p-lg-3">
+            <div class="overview-box sales">
+                <div class="overview-box-icon">
+                    <i class="pi pi-building"></i>
+                </div>
+                <div class="overview-box-content">
+                    <div class="overview-box-title">Total Venues</div>
+                    <div class="overview-box-value">150</div>
                 </div>
             </div>
         </div>
 
-        <div class="p-col-12 p-md-8 p-xl-3">
-            <div class="card operations">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h6>Cloud operations</h6>
-                        <p class="subtitle">Europe 1</p>
-                    </div>
-                    <p class="subtitle">8 May</p>
+        <div class="p-col-12 p-md-6 p-lg-3">
+            <div class="overview-box orders">
+                <div class="overview-box-icon">
+                    <i class="pi pi-calendar"></i>
                 </div>
-                <p-chart type="line" [data]="chart1" [options]="chartOptions1" [responsive]="true" style="max-height: 160px;"></p-chart>
-                <div class="insights">
-                    <div class="insight-header">
-                        <img src="assets/demo/images/dashboard/subtract.svg" alt="freya-layout" />
-                        <h6>Insights</h6>
-                    </div>
-                    <ul>
-                        <li>
-                            <span><span>1</span> Increase CPU load levels</span>
-                            <span class="p-tag p-tag-warning">12%</span>
-                        </li>
-                        <li>
-                            <span><span>2</span> 28% increase on thanks mes./w..</span>
-                            <span class="p-tag p-tag-success">UP!</span>
-                        </li>
-                        <a href="#">See all(4)</a>
-                    </ul>
-
-                </div>
-                <button pButton pRipple type="button" label="Go to full stock page" class="p-button-outlined"></button>
-            </div>
-        </div>
-
-        <div class="p-col-12 p-md-4 p-xl-3 mobile-teams">
-            <div class="card team">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h6>Team</h6>
-                        <p class="subtitle">22 People</p>
-                    </div>
-                </div>
-                <div class="peoples">
-                    <img src="assets/demo/images/dashboard/avatar/avatar-1.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-2.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-3.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-4.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-5.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-6.png" alt="freya-layout" />
-                    <div class="no-picture" style="background: #FFC3A2;"><span>TA</span></div>
-                    <img src="assets/demo/images/dashboard/avatar/avatar-7.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-7.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-1.png" alt="freya-layout" />
-                    <div class="no-picture" style="background: #FFDB7D;"><span>JH</span></div>
-                    <img src="assets/demo/images/dashboard/avatar/avatar-2.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-3.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-4.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-5.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-6.png" alt="freya-layout" />
-                    <div class="no-picture" style="background: #BAE6FF;"><span>SE</span></div>
-                    <img src="assets/demo/images/dashboard/avatar/avatar-7.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-7.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-1.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-2.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-3.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-4.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-5.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-6.png" alt="freya-layout" />
-                    <div class="no-picture" style="background: #91CC9D;"><span>TH</span></div>
-                    <img src="assets/demo/images/dashboard/avatar/avatar-7.png" alt="freya-layout" />
-                    <img src="assets/demo/images/dashboard/avatar/avatar-7.png" alt="freya-layout" />
-                    <div class="no-picture"><span>+18</span></div>
-                </div>
-                <a href="#">See all teams</a>
-            </div>
-        </div>
-
-        <div class="p-col-12 p-md-12 p-xl-8">
-            <div class="p-grid">
-                <div class="p-col-12">
-                    <div class="card chart">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <h6>Nasdaq 100</h6>
-                                <p class="subtitle">Line graph</p>
-                            </div>
-                        </div>
-                        <p-chart type="line" [data]="chart2" [options]="chartOptions2" [responsive]="true" style="max-height: 330px;"></p-chart>
-                    </div>
-                </div>
-                <div class="p-col-12  p-md-5">
-                    <div class="card map">
-                        <img src="assets/demo/images/dashboard/asset-map.png" alt="freya-layout" />
-                        <div class="map-content">
-                            <h6>Last active region (data traffic)</h6>
-                            <div class="city">
-                                <span><span>1</span> Tokyo</span>
-                                <span class="status">22%</span>
-                            </div>
-                            <div class="city">
-                                <span><span>2</span> London</span>
-                                <span class="status">22%</span>
-                            </div>
-                            <a href="#">See all</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-col-12 p-md-7">
-                    <div class="card schedule">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <h6>Schedule</h6>
-                                <p class="subtitle">Europe office</p>
-                            </div>
-                            <p class="subtitle">Today</p>
-                        </div>
-                        <p>3 events, 3h 30m</p>
-                        <ul>
-                            <li>
-                                <div class="schedule-header">
-                                    <h6>Daily talks over Zoom w/ teamA</h6>
-                                    <span>8:00 - 9:00</span>
-                                </div>
-                                <a href="#">Join over Zoom</a>
-                                <span>6 participiants (4 accepted)</span>
-                            </li>
-                            <li>
-                                <div class="schedule-header">
-                                    <h6>New Project Kick, v1</h6>
-                                    <span>8:00 - 9:00</span>
-                                </div>
-                                <a href="#">Join over Zoom</a>
-                                <span>3 participiants (all accepted)</span>
-                            </li>
-                            <li>
-                                <div class="schedule-header">
-                                    <h6>Grooming btw TeamA and SR1E</h6>
-                                    <span>8:00 - 9:00</span>
-                                </div>
-                                <a href="#">Master room</a>
-                                <span>12 participiants (11 accepted)</span>
-                            </li>
-                            <li>
-                                <div class="schedule-header">
-                                    <h6>New Project Kick, v2</h6>
-                                    <span>12:00 - 14:00</span>
-                                </div>
-                                <a href="#">Master room</a>
-                                <span>5 participiants (1 accepted)</span>
-                            </li>
-                        </ul>
-                        <a href="#">Go to full schedule</a>
-                    </div>
+                <div class="overview-box-content">
+                    <div class="overview-box-title">Bookings</div>
+                    <div class="overview-box-value">45</div>
                 </div>
             </div>
         </div>
-        <div class="p-col-12 p-xl-4">
-            <div class="p-grid">
-                <div class="p-col-12 p-md-6 p-xl-12">
-                    <div class="card statistics">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <h6>Statistics</h6>
-                                <p class="subtitle">Europe 1</p>
-                            </div>
-                            <p class="subtitle">8 May</p>
-                        </div>
-                        <div class="p-grid">
-                            <div class="p-col-12 p-md-6">
-                                <div class="statistic-item">
-                                    <div class="item-title">
-                                        <span>🐳</span>
-                                        <h5>99,99%</h5>
-                                    </div>
-                                    <h6>Uptime/year</h6>
-                                </div>
-                            </div>
-                            <div class="p-col-12 p-md-6">
-                                <div class="statistic-item">
-                                    <div class="item-title">
-                                        <span>🖥 </span>
-                                        <h5>2K</h5>
-                                    </div>
-                                    <h6>Connected devices</h6>
-                                </div>
-                            </div>
-                            <div class="p-col-12 p-md-6">
-                                <div class="statistic-item">
-                                    <div class="item-title">
-                                        <span>🎁 </span>
-                                        <h5>244</h5>
-                                    </div>
-                                    <h6>Thanks messages received</h6>
-                                </div>
-                            </div>
-                            <div class="p-col-12 p-md-6">
-                                <div class="statistic-item">
-                                    <div class="item-title">
-                                        <span>💵 </span>
-                                        <h5>4812$</h5>
-                                    </div>
-                                    <h6>Earnings/month</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+        <div class="p-col-12 p-md-6 p-lg-3">
+            <div class="overview-box users">
+                <div class="overview-box-icon">
+                    <i class="pi pi-users"></i>
                 </div>
-                <div class="p-col-12 p-md-6 p-xl-12">
-                    <div class="card stocks">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <h6>👓 Stock watchlist (12)</h6>
-                                <p class="subtitle">Today</p>
-                            </div>
-                            <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-secondary p-button-text p-button-rounded"></button>
-                        </div>
-                        <ul>
-                            <li class="down">
-                                <div class="stock-name">
-                                    <h6>AMD</h6>
-                                </div>
-                                <img src="assets/demo/images/dashboard/mini-graph-1.svg" alt="freya-layout" />
-                                <div class="stock-price">
-                                    <i class="pi pi-arrow-down"></i>
-                                    <h6>54.20</h6>
-                                </div>
-                                <div class="stock-status">
-                                    <span>0.57%</span>
-                                    <span>4.01</span>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="stock-name">
-                                    <h6>MSFT</h6>
-                                </div>
-                                <img src="assets/demo/images/dashboard/mini-graph-2.svg" alt="freya-layout" />
-                                <div class="stock-price">
-                                    <i class="pi pi-arrow-down"></i>
-                                    <h6>183.16</h6>
-                                </div>
-                                <div class="stock-status">
-                                    <span>1.46%</span>
-                                    <span>4.01</span>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="stock-name">
-                                    <h6>AAPL</h6>
-                                </div>
-                                <img src="assets/demo/images/dashboard/mini-graph-3.svg" alt="freya-layout" />
-                                <div class="stock-price">
-                                    <i class="pi pi-arrow-down"></i>
-                                    <h6>307.20</h6>
-                                </div>
-                                <div class="stock-status">
-                                    <span>0.59%</span>
-                                    <span>4.01</span>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="stock-name">
-                                    <h6>TSLA</h6>
-                                </div>
-                                <img src="assets/demo/images/dashboard/mini-graph-4.svg" alt="freya-layout" />
-                                <div class="stock-price">
-                                    <i class="pi pi-arrow-down"></i>
-                                    <h6>799.17</h6>
-                                </div>
-                                <div class="stock-status">
-                                    <span>0.52%</span>
-                                    <span>4.01</span>
-                                </div>
-                            </li>
-                            <li class="same">
-                                <div class="stock-name">
-                                    <h6>AMZN</h6>
-                                </div>
-                                <img src="assets/demo/images/dashboard/mini-graph-5.svg" alt="freya-layout" />
-                                <div class="stock-price">
-                                    <i class="pi pi-minus"></i>
-                                    <h6>799.17</h6>
-                                </div>
-                                <div class="stock-status">
-                                    <span>0.52%</span>
-                                    <span>4.01</span>
-                                </div>
-                            </li>
-                        </ul>
-                        <a href="#">Show all</a>
-                        <button pButton pRipple type="button" label="Go to full stock page"></button>
-                    </div>
+                <div class="overview-box-content">
+                    <div class="overview-box-title">Venue Owners</div>
+                    <div class="overview-box-value">32</div>
                 </div>
             </div>
+        </div>
 
-        </div> -->
+        <div class="p-col-12 p-md-6 p-lg-3">
+            <div class="overview-box revenue">
+                <div class="overview-box-icon">
+                    <i class="pi pi-dollar"></i>
+                </div>
+                <div class="overview-box-content">
+                    <div class="overview-box-title">Revenue</div>
+                    <div class="overview-box-value">₹2.5L</div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Toast for notifications -->
+<p-toast key="toastmsg"></p-toast>
+
+<!-- Confirmation dialog -->
+<p-confirmDialog
+    [style]="{width: '450px'}"
+    header="Confirmation"
+    icon="pi pi-exclamation-triangle">
+</p-confirmDialog>
+
+<style>
+.venue-approval-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.venue-approval-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.venue-approval-header {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.overview-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.overview-box-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.sales .overview-box-icon {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.orders .overview-box-icon {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.users .overview-box-icon {
+    background: #e8f5e8;
+    color: #388e3c;
+}
+
+.revenue .overview-box-icon {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.overview-box-title {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.overview-box-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.notification {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.notification h6 {
+    margin: 0;
+    font-size: 1rem;
+}
+</style>

@@ -42,6 +42,7 @@ import { SubareaService } from 'src/app/services/subarea.service';
 import { RazorpayService } from 'src/app/services/razorpay.service';
 import { Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
+declare var google: any;
 
 declare var Razorpay;
 
@@ -117,6 +118,12 @@ export class VenueDetailsComponent implements OnInit {
     val5: number;
     msg: string;
     products: Product[];
+    map: any;
+    marker: any;
+    venueCoordinates: { lat: number; lng: number } | null = null;
+    mapLoaded = false;
+    mapError = false;
+    venueMapUrl = '';
     carouselResponsiveOptions: any[] = [
         {
             breakpoint: '1024px',
@@ -307,6 +314,8 @@ export class VenueDetailsComponent implements OnInit {
     mobileNumber: any;
     offerPaymentValue25_percent: number = 0;
     paymentAmount: any;
+    similarVenues: any[] = [];
+@ViewChild('similarVenuesContainer') similarVenuesContainer!: ElementRef;
     @ViewChild('paginator', { static: true }) paginator: Paginator;
     @ViewChild('searchCalendar', { static: true }) datePicker;
     constructor(
@@ -685,7 +694,86 @@ export class VenueDetailsComponent implements OnInit {
 
     checkScreenSize() {
         this.isMobile = window.innerWidth <= 768;
+    }
+
+getSimilarVenues(): void {
+  if (!this.venueDetails?.id) return;
+
+  const categoryId = this.venueDetails.categories?.[0]?.id;
+  const cityCode = this.venueDetails.citycode;
+
+  let query = `?assured=true&disabled=false&pageSize=10&pageNumber=1&excludeVenueId=${this.venueDetails.id}`;
+
+  if (categoryId) {
+    query += `&categoryId=${categoryId}`;
+  }
+  if (cityCode) {
+    query += `&citycode=${cityCode}`;
+  }
+
+  this.venueService.getVenueListForFilter(query).subscribe({
+    next: (data) => {
+      if (data?.data?.items) {
+        this.similarVenues = data.data.items.slice(0, 10).map(venue => ({
+          id: venue.id,
+          name: venue.name,
+          subarea: venue.subarea,
+          cityname: venue.cityname,
+          venueImage: venue.venueImage,
+          minPrice: this.calculateMinPrice(venue)
+        }));
       }
+    },
+    error: (err) => {
+      console.error('Error fetching similar venues:', err);
+      this.similarVenues = [];
+    }
+  });
+}
+
+// Optimized helper methods
+trackByVenueId(index: number, venue: any): any {
+  return venue?.id || index;
+}
+
+getVenueImage(venue: any): string {
+  return venue?.venueImage?.[0]?.image || this.staticPath + 'default-venue.jpg';
+}
+
+
+
+getVenueLocation(venue: any): string {
+  if (venue.subarea && venue.cityname) {
+    return `${venue.subarea}, ${venue.cityname}`;
+  }
+  return venue.cityname || venue.subarea || 'Location not available';
+}
+
+calculateMinPrice(venue: any): number {
+  const priceArray: number[] = [];
+
+  if (venue.foodMenuType) {
+    const menuTypes = ['jainFood', 'mixFood', 'non_veg', 'veg_food'];
+
+    menuTypes.forEach(type => {
+      if (venue.foodMenuType[type]?.length) {
+        venue.foodMenuType[type].forEach((item: any) => {
+          if (item.value > 0) {
+            priceArray.push(item.value);
+          }
+        });
+      }
+    });
+  }
+
+  return priceArray.length > 0 ? Math.min(...priceArray) : 0;
+}
+
+navigateToVenue(venueId: number): void {
+  if (venueId) {
+    this.router.navigate(['/venue-details', venueId]);
+  }
+}
 
     onSubmitNumber(mode) {
         this.submitted = true;
@@ -850,7 +938,7 @@ export class VenueDetailsComponent implements OnInit {
                 // this.messageService.add({ key: 'usertoastmsg', severity: 'error', summary: err.error.error, detail: err.error.error, life: 6000 });
             }
         );
-       
+
     }
     resendOtp() {
         this.otp = '';
@@ -963,6 +1051,129 @@ export class VenueDetailsComponent implements OnInit {
             (error) => {}
         );
     }
+
+    async initializeMap(): Promise<void> {
+        try {
+            const address = `${this.venueDetails.subarea}, ${this.venueDetails.cityname}, ${this.venueDetails.statename}, India`;
+
+            // Generate map URL for sharing
+            this.venueMapUrl = this.venueService.generateMapsUrl(this.venueDetails.name, address);
+
+            // Get coordinates
+            const location = await this.venueService.getGeocodedLocation(address);
+            this.venueCoordinates = { lat: location.lat, lng: location.lng };
+
+            // Initialize map
+            setTimeout(() => {
+                this.createMap();
+            }, 100);
+
+        } catch (error) {
+            console.error('Error initializing map:', error);
+            this.mapError = true;
+            // Fallback to basic map URL
+            this.venueMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(this.venueDetails.cityname)}`;
+        }
+    }
+
+    /**
+     * Create Google Map instance
+     */
+    createMap(): void {
+        const mapElement = document.getElementById('venue-map');
+        if (!mapElement || !this.venueCoordinates) {
+            return;
+        }
+
+        const mapOptions = {
+            center: this.venueCoordinates,
+            zoom: 15,
+            mapTypeId: 'roadmap',
+            disableDefaultUI: false,
+            zoomControl: true,
+            streetViewControl: true,
+            fullscreenControl: true
+        };
+
+        this.map = new google.maps.Map(mapElement, mapOptions);
+
+        // Add marker for venue
+        this.marker = new google.maps.Marker({
+            position: this.venueCoordinates,
+            map: this.map,
+            title: this.venueDetails.name,
+            animation: google.maps.Animation.DROP
+        });
+
+        // Add info window
+        const infoWindow = new google.maps.InfoWindow({
+            content: `
+                <div style="padding: 10px; max-width: 300px;">
+                    <h4 style="margin: 0 0 10px 0; color: #333;">${this.venueDetails.name}</h4>
+                    <p style="margin: 0 0 5px 0; color: #666;">
+                        <strong>Location:</strong> Near ${this.venueDetails.subarea}<br>
+                        ${this.venueDetails.cityname}, ${this.venueDetails.statename}
+                    </p>
+                    <p style="margin: 0 0 5px 0; color: #666;">
+                        <strong>Capacity:</strong> ${this.venueDetails.capacity} people
+                    </p>
+                    <p style="margin: 0; color: #666;">
+                        <strong>Rating:</strong> ⭐ ${this.venueDetails.googleRating}/5
+                    </p>
+                </div>
+            `
+        });
+
+        // Open info window on marker click
+        this.marker.addListener('click', () => {
+            infoWindow.open(this.map, this.marker);
+        });
+
+        this.mapLoaded = true;
+    }
+
+    /**
+     * Open venue location in Google Maps app/website
+     */
+    openInGoogleMaps(): void {
+        if (this.venueMapUrl) {
+            window.open(this.venueMapUrl, '_blank');
+        }
+    }
+
+    /**
+     * Share venue details on WhatsApp
+     */
+    shareVenueOnWhatsApp(): void {
+        if (this.venueDetails) {
+            this.venueService.shareOnWhatsApp(this.venueDetails, this.venueMapUrl);
+        }
+    }
+
+    /**
+     * Copy map link to clipboard
+     */
+    copyMapLink(): void {
+        if (this.venueMapUrl) {
+            navigator.clipboard.writeText(this.venueMapUrl).then(() => {
+                // You can show a toast notification here
+                alert('Map link copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+    }
+
+    /**
+     * Get directions to venue
+     */
+    getDirections(): void {
+        if (this.venueCoordinates) {
+            const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${this.venueCoordinates.lat},${this.venueCoordinates.lng}`;
+            window.open(directionsUrl, '_blank');
+        }
+    }
+
     getVenueDetails() {
         this.venueService.getVenueDetailsByMeta(this.metaUrl).subscribe(
             // this.venueService.getVenueDetails(this.id).subscribe(
@@ -1300,6 +1511,7 @@ export class VenueDetailsComponent implements OnInit {
                 this.getCategoryBySlug();
                 await this.getSubareas();
                 await this.getCities();
+                await this.initializeMap();
                 if (!this.isLoggedIn) {
                     setTimeout(() => {
                         this.numberPopup = true;
@@ -1307,6 +1519,7 @@ export class VenueDetailsComponent implements OnInit {
                         this.otpthankyouPopup = false;
                     }, 4000);
                 }
+                setTimeout(() => this.getSimilarVenues(), 100);
             },
             (err) => {
                 this.errorMessage = err.error.message;

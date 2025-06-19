@@ -463,7 +463,22 @@ public metaDescription: string;
     addVenue() {
         this.submitted = true;
         if (this.venueForm.valid) {
+            // Get user data to check role
+            const userData = this.tokenStorageService.getUser();
+            const isVenueOwner = userData && userData.userdata && userData.userdata.rolename === 'venueowner';
+
             var venueData = this.venueForm.value;
+
+            if (isVenueOwner) {
+                venueData['status'] = false;  // inactive
+                venueData['assured'] = false; // not assured
+                venueData['pendingApproval'] = true; // flag for admin dashboard
+            } else {
+                // Admin can create active venues directly
+                venueData['status'] = venueData.status !== undefined ? venueData.status : true;
+                venueData['assured'] = venueData.assured !== undefined ? venueData.assured : false;
+                venueData['pendingApproval'] = false;
+            }
             this.venueImagesArray = [];
             if (this.venueImage != undefined) {
                 this.venueImage.forEach((element, index) => {

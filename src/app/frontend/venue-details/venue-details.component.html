@@ -1137,6 +1137,8 @@
                         </div>
                     </div>
                 </div>
+
+
                 <div class="col-lg-4 sidebar-right">
                     <p-toast key="toastMsg"></p-toast>
                     <div class="top-button">
@@ -1823,6 +1825,380 @@
         </div>
     </div>
 </div>
+<!-- HTML-Only Optimized Similar Venues Section with Horizontal Scroll -->
+<div class="similar-venues-section" *ngIf="similarVenues?.length">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="section-title">Similar Venues</h3>
+                <div class="similar-venues-wrapper">
+                    <div class="similar-venues-container"
+                         #similarVenuesContainer
+                         (scroll)="onSimilarVenuesScroll()"
+                         style="display: flex; overflow-x: auto; overflow-y: hidden; gap: 20px; padding: 10px 0; scroll-behavior: smooth;">
+
+                        <div class="venue-card"
+                             *ngFor="let venue of similarVenues; trackBy: trackByVenueId"
+                             (click)="getVenueDetails(venue.metaUrl)"
+                             style="flex: 0 0 280px; cursor: pointer; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s;"
+                             onmouseover="this.style.transform='translateY(-2px)'"
+                             onmouseout="this.style.transform='translateY(0)'">
+
+                            <!-- Optimized Image Display -->
+                            <div class="venue-image" style="height: 200px; overflow: hidden; position: relative;">
+                                <img *ngIf="venue.venueImage && venue.venueImage[0] && venue.venueImage[0].venue_image_src; else defaultImg"
+                                     [src]="venue.venueImage[0].venue_image_src"
+                                     [alt]="venue.name"
+                                     loading="lazy"
+                                     style="width: 100%; height: 100%; object-fit: cover;">
+
+                                <ng-template #defaultImg>
+                                    <div style="width: 100%; height: 100%; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                        <i class="pi pi-image" style="font-size: 2rem;"></i>
+                                    </div>
+                                </ng-template>
+
+                                <!-- Assured Badge -->
+                                <div class="listing-badges" style="position: absolute; top: 10px; left: 10px;" *ngIf="venue.assured">
+                                    <span class="listing-badge Assured" style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                        <i class="pi pi-check"></i> Assured
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="venue-info" style="padding: 15px;">
+                                <h5 class="venue-name" style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #333; line-height: 1.2;">
+                                    {{ venue.name }}
+                                </h5>
+
+                                <!-- Location with Icon -->
+                                <div class="category-icon" style="margin-bottom: 10px;">
+                                    <div class="location" style="display: flex; align-items: center; gap: 5px;">
+                                        <span class="icon">
+                                            <img src="assets/img/svg/location-icon.svg" style="width: 12px; height: 12px;" />
+                                        </span>
+                                        <span class="city" style="font-size: 13px; color: #666;">
+                                            <span *ngIf="venue.subarea">{{ venue.subarea }}</span>
+                                            <span *ngIf="venue.subarea && venue.cityname">, </span>
+                                            <span *ngIf="venue.cityname">{{ venue.cityname }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Price Information -->
+                                <div class="price-icons" style="margin-bottom: 10px;">
+                                    <div class="price-div">
+                                        <div class="acr-listing-icons pt-0">
+                                            <div class="acr-listing-icon" style="display: flex; align-items: center; gap: 5px; font-size: 13px; color: #666;">
+                                                <i class="pi pi-users" style="font-size: 12px;"></i>
+                                                Per Person:
+                                                <span *ngIf="venue.minPrice && venue.minPrice > 0"
+                                                      class="acr-listing-icon-value"
+                                                      style="font-weight: 600; color: #333;">
+                                                    ₹{{ venue.minPrice }}
+                                                </span>
+                                                <span *ngIf="!venue.minPrice || venue.minPrice == 0"
+                                                      class="acr-listing-icon-value"
+                                                      style="font-weight: 600; color: #999;">
+                                                    N/A
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- View Details Button -->
+                                <div class="listing-gallery-wrapper" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <a class="btn-custom btn-sm secondary"
+                                       style="background: #007bff; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; border: none; cursor: pointer;">
+                                        View Details
+                                    </a>
+
+                                    <!-- Ratings -->
+                                    <div class="review-list" style="display: flex; align-items: center; gap: 8px; font-size: 11px;">
+                                        <div class="icon-review google-ratings" style="display: flex; align-items: center; gap: 2px;" *ngIf="venue.googleRating">
+                                            <img src="assets/img/svg/google.png" alt="" style="width: 12px; height: 12px;" />
+                                            <i class="pi pi-star-fill" style="font-size: 10px; color: #ffc107;"></i>
+                                            <span class="rating-style" style="color: #666;">
+                                                <b>{{ venue.googleRating }}</b>/5
+                                            </span>
+                                        </div>
+                                        <div class="vl" style="width: 1px; height: 12px; background: #ddd;" *ngIf="venue.googleRating && venue.eazyVenueRating"></div>
+                                        <div class="icon-review eazy-venue-ratings" style="display: flex; align-items: center; gap: 2px;" *ngIf="venue.eazyVenueRating">
+                                            <img src="assets/images/logo.png" alt="" style="width: 12px; height: 12px;" />
+                                            <i class="pi pi-star-fill" style="font-size: 10px; color: #ffc107;"></i>
+                                            <span class="rating-style" style="color: #666;">
+                                                <b>{{ venue.eazyVenueRating }}</b>/5
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add this CSS to your component's stylesheet -->
+<style>
+.similar-venues-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.similar-venues-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.similar-venues-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.similar-venues-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.venue-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+</style>
+
+<div class="venue-map-section" *ngIf="venueDetails">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <h3 class="section-title">
+            <i class="fas fa-map-marker-alt"></i> Venue Location
+          </h3>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Map Container -->
+        <div class="col-lg-8 col-md-12">
+          <div class="map-container">
+            <!-- Google Map -->
+            <div
+              id="venue-map"
+              class="venue-map"
+              [class.map-loading]="!mapLoaded && !mapError"
+              [class.map-error]="mapError">
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="!mapLoaded && !mapError" class="map-loading-overlay">
+              <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading map...</span>
+              </div>
+              <p class="mt-2">Loading map...</p>
+            </div>
+
+            <!-- Error State -->
+            <div *ngIf="mapError" class="map-error-overlay">
+              <i class="fas fa-exclamation-triangle text-warning"></i>
+              <p class="mt-2">Unable to load map. You can still view the location on Google Maps.</p>
+              <button class="btn btn-primary btn-sm" (click)="openInGoogleMaps()">
+                <i class="fas fa-external-link-alt"></i> Open in Google Maps
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location Details & Actions -->
+        <div class="col-lg-4 col-md-12">
+          <div class="location-details-card">
+            <div class="location-info">
+              <h5 class="venue-name">{{ venueDetails.name }}</h5>
+              <div class="address-details">
+                <p class="address-line">
+                  <i class="fas fa-map-pin text-primary"></i>
+                  Near {{ venueDetails.subarea }}
+                </p>
+                <p class="address-line">
+                  <i class="fas fa-city text-primary"></i>
+                  {{ venueDetails.cityname }}, {{ venueDetails.statename }}
+                </p>
+                <p class="address-line" *ngIf="venueDetails.zipcode">
+                  <i class="fas fa-mail-bulk text-primary"></i>
+                  {{ venueDetails.zipcode }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="map-actions">
+              <button
+                class="btn btn-primary btn-block mb-2"
+                (click)="openInGoogleMaps()"
+                [disabled]="!venueMapUrl">
+                <i class="fas fa-map-marked-alt"></i>
+                View on Google Maps
+              </button>
+
+              <button
+                class="btn btn-success btn-block mb-2"
+                (click)="getDirections()"
+                [disabled]="!venueCoordinates">
+                <i class="fas fa-route"></i>
+                Get Directions
+              </button>
+
+              <button
+                class="btn btn-whatsapp btn-block mb-2"
+                (click)="shareVenueOnWhatsApp()"
+                [disabled]="!venueMapUrl">
+                <i class="fab fa-whatsapp"></i>
+                Share on WhatsApp
+              </button>
+
+              <button
+                class="btn btn-outline-secondary btn-block"
+                (click)="copyMapLink()"
+                [disabled]="!venueMapUrl">
+                <i class="fas fa-copy"></i>
+                Copy Map Link
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add these styles to your component's CSS or global styles -->
+  <style>
+  .venue-map-section {
+    padding: 40px 0;
+    background-color: #f8f9fa;
+  }
+
+  .section-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+  }
+
+  .section-title i {
+    color: #007bff;
+    margin-right: 10px;
+  }
+
+  .map-container {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .venue-map {
+    width: 100%;
+    height: 400px;
+    border: none;
+  }
+
+  .map-loading-overlay,
+  .map-error-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .location-details-card {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+  }
+
+  .venue-name {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+
+  .address-details .address-line {
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 0.95rem;
+  }
+
+  .address-details i {
+    width: 16px;
+    margin-right: 8px;
+  }
+
+  .map-actions {
+    margin-top: 20px;
+  }
+
+  .btn-whatsapp {
+    background-color: #25D366;
+    border-color: #25D366;
+    color: white;
+  }
+
+  .btn-whatsapp:hover {
+    background-color: #128C7E;
+    border-color: #128C7E;
+    color: white;
+  }
+
+  .quick-info {
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+  }
+
+  .info-label {
+    color: #666;
+    font-weight: 500;
+  }
+
+  .info-value {
+    color: #333;
+    font-weight: 600;
+  }
+
+  .rating-stars {
+    color: #ffc107;
+  }
+
+  @media (max-width: 991px) {
+    .location-details-card {
+      margin-top: 20px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .venue-map {
+      height: 300px;
+    }
+
+    .map-actions .btn {
+      margin-bottom: 10px;
+    }
+  }
+  </style>
 <p-dialog
     header="Schedule A Visit"
     [(visible)]="displayModal"

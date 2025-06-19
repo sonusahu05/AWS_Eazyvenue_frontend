@@ -2,6 +2,89 @@
     border-radius: 33px 0px 0px 33px !important;
 }
 
+.similar-venues-section {
+    margin: 40px 0;
+
+    .section-title {
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .similar-venues-wrapper {
+      position: relative;
+
+      .similar-venues-container {
+        display: flex;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        gap: 16px;
+        padding: 10px 0;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+
+        .venue-card {
+          flex: 0 0 280px;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          cursor: pointer;
+          transition: transform 0.2s ease;
+
+          &:hover {
+            transform: translateY(-2px);
+          }
+
+          .venue-image {
+            height: 180px;
+            overflow: hidden;
+            border-radius: 8px 8px 0 0;
+
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+          }
+
+          .venue-info {
+            padding: 15px;
+
+            .venue-name {
+              font-size: 16px;
+              font-weight: 600;
+              margin-bottom: 8px;
+              color: #333;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            .venue-location {
+              font-size: 14px;
+              color: #666;
+              margin-bottom: 8px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            .venue-price {
+              font-size: 14px;
+              font-weight: 600;
+              color: #e74c3c;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  
 
 @font-face {
     font-family: "SegoeUI-Semibold";
@@ -3340,7 +3423,7 @@ h1.venuename {
         margin-top: 60px;
     }
 
-  
+
 
     a.display-name.text-tertiary {
         color: #707070;
@@ -3646,15 +3729,15 @@ h3.home-search-popup-heading {
     width: 100%;
 }
 
-:host ::ng-deep .guest-count-dpd .p-dropdown { 
-    width: 100%; 
+:host ::ng-deep .guest-count-dpd .p-dropdown {
+    width: 100%;
 }
 @media screen and (min-width: 1024px) {
     .top-link {
         display: block;
         margin-top: -20px;
         margin-bottom: 10px;
-    }    
+    }
 }
 
 .BreadCrumbs .crumb:after {
@@ -3764,7 +3847,7 @@ h5.resend-head {
         flex: 2;
     }
     div{
-        flex: 5; 
+        flex: 5;
     }
 }
 .custom-input{
@@ -3773,7 +3856,7 @@ h5.resend-head {
     padding: 5px 10px !important;
     margin: 5px !important;
     width: 100% !important;
-    
+
 }
 .custom-input:hover{
     border-color: #EC3539 !important;
