@@ -326,6 +326,7 @@ export class VenueDetailsComponent implements OnInit {
         private http: HttpClient,
         private renderer: Renderer2,
         private productService: ProductService,
+        private enquiryService: EnquiryService,
         private BannerService: BannerService,
         private venueService: VenueService,
         private categoryService: CategoryService,
@@ -476,6 +477,9 @@ export class VenueDetailsComponent implements OnInit {
         if (this.isLoggedIn == true) {
             // this.loginRegisterModal = false;
             this.numberPopup = false;
+        }
+        if (this.isLoggedIn && this.loggedInUser?.id) {
+            this.getUserDetails(this.loggedInUser.id);
         }
         this.mobileForm = this.formBuilder.group({
             mobileNumber: [
@@ -1539,6 +1543,9 @@ navigateToVenue(venueId: number): void {
             data => {
                 this.fullUserDetails = data;
                 console.log('👤 VENUE: Full user details loaded:', this.fullUserDetails);
+
+                // Check and start enquiry timer after user details are loaded
+                this.checkAndStartEnquiryTimer();
             },
             err => {
                 console.error('❌ VENUE: Failed to load user details:', err);
@@ -1547,8 +1554,13 @@ navigateToVenue(venueId: number): void {
     }
 
     // 6. Update your createAutoEnquiry method to use fullUserDetails
+    // Fixed createAutoEnquiry method with proper error handling
     createAutoEnquiry() {
         console.log('🎯 VENUE: Creating auto enquiry...');
+        console.log('🎯 VENUE: isLoggedIn:', this.isLoggedIn);
+        console.log('🎯 VENUE: loggedInUser:', this.loggedInUser);
+        console.log('🎯 VENUE: fullUserDetails:', this.fullUserDetails);
+        console.log('🎯 VENUE: Mobile number:', this.fullUserDetails?.mobileNumber);
 
         if (this.hasCreatedEnquiry) {
             console.log('🎯 VENUE: Enquiry already created, skipping...');
@@ -1557,25 +1569,25 @@ navigateToVenue(venueId: number): void {
 
         // Check if user is logged in
         if (!this.isLoggedIn || !this.loggedInUser) {
-            console.log('⚠️ VENUE: User not logged in, cannot create enquiry');
+            console.log('⚠️ VENUE: User not logged in');
             return;
         }
 
         // Check if full user details are loaded
         if (!this.fullUserDetails) {
-            console.log('⚠️ VENUE: User details not loaded yet, cannot create enquiry');
+            console.log('⚠️ VENUE: User details not loaded yet');
+            // Try to fetch user details again
+            if (this.loggedInUser?.id) {
+                console.log('🔄 VENUE: Attempting to fetch user details...');
+                this.getUserDetails(this.loggedInUser.id);
+            }
             return;
         }
-
-        console.log('👤 VENUE: Full user details:', this.fullUserDetails);
 
         if (!this.fullUserDetails.mobileNumber) {
-            console.log('⚠️ VENUE: No user mobile number found, cannot create enquiry');
+            console.log('⚠️ VENUE: No mobile number found in user details:', this.fullUserDetails);
             return;
         }
-
-        // Enhanced venue details check with more debugging
-        console.log('🏢 VENUE: Checking venue details...', this.venueDetails);
 
         if (!this.venueDetails) {
             console.log('⚠️ VENUE: venueDetails is null/undefined');
@@ -1599,17 +1611,67 @@ navigateToVenue(venueId: number): void {
         };
 
         console.log('📝 VENUE: Enquiry data prepared:', enquiryData);
+        console.log('📝 VENUE: About to call API...');
 
-        this.enquiryService.createEnquiry(enquiryData).subscribe(
-            response => {
-                console.log('✅ VENUE: Auto enquiry created successfully:', response);
-                this.hasCreatedEnquiry = true;
-            },
-            error => {
-                console.error('❌ VENUE: Failed to create auto enquiry:', error);
-                // Don't show error to user for auto enquiry
+        // Check if service exists
+        if (!this.enquiryService) {
+            console.error('❌ VENUE: EnquiryService is not injected!');
+            return;
+        }
+
+        // Check if method exists
+        if (typeof this.enquiryService.createEnquiry !== 'function') {
+            console.error('❌ VENUE: createEnquiry method does not exist on service!');
+            return;
+        }
+
+        console.log('✅ VENUE: Service and method exist, making API call...');
+
+        try {
+            const result = this.enquiryService.createEnquiry(enquiryData);
+            console.log('📞 VENUE: Service method returned:', result);
+
+            if (!result) {
+                console.error('❌ VENUE: Service method returned null/undefined');
+                return;
             }
-        );
+
+            if (typeof result.subscribe !== 'function') {
+                console.error('❌ VENUE: Service method did not return an Observable');
+                console.error('❌ VENUE: Returned type:', typeof result);
+                console.error('❌ VENUE: Returned value:', result);
+                return;
+            }
+
+            console.log('🔄 VENUE: Starting subscription...');
+
+            result.subscribe(
+                (response) => {
+                    console.log('✅ VENUE: SUCCESS - Response received:', response);
+                    if (response && response.success) {
+                        console.log('✅ VENUE: Enquiry created successfully with ID:', response.id);
+                        this.hasCreatedEnquiry = true;
+                    }
+                },
+                (error) => {
+                    console.error('❌ VENUE: ERROR - API call failed:', error);
+                    console.error('❌ VENUE: Error details:', {
+                        status: error.status,
+                        statusText: error.statusText,
+                        message: error.message,
+                        error: error.error
+                    });
+                },
+                () => {
+                    console.log('🎯 VENUE: COMPLETE - API call finished');
+                }
+            );
+
+            console.log('✅ VENUE: Subscription started successfully');
+
+        } catch (error) {
+            console.error('💥 VENUE: Exception occurred during API call:', error);
+        }
     }
 
     // 7. Add a method to check if both venue and user data are ready
@@ -1632,7 +1694,7 @@ navigateToVenue(venueId: number): void {
             this.createAutoEnquiry();
         }, 10000); // 10 seconds
     }
-    
+
 
     isNumber(val: any): boolean {
         return typeof val === 'number';

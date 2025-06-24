@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 import { environment } from "./../../../../environments/environment";
 
 @Injectable({
@@ -17,19 +19,68 @@ export class EnquiryService {
   // Auto create enquiry when user views venue details
   createEnquiry(enquiryData: any): Observable<any> {
     console.log('🚀 SERVICE: Sending enquiry data to API:', enquiryData);
-    return this.http.post(environment.apiUrl + 'enquiry', enquiryData, this.httpOptions);
+    console.log('🚀 SERVICE: API URL:', environment.apiUrl + 'eventplanner');
+
+    return this.http.post<any>(environment.apiUrl + 'eventplanner', enquiryData, this.httpOptions)
+      .pipe(
+        tap(response => {
+          console.log('🚀 SERVICE: API Response received:', response);
+        }),
+        catchError(error => {
+          console.error('🚀 SERVICE: API Error occurred:', error);
+          console.error('🚀 SERVICE: Error status:', error.status);
+          console.error('🚀 SERVICE: Error message:', error.message);
+          console.error('🚀 SERVICE: Error body:', error.error);
+          return throwError(error);
+        })
+      );
   }
 
   getEnquiryList(): Observable<any> {
     console.log('📊 SERVICE: Fetching enquiry list from API...');
-    return this.http.get<any>(environment.apiUrl + 'enquiry');
+    console.log('📊 SERVICE: API URL:', environment.apiUrl + 'eventplanner');
+
+    return this.http.get<any>(environment.apiUrl + 'eventplanner')
+      .pipe(
+        tap(response => {
+          console.log('📊 SERVICE: Get enquiry list response:', response);
+        }),
+        catchError(error => {
+          console.error('📊 SERVICE: Get enquiry list error:', error);
+          return throwError(error);
+        })
+      );
   }
 
   updateEnquiry(id: string, data: any): Observable<any> {
-    return this.http.put(environment.apiUrl + 'enquiry/' + id, data, this.httpOptions);
+    console.log('📝 SERVICE: Updating enquiry:', id, 'with data:', data);
+    console.log('📝 SERVICE: API URL:', environment.apiUrl + 'eventplanner/' + id);
+
+    return this.http.put<any>(environment.apiUrl + 'eventplanner/' + id, data, this.httpOptions)
+      .pipe(
+        tap(response => {
+          console.log('📝 SERVICE: Update enquiry response:', response);
+        }),
+        catchError(error => {
+          console.error('📝 SERVICE: Update enquiry error:', error);
+          return throwError(error);
+        })
+      );
   }
 
   getEnquiryById(id: string): Observable<any> {
-    return this.http.get<any>(environment.apiUrl + 'enquiry/' + id);
+    console.log('🔍 SERVICE: Fetching enquiry by ID:', id);
+    console.log('🔍 SERVICE: API URL:', environment.apiUrl + 'eventplanner/' + id);
+
+    return this.http.get<any>(environment.apiUrl + 'eventplanner/' + id)
+      .pipe(
+        tap(response => {
+          console.log('🔍 SERVICE: Get enquiry by ID response:', response);
+        }),
+        catchError(error => {
+          console.error('🔍 SERVICE: Get enquiry by ID error:', error);
+          return throwError(error);
+        })
+      );
   }
 }
