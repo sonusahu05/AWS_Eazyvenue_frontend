@@ -193,7 +193,7 @@ import { UserMyAccountEditComponent } from './frontend/my-account/edit/edit.comp
 import { OrdersComponent } from './frontend/my-account/orders/orders.component';
 import { ViewCustomerVenueOrderComponent } from './frontend/my-account/orders/view/view.component';
 import { ViewCustomerVenueAvailabilityComponent } from './frontend/my-account/availability/view/view.component';
-import { EventplannerListComponent } from './manage/eventmanager/list/list.component';
+import { EnquiryListComponent } from './manage/eventmanager/list/list.component';
 import { ResetPasswordComponent } from './frontend/reset-password/reset-password.component';
 import { WishlistComponent } from './manage/wishlist/wishlist.component';
 import { compareVenue } from './frontend/compare/compare.component';
@@ -356,7 +356,7 @@ FullCalendarModule.registerPlugins([
         AddVenueSlotManagementComponent,
         EditVenueSlotManagementComponent,
         VenueSlotAvailabilityComponent,
-        EventplannerListComponent,
+        EnquiryListComponent,
         BannerComponent,
         BannerAddComponent,
         BannerEditComponent,

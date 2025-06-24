@@ -1,85 +1,94 @@
 import { Component, OnInit } from '@angular/core';
-import { EventplannerService } from '../service/eventmanager.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Router } from '@angular/router';
-import { TitleCasePipe } from '@angular/common';
+import { EnquiryService } from '../service/eventmanager.service';
+import { MessageService } from 'primeng/api';
+
 @Component({
-  selector: 'app-eventplanner-list',
+  selector: 'app-enquiry-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
-  styles: [`
-      :host ::ng-deep .p-dialog .product-image {
-          width: 150px;
-          margin: 0 auto 2rem auto;
-          display: block;
-      }
-      @media screen and (max-width: 960px) {
-          :host ::ng-deep .p-datatable.p-datatable-customers .p-datatable-tbody > tr > td:last-child {
-              text-align: center;
-          }
-
-          :host ::ng-deep .p-datatable.p-datatable-customers .p-datatable-tbody > tr > td:nth-child(6) {
-              display: flex;
-          }
-      }
-  `],
-  providers: [EventplannerService, EventplannerService, ConfirmationService, TitleCasePipe,MessageService]
+  providers: [MessageService]
 })
-export class EventplannerListComponent implements OnInit {
-  productDialog: boolean;
-  eventPlannerList: [];
-  submitted: boolean;
-  cols: any[];
-  errorMessage: string;
-  loading: boolean;
-  totalRecords = 0;
-  constructor(private eventplannerService: EventplannerService, private messageService: MessageService, private titlecasePipe: TitleCasePipe, private router: Router, private confirmationService: ConfirmationService) { }
-  ngOnInit() {
-    this.cols = [
-      { field: 'name', header: 'Name' },
-      { field: 'email', header: 'Email' },
-      { field: 'message', header: 'Message' },
-      { field: 'phoneNumber', header: 'Phone Number' },
-      { field: 'status', header: 'Status' }
-    ];
-    this.loadEventplannerList();
-  }
+export class EnquiryListComponent implements OnInit {
+    enquiryList: any[] = [];
+    loading: boolean = false;
+    totalRecords = 0;
+    cols: any[];
 
-  loadEventplannerList() {
-    var query = "?filterByDisable=false";
-    this.eventplannerService.getEventplannerList(query).subscribe(
-      data => {
-        this.loading = false;
-        this.eventPlannerList = data.data.items;
-        this.totalRecords = data.data.totalCount;
-      },
-      err => {
-        this.errorMessage = err.error.message;
-      });
-  }
+    constructor(
+      private enquiryService: EnquiryService,
+      private messageService: MessageService
+    ) { }
 
+    ngOnInit() {
+      this.cols = [
+        { field: 'venueName', header: 'Venue Name' },
+        { field: 'userName', header: 'User Name' },
+        { field: 'userContact', header: 'Contact' },
+        { field: 'leadCount', header: 'No of Leads' },
+        { field: 'created_at', header: 'Date' },
+        { field: 'status', header: 'Status' }
+      ];
+      this.loadEnquiries();
+    }
 
-    onDelete(eventplanner) {
-      this.confirmationService.confirm({
-        message: 'Are you sure you want to delete ' + (this.titlecasePipe.transform(eventplanner.name)) + '?',
-        header: 'Confirm',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-          var disableStatus;
-          if (eventplanner.disable == false) {
-            disableStatus = true;
+    loadEnquiries() {
+      console.log('📊 DASHBOARD: Starting to load enquiries...');
+      this.loading = true;
+
+      this.enquiryService.getEnquiryList().subscribe(
+        data => {
+          console.log('📊 DASHBOARD: Received data from API:', data);
+          this.loading = false;
+
+          if (data && data.data && data.data.items && data.data.items.length > 0) {
+            this.enquiryList = data.data.items;
+            this.totalRecords = data.totalCount || data.data.items.length;
+            console.log('📊 DASHBOARD: Enquiry list populated:', this.enquiryList);
           } else {
-            disableStatus = false;
+            console.log('📊 DASHBOARD: No data found, showing empty state');
+            this.enquiryList = [];
+            this.totalRecords = 0;
           }
-          var eventplannerData = '{"disable":' + disableStatus + '}';
-          this.eventplannerService.updateEventplanner(eventplanner.id, eventplannerData).subscribe((res) => {
-            this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Event Planner Deleted', life: 3000 });
-            this.loadEventplannerList();
-          })
         },
-        reject: () => {
-          //this.getUserDetails(user.id);
+        err => {
+          console.error('📊 DASHBOARD: Error loading enquiries:', err);
+          this.loading = false;
+          this.enquiryList = [];
+          this.totalRecords = 0;
+
+          // Show error message to user
+          this.messageService.add({
+            key: 'toastmsg',
+            severity: 'error',
+            summary: 'Error',
+            detail: err.error?.message || 'Failed to load enquiries. Please check your network connection.'
+          });
         }
-      });
+      );
+    }
+
+    updateStatus(enquiry: any, status: string) {
+      const updateData = { status: status };
+
+      this.enquiryService.updateEnquiry(enquiry.id, updateData).subscribe(
+        res => {
+          this.messageService.add({
+            key: 'toastmsg',
+            severity: 'success',
+            summary: 'Updated',
+            detail: 'Status updated successfully'
+          });
+          // Reload the list to get updated data
+          this.loadEnquiries();
+        },
+        err => {
+          this.messageService.add({
+            key: 'toastmsg',
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update status'
+          });
+        }
+      );
     }
 }

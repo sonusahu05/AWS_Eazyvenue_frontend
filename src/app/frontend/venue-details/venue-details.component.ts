@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 // import data from '../../../assets/demo/data/navigation.json';
+import { EnquiryService } from '../../manage/eventmanager/service/eventmanager.service';
 import { ProductService } from '../../demo/service/productservice';
 import { Product } from '../../demo/domain/product';
 // import listingblock from '../../../assets/demo/data/listing.json';
@@ -250,6 +251,7 @@ export class VenueDetailsComponent implements OnInit {
     public defaultDate;
     public tmpVenueList: any[] = [];
     public activeIndex: number = 0;
+    public fullUserDetails: any;
     staticPath;
     //totalPeopleBooked = Math.floor(Math.random() * 1000);
     totalPeopleBooked;
@@ -315,6 +317,8 @@ export class VenueDetailsComponent implements OnInit {
     offerPaymentValue25_percent: number = 0;
     paymentAmount: any;
     similarVenues: any[] = [];
+    private enquiryTimer: any;
+    private hasCreatedEnquiry = false;
 @ViewChild('similarVenuesContainer') similarVenuesContainer!: ElementRef;
     @ViewChild('paginator', { static: true }) paginator: Paginator;
     @ViewChild('searchCalendar', { static: true }) datePicker;
@@ -483,6 +487,7 @@ export class VenueDetailsComponent implements OnInit {
                 ],
             ],
         });
+        this.getUserDetails(this.loggedInUser.id);
 
         this.defaultDate = new Date();
         let today = new Date();
@@ -998,6 +1003,10 @@ navigateToVenue(venueId: number): void {
         this.otpArray = [];
     }
     ngOnDestroy() {
+        if (this.enquiryTimer) {
+            clearTimeout(this.enquiryTimer);
+            console.log('🏢 VENUE: Timer cleared on destroy');
+        }
         this.renderer.removeClass(document.body, 'body-dark');
     }
     get forgotPassValidation() {
@@ -1076,9 +1085,6 @@ navigateToVenue(venueId: number): void {
         }
     }
 
-    /**
-     * Create Google Map instance
-     */
     createMap(): void {
         const mapElement = document.getElementById('venue-map');
         if (!mapElement || !this.venueCoordinates) {
@@ -1520,12 +1526,113 @@ navigateToVenue(venueId: number): void {
                     }, 4000);
                 }
                 setTimeout(() => this.getSimilarVenues(), 100);
+                this.checkAndStartEnquiryTimer();
             },
             (err) => {
                 this.errorMessage = err.error.message;
             }
         );
     }
+
+    getUserDetails(id: string) {
+        this.userService.getUserDetails(id).subscribe(
+            data => {
+                this.fullUserDetails = data;
+                console.log('👤 VENUE: Full user details loaded:', this.fullUserDetails);
+            },
+            err => {
+                console.error('❌ VENUE: Failed to load user details:', err);
+            }
+        );
+    }
+
+    // 6. Update your createAutoEnquiry method to use fullUserDetails
+    createAutoEnquiry() {
+        console.log('🎯 VENUE: Creating auto enquiry...');
+
+        if (this.hasCreatedEnquiry) {
+            console.log('🎯 VENUE: Enquiry already created, skipping...');
+            return;
+        }
+
+        // Check if user is logged in
+        if (!this.isLoggedIn || !this.loggedInUser) {
+            console.log('⚠️ VENUE: User not logged in, cannot create enquiry');
+            return;
+        }
+
+        // Check if full user details are loaded
+        if (!this.fullUserDetails) {
+            console.log('⚠️ VENUE: User details not loaded yet, cannot create enquiry');
+            return;
+        }
+
+        console.log('👤 VENUE: Full user details:', this.fullUserDetails);
+
+        if (!this.fullUserDetails.mobileNumber) {
+            console.log('⚠️ VENUE: No user mobile number found, cannot create enquiry');
+            return;
+        }
+
+        // Enhanced venue details check with more debugging
+        console.log('🏢 VENUE: Checking venue details...', this.venueDetails);
+
+        if (!this.venueDetails) {
+            console.log('⚠️ VENUE: venueDetails is null/undefined');
+            return;
+        }
+
+        if (!this.venueDetails._id && !this.venueDetails.id) {
+            console.log('⚠️ VENUE: Venue ID not found. Available properties:', Object.keys(this.venueDetails));
+            return;
+        }
+
+        const venueId = this.venueDetails._id || this.venueDetails.id;
+        const venueName = this.venueDetails.name || this.venueDetails.venueName || 'Unknown Venue';
+
+        const enquiryData = {
+            venueName: venueName,
+            venueId: venueId,
+            userName: (this.fullUserDetails.firstName || '') + ' ' + (this.fullUserDetails.lastName || ''),
+            userContact: this.fullUserDetails.mobileNumber,
+            userEmail: this.fullUserDetails.email || ''
+        };
+
+        console.log('📝 VENUE: Enquiry data prepared:', enquiryData);
+
+        this.enquiryService.createEnquiry(enquiryData).subscribe(
+            response => {
+                console.log('✅ VENUE: Auto enquiry created successfully:', response);
+                this.hasCreatedEnquiry = true;
+            },
+            error => {
+                console.error('❌ VENUE: Failed to create auto enquiry:', error);
+                // Don't show error to user for auto enquiry
+            }
+        );
+    }
+
+    // 7. Add a method to check if both venue and user data are ready
+    checkAndStartEnquiryTimer() {
+        // Only start timer if user is logged in and both user details and venue details are loaded
+        if (this.isLoggedIn && this.fullUserDetails && this.venueDetails) {
+            console.log('✅ VENUE: Both user and venue data loaded, starting enquiry timer');
+            this.startEnquiryTimer();
+        } else {
+            console.log('⏳ VENUE: Waiting for data to load. User logged in:', this.isLoggedIn, 'User details:', !!this.fullUserDetails, 'Venue details:', !!this.venueDetails);
+        }
+    }
+
+    // 8. Update startEnquiryTimer to be more simple
+    startEnquiryTimer() {
+        console.log('⏰ VENUE: Starting 10-second enquiry timer...');
+
+        this.enquiryTimer = setTimeout(() => {
+            console.log('⏰ VENUE: 10 seconds completed! Creating auto enquiry...');
+            this.createAutoEnquiry();
+        }, 10000); // 10 seconds
+    }
+    
 
     isNumber(val: any): boolean {
         return typeof val === 'number';

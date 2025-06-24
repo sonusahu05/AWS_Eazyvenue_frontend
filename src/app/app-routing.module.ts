@@ -72,7 +72,7 @@ import { MyAccountComponent } from './frontend/my-account/my-account.component';
 import { UserMyAccountEditComponent } from './frontend/my-account/edit/edit.component';
 import { OrdersComponent } from './frontend/my-account/orders/orders.component';
 import { ViewCustomerVenueOrderComponent } from './frontend/my-account/orders/view/view.component';
-import { EventplannerListComponent } from './manage/eventmanager/list/list.component';
+import { EnquiryListComponent } from './manage/eventmanager/list/list.component';
 import { ResetPasswordComponent } from './frontend/reset-password/reset-password.component';
 import { WishlistComponent } from './manage/wishlist/wishlist.component';
 import { compareVenue } from './frontend/compare/compare.component';
@@ -360,7 +360,7 @@ import { SignupComponent } from './pages/venue-signup.component';
                         },
                         {
                             path: 'eventplanner',
-                            component: EventplannerListComponent,
+                            component: EnquiryListComponent,
                         },
                         {
                             path: 'location/state',
