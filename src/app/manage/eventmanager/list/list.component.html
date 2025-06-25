@@ -1,69 +1,206 @@
-<div class="card">
-    <div class="card-header">
-        <h4>Venue Enquiry Dashboard</h4>
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <h2 class="dashboard-title">
+                <i class="fas fa-building"></i>
+                Venue Enquiry Dashboard
+            </h2>
+            <div class="header-stats">
+                <span class="stat-badge">{{totalRecords}} Total Enquiries</span>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
+
+    <div class="table-wrapper">
         <p-table
             [value]="enquiryList"
             [loading]="loading"
             [paginator]="true"
             [rows]="10"
             [totalRecords]="totalRecords"
-            styleClass="p-datatable-customers">
+            styleClass="modern-datatable">
 
             <ng-template pTemplate="header">
                 <tr>
-                    <th>Venue Name</th>
-                    <th>Latest User</th>
-                    <th>Contact No</th>
-                    <th>No of Leads</th>
-                    <th>Latest Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th class="venue-col">Venue Details</th>
+                    <th class="user-col">Contact Info</th>
+                    <th class="leads-col">Leads</th>
+                    <th class="date-col">Latest Activity</th>
+                    <th class="status-col">Status</th>
+                    <th class="actions-col">Actions</th>
                 </tr>
             </ng-template>
 
             <ng-template pTemplate="body" let-enquiry>
-                <tr>
-                    <td>{{enquiry.venueName}}</td>
-                    <td>{{enquiry.userName}}</td>
-                    <td>{{enquiry.userContact}}</td>
-                    <td>
-                        <span class="badge badge-primary">{{enquiry.leadCount}}</span>
+                <tr class="data-row">
+                    <td class="venue-cell">
+                        <div class="venue-info">
+                            <div class="venue-name">
+                                <i class="fas fa-map-marker-alt venue-icon"></i>
+                                <strong>{{enquiry.venueName}}</strong>
+                            </div>
+
+                            <div *ngIf="enquiry.leadCount > 1" class="leads-dropdown">
+                                <p-dropdown
+                                    [options]="getLeadOptions(enquiry)"
+                                    [(ngModel)]="enquiry.selectedLead"
+                                    optionLabel="label"
+                                    optionValue="value"
+                                    placeholder="View all {{enquiry.leadCount}} leads"
+                                    (onChange)="onLeadChange(enquiry, $event)"
+                                    styleClass="custom-dropdown">
+                                    <ng-template pTemplate="selectedItem" let-option>
+                                        <div class="dropdown-item-content">
+                                            <i class="fas fa-users"></i>
+                                            <span>{{option.label}}</span>
+                                        </div>
+                                    </ng-template>
+                                </p-dropdown>
+                            </div>
+                        </div>
                     </td>
-                    <td>{{enquiry.created_at | date:'dd/MM/yyyy HH:mm'}}</td>
-                    <td>
-                        <span
-                            class="badge"
-                            [ngClass]="{
-                                'badge-success': enquiry.status === 'Contacted',
-                                'badge-warning': enquiry.status === 'New',
-                                'badge-info': enquiry.status === 'Converted',
-                                'badge-secondary': enquiry.status === 'Closed'
-                            }">
-                            {{enquiry.status}}
+
+                    <td class="contact-cell">
+                        <div class="contact-info">
+                            <div class="user-name">
+                                <i class="fas fa-user"></i>
+                                {{getCurrentUser(enquiry).userName}}
+                            </div>
+                            <div class="user-contact">
+                                <i class="fas fa-phone-alt"></i>
+                                {{getCurrentUser(enquiry).userContact}}
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="leads-cell">
+                        <div class="leads-count">
+                            <span class="leads-badge">{{enquiry.leadCount}}</span>
+                            <small>leads</small>
+                        </div>
+                    </td>
+
+                    <td class="date-cell">
+                        <div class="date-info">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>{{getCurrentUser(enquiry).created_at | date:'dd/MM/yyyy'}}</span>
+                            <small>{{getCurrentUser(enquiry).created_at | date:'HH:mm'}}</small>
+                        </div>
+                    </td>
+
+                    <td class="status-cell">
+                        <span class="status-indicator"
+                              [ngClass]="{
+                                'status-whatsapp': getCurrentUser(enquiry).status === 'WhatsApp Contacted',
+                                'status-phone': getCurrentUser(enquiry).status === 'Phone Contacted',
+                                'status-new': getCurrentUser(enquiry).status === 'New',
+                                'status-closed': getCurrentUser(enquiry).status === 'Closed'
+                              }">
+                            <i class="fas fa-circle"></i>
+                            {{getCurrentUser(enquiry).status}}
                         </span>
                     </td>
-                    <td>
-                        <button
-                            class="btn btn-sm btn-outline-success me-2"
-                            (click)="updateStatus(enquiry, 'Contacted')"
-                            [disabled]="enquiry.status === 'Contacted'">
-                            Mark Contacted
-                        </button>
-                        <button
-                            class="btn btn-sm btn-outline-info"
-                            (click)="updateStatus(enquiry, 'Converted')"
-                            [disabled]="enquiry.status === 'Converted'">
-                            Mark Converted
-                        </button>
+
+                    <td class="actions-cell">
+                        <div class="action-buttons">
+                            <button
+                                class="action-btn whatsapp-btn"
+                                (click)="contactViaWhatsApp(enquiry)"
+                                title="Contact via WhatsApp"
+                                [disabled]="getCurrentUser(enquiry).status === 'WhatsApp Contacted'">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+
+                            <button
+                                class="action-btn phone-btn"
+                                (click)="contactViaPhone(enquiry)"
+                                title="Contact via Phone"
+                                [disabled]="getCurrentUser(enquiry).status === 'Phone Contacted'">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Expanded Lead Details Row -->
+                <tr *ngIf="enquiry.showLeadDetails && enquiry.selectedLeadData" class="expanded-row">
+                    <td colspan="6" class="expanded-content">
+                        <div class="lead-details-card">
+                            <div class="lead-header">
+                                <h6><i class="fas fa-info-circle"></i> Selected Lead Details</h6>
+                            </div>
+
+                            <div class="lead-info-grid">
+                                <div class="info-item">
+                                    <label>User</label>
+                                    <span>{{enquiry.selectedLeadData.userName}}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Contact</label>
+                                    <span>{{enquiry.selectedLeadData.userContact}}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Email</label>
+                                    <span>{{enquiry.selectedLeadData.userEmail || 'N/A'}}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Date</label>
+                                    <span>{{enquiry.selectedLeadData.created_at | date:'dd/MM/yyyy HH:mm'}}</span>
+                                </div>
+                            </div>
+
+                            <div class="lead-actions">
+                                <div class="status-section">
+                                    <label>Status:</label>
+                                    <span class="status-indicator"
+                                          [ngClass]="{
+                                            'status-whatsapp': enquiry.selectedLeadData.status === 'WhatsApp Contacted',
+                                            'status-phone': enquiry.selectedLeadData.status === 'Phone Contacted',
+                                            'status-new': enquiry.selectedLeadData.status === 'New',
+                                            'status-closed': enquiry.selectedLeadData.status === 'Closed'
+                                          }">
+                                        <i class="fas fa-circle"></i>
+                                        {{enquiry.selectedLeadData.status}}
+                                    </span>
+                                </div>
+
+                                <div class="actions-section">
+                                    <label>Actions:</label>
+                                    <div class="action-buttons">
+                                        <button
+                                            class="action-btn whatsapp-btn"
+                                            (click)="contactViaWhatsAppForLead(enquiry.selectedLeadData, enquiry)"
+                                            title="Contact via WhatsApp"
+                                            [disabled]="enquiry.selectedLeadData.status === 'WhatsApp Contacted'">
+                                            <i class="fab fa-whatsapp"></i>
+                                            <span>WhatsApp</span>
+                                        </button>
+
+                                        <button
+                                            class="action-btn phone-btn"
+                                            (click)="contactViaPhoneForLead(enquiry.selectedLeadData, enquiry)"
+                                            title="Contact via Phone"
+                                            [disabled]="enquiry.selectedLeadData.status === 'Phone Contacted'">
+                                            <i class="fas fa-phone"></i>
+                                            <span>Call</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             </ng-template>
 
             <ng-template pTemplate="emptymessage">
                 <tr>
-                    <td colspan="7">No enquiries found.</td>
+                    <td colspan="6" class="empty-state">
+                        <div class="empty-content">
+                            <i class="fas fa-search"></i>
+                            <h4>No enquiries found</h4>
+                            <p>Try adjusting your filters or check back later</p>
+                        </div>
+                    </td>
                 </tr>
             </ng-template>
         </p-table>
@@ -71,3 +208,4 @@
 </div>
 
 <p-toast key="toastmsg"></p-toast>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
