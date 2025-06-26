@@ -266,53 +266,6 @@ refreshVenueList(event: LazyLoadEvent) {
         query.set('filterByEndDate', moment(this.endDate).format('YYYY-MM-DD'));
     }
 
-    // Process filters - but skip email filter for venue owners (we'll handle it client-side)
-    if (event.filters) {
-        Object.keys(event.filters).forEach(key => {
-            if (event.filters[key].value !== null && event.filters[key].value !== undefined) {
-                switch (key) {
-                    case 'name':
-                        // For venue owners, don't send name filter to server, handle client-side
-                        if (!isVenueOwner) {
-                            query.set('filterByName', event.filters[key].value);
-                        }
-                        break;
-                    case 'email':
-                        // Never send email filter to server for venue owners
-                        if (!isVenueOwner) {
-                            query.set('filterByEmail', event.filters[key].value);
-                        }
-                        break;
-                    case 'cityname':
-                        if (!isVenueOwner) {
-                            query.set('filterByCity', event.filters[key].value);
-                        }
-                        break;
-                    case 'statename':
-                        if (!isVenueOwner) {
-                            query.set('filterByState', event.filters[key].value);
-                        }
-                        break;
-                    case 'zipcode':
-                        if (!isVenueOwner) {
-                            query.set('filterByZipcode', event.filters[key].value);
-                        }
-                        break;
-                    case 'status':
-                        if (event.filters[key].value !== null && !isVenueOwner) {
-                            query.set('filterByStatus', event.filters[key].value);
-                        }
-                        break;
-                    case 'assured':
-                        if (event.filters[key].value !== null && !isVenueOwner) {
-                            query.set('filterByAssured', event.filters[key].value);
-                        }
-                        break;
-                }
-            }
-        });
-    }
-
     // Handle sorting
     if (event.sortField && event.sortOrder) {
         query.set('sortBy', event.sortField);
@@ -367,53 +320,50 @@ refreshVenueList(event: LazyLoadEvent) {
                 venues = venues.filter(venue => venue.status === true);
             }
 
-            if (event.filters) {
-                Object.keys(event.filters).forEach(key => {
-                    if (event.filters[key].value !== null && event.filters[key].value !== undefined) {
-                        const filterValue = event.filters[key].value.toString().toLowerCase();
+            // Apply client-side filtering only for non-venue owners
+if (event.filters && !isVenueOwner) {
+    Object.keys(event.filters).forEach(key => {
+        if (event.filters[key].value !== null && event.filters[key].value !== undefined) {
+            const filterValue = event.filters[key].value.toString().toLowerCase();
 
-                        switch (key) {
-                            case 'name':
-                                if (isVenueOwner || !query.has('filterByName')) {
-                                    venues = venues.filter(venue => {
-                                        if (!venue.name) return false;
-                                        return venue.name.toLowerCase().includes(filterValue);
-                                    });
-                                }
-                                break;
-                            case 'cityname':
-                                if (isVenueOwner || !query.has('filterByCity')) {
-                                    venues = venues.filter(venue => {
-                                        if (!venue.cityname) return false;
-                                        return venue.cityname.toLowerCase().includes(filterValue);
-                                    });
-                                }
-                                break;
-                            case 'statename':
-                                if (isVenueOwner || !query.has('filterByState')) {
-                                    venues = venues.filter(venue => {
-                                        if (!venue.statename) return false;
-                                        return venue.statename.toLowerCase().includes(filterValue);
-                                    });
-                                }
-                                break;
-                            case 'zipcode':
-                                if (isVenueOwner || !query.has('filterByZipcode')) {
-                                    venues = venues.filter(venue => {
-                                        if (!venue.zipcode) return false;
-                                        return venue.zipcode.toString().includes(filterValue);
-                                    });
-                                }
-                                break;
-                            case 'assured':
-                                if (isVenueOwner || !query.has('filterByAssured')) {
-                                    venues = venues.filter(venue => venue.assured === event.filters[key].value);
-                                }
-                                break;
-                        }
-                    }
-                });
+            switch (key) {
+                case 'name':
+                    venues = venues.filter(venue => {
+                        if (!venue.name) return false;
+                        return venue.name.toLowerCase().includes(filterValue);
+                    });
+                    break;
+                case 'email':
+                    venues = venues.filter(venue => {
+                        if (!venue.email) return false;
+                        return venue.email.toLowerCase().includes(filterValue);
+                    });
+                    break;
+                case 'cityname':
+                    venues = venues.filter(venue => {
+                        if (!venue.cityname) return false;
+                        return venue.cityname.toLowerCase().includes(filterValue);
+                    });
+                    break;
+                case 'statename':
+                    venues = venues.filter(venue => {
+                        if (!venue.statename) return false;
+                        return venue.statename.toLowerCase().includes(filterValue);
+                    });
+                    break;
+                case 'zipcode':
+                    venues = venues.filter(venue => {
+                        if (!venue.zipcode) return false;
+                        return venue.zipcode.toString().includes(filterValue);
+                    });
+                    break;
+                case 'assured':
+                    venues = venues.filter(venue => venue.assured === event.filters[key].value);
+                    break;
             }
+        }
+    });
+}
 
             // Handle client-side sorting if needed
             if (event.sortField && event.sortOrder) {
