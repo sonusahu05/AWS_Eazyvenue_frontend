@@ -261,8 +261,6 @@
         </div>
     </div>
 </div>
-
-<!-- Listings Slider Start -->
 <div
     class="section section-padding sigma_header listings"
     *ngIf="!vendorSelection"
@@ -275,18 +273,39 @@
             <h2 class="title">Top Assured Venues Near You</h2>
         </div>
     </div>
-    <div class="location-status" *ngIf="userLocation && locationBasedFilter">
-        <small class="text-muted">
-          <i class="pi pi-map-marker"></i>
-          Showing venues near: {{ userLocation.subarea ? userLocation.subarea + ', ' : '' }}{{ userLocation.city }}
-          <span *ngIf="selectedCityName && selectedCityName !== userLocation.city">
-            (Filtered by: {{ selectedCityName }})
-          </span>
-          <button class="btn btn-link btn-sm" (click)="disableLocationFilter()">
-            Show all venues
-          </button>
-        </small>
-      </div>
+    <div class="location-banner" *ngIf="showLocationPrompt || locationEnabled">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="location-info" *ngIf="!locationEnabled && showLocationPrompt">
+                        <i class="pi pi-map-marker"></i>
+                        <span>Enable location to find venues near you</span>
+                    </div>
+                    <div class="location-info" *ngIf="locationEnabled">
+                        <i class="pi pi-check-circle" style="color: #28a745;"></i>
+                        <span *ngIf="currentRadius > 0">
+                            Showing venues within {{currentRadius}}km of your location
+                        </span>
+                        <span *ngIf="currentRadius === 0">
+                            Showing all venues sorted by distance
+                        </span>
+                    </div>
+                    <div class="location-error" *ngIf="locationError">
+                        <i class="pi pi-exclamation-triangle" style="color: #dc3545;"></i>
+                        <span>{{locationError}}</span>
+                    </div>
+                </div>
+                <div class="col-md-4 text-right">
+                    <button
+                        class="btn btn-sm btn-outline-primary"
+                        *ngIf="!locationEnabled"
+                        (click)="requestUserLocation()">
+                        <i class="pi pi-map-marker"></i> Enable Location
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container-fluid">
         <p-galleria
             [(value)]="venueImages"
@@ -495,6 +514,9 @@
                                                     >,</span
                                                 >
                                                 {{ item.cityname }}
+                                            </span>
+                                            <span class="distance-info" *ngIf="item.distanceText && locationEnabled">
+                                                • {{ item.distanceText }}
                                             </span>
                                         </div>
                                     </div>

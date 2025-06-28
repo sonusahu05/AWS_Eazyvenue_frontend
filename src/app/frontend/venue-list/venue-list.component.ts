@@ -7,6 +7,7 @@ import { BannerService } from 'src/app/services/banner.service';
 import { VenueService } from 'src/app/manage/venue/service/venue.service';
 import { environment } from 'src/environments/environment';
 import { FilterService, LazyLoadEvent, SelectItemGroup } from 'primeng/api';
+import { GeolocationService, UserLocation, VenueWithDistance } from '../../services/geolocation.service';
 import { Paginator } from 'primeng/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from 'src/app/services/category.service';
@@ -29,7 +30,6 @@ import { timer, Subscription } from 'rxjs';
 import { take, filter, elementAt } from 'rxjs/operators';
 import { NgxOtpInputComponent, NgxOtpInputConfig } from 'ngx-otp-input';
 import { Meta, Title } from '@angular/platform-browser';
-import { GeolocationService } from 'src/app/services/geolocation.service';
 
 interface City {
     name: string,
@@ -63,15 +63,16 @@ export class VenueListComponent implements OnInit {
     showHomeSearch() {
         this.homeSearch = true;
     }
+    userLocation: UserLocation | null = null;
+    locationEnabled: boolean = false;
+    locationError: string = '';
+    currentRadius: number = 0;
+    showLocationPrompt: boolean = true;
     showoccasionerror = false;
     showvenuecityerror = false;
     venuecityname: any;
     numberPopup: boolean = false;
     bannerPopupVisible: boolean = false;
-    userLocation: any = null;
-    isLocationLoaded: boolean = false;
-    locationBasedFilter: boolean = true;
-    pendingLocationFilter: any = null;
     mobileForm: FormGroup;
     mobileNumber: any;
     submitted: boolean = false;
@@ -356,9 +357,9 @@ displayLimit: number = 25;
     @ViewChild('searchCalendarMobileView', { static: true }) datePickerMobile;
     constructor(
         private filterService: FilterService,
+        private geolocationService: GeolocationService,
         private photoService: PhotoService,
         private productService: ProductService,
-        private geolocationService: GeolocationService,
         private BannerService: BannerService,
         private venueService: VenueService,
         private router: Router,
@@ -491,13 +492,11 @@ displayLimit: number = 25;
         // })
         this.getSubareas();
         this.getCities();
-        this.getUserLocation();
-        this.getVenueList();
-        this.getAllVenueList();
-
         // this.getVenues();
         //this.getVenueList(this.selectedCategoryId);
-
+        this.getVenueList();
+        this.getAllVenueList();
+        this.initializeLocation();
         this.title.setTitle("Find the Right Banquet Halls Near You at EazyVenue.com")
         this.meta.addTag({name:"title",content:"Find the Right Banquet Halls Near You at EazyVenue.com"})
         this.meta.addTag({name:"description",content:"Discover Your Perfect Event Venue with EazyVenue.com, Explore exquisite banquet halls specially curated for weddings, parties, and corporate gatherings. Our diverse spaces ensure your events are unforgettable."})
@@ -505,221 +504,6 @@ displayLimit: number = 25;
         this.meta.addTag({ name: 'robots', content: 'index, follow' });
 
     }
-
-    async getUserLocation() {
-        try {
-          // First try to get precise location via GPS
-          const position = await this.geolocationService.getCurrentLocation();
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-
-          this.geolocationService.getLocationDetails(lat, lng).subscribe(
-            locationData => {
-              this.userLocation = locationData;
-              this.isLocationLoaded = true;
-              console.log('User location detected:', this.userLocation);
-
-              // Apply location-based filtering
-              this.applyLocationFilter();
-            },
-            error => {
-              console.error('Error getting location details:', error);
-              this.fallbackToIPLocation();
-            }
-          );
-        } catch (error) {
-          console.error('GPS location error:', error);
-          this.fallbackToIPLocation();
-        }
-      }
-
-      fallbackToIPLocation() {
-        // Fallback to IP-based location
-        this.geolocationService.getLocationByIP().subscribe(
-          locationData => {
-            this.userLocation = locationData;
-            this.isLocationLoaded = true;
-            console.log('Fallback IP location:', this.userLocation);
-
-            // Apply location-based filtering
-            this.applyLocationFilter();
-          },
-          error => {
-            console.error('IP location error:', error);
-            this.isLocationLoaded = true;
-            // Continue without location filtering
-            this.getVenueList();
-          }
-        );
-      }
-
-      applyLocationFilter() {
-        if (this.userLocation && this.locationBasedFilter) {
-          const detectedCity = this.userLocation.city.toLowerCase().trim();
-          const detectedSubarea = this.userLocation.subarea.toLowerCase().trim();
-
-          console.log('Detected city:', detectedCity);
-          console.log('CityList length:', this.cityList.length);
-
-          // If cityList is empty, wait for it to load
-          if (this.cityList.length === 0) {
-            console.log('CityList is empty, waiting for it to load...');
-            // Store the detected location and apply filter after cities are loaded
-            this.pendingLocationFilter = {
-              city: detectedCity,
-              subarea: detectedSubarea
-            };
-            return;
-          }
-
-          this.applyLocationFilterWithCities(detectedCity, detectedSubarea);
-        } else {
-          this.getVenueList();
-        }
-      }
-
-      applyLocationFilterWithCities(detectedCity: string, detectedSubarea: string) {
-        console.log('Available cities in cityList:', this.cityList.map(c => ({name: c.name, code: c.code || c.id})));
-
-        // Find matching city with more precise matching
-        let matchingCity = null;
-
-        // First try exact match
-        matchingCity = this.cityList.find(city => {
-          const cityName = city.name.toLowerCase().trim();
-          return cityName === detectedCity;
-        });
-
-        // If no exact match, try to find city that starts with detected city
-        if (!matchingCity) {
-          matchingCity = this.cityList.find(city => {
-            const cityName = city.name.toLowerCase().trim();
-            // Extract just the city name (before comma) for comparison
-            const cityNameOnly = cityName.split(',')[0].trim();
-
-            // FIXED: More precise matching - must be exact or start with detected city
-            // and length difference should be very small to avoid Thane->Thanesar matches
-            return (cityNameOnly === detectedCity ||
-                    (cityNameOnly.startsWith(detectedCity) &&
-                     Math.abs(cityNameOnly.length - detectedCity.length) <= 1));
-          });
-        }
-
-        // Enhanced third match with stricter conditions
-        if (!matchingCity) {
-          matchingCity = this.cityList.find(city => {
-            const cityName = city.name.toLowerCase().trim();
-            const cityNameOnly = cityName.split(',')[0].trim();
-
-            // FIXED: Much stricter matching - only allow if:
-            // 1. Detected city is contained in city name AND
-            // 2. City name is contained in detected city (bidirectional check) AND
-            // 3. Length difference is minimal (max 1 character)
-            // 4. OR exact match after removing common suffixes/prefixes
-
-            const normalizedCityName = cityNameOnly.replace(/\s+(city|town|district)$/i, '');
-            const normalizedDetectedCity = detectedCity.replace(/\s+(city|town|district)$/i, '');
-
-            return (normalizedCityName === normalizedDetectedCity) ||
-                   (cityNameOnly === detectedCity) ||
-                   (cityNameOnly.includes(detectedCity) &&
-                    detectedCity.includes(cityNameOnly.substring(0, detectedCity.length)) &&
-                    Math.abs(cityNameOnly.length - detectedCity.length) <= 1);
-          });
-        }
-
-        console.log('Matching city found:', matchingCity);
-
-        if (matchingCity) {
-          // Verify the match is actually correct by double-checking
-          const cityNameParts = matchingCity.name.toLowerCase().split(',')[0].trim();
-
-          // Additional verification: if detected city is "thane" and matched city starts with "thane"
-          // but is much longer, it's likely a false positive
-          if (detectedCity === 'thane' && cityNameParts.startsWith('thane') && cityNameParts !== 'thane') {
-            console.log('Potential false positive detected for Thane, skipping match');
-            console.log('Detected:', detectedCity, 'Matched:', cityNameParts);
-
-            // Try to find exact "Thane" match instead
-            const exactThaneMatch = this.cityList.find(city => {
-              const cityName = city.name.toLowerCase().split(',')[0].trim();
-              return cityName === 'thane';
-            });
-
-            if (exactThaneMatch) {
-              matchingCity = exactThaneMatch;
-              console.log('Found exact Thane match:', exactThaneMatch);
-            } else {
-              matchingCity = null;
-              console.log('No exact Thane match found, will show all venues');
-            }
-          }
-        }
-
-        if (matchingCity) {
-          // Clear previous selections
-          this.selectedCities = [];
-          this.selectedSubareaIds = [];
-          this.selectedVenueIds = [];
-
-          // Set the detected city
-          this.selectedCities = [matchingCity.code || matchingCity.id];
-          this.selectedCityName = matchingCity.name;
-
-          console.log('Selected cities after location filter:', this.selectedCities);
-          console.log('Selected city name:', this.selectedCityName);
-
-          // Reset pagination for new filter
-          this.finalVenueList = [];
-          this.pageNumber = 1;
-
-          // Load venues with city filter immediately (don't wait for subarea)
-          console.log('Loading venues with city filter - City:', this.selectedCities);
-          this.getVenueList();
-
-          // Try to find matching subarea but don't wait for it
-          this.getSubareas();
-          setTimeout(() => {
-            const matchingSubarea = this.subareaList?.find(subarea => {
-              const subareaName = subarea.name.toLowerCase().trim();
-              return subareaName === detectedSubarea ||
-                     subareaName.includes(detectedSubarea) ||
-                     detectedSubarea.includes(subareaName);
-            });
-
-            if (matchingSubarea) {
-              this.selectedSubareaIds = [matchingSubarea.id];
-              this.selectedSubareaName = matchingSubarea.name;
-              console.log('Selected subarea:', this.selectedSubareaName);
-
-              // Reload venues with both city and subarea filter
-              this.finalVenueList = [];
-              this.pageNumber = 1;
-              this.getVenueList();
-            }
-          }, 1000);
-        } else {
-          console.log('No matching city found for:', detectedCity);
-          console.log('Available city names:', this.cityList.map(c => c.name.toLowerCase()));
-
-          // If no exact city match, still load all venues but prioritize by detected city
-          this.finalVenueList = [];
-          this.pageNumber = 1;
-          this.getVenueList();
-        }
-      }
-
-      // Also add this method to disable location filtering
-      disableLocationFilter() {
-        this.locationBasedFilter = false;
-        this.selectedCities = [];
-        this.selectedSubareaIds = [];
-        this.selectedCityName = '';
-        this.selectedSubareaName = '';
-        this.finalVenueList = [];
-        this.pageNumber = 1;
-        this.getVenueList();
-      }
 
     ngAfterViewInit() {
         if (this.galleryWrapper) {
@@ -739,6 +523,90 @@ displayLimit: number = 25;
           element.removeEventListener('touchmove', this.handleTouchMove);
         }
       }
+
+      async initializeLocation() {
+        try {
+            // Check if user has previously granted location permission
+            const cachedLocation = this.geolocationService.getCachedUserLocation();
+
+            if (cachedLocation) {
+                this.userLocation = cachedLocation;
+                this.locationEnabled = true;
+                this.showLocationPrompt = false;
+                this.applyLocationFilter();
+                return;
+            }
+
+            // Auto-request location (user will see browser prompt)
+            await this.requestUserLocation();
+
+        } catch (error) {
+            console.log('Location not available on init:', error);
+            // Continue without location - venues will show in default order
+        }
+    }
+
+    /**
+     * Request user's location
+     */
+    async requestUserLocation() {
+        try {
+            this.locationError = '';
+
+            const location = await this.geolocationService.getUserLocation();
+            this.userLocation = location;
+            this.locationEnabled = true;
+            this.showLocationPrompt = false;
+
+            // Re-filter venues with location data
+            this.applyLocationFilter();
+
+            this.messageService.add({
+                key: 'toastmsg',
+                severity: 'success',
+                summary: 'Location Found',
+                detail: 'Showing venues near you',
+                life: 3000
+            });
+
+        } catch (error) {
+            this.locationError = error.message;
+            this.locationEnabled = false;
+
+            this.messageService.add({
+                key: 'toastmsg',
+                severity: 'warn',
+                summary: 'Location Error',
+                detail: 'Unable to get your location. Showing all venues.',
+                life: 4000
+            });
+        }
+    }
+
+    /**
+     * Apply location-based filtering to current venue list
+     */
+    applyLocationFilter() {
+        if (!this.userLocation || !this.finalVenueList || this.finalVenueList.length === 0) {
+            return;
+        }
+
+        const result = this.geolocationService.getVenuesWithDistanceFilter(
+            this.finalVenueList,
+            this.userLocation
+        );
+
+        this.finalVenueList = result.venues;
+        this.currentRadius = result.radiusUsed;
+
+        // Update displayed venues
+        this.updateDisplayedVenues();
+
+        // Show info about radius used
+        if (result.radiusUsed > 0) {
+            console.log(`Showing ${result.totalFound} venues within ${result.radiusUsed}km`);
+        }
+    }
 
       handleTouchStart = (event: TouchEvent) => {
         // Record the initial touch coordinates
@@ -959,24 +827,16 @@ displayLimit: number = 25;
     getCities() {
         // let query = "?filterByDisable=false&filterByStatus=true";
         this.cityService.getcityList("list=true").subscribe(
-          data => {
-            this.cityList = data.data.items;
+            data => {
+                // console.log(data);
 
-            // Check if there's a pending location filter to apply
-            if (this.pendingLocationFilter) {
-              console.log('Applying pending location filter...');
-              this.applyLocationFilterWithCities(
-                this.pendingLocationFilter.city,
-                this.pendingLocationFilter.subarea
-              );
-              this.pendingLocationFilter = null; // Clear the pending filter
+                this.cityList = data.data.items;
+            },
+            err => {
+                this.errorMessage = err.error.message;
             }
-          },
-          err => {
-            this.errorMessage = err.error.message;
-          }
         );
-      }
+    }
     async getWishlist() {
         let query = "?filterByStatus=true&filterByCustomerId=" + this.userId;
         this.wishlistService.getWishlist(query).subscribe(
@@ -1137,14 +997,11 @@ displayLimit: number = 25;
 
         this.loading = true;
         this.venueService.getVenueListForFilter(newQuery).subscribe(
+        // this.venueService.getVenueListWithoutAuth(query).subscribe(
             data => {
-              this.loading = false;
-              this.tmpVenueList = data.data.items;
-
-              // Apply location-based sorting if user location is available
-              if (this.userLocation && this.locationBasedFilter) {
-                this.tmpVenueList = this.sortVenuesByLocation(this.tmpVenueList);
-              }
+                //if (data.data.items.length > 0) {
+                this.loading = false;
+                this.tmpVenueList = data.data.items;
                 this.tmpVenueList.forEach(tElement => {
                     if (tElement.venueVideo !== '') {
                         tElement.venueImage.push({ video: tElement.venueVideo });
@@ -1152,36 +1009,6 @@ displayLimit: number = 25;
                 })
                 this.finalVenueList = [...this.venueList, ...this.tmpVenueList];
                 this.totalRecords = data.data.totalCount;
-if (this.finalVenueList.length < 5 && this.locationBasedFilter && this.selectedCities.length > 0) {
-    // Check if current city is not Mumbai
-    const currentCityName = this.selectedCityName?.toLowerCase();
-    if (currentCityName && !currentCityName.includes('mumbai')) {
-        // Find Mumbai city in cityList
-        const mumbaiCity = this.cityList.find(city =>
-            city.name.toLowerCase().includes('mumbai')
-        );
-
-        if (mumbaiCity) {
-            // Fetch Mumbai venues as fallback
-            let mumbaiQuery = newQuery.replace(/&citycode=[^&]*/g, '') + "&citycode=" + (mumbaiCity.code || mumbaiCity.id);
-
-            this.venueService.getVenueListForFilter(mumbaiQuery).subscribe(
-                mumbaiData => {
-                    const mumbaiVenues = mumbaiData.data.items || [];
-                    // Add Mumbai venues that aren't already in the list
-                    const existingIds = this.finalVenueList.map(v => v.id);
-                    const newMumbaiVenues = mumbaiVenues.filter(v => !existingIds.includes(v.id));
-
-                    // Limit to avoid too many results
-                    const venuesNeeded = Math.max(0, 10 - this.finalVenueList.length);
-                    this.finalVenueList = [...this.finalVenueList, ...newMumbaiVenues.slice(0, venuesNeeded)];
-
-                    this.updateDisplayedVenues();
-                }
-            );
-        }
-    }
-}
                 if (this.finalVenueList.length > 0) {
                     this.finalVenueList.forEach(element => {
                         this.allFoodMenuPriceArray = [];
@@ -1231,8 +1058,12 @@ if (this.finalVenueList.length < 5 && this.locationBasedFilter && this.selectedC
                         }
                         element['minPrice'] = minPrice;
                     });
+                    if (this.locationEnabled && this.userLocation) {
+                        this.applyLocationFilter();
+                    } else {
+                        this.updateDisplayedVenues();
+                    }
                     this.noVenueFlag = false;
-                    this.updateDisplayedVenues();
                 } else {
                     this.noVenueFlag = true;
                 }
@@ -1243,43 +1074,31 @@ if (this.finalVenueList.length < 5 && this.locationBasedFilter && this.selectedC
             });
     }
 
-    sortVenuesByLocation(venues: any[]): any[] {
-        if (!this.userLocation) return venues;
+    async toggleLocation() {
+        if (this.locationEnabled) {
+            // Disable location
+            this.locationEnabled = false;
+            this.userLocation = null;
+            this.geolocationService.clearCachedLocation();
 
-        const userCity = this.userLocation.city.toLowerCase();
-        const userSubarea = this.userLocation.subarea.toLowerCase();
+            // Reload venues without location filter
+            this.finalVenueList = [];
+            this.pageNumber = 1;
+            this.getVenueList();
 
-        return venues.sort((a, b) => {
-          const aCity = (a.cityname || '').toLowerCase();
-          const aSubarea = (a.subarea || '').toLowerCase();
-          const bCity = (b.cityname || '').toLowerCase();
-          const bSubarea = (b.subarea || '').toLowerCase();
-
-          // Priority scoring
-          let aScore = 0;
-          let bScore = 0;
-
-          // Exact subarea match gets highest priority
-          if (aSubarea.includes(userSubarea) || userSubarea.includes(aSubarea)) aScore += 10;
-          if (bSubarea.includes(userSubarea) || userSubarea.includes(bSubarea)) bScore += 10;
-
-          // City match gets medium priority
-          if (aCity.includes(userCity) || userCity.includes(aCity)) aScore += 5;
-          if (bCity.includes(userCity) || userCity.includes(bCity)) bScore += 5;
-
-          return bScore - aScore; // Sort in descending order of score
-        });
+        } else {
+            // Enable location
+            await this.requestUserLocation();
+        }
     }
 
-    requestLocationPermission() {
-        if (confirm('Allow location access to find venues near you?')) {
-          this.getUserLocation();
-        } else {
-          this.isLocationLoaded = true;
-          this.getVenueList();
-        }
-      }
-
+    /**
+     * Manually refresh location
+     */
+    async refreshLocation() {
+        this.geolocationService.clearCachedLocation();
+        await this.requestUserLocation();
+    }
     onClickGuestCount(capacity, event) {
         if (capacity.id != undefined) {
             this.capacityId = capacity.id;
@@ -1331,44 +1150,6 @@ if (this.finalVenueList.length < 5 && this.locationBasedFilter && this.selectedC
 
         })
 
-        // let vendorParentQuery = "?filterByDisable=false&filterByStatus=true&filterBySlug=Vendor";
-        // this.categoryService.getCategoryWithoutAuthList(vendorParentQuery).subscribe(
-        //     vendorParentData => {
-        //         let vedorListQuery = "?filterByDisable=false&filterByStatus=true&filterByParent=" + vendorParentData.data.items[0]['id'] + "&sortBy=created_at&orderBy=1";
-        //         this.categoryService.getCategoryWithoutAuthList(vedorListQuery).subscribe(
-        //             vendorListData => {
-        //                 let photoItem = vendorListData.data.items.filter(o => o.name === "Photographer");
-        //                 this.groupedMenuList.push({ label: "Vendor", value: "Vendor", items: photoItem })
-        //                 let occationParentQuery = "?filterByDisable=false&filterByStatus=true&filterBySlug=parent_category";
-        //                 this.categoryService.getCategoryWithoutAuthList(occationParentQuery).subscribe(
-        //                     occationParentData => {
-        //                         let occasionListQuery = "?filterByDisable=false&filterByStatus=true&filterByParent=" + occationParentData.data.items[0]['id'] + "&sortBy=created_at&orderBy=1";
-        //                         this.categoryService.getCategoryWithoutAuthList(occasionListQuery).subscribe(
-        //                             occasionListData => {
-        //                                 this.groupedMenuList.push({ label: "Occasion", value: "Occasion", items: occasionListData.data.items })
-        //                                 console.log(this.groupedMenuList);
-
-        //                             },
-        //                             occasionListErr => {
-        //                                 this.errorMessage = occasionListErr.error.message;
-        //                             }
-        //                         )
-        //                     },
-        //                     occasionParentErr => {
-        //                         this.errorMessage = occasionParentErr.error.message;
-        //                     }
-        //                 )
-        //             },
-        //             vendorListErr => {
-        //                 this.errorMessage = vendorListErr.error.message;
-        //             }
-        //         )
-        //     },
-        //     vendorParentErr => {
-        //         this.errorMessage = vendorParentErr.error.message;
-        //     }
-        // )
-
     }
     filterGroupedSearch(event) {
         let query = event.query;
@@ -1417,102 +1198,6 @@ if (this.finalVenueList.length < 5 && this.locationBasedFilter && this.selectedC
         // this.getAllVenueList();
     }
 
-    // getCategoryBySlug() {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=parent_category";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-    //             if (data.data.items.length > 0) {
-    //                 this.parentCategoryDetails = data.data.items[0];
-    //                 let parentCategoryId = this.parentCategoryDetails['id'];
-    //                 this.getCategoryList(parentCategoryId);
-    //             }
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    // getVendorBySlug() {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=Vendor";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-    //             console.log(data);
-
-    //             if (data.data.items.length > 0) {
-    //                 // this.parentCategoryDetails = data.data.items[0];
-    //                 let parentCategoryId = data.data.items[0]['id'];
-    //                 this.getVendorList(parentCategoryId);
-    //             }
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    // getVendorList(parentCategoryId: any) {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + parentCategoryId + "&sortBy=created_at&orderBy=1";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-    //             //if (data.data.items.length > 0) {
-    //             this.categoryMenuList = data.data.items;
-    //             // this.vendorList = data.data.items;
-    //             // this.selectedCategoryId = this.categoryMenuList[0].id;
-    //             let index = this.categoryMenuList.findIndex(x => x.id === this.selectedCategoryId);
-    //             if (index != -1) {
-    //                 this.categoryMenuList[index]['show'] = 'false';
-    //             }
-    //             if (this.isLoggedIn == true) {
-    //                 //this.getWishlist();
-    //             } else {
-    //                 // this.getVenueList(this.lazyLoadEvent);
-    //                 // this.getAllVenueList();
-    //             }
-    //             //}
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    // getCategoryList(parentCategoryId: any) {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + parentCategoryId + "&sortBy=created_at&orderBy=1";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-    //             //if (data.data.items.length > 0) {
-    //             this.categoryMenuList = data.data.items;
-    //             // this.occasionList = data.data.items;
-    //             // this.selectedCategoryId = this.categoryMenuList[0].id;
-    //             let index = this.categoryMenuList.findIndex(x => x.id === this.selectedCategoryId);
-    //             if (index != -1) {
-    //                 this.categoryMenuList[index]['show'] = 'false';
-    //             }
-    //             if (this.isLoggedIn == true) {
-    //                 //this.getWishlist();
-    //             } else {
-    //                 // this.getVenueList(this.lazyLoadEvent);
-    //                 // this.getAllVenueList();
-    //             }
-    //             //}
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    // getAllVenueList() {
-    //     let query = "filterByDisable=false&filterByStatus=true&filterByAssured=true";
-    //     // &filterByCategory=" + this.selectedCategoryId;
-    //     this.venueService.getVenueListWithoutAuth(query).subscribe(
-    //         data => {
-    //             //if (data.data.items.length > 0) {
-    //             this.allVenueList = data.data.items;
-    //             //}
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
     getVenueDetails(id) {
         // console.log(id);
 
@@ -2090,45 +1775,11 @@ if (this.finalVenueList.length < 5 && this.locationBasedFilter && this.selectedC
     @HostListener('window:keyup.esc', ['$event']) w(e: KeyboardEvent) {
         this.displayBasic = false;
     }
-
-
-    // showDialogoffer() {
-    //     if (this.isLoggedIn == false) {
-    //         this.numberPopup = true;
-    //         this.otpPopup = false;
-    //         this.otpthankyouPopup = false;
-    //         this.ngxotp.clear();
-    //         this.otp = undefined;
-    //     }
-    // }
     showDialogoffer() {
         this.otpPopup = true;
         this.homeSearch = false;
         this.otpthankyouPopup = false;
     }
 
-    // onTouchEnd(e: TouchEvent) {
-    //     let touchobj = e.changedTouches[0];
 
-    //     if (this.isVertical) {
-    //         this.changePageOnTouch(e, touchobj.pageY - (<{ x: number; y: number }>this.startPos).y);
-    //     } else {
-    //         this.changePageOnTouch(e, touchobj.pageX - (<{ x: number; y: number }>this.startPos).x);
-    //     }
-    // }
-
-    // onTouchMove(e: TouchEvent) {
-    //     if (e.cancelable) {
-    //         e.preventDefault();
-    //     }
-    // }
-
-    // onTouchStart(e: TouchEvent) {
-    //     let touchobj = e.changedTouches[0];
-
-    //     this.startPos = {
-    //         x: touchobj.pageX,
-    //         y: touchobj.pageY
-    //     };
-    // }
 }

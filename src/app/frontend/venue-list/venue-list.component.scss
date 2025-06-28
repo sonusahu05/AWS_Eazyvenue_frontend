@@ -12,6 +12,82 @@
     color: red !important;
 }
 
+/* Add these styles to your component CSS or global styles */
+
+.location-banner {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 12px 0;
+    margin-bottom: 20px;
+}
+
+.location-info {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #495057;
+}
+
+.location-info i {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.location-error {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #dc3545;
+}
+
+.location-error i {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.location-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.distance-info {
+    color: #28a745;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+
+/* Button styles for location controls */
+.btn-outline-primary {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
 .location-prompt-container {
     position: fixed;
     top: 0;
