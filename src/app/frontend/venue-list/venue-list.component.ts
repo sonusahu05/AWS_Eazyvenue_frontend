@@ -68,6 +68,9 @@ export class VenueListComponent implements OnInit {
     locationError: string = '';
     currentRadius: number = 0;
     showLocationPrompt: boolean = true;
+    locationPermissionState: 'granted' | 'denied' | 'prompt' | 'unsupported' = 'prompt';
+    locationLoading: boolean = false;
+    showLocationHelp: boolean = false;
     showoccasionerror = false;
     showvenuecityerror = false;
     venuecityname: any;
@@ -388,7 +391,7 @@ displayLimit: number = 25;
       closeDatesMobileView(){
         this.datePickerMobile.hideOverlay();
       }
-    ngOnInit() {
+    async ngOnInit() {
         const canonicalLink = this.renderer.createElement('link');
         this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
         this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
@@ -494,9 +497,9 @@ displayLimit: number = 25;
         this.getCities();
         // this.getVenues();
         //this.getVenueList(this.selectedCategoryId);
+        await this.initializeLocation();
         this.getVenueList();
         this.getAllVenueList();
-        this.initializeLocation();
         this.title.setTitle("Find the Right Banquet Halls Near You at EazyVenue.com")
         this.meta.addTag({name:"title",content:"Find the Right Banquet Halls Near You at EazyVenue.com"})
         this.meta.addTag({name:"description",content:"Discover Your Perfect Event Venue with EazyVenue.com, Explore exquisite banquet halls specially curated for weddings, parties, and corporate gatherings. Our diverse spaces ensure your events are unforgettable."})
@@ -526,87 +529,196 @@ displayLimit: number = 25;
 
       async initializeLocation() {
         try {
-            // Check if user has previously granted location permission
-            const cachedLocation = this.geolocationService.getCachedUserLocation();
+          // Check location permission status
+          this.locationPermissionState = await this.geolocationService.checkLocationPermission();
 
-            if (cachedLocation) {
-                this.userLocation = cachedLocation;
-                this.locationEnabled = true;
-                this.showLocationPrompt = false;
-                this.applyLocationFilter();
-                return;
-            }
+          // Check if we have cached location
+          const cachedLocation = this.geolocationService.getCachedUserLocation();
 
-            // Auto-request location (user will see browser prompt)
-            await this.requestUserLocation();
-
-        } catch (error) {
-            console.log('Location not available on init:', error);
-            // Continue without location - venues will show in default order
-        }
-    }
-
-    /**
-     * Request user's location
-     */
-    async requestUserLocation() {
-        try {
-            this.locationError = '';
-
-            const location = await this.geolocationService.getUserLocation();
-            this.userLocation = location;
+          if (cachedLocation) {
+            this.userLocation = cachedLocation;
             this.locationEnabled = true;
             this.showLocationPrompt = false;
-
-            // Re-filter venues with location data
             this.applyLocationFilter();
+            return;
+          }
 
-            this.messageService.add({
-                key: 'toastmsg',
-                severity: 'success',
-                summary: 'Location Found',
-                detail: 'Showing venues near you',
-                life: 3000
-            });
+          // AUTO-REQUEST location when user visits (your requirement)
+          // This will show browser permission dialog automatically
+          await this.requestUserLocationAuto();
 
         } catch (error) {
-            this.locationError = error.message;
-            this.locationEnabled = false;
-
-            this.messageService.add({
-                key: 'toastmsg',
-                severity: 'warn',
-                summary: 'Location Error',
-                detail: 'Unable to get your location. Showing all venues.',
-                life: 4000
-            });
+          console.log('Location initialization failed:', error);
+          this.showLocationPrompt = true;
+          this.locationEnabled = false;
         }
-    }
+      }
 
-    /**
-     * Apply location-based filtering to current venue list
-     */
-    applyLocationFilter() {
-        if (!this.userLocation || !this.finalVenueList || this.finalVenueList.length === 0) {
+      /**
+       * Auto-request location (called on page load)
+       */
+      async requestUserLocationAuto() {
+        try {
+          this.locationError = '';
+
+          if (!this.geolocationService.isGeolocationSupported()) {
+            this.showLocationPrompt = false;
+            this.locationError = 'Location services not supported by your browser.';
             return;
+          }
+
+          // Try to get location without bypassing denied check
+          const location = await this.geolocationService.getUserLocation(false, false);
+          this.userLocation = location;
+          this.locationEnabled = true;
+          this.showLocationPrompt = false;
+          this.locationPermissionState = 'granted';
+
+          this.applyLocationFilter();
+
+          // Optional: Show success message
+          this.messageService.add({
+            key: 'toastmsg',
+            severity: 'success',
+            summary: 'Location Enabled',
+            detail: 'Showing venues near you',
+            life: 3000
+          });
+
+        } catch (error) {
+          // Auto-request failed, show enable button
+          this.locationError = '';
+          this.locationEnabled = false;
+          this.showLocationPrompt = true;
+
+          if (error.message.includes('denied')) {
+            this.locationPermissionState = 'denied';
+          }
+
+          console.log('Auto location request failed:', error.message);
+          // Don't show error message for auto-request - just show enable button
+        }
+      }
+
+      /**
+       * Manual location request (when user clicks enable button)
+       */
+      async requestUserLocation() {
+        if (this.locationLoading) return;
+
+        try {
+          this.locationLoading = true;
+          this.locationError = '';
+
+          if (!this.geolocationService.isGeolocationSupported()) {
+            throw new Error('Location services are not supported by your browser');
+          }
+
+          // For manual request, bypass denied check to try again
+          const location = await this.geolocationService.getUserLocation(true, true);
+          this.userLocation = location;
+          this.locationEnabled = true;
+          this.showLocationPrompt = false;
+          this.locationPermissionState = 'granted';
+
+          this.applyLocationFilter();
+
+          this.messageService.add({
+            key: 'toastmsg',
+            severity: 'success',
+            summary: 'Location Found',
+            detail: 'Showing venues near you',
+            life: 3000
+          });
+
+        } catch (error) {
+          this.locationError = error.message;
+          this.locationEnabled = false;
+
+          if (error.message.includes('denied')) {
+            this.locationPermissionState = 'denied';
+          }
+
+          this.messageService.add({
+            key: 'toastmsg',
+            severity: 'error',
+            summary: 'Location Error',
+            detail: 'Unable to access location. Please check browser settings.',
+            life: 6000
+          });
+
+          this.showLocationPrompt = true;
+        } finally {
+          this.locationLoading = false;
+        }
+      }
+
+      async toggleLocation() {
+        if (this.locationEnabled) {
+          // Disable location
+          this.locationEnabled = false;
+          this.userLocation = null;
+          this.showLocationPrompt = true;
+          this.geolocationService.clearCachedLocation();
+
+          // Reload venues without location filter
+          this.finalVenueList = [];
+          this.pageNumber = 1;
+          this.getVenueList();
+
+        } else {
+          // Enable location
+          await this.requestUserLocation();
+        }
+      }
+
+      async refreshLocation() {
+        this.geolocationService.clearCachedLocation();
+        await this.requestUserLocation();
+      }
+
+      applyLocationFilter() {
+        if (!this.userLocation || !this.finalVenueList || this.finalVenueList.length === 0) {
+          return;
         }
 
         const result = this.geolocationService.getVenuesWithDistanceFilter(
-            this.finalVenueList,
-            this.userLocation
+          this.finalVenueList,
+          this.userLocation
         );
 
         this.finalVenueList = result.venues;
         this.currentRadius = result.radiusUsed;
 
-        // Update displayed venues
         this.updateDisplayedVenues();
 
-        // Show info about radius used
         if (result.radiusUsed > 0) {
-            console.log(`Showing ${result.totalFound} venues within ${result.radiusUsed}km`);
+          console.log(`Showing ${result.totalFound} venues within ${result.radiusUsed}km`);
         }
-    }
+      }
+
+      // Helper method to get user-friendly permission message
+      getLocationPermissionMessage(): string {
+        switch (this.locationPermissionState) {
+          case 'denied':
+            return 'Location access denied. Please enable location in your browser settings to see nearby venues.';
+          case 'unsupported':
+            return 'Location services are not available in your browser.';
+          case 'granted':
+            return 'Location access granted.';
+          default:
+            return 'Enable location to find venues near you.';
+        }
+      }
+
+      getLocationButtonText(): string {
+        switch (this.locationPermissionState) {
+          case 'denied':
+            return 'Enable Location';
+          default:
+            return 'Enable Location';
+        }
+      }
 
       handleTouchStart = (event: TouchEvent) => {
         // Record the initial touch coordinates
@@ -1074,31 +1186,6 @@ displayLimit: number = 25;
             });
     }
 
-    async toggleLocation() {
-        if (this.locationEnabled) {
-            // Disable location
-            this.locationEnabled = false;
-            this.userLocation = null;
-            this.geolocationService.clearCachedLocation();
-
-            // Reload venues without location filter
-            this.finalVenueList = [];
-            this.pageNumber = 1;
-            this.getVenueList();
-
-        } else {
-            // Enable location
-            await this.requestUserLocation();
-        }
-    }
-
-    /**
-     * Manually refresh location
-     */
-    async refreshLocation() {
-        this.geolocationService.clearCachedLocation();
-        await this.requestUserLocation();
-    }
     onClickGuestCount(capacity, event) {
         if (capacity.id != undefined) {
             this.capacityId = capacity.id;
