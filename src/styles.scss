@@ -12701,7 +12701,31 @@ label.icons-image.search-icon {
 }
 
 @media (min-width: 1099px) and (max-width: 1180px) {
+
+}
+
+/* Global accessibility improvements for galleria thumbnail navigation buttons */
+.p-galleria-thumbnail-prev:not([aria-label])::before {
+    content: "Previous thumbnails";
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.p-galleria-thumbnail-next:not([aria-label])::before {
+    content: "Next thumbnails";
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+@media (min-width: 1099px) and (max-width: 1180px) {
     .mobile-view-gallery {
         display: block!important;
-      }
+    }
 }
+

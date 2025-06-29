@@ -1010,3 +1010,41 @@ label.mobile-number-text {
     border-width: 1px;
 
 }
+
+/* Accessibility improvements for carousel navigation buttons */
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-prev::before {
+    content: "Previous categories";
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-next::before {
+    content: "Next categories";
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Accessibility improvements for galleria thumbnail navigation buttons */
+:host ::ng-deep .p-galleria-thumbnail-prev::before {
+    content: "Previous thumbnails";
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+:host ::ng-deep .p-galleria-thumbnail-next::before {
+    content: "Next thumbnails";
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}

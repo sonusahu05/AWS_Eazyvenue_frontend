@@ -31,6 +31,7 @@
                                                         categoryMenu.slug
                                                     }}.svg"
                                                     class="product-image"
+                                                    alt="{{ categoryMenu.name }} category icon"
                                                 />
                                             </div>
                                         </div>
@@ -64,7 +65,7 @@
     <div class="search-bar">
         <div class="city-field col-md-2 p-p-0">
             <label for="" class="icons-image">
-                <img src="assets/images/category-icons/celebration.svg" />
+                <img src="assets/images/category-icons/celebration.svg" alt="Celebration category icon" />
             </label>
             <span class="p-fluid">
                 <p-autoComplete
@@ -92,6 +93,7 @@
                     <img
                         src="assets/images/category-icons/search.png"
                         class="search-icon"
+                        alt="Search icon"
                     />
                 </label>
                 <p-autoComplete
@@ -124,7 +126,7 @@
         <div class="col-md-auto p-p-0 guest_field_list">
             <div class="Guest-field">
                 <label for="" class="icons-image">
-                    <img src="assets/images/svg-icons/guest-icon.svg" />
+                    <img src="assets/images/svg-icons/guest-icon.svg" alt="Guest count icon" />
                 </label>
                 <p-dropdown
                     [editable]="true"
@@ -210,7 +212,7 @@
         </div>
         <div class="col-md-auto p-p-0 calendar-div">
             <label for="" class="icons-image"
-                ><img src="assets/images/svg-icons/calender-icon.svg"
+                ><img src="assets/images/svg-icons/calender-icon.svg" alt="Calendar date selection icon"
             /></label>
             <!-- <p-calendar [(ngModel)]="rangeDates" [showButtonBar]="true" selectionMode="range" (click)="onClickClear()"></p-calendar> -->
             <p-calendar
@@ -325,6 +327,7 @@
                     [src]="img.venue_image_src"
                     class="assured-img"
                     style="width: 900px; height: 500px; display: block"
+                    alt="Venue gallery image"
                 />
                 <video
                     *ngIf="img.video"
@@ -348,6 +351,7 @@
                             display: block;
                             visibility: visible;
                         "
+                        alt="Venue thumbnail image"
                     />
                     <video
                         *ngIf="img.video"
@@ -395,32 +399,32 @@
                                                 pTemplate="thumbnail"
                                                 let-img
                                             >
-                                                <img
-                                                    *ngIf="!img.video"
-                                                    [src]="img.venue_image_src"
-                                                    (click)="
-                                                        getVenueDetails(
-                                                            item.metaUrl
-                                                        )
-                                                    "
-                                                    style="
-                                                        width: 100%;
-                                                        display: block;
-                                                    "
-                                                />
-                                                <video
-                                                    *ngIf="img.video"
-                                                    muted
-                                                    controls
-                                                    loop
-                                                >
-                                                    <source
-                                                        [src]="img.video"
-                                                        type="video/mp4"
+                                                <a [routerLink]="['/venue', item.metaUrl]" style="display: block;">
+                                                    <img
+                                                        *ngIf="!img.video"
+                                                        [src]="img.venue_image_src"
+                                                        style="
+                                                            width: 100%;
+                                                            display: block;
+                                                        "
+                                                        [alt]="item.name + ' venue image'"
                                                     />
-                                                    Your browser does not
-                                                    support the video tag.
-                                                </video>
+                                                </a>
+                                                <a [routerLink]="['/venue', item.metaUrl]" style="display: block;">
+                                                    <video
+                                                        *ngIf="img.video"
+                                                        muted
+                                                        controls
+                                                        loop
+                                                    >
+                                                        <source
+                                                            [src]="img.video"
+                                                            type="video/mp4"
+                                                        />
+                                                        Your browser does not
+                                                        support the video tag.
+                                                    </video>
+                                                </a>
                                             </ng-template>
                                         </p-galleria>
                                     </div>
@@ -445,38 +449,38 @@
                                                 pTemplate="item"
                                                 let-iItem
                                             >
-                                                <img
-                                                    *ngIf="!iItem.video"
-                                                    (click)="
-                                                        getVenueDetails(
-                                                            item.metaUrl
-                                                        )
-                                                    "
-                                                    [src]="
-                                                        iItem.venue_image_src
-                                                    "
-                                                    style="
-                                                        width: 100%;
-                                                        display: block;
-                                                    "
-                                                />
-                                                <video
-                                                    *ngIf="iItem.video"
-                                                    style="
-                                                        width: 100%;
-                                                        display: block;
-                                                    "
-                                                    muted
-                                                    controls
-                                                    loop
-                                                >
-                                                    <source
-                                                        src="{{ iItem.video }}"
-                                                        type="video/mp4"
+                                                <a [routerLink]="['/venue', item.metaUrl]" style="display: block;">
+                                                    <img
+                                                        *ngIf="!iItem.video"
+                                                        [src]="
+                                                            iItem.venue_image_src
+                                                        "
+                                                        style="
+                                                            width: 100%;
+                                                            display: block;
+                                                        "
+                                                        [alt]="item.name + ' venue image'"
                                                     />
-                                                    Your browser does not
-                                                    support the video tag.
-                                                </video>
+                                                </a>
+                                                <a [routerLink]="['/venue', item.metaUrl]" style="display: block;">
+                                                    <video
+                                                        *ngIf="iItem.video"
+                                                        style="
+                                                            width: 100%;
+                                                            display: block;
+                                                        "
+                                                        muted
+                                                        controls
+                                                        loop
+                                                    >
+                                                        <source
+                                                            src="{{ iItem.video }}"
+                                                            type="video/mp4"
+                                                        />
+                                                        Your browser does not
+                                                        support the video tag.
+                                                    </video>
+                                                </a>
                                             </ng-template>
                                         </p-galleria>
                                     </div>
@@ -493,9 +497,7 @@
                                 <div class="listing-body">
                                     <h5 class="listing-title">
                                         <a
-                                            (click)="
-                                                getVenueDetails(item.metaUrl)
-                                            "
+                                            [routerLink]="['/venue', item.metaUrl]"
                                             [title]="item.name"
                                             class="mb-0"
                                             >{{ item.name }}</a
@@ -506,6 +508,7 @@
                                             <span class="icon">
                                                 <img
                                                     src="assets/img/svg/location-icon.svg"
+                                                    alt="Location icon"
                                                 />
                                             </span>
                                             <span class="city"
@@ -521,11 +524,9 @@
                                         </div>
                                     </div>
                                     <div class="short-discription">
-                                        <span
+                                        <a
                                             class="read-more"
-                                            (click)="
-                                                getVenueDetails(item.metaUrl)
-                                            "
+                                            [routerLink]="['/venue', item.metaUrl]"
                                         >
                                             <p
                                                 class="listing-text"
@@ -533,7 +534,7 @@
                                                     item.shortdescription
                                                 "
                                             ></p>
-                                        </span>
+                                        </a>
                                     </div>
                                     <div class="price-icons">
                                         <div class="price-div">
@@ -569,9 +570,7 @@
                                     </div>
                                     <div class="listing-gallery-wrapper">
                                         <a
-                                            (click)="
-                                                getVenueDetails(item.metaUrl)
-                                            "
+                                            [routerLink]="['/venue', item.metaUrl]"
                                             class="btn-custom btn-sm secondary"
                                             >View Details</a
                                         >
@@ -583,7 +582,7 @@
                                             >
                                                 <img
                                                     src="assets/img/svg/google.png"
-                                                    alt=""
+                                                    alt="Google ratings icon"
                                                 />
                                                 <i
                                                     class="pi pi-star-fill"
@@ -604,7 +603,7 @@
                                             >
                                                 <img
                                                     src="assets/images/logo.png"
-                                                    alt=""
+                                                    alt="EazyVenue ratings icon"
                                                 />
                                                 <i
                                                     class="pi pi-star-fill"
@@ -649,7 +648,7 @@
 styleClass="banner-popup-dialog"
 >
 <div class="banner-container">
-    <button class="close-banner-btn" (click)="closeBannerPopup()">
+    <button class="close-banner-btn" (click)="closeBannerPopup()" aria-label="Close banner">
         <i class="pi pi-times"></i>
     </button>
     <video
@@ -687,7 +686,7 @@ styleClass="banner-popup-dialog"
 styleClass="mobile-banner-popup-dialog"
 >
 <div class="mobile-banner-container">
-    <button class="close-banner-btn" (click)="closeBannerPopup()">
+    <button class="close-banner-btn" (click)="closeBannerPopup()" aria-label="Close banner">
         <i class="pi pi-times"></i>
     </button>
     <video
@@ -749,6 +748,36 @@ styleClass="mobile-banner-popup-dialog"
                     .alternative-show-more-btn:hover {
                         transform: translateY(-2px);
                         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+                    }
+
+                    /* Venue link styles to prevent interference with video controls */
+                    .listing-thumbnail a {
+                        text-decoration: none;
+                        color: inherit;
+                        display: block;
+                    }
+
+                    .listing-thumbnail a:hover {
+                        text-decoration: none;
+                        color: inherit;
+                    }
+
+                    /* Ensure video controls still work when wrapped in anchor */
+                    .listing-thumbnail a video {
+                        pointer-events: auto;
+                    }
+
+                    .listing-thumbnail a video:hover {
+                        cursor: pointer;
+                    }
+
+                    /* Prevent anchor from capturing video control clicks */
+                    .listing-thumbnail a[href] video::-webkit-media-controls {
+                        pointer-events: auto;
+                    }
+
+                    .listing-thumbnail a[href] video::-webkit-media-controls-panel {
+                        pointer-events: auto;
                     }
                 </style>
             </div>
@@ -1078,7 +1107,7 @@ styleClass="mobile-banner-popup-dialog"
         >
             <div class="city-field col-md-12 p-p-0">
                 <label for="" class="icons-image">
-                    <img src="assets/images/category-icons/celebration.svg" />
+                    <img src="assets/images/category-icons/celebration.svg" alt="Celebration category icon" />
                 </label>
                 <span class="p-fluid">
                     <p-dropdown
@@ -1102,6 +1131,7 @@ styleClass="mobile-banner-popup-dialog"
                         <img
                             src="assets/images/category-icons/search.png"
                             class="search-icon"
+                            alt="Search icon"
                         />
                     </label>
                     <p-autoComplete
@@ -1135,7 +1165,7 @@ styleClass="mobile-banner-popup-dialog"
             <div class="col-md-12 p-p-0 guest_field_list">
                 <div class="Guest-field">
                     <label for="" class="icons-image">
-                        <img src="assets/images/svg-icons/guest-icon.svg" />
+                        <img src="assets/images/svg-icons/guest-icon.svg" alt="Guest count icon" />
                     </label>
                     <p-dropdown
                         [editable]="true"
@@ -1150,7 +1180,7 @@ styleClass="mobile-banner-popup-dialog"
             </div>
             <div class="col-md-12 p-p-0 calendar-div">
                 <label for="" class="icons-image"
-                    ><img src="assets/images/svg-icons/calender-icon.svg"
+                    ><img src="assets/images/svg-icons/calender-icon.svg" alt="Calendar date selection icon"
                 /></label>
                 <!-- <p-calendar [(ngModel)]="rangeDates" [showButtonBar]="true" selectionMode="range" (click)="onClickClear()"></p-calendar> -->
                 <p-calendar

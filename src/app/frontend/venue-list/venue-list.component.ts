@@ -1027,7 +1027,12 @@ displayLimit: number = 25;
         const startIndex = 0;
         const endIndex = this.pageNumber * this.pageSize;
         this.displayedVenueList = this.finalVenueList.slice(startIndex, endIndex);
-      }
+        
+        // Generate ItemList schema for venue listings
+        if (this.displayedVenueList && this.displayedVenueList.length > 0) {
+            this.generateVenueListSchema();
+        }
+    }
 
       // Load more venues when "Show More" button is clicked
       loadMoreVenues() {
@@ -1868,5 +1873,400 @@ displayLimit: number = 25;
         this.otpthankyouPopup = false;
     }
 
+    generateVenueListSchema() {
+        // Remove existing schemas
+        const existingScript = document.querySelector('script[data-schema="venue-list"]');
+        if (existingScript) {
+            existingScript.remove();
+        }
+
+        const existingVenueSchemas = document.querySelectorAll('script[data-schema^="venue-"]');
+        existingVenueSchemas.forEach(script => script.remove());
+
+        const existingBreadcrumbSchema = document.querySelector('script[data-schema="breadcrumb"]');
+        if (existingBreadcrumbSchema) {
+            existingBreadcrumbSchema.remove();
+        }
+
+        const existingAggregateRatingSchema = document.querySelector('script[data-schema="aggregate-rating"]');
+        if (existingAggregateRatingSchema) {
+            existingAggregateRatingSchema.remove();
+        }
+
+        // Generate BreadcrumbList schema
+        this.generateBreadcrumbSchema();
+
+        // Generate AggregateRating schema for all venues
+        this.generateAggregateRatingSchema();
+
+        const itemListElements = this.displayedVenueList.map((venue, index) => {
+            // Generate individual Place/LocalBusiness schema for each venue
+            this.generateIndividualVenueSchema(venue, index);
+
+            return {
+                "@type": "ListItem",
+                "position": index + 1,
+                "item": {
+                    "@type": "LocalBusiness",
+                    "name": venue.name,
+                    "url": `${window.location.origin}/venue/${venue.metaUrl}`,
+                    "image": venue.venueImage && venue.venueImage.length > 0 ? venue.venueImage[0].venue_image_src : '',
+                    "description": venue.shortdescription || `${venue.name} - Wedding venue in ${venue.cityname}`,
+                    "address": {
+                        "@type": "PostalAddress",
+                        "addressLocality": venue.subarea || venue.cityname,
+                        "addressRegion": venue.cityname,
+                        "addressCountry": "IN"
+                    },
+                    "priceRange": venue.minPrice && venue.minPrice > 0 ? `₹${venue.minPrice}+` : undefined,
+                    "aggregateRating": venue.googleRating && venue.googleRating > 0 ? {
+                        "@type": "AggregateRating",
+                        "ratingValue": venue.googleRating,
+                        "bestRating": "5",
+                        "worstRating": "1"
+                    } : undefined,
+                    "additionalType": "https://schema.org/EventVenue"
+                }
+            };
+        });
+
+        const itemListSchema = {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": "Top Assured Venues Near You",
+            "description": "Browse through our curated list of top-rated wedding venues and event spaces",
+            "numberOfItems": this.displayedVenueList.length,
+            "itemListElement": itemListElements
+        };
+
+        // Create and append the ItemList schema script
+        const itemListScript = document.createElement('script');
+        itemListScript.type = 'application/ld+json';
+        itemListScript.setAttribute('data-schema', 'venue-list');
+        itemListScript.text = JSON.stringify(itemListSchema);
+        document.head.appendChild(itemListScript);
+    }
+
+    generateIndividualVenueSchema(venue: any, index: number) {
+        const venueSchema = {
+            "@context": "https://schema.org",
+            "@type": ["Place", "LocalBusiness", "EventVenue"],
+            "@id": `${window.location.origin}/venue/${venue.metaUrl}`,
+            "name": venue.name,
+            "description": venue.shortdescription || venue.description || `${venue.name} - Premium wedding venue located in ${venue.cityname}`,
+            "url": `${window.location.origin}/venue/${venue.metaUrl}`,
+            "sameAs": venue.website ? [venue.website] : undefined,
+            "image": venue.venueImage && venue.venueImage.length > 0 ? 
+                venue.venueImage.filter(img => !img.video).map(img => img.venue_image_src) : [],
+            "photo": venue.venueImage && venue.venueImage.length > 0 ? 
+                venue.venueImage.filter(img => !img.video).map(img => ({
+                    "@type": "ImageObject",
+                    "url": img.venue_image_src,
+                    "caption": `${venue.name} - Venue Photo`
+                })) : undefined,
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": venue.address || venue.subarea,
+                "addressLocality": venue.subarea || venue.cityname,
+                "addressRegion": venue.cityname,
+                "addressCountry": "India",
+                "postalCode": venue.pincode || undefined
+            },
+            "geo": venue.latitude && venue.longitude ? {
+                "@type": "GeoCoordinates",
+                "latitude": parseFloat(venue.latitude),
+                "longitude": parseFloat(venue.longitude)
+            } : undefined,
+            "telephone": venue.mobile || venue.phone || undefined,
+            "email": venue.email || undefined,
+            "priceRange": venue.minPrice && venue.minPrice > 0 ? `₹${venue.minPrice}+` : "₹₹₹",
+            "paymentAccepted": ["Cash", "Credit Card", "Debit Card", "UPI", "Bank Transfer"],
+            "currenciesAccepted": "INR",
+            "openingHoursSpecification": {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                "opens": "09:00",
+                "closes": "23:00"
+            },
+            "aggregateRating": venue.googleRating && venue.googleRating > 0 ? {
+                "@type": "AggregateRating",
+                "ratingValue": venue.googleRating,
+                "bestRating": "5",
+                "worstRating": "1",
+                "ratingCount": venue.reviewCount || undefined
+            } : undefined,
+            "review": venue.eazyVenueRating && venue.eazyVenueRating > 0 ? [{
+                "@type": "Review",
+                "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": venue.eazyVenueRating,
+                    "bestRating": "5",
+                    "worstRating": "1"
+                },
+                "author": {
+                    "@type": "Organization",
+                    "name": "EazyVenue"
+                },
+                "reviewBody": `Professional venue review for ${venue.name}`
+            }] : undefined,
+            "amenityFeature": this.generateAmenityFeatures(venue),
+            "maximumAttendeeCapacity": venue.maxCapacity || venue.capacity || undefined,
+            "isAccessibleForFree": false,
+            "publicAccess": false,
+            "smokingAllowed": venue.smokingAllowed || false,
+            "petsAllowed": venue.petsAllowed || false,
+            "hasMap": venue.latitude && venue.longitude ? `https://maps.google.com/?q=${venue.latitude},${venue.longitude}` : undefined,
+            "additionalProperty": [
+                {
+                    "@type": "PropertyValue",
+                    "name": "Venue Type",
+                    "value": venue.categoryName || "Wedding Venue"
+                },
+                {
+                    "@type": "PropertyValue",
+                    "name": "Assured Venue",
+                    "value": venue.assured ? "Yes" : "No"
+                }
+            ].concat(venue.minPrice > 0 ? [{
+                "@type": "PropertyValue",
+                "name": "Starting Price",
+                "value": `₹${venue.minPrice} per person`
+            }] : []),
+            "offers": venue.minPrice > 0 ? {
+                "@type": "Offer",
+                "priceSpecification": {
+                    "@type": "PriceSpecification",
+                    "minPrice": venue.minPrice,
+                    "priceCurrency": "INR",
+                    "price": venue.minPrice
+                },
+                "availability": "https://schema.org/InStock",
+                "validFrom": new Date().toISOString().split('T')[0],
+                "category": "Event Venue Booking"
+            } : undefined
+        };
+
+        // Remove undefined values
+        Object.keys(venueSchema).forEach(key => {
+            if (venueSchema[key] === undefined) {
+                delete venueSchema[key];
+            }
+        });
+
+        // Create and append individual venue schema
+        const venueScript = document.createElement('script');
+        venueScript.type = 'application/ld+json';
+        venueScript.setAttribute('data-schema', `venue-${venue.id || index}`);
+        venueScript.text = JSON.stringify(venueSchema);
+        document.head.appendChild(venueScript);
+    }
+
+    generateAmenityFeatures(venue: any): any[] {
+        const amenities = [];
+
+        // Add common venue amenities
+        if (venue.parking) {
+            amenities.push({
+                "@type": "LocationFeatureSpecification",
+                "name": "Parking",
+                "value": true
+            });
+        }
+
+        if (venue.airConditioning || venue.ac) {
+            amenities.push({
+                "@type": "LocationFeatureSpecification",
+                "name": "Air Conditioning",
+                "value": true
+            });
+        }
+
+        if (venue.wifi) {
+            amenities.push({
+                "@type": "LocationFeatureSpecification",
+                "name": "WiFi",
+                "value": true
+            });
+        }
+
+        if (venue.decoration) {
+            amenities.push({
+                "@type": "LocationFeatureSpecification",
+                "name": "Decoration Services",
+                "value": true
+            });
+        }
+
+        if (venue.catering) {
+            amenities.push({
+                "@type": "LocationFeatureSpecification",
+                "name": "Catering Services",
+                "value": true
+            });
+        }
+
+        // Add food menu types as amenities
+        if (venue.foodMenuType) {
+            if (venue.foodMenuType.veg_food && venue.foodMenuType.veg_food.length > 0) {
+                amenities.push({
+                    "@type": "LocationFeatureSpecification",
+                    "name": "Vegetarian Food",
+                    "value": true
+                });
+            }
+
+            if (venue.foodMenuType.non_veg && venue.foodMenuType.non_veg.length > 0) {
+                amenities.push({
+                    "@type": "LocationFeatureSpecification",
+                    "name": "Non-Vegetarian Food",
+                    "value": true
+                });
+            }
+
+            if (venue.foodMenuType.jainFood && venue.foodMenuType.jainFood.length > 0) {
+                amenities.push({
+                    "@type": "LocationFeatureSpecification",
+                    "name": "Jain Food",
+                    "value": true
+                });
+            }
+        }
+
+        return amenities.length > 0 ? amenities : undefined;
+    }
+
+    generateBreadcrumbSchema() {
+        // Build breadcrumb based on current filters and location
+        const breadcrumbItems = [];
+        
+        // Home
+        breadcrumbItems.push({
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": `${window.location.origin}/`
+        });
+
+        // Banquet Halls
+        breadcrumbItems.push({
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Banquet Halls",
+            "item": `${window.location.origin}/banquet-halls`
+        });
+
+        let position = 3;
+
+        // Add occasion/category if selected
+        if (this.occasion && this.occasion.name) {
+            breadcrumbItems.push({
+                "@type": "ListItem",
+                "position": position++,
+                "name": this.occasion.name,
+                "item": `${window.location.origin}/banquet-halls/${this.occasion.slug || this.occasion.name.toLowerCase().replace(/\s+/g, '-')}`
+            });
+        }
+
+        // Add city if selected
+        if (this.selectedCityName) {
+            breadcrumbItems.push({
+                "@type": "ListItem",
+                "position": position++,
+                "name": this.selectedCityName,
+                "item": `${window.location.origin}/banquet-halls/${this.occasion?.slug || 'all'}/${this.selectedCityName.toLowerCase().replace(/\s+/g, '-')}`
+            });
+        }
+
+        // Add subarea if selected
+        if (this.selectedSubareaName && this.selectedSubareaName !== 'all') {
+            breadcrumbItems.push({
+                "@type": "ListItem",
+                "position": position++,
+                "name": this.selectedSubareaName,
+                "item": window.location.href
+            });
+        }
+
+        // Current page (if no specific filters, just show "Venue Listings")
+        if (breadcrumbItems.length === 2) {
+            breadcrumbItems.push({
+                "@type": "ListItem",
+                "position": position,
+                "name": "Venue Listings",
+                "item": window.location.href
+            });
+        }
+
+        const breadcrumbSchema = {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": breadcrumbItems
+        };
+
+        // Create and append breadcrumb schema
+        const breadcrumbScript = document.createElement('script');
+        breadcrumbScript.type = 'application/ld+json';
+        breadcrumbScript.setAttribute('data-schema', 'breadcrumb');
+        breadcrumbScript.text = JSON.stringify(breadcrumbSchema);
+        document.head.appendChild(breadcrumbScript);
+    }
+
+    generateAggregateRatingSchema() {
+        // Calculate aggregate ratings from displayed venues
+        const venuesWithRatings = this.displayedVenueList.filter(venue => 
+            (venue.googleRating && venue.googleRating > 0) || 
+            (venue.eazyVenueRating && venue.eazyVenueRating > 0)
+        );
+
+        if (venuesWithRatings.length === 0) {
+            return; // No ratings to aggregate
+        }
+
+        // Calculate aggregate from Google ratings
+        const googleRatings = venuesWithRatings
+            .filter(venue => venue.googleRating && venue.googleRating > 0)
+            .map(venue => parseFloat(venue.googleRating));
+        
+        // Calculate aggregate from EazyVenue ratings
+        const eazyVenueRatings = venuesWithRatings
+            .filter(venue => venue.eazyVenueRating && venue.eazyVenueRating > 0)
+            .map(venue => parseFloat(venue.eazyVenueRating));
+
+        // Combine all ratings for overall aggregate
+        const allRatings = [...googleRatings, ...eazyVenueRatings];
+        
+        if (allRatings.length === 0) {
+            return;
+        }
+
+        const averageRating = allRatings.reduce((sum, rating) => sum + rating, 0) / allRatings.length;
+        const totalReviews = venuesWithRatings.reduce((sum, venue) => {
+            return sum + (venue.reviewCount || 1); // Default to 1 if no review count
+        }, 0);
+
+        // Create aggregate rating for the venue collection
+        const aggregateRatingSchema = {
+            "@context": "https://schema.org",
+            "@type": "AggregateRating",
+            "@id": `${window.location.href}#aggregate-rating`,
+            "itemReviewed": {
+                "@type": "ItemList",
+                "name": "Top Assured Venues Near You",
+                "description": "Curated collection of premium wedding venues and event spaces"
+            },
+            "ratingValue": Math.round(averageRating * 10) / 10, // Round to 1 decimal place
+            "bestRating": "5",
+            "worstRating": "1",
+            "ratingCount": allRatings.length,
+            "reviewCount": totalReviews
+        };
+
+        // Create and append aggregate rating schema
+        const aggregateRatingScript = document.createElement('script');
+        aggregateRatingScript.type = 'application/ld+json';
+        aggregateRatingScript.setAttribute('data-schema', 'aggregate-rating');
+        aggregateRatingScript.text = JSON.stringify(aggregateRatingSchema);
+        document.head.appendChild(aggregateRatingScript);
+    }
 
 }
