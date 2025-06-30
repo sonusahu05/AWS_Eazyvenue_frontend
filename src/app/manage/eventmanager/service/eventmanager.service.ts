@@ -36,11 +36,16 @@ export class EnquiryService {
       );
   }
 
-  getEnquiryList(): Observable<any> {
-    console.log('📊 SERVICE: Fetching enquiry list from API...');
-    console.log('📊 SERVICE: API URL:', environment.apiUrl + 'eventplanner');
+  // Updated method to support filtering by venue owner email
+  getEnquiryList(queryParams?: string): Observable<any> {
+    const url = queryParams ?
+      environment.apiUrl + 'eventplanner' + queryParams :
+      environment.apiUrl + 'eventplanner';
 
-    return this.http.get<any>(environment.apiUrl + 'eventplanner')
+    console.log('📊 SERVICE: Fetching enquiry list from API...');
+    console.log('📊 SERVICE: API URL:', url);
+
+    return this.http.get<any>(url)
       .pipe(
         tap(response => {
           console.log('📊 SERVICE: Get enquiry list response:', response);
