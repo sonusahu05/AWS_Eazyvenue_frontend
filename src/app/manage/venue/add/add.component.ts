@@ -14,6 +14,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from "./../../../../environments/environment";
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 
+declare var google: any;
+
 @Component({
     selector: 'app-add',
     templateUrl: './add.component.html',
@@ -27,6 +29,9 @@ export class AddComponent implements OnInit {
     assured = '';
     vendorImage: any[] = [];
     venueImage: any;
+    autocomplete: any;
+    isGoogleMapsLoaded = false;
+    selectedVenueCoordinates: { lat: number, lng: number } = null;
     notprofile: boolean;
     decor2Image: any;
     decor3Image: any;
@@ -218,10 +223,134 @@ public metaDescription: string;
         this.isAddMode = !this.id;
         this.getStates();
         this.getCategory();
+        this.loadGoogleMaps();
     }
     get f() {
         return this.venueForm.controls;
     }
+
+    loadGoogleMaps() {
+        if (typeof google !== 'undefined' && google.maps) {
+            this.isGoogleMapsLoaded = true;
+            this.initAutocomplete();
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+            this.isGoogleMapsLoaded = true;
+            this.initAutocomplete();
+        };
+        document.head.appendChild(script);
+    }
+
+    // 5. ADD this new method to initialize autocomplete
+    initAutocomplete() {
+        const input = document.getElementById('venue-name-input') as HTMLInputElement;
+        if (!input) return;
+
+        this.autocomplete = new google.maps.places.Autocomplete(input, {
+            types: ['establishment'],
+            componentRestrictions: { country: 'IN' } // Restrict to India
+        });
+
+        this.autocomplete.addListener('place_changed', () => {
+            const place = this.autocomplete.getPlace();
+
+            if (!place.geometry) {
+                console.log("No details available for input: '" + place.name + "'");
+                return;
+            }
+
+            // Update form with place details
+            this.updateVenueFromPlace(place);
+        });
+    }
+
+    // 6. ADD this new method to update venue data from selected place
+    updateVenueFromPlace(place: any) {
+        console.log('Selected place:', place);
+
+        // Extract address components
+        let streetNumber = '';
+        let route = '';
+        let locality = '';
+        let sublocality = '';
+        let administrativeAreaLevel1 = '';
+        let administrativeAreaLevel2 = '';
+        let postalCode = '';
+        let country = '';
+
+        place.address_components.forEach((component: any) => {
+            const types = component.types;
+
+            if (types.includes('street_number')) {
+                streetNumber = component.long_name;
+            }
+            if (types.includes('route')) {
+                route = component.long_name;
+            }
+            if (types.includes('locality')) {
+                locality = component.long_name;
+            }
+            if (types.includes('sublocality') || types.includes('sublocality_level_1')) {
+                sublocality = component.long_name;
+            }
+            if (types.includes('administrative_area_level_1')) {
+                administrativeAreaLevel1 = component.long_name;
+            }
+            if (types.includes('administrative_area_level_2')) {
+                administrativeAreaLevel2 = component.long_name;
+            }
+            if (types.includes('postal_code')) {
+                postalCode = component.postal_code;
+            }
+            if (types.includes('country')) {
+                country = component.long_name;
+            }
+        });
+
+        // Build full address
+        const fullAddress = `${streetNumber} ${route}, ${locality}`.trim();
+
+        // Get coordinates
+        const lat = place.geometry.location.lat();
+        const lng = place.geometry.location.lng();
+
+        // Update form fields
+        this.venueForm.patchValue({
+            name: place.name,
+            address: fullAddress,
+            zipcode: postalCode
+        });
+
+        // Store coordinates for later use
+        this.selectedVenueCoordinates = {
+            lat: lat,
+            lng: lng
+        };
+
+        // Update location data
+        this.countryname = country;
+        this.statename = administrativeAreaLevel1;
+        this.cityname = locality || administrativeAreaLevel2;
+
+        // Find and set state
+        if (this.statelist && this.statelist.length > 0) {
+            const matchingState = this.statelist.find(state =>
+                state.name.toLowerCase().includes(administrativeAreaLevel1.toLowerCase())
+            );
+            if (matchingState) {
+                this.venueForm.get('state').setValue(matchingState);
+                this.statecode = matchingState.code;
+                this.getCities(false, matchingState.code);
+            }
+        }
+    }
+
     videoUploader(event) {
         for (let file of event.files) {
             this.videoFiles.push(file);
@@ -468,6 +597,10 @@ public metaDescription: string;
             const isVenueOwner = userData && userData.userdata && userData.userdata.rolename === 'venueowner';
 
             var venueData = this.venueForm.value;
+            if (this.selectedVenueCoordinates) {
+                venueData['lat'] = this.selectedVenueCoordinates.lat;
+                venueData['lng'] = this.selectedVenueCoordinates.lng;
+            }
 
             if (isVenueOwner) {
                 venueData['status'] = false;  // inactive
@@ -632,6 +765,10 @@ public metaDescription: string;
             delete venueData['subarea'];
             delete venueData['city'];
             delete venueData['state'];
+            if (this.selectedVenueCoordinates) {
+                venueData['lat'] = this.selectedVenueCoordinates.lat;
+                venueData['lng'] = this.selectedVenueCoordinates.lng;
+            }
             venueData = JSON.stringify(venueData, null, 4);
 
             this.VenueService.updateVenue(this.id, venueData).subscribe(res => {
