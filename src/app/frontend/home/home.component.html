@@ -7,7 +7,7 @@
 </div>
 <p-toast key="event_planer_msg"></p-toast>
 <div class="col-md-12 p-0 banner-section banner-img">
-    <img _ngcontent-llh-c234="" src="assets/images/bannerimage2.jpeg">
+    <img _ngcontent-llh-c234="" src="assets/images/bannerimage2.jpeg" alt="EazyVenue event venue banner image">
 </div>
 <app-venue-list> </app-venue-list>
 <app-category></app-category>
@@ -101,16 +101,19 @@
 
 <div class="col-md-12 text-center desktop-social-container">
     <button type="button" class="offer-btn btn-custom btn-sm secondary desktop-social-btn" aria-label="Social media links">
-        <!-- Replace the text with larger social media icons -->
+        <!-- Social media icons with proper accessibility -->
         <a href="https://www.instagram.com/eazyvenue/" target="_blank" class="social-link" aria-label="Visit EazyVenue on Instagram" title="Follow us on Instagram for venue updates and inspiration">
-            <i class="pi pi-instagram"></i>
+            <i class="pi pi-instagram" aria-hidden="true"></i>
+            <span class="sr-only">Instagram</span>
         </a>
         <a href="https://www.facebook.com/eazyvenue/" target="_blank" class="social-link" aria-label="Visit EazyVenue on Facebook" title="Like our Facebook page for latest venue news and events">
-            <i class="pi pi-facebook"></i>
+            <i class="pi pi-facebook" aria-hidden="true"></i>
+            <span class="sr-only">Facebook</span>
         </a>
         <a href="https://www.linkedin.com/company/eazyvenue-com/" target="_blank" class="social-link" aria-label="Visit EazyVenue on LinkedIn" title="Connect with us on LinkedIn for business updates">
-            <i class="pi pi-linkedin"></i>
-          </a>
+            <i class="pi pi-linkedin" aria-hidden="true"></i>
+            <span class="sr-only">LinkedIn</span>
+        </a>
     </button>
 </div>
 

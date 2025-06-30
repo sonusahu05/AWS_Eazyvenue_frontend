@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, HostListener, Renderer2, ElementRef } from '@angular/core';
 // import data from '../../../assets/demo/data/navigation.json';
 import { ProductService } from '../../demo/service/productservice';
 import { Product } from '../../demo/domain/product';
@@ -46,7 +46,7 @@ interface AutoCompleteCompleteEvent {
     providers: [BannerService, MessageService, ConfirmationService, CountryService]
 
 })
-export class VenueListComponent implements OnInit {
+export class VenueListComponent implements OnInit, AfterViewInit {
     // selectedIndex = 0;
     // showPrev(i : number){
     //     if(this.selectedIndex > 0) {
@@ -516,6 +516,51 @@ displayLimit: number = 25;
           element.addEventListener('touchstart', this.handleTouchStart, { passive: false });
           element.addEventListener('touchmove', this.handleTouchMove, { passive: false });
         }
+
+        // Add accessibility attributes to gallery navigation buttons
+        this.addAccessibilityToGalleryButtons();
+        
+        // Set up observer for dynamically created gallery buttons
+        this.setupAccessibilityObserver();
+        
+        // Set up a periodic check for dynamically created gallery buttons as backup
+        setInterval(() => {
+          this.addAccessibilityToGalleryButtons();
+        }, 3000);
+      }
+
+      private addAccessibilityToGalleryButtons() {
+        // Add aria-labels to previous buttons
+        const prevButtons = document.querySelectorAll('.p-galleria-thumbnail-prev, .p-galleria-item-prev');
+        prevButtons.forEach((button: Element) => {
+          if (!button.getAttribute('aria-label')) {
+            button.setAttribute('aria-label', 'Previous image');
+            button.setAttribute('title', 'Previous image');
+          }
+        });
+
+        // Add aria-labels to next buttons
+        const nextButtons = document.querySelectorAll('.p-galleria-thumbnail-next, .p-galleria-item-next');
+        nextButtons.forEach((button: Element) => {
+          if (!button.getAttribute('aria-label')) {
+            button.setAttribute('aria-label', 'Next image');
+            button.setAttribute('title', 'Next image');
+          }
+        });
+      }
+
+      private observer?: MutationObserver;
+
+      private setupAccessibilityObserver() {
+        // Use MutationObserver to catch dynamically added gallery buttons
+        this.observer = new MutationObserver(() => {
+          this.addAccessibilityToGalleryButtons();
+        });
+
+        this.observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
       }
 
       ngOnDestroy() {
@@ -524,6 +569,11 @@ displayLimit: number = 25;
           const element = this.galleryWrapper.nativeElement;
           element.removeEventListener('touchstart', this.handleTouchStart);
           element.removeEventListener('touchmove', this.handleTouchMove);
+        }
+
+        // Clean up MutationObserver
+        if (this.observer) {
+          this.observer.disconnect();
         }
       }
 
@@ -1032,6 +1082,11 @@ displayLimit: number = 25;
         if (this.displayedVenueList && this.displayedVenueList.length > 0) {
             this.generateVenueListSchema();
         }
+
+        // Add accessibility attributes after venues are updated
+        setTimeout(() => {
+            this.addAccessibilityToGalleryButtons();
+        }, 100);
     }
 
       // Load more venues when "Show More" button is clicked
