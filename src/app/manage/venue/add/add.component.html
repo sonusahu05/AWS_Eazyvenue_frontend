@@ -17,8 +17,16 @@
                         </div> -->
                         <div class="p-field p-col-4">
                             <label for="title">Venue Name <span class="mandatory-fields">*</span></label>
-                            <input formControlName="name" type="text" pInputText class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                            <input
+                                id="venue-name-input"
+                                formControlName="name"
+                                type="text"
+                                pInputText
+                                class="form-control"
+                                placeholder="Start typing venue name..."
+                                [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
+                                autocomplete="off">
+                            <small class="p-text-secondary">Start typing to search for venues using Google Places</small>
                             <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
                                 <div *ngIf="f.name.errors.required">Name is required</div>
                             </div>
@@ -53,8 +61,27 @@
                         </div>
                         <div class="p-field p-col-4">
                             <label for="textarea">Address</label>
-                            <textarea inputId="textarea" rows="3" cols="30" class="form-control"
-                                formControlName="address" pInputTextarea></textarea>
+                            <textarea
+                                inputId="textarea"
+                                rows="3"
+                                cols="30"
+                                class="form-control"
+                                formControlName="address"
+                                pInputTextarea
+                                readonly
+                                placeholder="Address will be auto-filled from venue selection"></textarea>
+                            <small class="p-text-secondary">Auto-filled from selected venue</small>
+                        </div>
+
+                        <!-- OPTIONAL: Add a display for coordinates (for debugging) -->
+                        <div class="p-field p-col-12" *ngIf="selectedVenueCoordinates">
+                            <div class="p-message p-message-info">
+                                <div class="p-message-wrapper">
+                                    <span class="p-message-detail">
+                                        📍 Coordinates: {{selectedVenueCoordinates.lat}}, {{selectedVenueCoordinates.lng}}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                         <div class="p-field p-col-4">
                             <label for="country">Country </label>
