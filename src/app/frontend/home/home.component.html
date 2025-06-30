@@ -7,15 +7,17 @@
 </div>
 <p-toast key="event_planer_msg"></p-toast>
 <div class="col-md-12 p-0 banner-section banner-img">
-    <img _ngcontent-llh-c234="" src="assets/images/bannerimage2.jpeg">
+    <img _ngcontent-llh-c234="" src="assets/images/bannerimage2.jpeg" alt="EazyVenue event venue banner image">
 </div>
 <app-venue-list> </app-venue-list>
 <app-category></app-category>
 <p-dialog header="Event Planner" [(visible)]="showEventPlannerDialog" [modal]="true" class="planner-popup "
-    [style]="{width: '38vw', overflow: 'hidden' }" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    [style]="{width: '38vw', overflow: 'hidden' }" [baseZIndex]="10000" [draggable]="false" [resizable]="false" 
+    aria-label="Event Planner Form" role="dialog" aria-describedby="event-planner-description">
 
     <div class="login-popup">
         <p-toast key="usertoastmsg"></p-toast>
+        <div id="event-planner-description" class="sr-only">Fill out this form to plan your event with our professional event planning services</div>
 
         <div class="forms">
             <form [formGroup]="eventPlannerForm" *ngIf="this.eventPlannerForm" (ngSubmit)="onSubmit()">
@@ -99,16 +101,19 @@
 
 <div class="col-md-12 text-center desktop-social-container">
     <button type="button" class="offer-btn btn-custom btn-sm secondary desktop-social-btn" aria-label="Social media links">
-        <!-- Replace the text with larger social media icons -->
-        <a href="https://www.instagram.com/eazyvenue/" target="_blank" class="social-link">
-            <i class="pi pi-instagram"></i>
+        <!-- Social media icons with proper accessibility -->
+        <a href="https://www.instagram.com/eazyvenue/" target="_blank" class="social-link" aria-label="Visit EazyVenue on Instagram" title="Follow us on Instagram for venue updates and inspiration">
+            <i class="pi pi-instagram" aria-hidden="true"></i>
+            <span class="sr-only">Instagram</span>
         </a>
-        <a href="https://www.facebook.com/eazyvenue/" target="_blank" class="social-link">
-            <i class="pi pi-facebook"></i>
+        <a href="https://www.facebook.com/eazyvenue/" target="_blank" class="social-link" aria-label="Visit EazyVenue on Facebook" title="Like our Facebook page for latest venue news and events">
+            <i class="pi pi-facebook" aria-hidden="true"></i>
+            <span class="sr-only">Facebook</span>
         </a>
-        <a href="https://www.linkedin.com/company/eazyvenue-com/" target="_blank" class="social-link">
-            <i class="pi pi-linkedin"></i>
-          </a>
+        <a href="https://www.linkedin.com/company/eazyvenue-com/" target="_blank" class="social-link" aria-label="Visit EazyVenue on LinkedIn" title="Connect with us on LinkedIn for business updates">
+            <i class="pi pi-linkedin" aria-hidden="true"></i>
+            <span class="sr-only">LinkedIn</span>
+        </a>
     </button>
 </div>
 
@@ -118,6 +123,19 @@
 
 <!-- Add styling for the social media icons with desktop optimization -->
 <style>
+/* Screen reader only content */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 /* Enhanced styling for desktop view */
 .desktop-social-container {
     position: relative;
@@ -218,10 +236,12 @@
 </style>
 
     <p-dialog header="Event Planner" [(visible)]="showModalOffer" [modal]="true" class="planner-popup"
-    [style]="{width: '38vw', overflow: 'hidden' }" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    [style]="{width: '38vw', overflow: 'hidden' }" [baseZIndex]="10000" [draggable]="false" [resizable]="false"
+    aria-label="Event Planner Offer Form" role="dialog" aria-describedby="event-planner-offer-description">
 
     <div class="login-popup">
         <p-toast key="usertoastmsg"></p-toast>
+        <div id="event-planner-offer-description" class="sr-only">Special offer form for event planning services with discounted rates</div>
 
         <div class="forms">
             <form [formGroup]="eventPlannerForm" *ngIf="this.eventPlannerForm" (ngSubmit)="onSubmit()">

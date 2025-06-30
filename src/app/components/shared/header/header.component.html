@@ -20,10 +20,10 @@ Desktop Aside bar Start
                 <div class="sigma_header-controls style-2 d-none d-lg-block">
                     <ul class="sigma_header-controls-inner">
                         <li class="search-trigger header-controls-item d-none d-sm-block">
-                            <a class="sigma_header-control-search" title="Search" href="javascript:void(0)"
-                                (click)="toggleSearch()">
+                            <button type="button" class="sigma_header-control-search" title="Open search" aria-label="Open search functionality"
+                                (click)="toggleSearch()" style="background: none; border: none; cursor: pointer;">
                                 <i class="flaticon-search"></i>
-                            </a>
+                            </button>
                         </li>
                         <li class="aside-toggle aside-trigger-right desktop-toggler" (click)="toggleCanvas()">
                             <span></span>
@@ -40,10 +40,10 @@ Desktop Aside bar Start
                 <div class="sigma_header-controls style-2">
                     <ul class="sigma_header-controls-inner">
                         <li class="search-trigger header-controls-item d-block d-lg-none">
-                            <a class="sigma_header-control-search" title="Search" href="javascript:void(0)"
-                                (click)="toggleSearch()">
+                            <button type="button" class="sigma_header-control-search" title="Open search" aria-label="Open search functionality"
+                                (click)="toggleSearch()" style="background: none; border: none; cursor: pointer;">
                                 <i class="flaticon-search"></i>
-                            </a>
+                            </button>
                         </li>
                         <li class="d-none d-lg-block">
                             <a routerLink="/submit-listings" class="btn-custom primary">Submit Listing <i

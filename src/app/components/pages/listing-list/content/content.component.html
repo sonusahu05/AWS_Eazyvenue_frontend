@@ -66,7 +66,7 @@
                                 <span class="listing-date">{{item.postdate}}</span>
                             </div>
                             <div class="dropdown options-dropdown" ngbDropdown>
-                                <a href="javascript:void(0)" ngbDropdownToggle><i class="fas fa-ellipsis-v"></i></a>
+                                <button type="button" class="dropdown-toggle-button" ngbDropdownToggle aria-label="Open venue options menu" title="More options for this venue" style="background: none; border: none; cursor: pointer;"><i class="fas fa-ellipsis-v"></i></button>
                                 <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right">
                                     <ul>
                                         <li> <a href="tel:{{agent.phoneno}}"> <i class="fas fa-phone"></i> Call

@@ -59,7 +59,13 @@
                                         </li>
                                         <div class="hot-muhurats-container">
                                             <li class="nav-item">
-                                              <a class="nav-link" (click)="toggleHotMuhurats()">HOT MUHURATS</a>
+                                              <a class="nav-link" 
+                                                 (click)="toggleHotMuhurats()" 
+                                                 aria-label="View hot muhurats - auspicious dates for events"
+                                                 role="button"
+                                                 tabindex="0"
+                                                 (keydown.enter)="toggleHotMuhurats()"
+                                                 (keydown.space)="toggleHotMuhurats()">HOT MUHURATS</a>
                                             </li>
                                             <app-muhrats [isOpen]="isHotMuhuratsOpen" (closeDrawer)="closeHotMuhurats()"></app-muhrats>
                                           </div>
@@ -95,25 +101,33 @@
                                 <div class="style-2 mr-0">
                                     <ul class="sigma_header-controls-inner m-0">
                                         <li class="m-0" *ngIf="!isLoggedIn">
-                                            <div *ngIf="!isLoggedIn" class="sigma_header-controls style-2"
-                                                (click)="showDialogoffer()">
+                                            <div *ngIf="!isLoggedIn" class="sigma_header-controls style-2">
                                                 <div class="text-align-text">
                                                     <p class="login-text">
-                                                        <a href="javascript:void(0);" style="color: rgb(0, 0, 0);"><i
-                                                                class="user-login-icon pi pi-user-plus"></i><span
-                                                                class="user-login-text">LOGIN</span>
-                                                        </a>
+                                                        <button type="button" 
+                                                                class="login-button" 
+                                                                style="color: rgb(0, 0, 0); background: none; border: none; cursor: pointer;" 
+                                                                aria-label="Login to your account" 
+                                                                title="Login to your account"
+                                                                (click)="showDialogoffer()">
+                                                            <i class="user-login-icon pi pi-user-plus"></i>
+                                                            <span class="user-login-text">LOGIN</span>
+                                                        </button>
                                                     </p>
                                                 </div>
                                             </div>
 
-                                            <div class="sigma_header-controls style-2 vendor-login"
-                                                (click)="showDialogvendor()">
+                                            <div class="sigma_header-controls style-2 vendor-login">
                                                 <div class="text-align-text">
-                                                    <p class="vendor-text"><a href="javascript:void(0);"
-                                                            style="color: red;">ARE
-                                                            YOU A
-                                                            VENDOR?</a>
+                                                    <p class="vendor-text">
+                                                        <button type="button" 
+                                                                class="vendor-button" 
+                                                                style="color: red; background: none; border: none; cursor: pointer;" 
+                                                                aria-label="Vendor registration - Are you a vendor?" 
+                                                                title="Register as a vendor"
+                                                                (click)="showDialogvendor()">
+                                                            ARE YOU A VENDOR?
+                                                        </button>
                                                     </p>
                                                 </div>
                                             </div>
@@ -126,9 +140,9 @@
 
                                                     <li class="dropdown">
                                                         <div (mouseenter)="op.toggle($event)">
-                                                        <a href="#" class="list-items" data-toggle="dropdown" style="background-color: #FFF;box-shadow: 0px 0px 6px -3px rgba(0,0,0,0.7); padding: .7rem; border-radius: 50%;">
+                                                        <button type="button" class="list-items" style="background-color: #FFF;box-shadow: 0px 0px 6px -3px rgba(0,0,0,0.7); padding: .7rem; border-radius: 50%; border: none; cursor: pointer;" aria-label="Open user account menu" title="Access your account options">
                                                             <i class="pi pi-user p-button-rounded p-button-info dropbtn dropdown-toggle" style="color: #FF0000;  font-size: 1rem;"></i>
-                                                        </a>
+                                                        </button>
                                                         <!-- <-- <a href="#" class="list-items" data-toggle="dropdown">
 
                                                             <p-button icon="pi pi-user" data-bs-toggle="dropdown"
@@ -208,7 +222,13 @@
                             <a class="nav-link" [class.active]="activeRoute === 'venue'" routerLink="/">Venues<span class="sr-only">(current)</span></a>
                             <a class="nav-link" [class.active]="activeRoute === 'venodr'" routerLink="/vendor">Vendors</a>
                             <a class="nav-link" [class.active]="activeRoute === 'subscribe'" routerLink="/subscribe">Subscription</a>
-                                <a class="nav-link" (click)="toggleHotMuhurats()">HOT MUHURATS</a>
+                                <a class="nav-link" 
+                                   (click)="toggleHotMuhurats()" 
+                                   aria-label="View hot muhurats - auspicious dates for events"
+                                   role="button"
+                                   tabindex="0"
+                                   (keydown.enter)="toggleHotMuhurats()"
+                                   (keydown.space)="toggleHotMuhurats()">HOT MUHURATS</a>
                               <app-muhrats [isOpen]="isHotMuhuratsOpen" (closeDrawer)="closeHotMuhurats()"></app-muhrats>
                             <!-- <a class="nav-link" style="color: gray;" pTooltip="Coming Soon" >Couple Date</a>
                             <a class="nav-link" *ngIf="!isLoggedIn" (click)="showDialogoffer()">Login</a>
@@ -250,9 +270,11 @@
     </div>
 </header>
 <p-dialog [(visible)]="loginRegisterModal" [modal]="true" [breakpoints]="{'960px': '60vw', '640px': '100vw'}"
-    [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    [baseZIndex]="10000" [draggable]="false" [resizable]="false" 
+    aria-label="Login and Registration" role="dialog" aria-describedby="login-register-description">
     <p-toast key="usertoastmsg"></p-toast>
     <div class="login-popup">
+        <div id="login-register-description" class="sr-only">Choose to login to your existing account or register as a new user</div>
         <p-tabView [(activeIndex)]="activeIndex">
             <p-tabPanel header="Login">
                 <div class="forms">
@@ -290,7 +312,7 @@
 
 
                 <div class="forgot-password">
-                    <a (click)="onClickShowForgotPasswordDialog()">Forgot Password?</a>
+                    <button type="button" class="forgot-password-button" style="background: none; border: none; color: inherit; text-decoration: underline; cursor: pointer;" aria-label="Reset your password" title="Click to reset your password" (click)="onClickShowForgotPasswordDialog()">Forgot Password?</button>
                 </div>
             </p-tabPanel>
 
@@ -433,7 +455,8 @@
 
 </p-dialog>
 <p-dialog [(visible)]="showForgotPasswordDialog" [modal]="true" [breakpoints]="{'960px': '60vw', '640px': '100vw'}"
-    [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    [baseZIndex]="10000" [draggable]="false" [resizable]="false"
+    aria-label="Forgot Password" role="dialog" aria-describedby="forgot-password-description">
 
     <section class="section">
         <div class="container">
@@ -495,8 +518,10 @@
 
 <!-- vendor -->
 <p-dialog [(visible)]="vendorForm" [modal]="true" [style]="{width: '33vw'}"
-    [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false"
+    aria-label="Vendor Login and Registration" role="dialog" aria-describedby="vendor-description">
     <div class="login-popup">
+        <div id="vendor-description" class="sr-only">Vendor login and registration form to grow your business with EazyVenue</div>
         <h2 class="vendor-popup-heading">"Grow your Business With Eazy Venue"</h2>
         <p-tabView [(activeIndex)]="activeIndex">
 
@@ -535,7 +560,7 @@
 
 
                 <div class="forgot-password">
-                    <a href="javascript:void(0);">Forgot Password?</a>
+                    <button type="button" class="forgot-password-button" style="background: none; border: none; color: inherit; text-decoration: underline; cursor: pointer;" aria-label="Reset your password" title="Click to reset your password">Forgot Password?</button>
                 </div>
             </p-tabPanel>
 
@@ -624,8 +649,10 @@
 <!-- offer-popup -->
 
 <p-dialog header="" [(visible)]="numberPopup" [modal]="true" class="offer-popup-login" [modal]="true"
-    [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    [baseZIndex]="10000" [draggable]="false" [resizable]="false"
+    aria-label="Photography Discount Offer" role="dialog" aria-describedby="offer-description">
     <div class="login-popup">
+        <div id="offer-description" class="sr-only">Special photography discount offer form - provide your contact number to receive 20% discount coupon</div>
         <h3 class="offer-popup-heading mb-0">Receive<span class="offer-text"> 20%</span> off on our Photography
             now!
         </h3>
@@ -657,8 +684,10 @@
     </div>
 </p-dialog>
 
-<p-dialog [(visible)]="otpPopup" [modal]="true" class="otp-popup-login">
+<p-dialog [(visible)]="otpPopup" [modal]="true" class="otp-popup-login"
+    aria-label="OTP Verification" role="dialog" aria-describedby="otp-verification-description">
     <div class="login-popup">
+        <div id="otp-verification-description" class="sr-only">Enter the OTP sent to your mobile number to complete verification</div>
         <!-- <h2 class="offer-popup-heading">Receive<span class="offer-popup-heading1"> 20%</span> off on our Photography now!</h2> -->
         <form (ngSubmit)="otpSubmit()">
 
@@ -750,8 +779,10 @@
 </p-dialog>
 
 <p-dialog [(visible)]="otpthankyouPopup" class="thankyoupopup" [modal]="true" [modal]="true"
-    [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false"
+    aria-label="Coupon Confirmation" role="dialog" aria-describedby="coupon-confirmation-description">
     <div class="login-popup">
+        <div id="coupon-confirmation-description" class="sr-only">Confirmation that your coupon code has been sent to your mobile number</div>
         <!-- <h2 class="offer-popup-heading">Receive<span class="offer-popup-heading1"> 20%</span> off on our Photography now!</h2> -->
         <h4 class="thankyou-popup" style="font-family: 'Kaushan Script';">Thank you so much!</h4>
         <h5 class="mobile-num-design">We have shared the
@@ -766,8 +797,10 @@
 
 
 <p-dialog [(visible)]="regthankyouPopup" class="thankyoupopup" [modal]="true" [modal]="true"
-    [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+    [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false"
+    aria-label="Registration Confirmation" role="dialog" aria-describedby="registration-confirmation-description">
     <div class="login-popup">
+        <div id="registration-confirmation-description" class="sr-only">Confirmation that your registration with EazyVenue has been completed successfully</div>
         <!-- <h2 class="offer-popup-heading">Receive<span class="offer-popup-heading1"> 20%</span> off on our Photography now!</h2> -->
         <h1 class="thankyou-popup" style="font-family: 'Kaushan Script';">Thank you!</h1>
         <h5 class="mobile-num-design">Your registeration is complete.

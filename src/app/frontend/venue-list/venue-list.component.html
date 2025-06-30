@@ -320,6 +320,8 @@
             [fullScreen]="true"
             [showItemNavigators]="true"
             [showThumbnails]="true"
+            aria-label="Venue image gallery"
+            role="region"
         >
             <ng-template pTemplate="item" let-img class="video-front">
                 <img
@@ -394,12 +396,16 @@
                                             [showIndicators]="false"
                                             [showItemNavigatorsOnHover]="true"
                                             [showIndicatorsOnItem]="true"
+                                            [attr.aria-label]="item.name + ' venue image gallery'"
+                                            role="region"
                                         >
                                             <ng-template
                                                 pTemplate="thumbnail"
                                                 let-img
                                             >
-                                                <a [routerLink]="['/venue', item.metaUrl]" style="display: block;">
+                                                <a [routerLink]="['/venue', item.metaUrl]" 
+                                                   style="display: block;"
+                                                   [attr.aria-label]="'View details for ' + item.name + ' venue'">
                                                     <img
                                                         *ngIf="!img.video"
                                                         [src]="img.venue_image_src"
@@ -410,7 +416,9 @@
                                                         [alt]="item.name + ' venue image'"
                                                     />
                                                 </a>
-                                                <a [routerLink]="['/venue', item.metaUrl]" style="display: block;">
+                                                <a [routerLink]="['/venue', item.metaUrl]" 
+                                                   style="display: block;"
+                                                   [attr.aria-label]="'Watch video tour of ' + item.name + ' venue'">
                                                     <video
                                                         *ngIf="img.video"
                                                         muted
@@ -444,12 +452,16 @@
                                             [showIndicators]="false"
                                             [showItemNavigatorsOnHover]="true"
                                             [showIndicatorsOnItem]="true"
+                                            [attr.aria-label]="item.name + ' venue image gallery'"
+                                            role="region"
                                         >
                                             <ng-template
                                                 pTemplate="item"
                                                 let-iItem
                                             >
-                                                <a [routerLink]="['/venue', item.metaUrl]" style="display: block;">
+                                                <a [routerLink]="['/venue', item.metaUrl]" 
+                                                   style="display: block;"
+                                                   [attr.aria-label]="'View details for ' + item.name + ' venue'">
                                                     <img
                                                         *ngIf="!iItem.video"
                                                         [src]="
@@ -462,7 +474,9 @@
                                                         [alt]="item.name + ' venue image'"
                                                     />
                                                 </a>
-                                                <a [routerLink]="['/venue', item.metaUrl]" style="display: block;">
+                                                <a [routerLink]="['/venue', item.metaUrl]" 
+                                                   style="display: block;"
+                                                   [attr.aria-label]="'Watch video tour of ' + item.name + ' venue'">
                                                     <video
                                                         *ngIf="iItem.video"
                                                         style="
@@ -646,8 +660,12 @@
 [draggable]="false"
 [resizable]="false"
 styleClass="banner-popup-dialog"
+aria-label="Promotional Banner Video"
+role="dialog"
+aria-describedby="banner-description"
 >
 <div class="banner-container">
+    <div id="banner-description" class="sr-only">Promotional video showcasing EazyVenue's premium venues and services</div>
     <button class="close-banner-btn" (click)="closeBannerPopup()" aria-label="Close banner">
         <i class="pi pi-times"></i>
     </button>
@@ -684,8 +702,12 @@ styleClass="banner-popup-dialog"
 [draggable]="false"
 [resizable]="false"
 styleClass="mobile-banner-popup-dialog"
+aria-label="Mobile Promotional Banner"
+role="dialog"
+aria-describedby="mobile-banner-description"
 >
 <div class="mobile-banner-container">
+    <div id="mobile-banner-description" class="sr-only">Mobile promotional content showcasing EazyVenue's services and special offers</div>
     <button class="close-banner-btn" (click)="closeBannerPopup()" aria-label="Close banner">
         <i class="pi pi-times"></i>
     </button>
@@ -716,6 +738,64 @@ styleClass="mobile-banner-popup-dialog"
                     <h3>No venues found matching your criteria</h3>
                 </div>
                 <style>
+                    /* Screen reader only content */
+                    .sr-only {
+                        position: absolute;
+                        width: 1px;
+                        height: 1px;
+                        padding: 0;
+                        margin: -1px;
+                        overflow: hidden;
+                        clip: rect(0, 0, 0, 0);
+                        white-space: nowrap;
+                        border: 0;
+                    }
+
+                    /* Accessibility improvements for gallery navigation buttons */
+                    .p-galleria-thumbnail-prev::after {
+                        content: "Previous image";
+                        position: absolute;
+                        left: -10000px;
+                        width: 1px;
+                        height: 1px;
+                        overflow: hidden;
+                        color: transparent;
+                        speak: normal;
+                    }
+
+                    .p-galleria-thumbnail-next::after {
+                        content: "Next image";
+                        position: absolute;
+                        left: -10000px;
+                        width: 1px;
+                        height: 1px;
+                        overflow: hidden;
+                        color: transparent;
+                        speak: normal;
+                    }
+
+                    .p-galleria-item-prev::after {
+                        content: "Previous image";
+                        position: absolute;
+                        left: -10000px;
+                        width: 1px;
+                        height: 1px;
+                        overflow: hidden;
+                        color: transparent;
+                        speak: normal;
+                    }
+
+                    .p-galleria-item-next::after {
+                        content: "Next image";
+                        position: absolute;
+                        left: -10000px;
+                        width: 1px;
+                        height: 1px;
+                        overflow: hidden;
+                        color: transparent;
+                        speak: normal;
+                    }
+
                     .show-more-container {
                         position: relative;
                         width: 100%;
@@ -852,8 +932,10 @@ styleClass="mobile-banner-popup-dialog"
         </form>
     </div>
 </p-dialog>
-<p-dialog [(visible)]="otpPopup" [modal]="true" class="otp-popup-login">
+<p-dialog [(visible)]="otpPopup" [modal]="true" class="otp-popup-login" 
+    aria-label="OTP Verification" role="dialog" aria-describedby="otp-description">
     <div class="login-popup">
+        <div id="otp-description" class="sr-only">Enter the OTP (One Time Password) sent to your mobile number to verify your account</div>
         <!-- <h2 class="offer-popup-heading">Receive<span class="offer-popup-heading1"> 20%</span> off on our Photography now!</h2> -->
         <form (ngSubmit)="otpSubmit()">
             <div class="form-group mb-3 p-2">
