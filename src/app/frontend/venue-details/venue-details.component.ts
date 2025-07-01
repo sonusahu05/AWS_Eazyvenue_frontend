@@ -11,6 +11,7 @@ import { EnquiryService } from '../../manage/eventmanager/service/eventmanager.s
 import { ProductService } from '../../demo/service/productservice';
 import { Product } from '../../demo/domain/product';
 // import listingblock from '../../../assets/demo/data/listing.json';
+import { VendorService } from 'src/app/services/vendor.service';
 import { BannerService } from 'src/app/services/banner.service';
 import { VenueService } from 'src/app/manage/venue/service/venue.service';
 import { environment } from 'src/environments/environment';
@@ -108,6 +109,21 @@ export class VenueDetailsComponent implements OnInit {
     availableClasses: string[] = ['light', 'normal-header'];
     currentClassIdx: number = 0;
     bodyClass: string;
+  nearbyVendors: any[] = [];
+  vendorCategories = [
+    { name: "All", slug: "" },
+    { name: "Photographer", slug: "photographer" },
+    { name: "Decorator", slug: "decorator" },
+    { name: "Caterer", slug: "caterer" },
+    { name: "Videographer", slug: "videographer" },
+    { name: "Mehendi Artist", slug: "mehendi-artist" },
+    { name: "DJ", slug: "dj" },
+    { name: "Makeup Artist", slug: "makeup-artist" }
+  ];
+  selectedVendorCategory: string = "";
+  vendorPageNumber: number = 1;
+  vendorRows: number = 10;
+  vendorLoading: boolean = false;
     occasion: City[];
     cities: City[];
     selectedCity1: City;
@@ -336,6 +352,7 @@ export class VenueDetailsComponent implements OnInit {
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
         private venueOrderService: VenueOrderService,
+        private vendorService: VendorService,
         private router: Router,
         private formBuilder: FormBuilder,
         private roleService: RoleService,
@@ -648,10 +665,121 @@ export class VenueDetailsComponent implements OnInit {
             }
         });
         this.getVenueDetails();
+        this.loadNearbyVendors();
     }
     get h() {
         return this.mobileForm.controls;
     }
+
+    loadNearbyVendors(): void {
+        if (this.vendorLoading) return;
+
+        this.vendorLoading = true;
+
+        // Build query parameters
+        let query = `?pageSize=${this.vendorRows}&pageNumber=${this.vendorPageNumber}`;
+
+        // Add category filter if selected
+        if (this.selectedVendorCategory && this.selectedVendorCategory !== "") {
+          query += `&category=${this.selectedVendorCategory}`;
+        }
+
+        // Add location filter based on current venue's location
+        if (this.venueDetails && this.venueDetails.citycode) {
+          query += `&citycode=${this.venueDetails.citycode}`;
+        }
+
+        if (this.venueDetails && this.venueDetails.subareacode) {
+          query += `&subareacode=${this.venueDetails.subareacode}`;
+        }
+
+        // Add sorting - popular vendors first
+        query += `&sort=popularity`;
+
+        this.vendorService.getVendorListUser(query).subscribe(
+          (response) => {
+            if (this.vendorPageNumber === 1) {
+              this.nearbyVendors = response.data || [];
+            } else {
+              this.nearbyVendors = [...this.nearbyVendors, ...(response.data || [])];
+            }
+            this.vendorLoading = false;
+          },
+          (error) => {
+            console.error('Error loading nearby vendors:', error);
+            this.vendorLoading = false;
+            this.messageService.add({
+              key: 'toastMsg',
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to load nearby vendors.',
+              life: 3000
+            });
+          }
+        );
+      }
+
+      // Method to handle vendor category change
+      onVendorCategoryChange(category: any): void {
+        this.selectedVendorCategory = category.slug;
+        this.vendorPageNumber = 1;
+        this.nearbyVendors = [];
+        this.loadNearbyVendors();
+      }
+
+      // Method to handle vendor card click
+      getVendorDetails(vendorId: number): void {
+        this.router.navigate(['/vendor/detail', vendorId]);
+      }
+
+      createSlug(input):string {
+        return input.toLowerCase().replace(/ /g, '_');
+      }
+
+      // Method to handle contact vendor
+      contactVendor(vendor: any, event: Event): void {
+        event.stopPropagation();
+        this.messageService.add({
+          key: 'toastMsg',
+          severity: 'info',
+          summary: 'Contact',
+          detail: `Contacting ${vendor.name}...`,
+          life: 3000
+        });
+      }
+
+      // TrackBy function for vendors
+      trackByVendorId(index: number, vendor: any): number {
+        return vendor.id;
+      }
+
+      // Method to handle scroll for loading more vendors
+      onFrequentVendorsScroll(): void {
+        const container = document.querySelector('.frequent-vendors-container') as HTMLElement;
+        if (container) {
+          const scrollLeft = container.scrollLeft;
+          const scrollWidth = container.scrollWidth;
+          const clientWidth = container.clientWidth;
+
+          // Load more when scrolled to 80% of the width
+          if (scrollLeft + clientWidth >= scrollWidth * 0.8) {
+            this.loadMoreVendors();
+          }
+        }
+      }
+
+      // Method to load more vendors on scroll
+      private loadMoreVendors(): void {
+        if (!this.vendorLoading && this.nearbyVendors.length >= this.vendorRows) {
+          this.vendorPageNumber++;
+          this.loadNearbyVendors();
+        }
+      }
+
+      // Method to capitalize words (if not already present)
+      private capitalizeWords(str: string): string {
+        return str.replace(/\b\w/g, match => match.toUpperCase()).replace(/-/g, ' ');
+      }
 
     submitReview() {
         if (!this.venueDetails || !this.venueDetails.id) {

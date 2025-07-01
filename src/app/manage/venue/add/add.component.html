@@ -209,7 +209,7 @@
                                 <div *ngIf="f.eazyVenueRating.errors.required">Please select rating</div>
                             </div>
                         </div>
-                        <div class="p-field p-col-2">
+                        <div class="p-field p-col-2" *ngIf="!isVenueOwner">
                             <label for="peopleBooked">People Booked<span class="mandatory-fields">*</span></label>
                             <p-inputNumber inputId="peopleBooked" formControlName="peopleBooked"
                                 placeholder="Enter people booked"
@@ -218,7 +218,7 @@
                                 <div *ngIf="f.peopleBooked.errors.required">Please enter people booked</div>
                             </div>
                         </div>
-                        <div class="p-field p-col-2">
+                        <div class="p-field p-col-2" *ngIf="!isVenueOwner">
                             <label for="views">Views<span class="mandatory-fields">*</span></label>
                             <p-inputNumber inputId="views" formControlName="views" placeholder="Enter views"
                                  [ngClass]="{ 'is-invalid': submitted && f.views.errors }">

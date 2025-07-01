@@ -1,14 +1,14 @@
-// Legacy method for backward compatibility
 import { Component, OnInit } from '@angular/core';
 import { EnquiryService } from '../service/eventmanager.service';
 import { MessageService } from 'primeng/api';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { VenueService } from 'src/app/manage/venue/service/venue.service';
 
 @Component({
-selector: 'app-enquiry-list',
-templateUrl: './list.component.html',
-styleUrls: ['./list.component.scss'],
-providers: [MessageService]
+  selector: 'app-enquiry-list',
+  templateUrl: './list.component.html',
+  styleUrls: ['./list.component.scss'],
+  providers: [MessageService]
 })
 export class EnquiryListComponent implements OnInit {
   enquiryList: any[] = [];
@@ -17,11 +17,13 @@ export class EnquiryListComponent implements OnInit {
   cols: any[];
   isVenueOwner: boolean = false;
   userEmail: string = '';
+  userVenueIds: string[] = []; // Store venue IDs owned by this user
 
   constructor(
     private enquiryService: EnquiryService,
     private messageService: MessageService,
-    private tokenStorageService: TokenStorageService // Add this service
+    private tokenStorageService: TokenStorageService,
+    private venueService: VenueService
   ) { }
 
   ngOnInit() {
@@ -56,14 +58,110 @@ export class EnquiryListComponent implements OnInit {
     console.log('📊 DASHBOARD: Starting to load enquiries...');
     this.loading = true;
 
-    // For venue owners, we'll fetch all enquiries and filter client-side
-    // since the backend filtering might not be properly configured
-    let queryParams = '';
+    if (this.isVenueOwner && this.userEmail) {
+      // For venue owners, first get their venues, then filter enquiries
+      this.loadVenueOwnerEnquiries();
+    } else {
+      // For non-venue owners, load all enquiries
+      this.loadAllEnquiries();
+    }
+  }
 
-    // Don't use backend filtering for now - fetch all and filter client-side
-    // if (this.isVenueOwner && this.userEmail) {
-    //   queryParams = `?filterByVenueEmail=${encodeURIComponent(this.userEmail)}`;
-    // }
+  // Load enquiries for venue owners
+  loadVenueOwnerEnquiries() {
+    console.log('📊 ENQUIRY: Loading enquiries for venue owner...');
+
+    // First, get venues owned by this user
+    this.getUserVenues().then(venueIds => {
+      this.userVenueIds = venueIds;
+      console.log('📊 ENQUIRY: User owns venues:', this.userVenueIds);
+
+      if (this.userVenueIds.length === 0) {
+        console.log('📊 ENQUIRY: No venues found for this user');
+        this.loading = false;
+        this.enquiryList = [];
+        this.totalRecords = 0;
+
+        this.messageService.add({
+          key: 'toastmsg',
+          severity: 'info',
+          summary: 'No Venues',
+          detail: 'No venues found for your account. Please contact support.',
+          life: 5000,
+        });
+        return;
+      }
+
+      // Now load all enquiries and filter by venue IDs
+      this.loadAllEnquiries();
+
+    }).catch(error => {
+      console.error('📊 ENQUIRY: Error getting user venues:', error);
+      this.loading = false;
+      this.messageService.add({
+        key: 'toastmsg',
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to load your venues. Please try again.',
+        life: 5000,
+      });
+    });
+  }
+
+  // Get venues owned by the current user
+  async getUserVenues(): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      // Build query to get venues for this user
+      // You can use the same approach as in your venue list component
+      let query = new URLSearchParams({
+        admin: 'true',
+        pageSize: '1000',
+        pageNumber: '1',
+        filterByDisable: 'false'
+      });
+
+      const queryString = '?' + query.toString();
+
+      this.venueService.getVenueListForFilter(queryString).subscribe(
+        (data) => {
+          console.log('📊 ENQUIRY: Venue API Response:', data);
+
+          let venues = data.data.items || [];
+
+          // Filter venues by user email (same logic as venue list)
+          const userVenues = venues.filter(venue => {
+            if (!venue.email) return false;
+
+            const venueEmail = venue.email.trim().toLowerCase();
+            const userEmailLower = this.userEmail.toLowerCase();
+
+            return venueEmail === userEmailLower;
+          });
+
+          console.log('📊 ENQUIRY: Found user venues:', userVenues.length);
+
+          // Extract venue IDs
+          const venueIds = userVenues.map(venue => venue.id || venue._id);
+          console.log('📊 ENQUIRY: Venue IDs:', venueIds);
+
+          resolve(venueIds);
+        },
+        (error) => {
+          console.error('📊 ENQUIRY: Error fetching venues:', error);
+          reject(error);
+        }
+      );
+    });
+  }
+
+  loadAllEnquiries() {
+    console.log('📊 DASHBOARD: Loading all enquiries...');
+
+    // Option 1: Try backend filtering first (if you implement the enhanced backend)
+    let queryParams = '';
+    if (this.isVenueOwner && this.userEmail) {
+      queryParams = `?filterByVenueEmail=${encodeURIComponent(this.userEmail)}`;
+    }
 
     this.enquiryService.getEnquiryList(queryParams).subscribe(
       data => {
@@ -73,20 +171,13 @@ export class EnquiryListComponent implements OnInit {
         if (data && data.data && data.data.items && data.data.items.length > 0) {
           let enquiries = data.data.items;
 
-          // Client-side filtering for venue owners
-          if (this.isVenueOwner && this.userEmail) {
-            console.log('📊 ENQUIRY: Starting client-side filtering for venue owner');
-            console.log('📊 ENQUIRY: Total enquiries before filtering:', enquiries.length);
-            console.log('📊 ENQUIRY: Looking for venues owned by:', this.userEmail);
-
-            // Since we don't have venue email in enquiry data, we need to:
-            // 1. Get all venues owned by this user
-            // 2. Filter enquiries that match those venue IDs
-            this.filterEnquiriesByVenueOwnership(enquiries);
-            return;
+          // Client-side filtering for venue owners if backend filtering didn't work
+          if (this.isVenueOwner && this.userVenueIds.length > 0) {
+            console.log('📊 ENQUIRY: Applying client-side venue filtering...');
+            enquiries = this.filterEnquiriesByVenueIds(enquiries);
           }
 
-          // For non-venue owners, show all enquiries
+          // Process enquiries
           this.enquiryList = enquiries.map(enquiry => ({
             ...enquiry,
             selectedLead: null,
@@ -97,6 +188,17 @@ export class EnquiryListComponent implements OnInit {
 
           this.totalRecords = enquiries.length;
           console.log('📊 DASHBOARD: Enquiry list populated:', this.enquiryList);
+
+          // Show message if venue owner has no enquiries after filtering
+          if (this.isVenueOwner && enquiries.length === 0) {
+            this.messageService.add({
+              key: 'toastmsg',
+              severity: 'info',
+              summary: 'No Enquiries',
+              detail: 'No enquiries found for your venues.',
+              life: 3000,
+            });
+          }
 
         } else {
           console.log('📊 DASHBOARD: No data found, showing empty state');
@@ -129,6 +231,27 @@ export class EnquiryListComponent implements OnInit {
         });
       }
     );
+  }
+
+  // Filter enquiries by venue IDs
+  filterEnquiriesByVenueIds(enquiries: any[]): any[] {
+    console.log('📊 ENQUIRY: Filtering enquiries by venue IDs...');
+    console.log('📊 ENQUIRY: Total enquiries:', enquiries.length);
+    console.log('📊 ENQUIRY: User venue IDs:', this.userVenueIds);
+
+    const filteredEnquiries = enquiries.filter(enquiry => {
+      const venueId = enquiry.venueId || enquiry.venue_id;
+      const isMatch = this.userVenueIds.includes(venueId);
+
+      if (isMatch) {
+        console.log('📊 ENQUIRY: ✓ Match found for venue:', enquiry.venueName, 'ID:', venueId);
+      }
+
+      return isMatch;
+    });
+
+    console.log('📊 ENQUIRY: Filtered enquiries count:', filteredEnquiries.length);
+    return filteredEnquiries;
   }
 
   // Get dropdown options for leads using allEnquiries from backend
@@ -256,9 +379,6 @@ ${venueName} Team`;
         if (enquiry.selectedLeadData === leadData) {
           enquiry.selectedLeadData.status = status;
         }
-
-        // Optional: Reload the list to get completely fresh data
-        // this.loadEnquiries();
       },
       err => {
         console.error('📞 Error updating status:', err);
@@ -272,116 +392,8 @@ ${venueName} Team`;
     );
   }
 
-  // Filter enquiries by venue ownership - more robust approach
-  filterEnquiriesByVenueOwnership(enquiries: any[]) {
-    console.log('📊 ENQUIRY: Filtering enquiries by venue ownership...');
-
-    // First, let's try to identify the venue by name pattern
-    // Since "Bawa International" should match "bawagurgaon@gmail.com"
-    const filteredEnquiries = enquiries.filter(enquiry => {
-      const venueName = enquiry.venueName ? enquiry.venueName.toLowerCase() : '';
-      const userEmail = this.userEmail.toLowerCase();
-
-      // Extract potential venue name from email
-      // "bawagurgaon@gmail.com" -> "bawa"
-      const emailPrefix = userEmail.split('@')[0];
-      let venueNameFromEmail = '';
-
-      if (emailPrefix.includes('bawa')) {
-        venueNameFromEmail = 'bawa';
-      } else {
-        // Extract first part before numbers/location
-        venueNameFromEmail = emailPrefix.replace(/[0-9]/g, '').replace(/(gurgaon|delhi|mumbai|bangalore|chennai|hyderabad|pune|kolkata)/g, '');
-      }
-
-      console.log('📊 ENQUIRY: Checking venue:', {
-        venueName: enquiry.venueName,
-        venueId: enquiry.venueId,
-        userEmail: this.userEmail,
-        venueNameFromEmail: venueNameFromEmail,
-        contains: venueName.includes(venueNameFromEmail)
-      });
-
-      // Check if venue name contains the extracted name from email
-      if (venueNameFromEmail && venueName.includes(venueNameFromEmail)) {
-        console.log(`✓ MATCH FOUND: ${enquiry.venueName} matches ${venueNameFromEmail}`);
-        return true;
-      }
-
-      // Additional check: venue ID matching (if you have a pattern)
-      if (enquiry.venueId) {
-        console.log(`📊 ENQUIRY: Venue ID for ${enquiry.venueName}: ${enquiry.venueId}`);
-      }
-
-      return false;
-    });
-
-    console.log(`📊 ENQUIRY: Found ${filteredEnquiries.length} matching enquiries for venue owner: ${this.userEmail}`);
-
-    // If no matches found with name matching, let's check if we need to make an API call
-    if (filteredEnquiries.length === 0) {
-      console.log('📊 ENQUIRY: No matches found with name matching. Checking with venue service...');
-      this.getVenueOwnerVenuesAndFilter(enquiries);
-      return;
-    }
-
-    // Update the UI with filtered results
-    this.updateEnquiryList(filteredEnquiries);
-  }
-
-  // Get venues owned by this user and filter enquiries
-  getVenueOwnerVenuesAndFilter(enquiries: any[]) {
-    // You'll need to inject VenueService for this to work
-    // For now, let's use a fallback approach
-
-    console.log('📊 ENQUIRY: Attempting to get venues for owner:', this.userEmail);
-
-    // Temporary fallback: show all enquiries with a warning
-    // In production, you should make an API call to get venues owned by this user
-    this.messageService.add({
-      key: 'toastmsg',
-      severity: 'warn',
-      summary: 'Filtering Issue',
-      detail: 'Cannot properly filter enquiries. Please contact support to configure venue-enquiry mapping.',
-      life: 10000,
-    });
-
-    // For debugging: show all enquiries but mark them
-    const debugEnquiries = enquiries.map(enquiry => ({
-      ...enquiry,
-      _debugNote: 'Filtering not working properly - all enquiries shown'
-    }));
-
-    this.updateEnquiryList(debugEnquiries);
-  }
-
   updateStatus(enquiry: any, status: string) {
     const currentUser = this.getCurrentUser(enquiry);
     this.updateLeadStatus(currentUser, enquiry, status);
-  }
-
-  // Helper method to update enquiry list
-  updateEnquiryList(enquiries: any[]) {
-    this.enquiryList = enquiries.map(enquiry => ({
-      ...enquiry,
-      selectedLead: null,
-      selectedLeadData: null,
-      showLeadDetails: false,
-      currentLeadIndex: 0
-    }));
-
-    this.totalRecords = enquiries.length;
-    console.log('📊 DASHBOARD: Enquiry list updated:', this.enquiryList);
-
-    // Show message if venue owner has no enquiries
-    if (this.isVenueOwner && enquiries.length === 0) {
-      this.messageService.add({
-        key: 'toastmsg',
-        severity: 'info',
-        summary: 'No Enquiries Found',
-        detail: `No enquiries found for your venues (${this.userEmail}).`,
-        life: 5000,
-      });
-    }
   }
 }

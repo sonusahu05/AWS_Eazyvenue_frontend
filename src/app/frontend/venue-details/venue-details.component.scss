@@ -2,6 +2,311 @@
     border-radius: 33px 0px 0px 33px !important;
 }
 
+/* Add these styles to your component or global styles */
+
+/* Vendor Section Styles */
+.frequent-vendors-section {
+    margin-top: 40px;
+    padding: 20px 0;
+  }
+
+  .section-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0;
+    font-size: 24px;
+  }
+
+  .view-all-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .view-all-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+
+  /* Category Filter Styles */
+  .vendor-category-filter {
+    margin-bottom: 20px;
+  }
+
+  .category-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .category-btn {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+    outline: none;
+  }
+
+  .category-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .category-btn.active {
+    background: #007bff !important;
+    color: white !important;
+    border-color: #007bff !important;
+  }
+
+  /* Vendor Container Styles */
+  .frequent-vendors-container {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 20px;
+    padding: 10px 0;
+    scroll-behavior: smooth;
+  }
+
+  .frequent-vendors-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .frequent-vendors-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+
+  .frequent-vendors-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+
+  .frequent-vendors-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+
+  /* Vendor Card Styles */
+  .vendor-card {
+    flex: 0 0 320px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+  }
+
+  .vendor-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .vendor-image {
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .vendor-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .vendor-card:hover .vendor-image img {
+    transform: scale(1.05);
+  }
+
+  /* Badge Styles */
+  .vendor-category-badge,
+  .verified-badge {
+    position: absolute;
+    top: 10px;
+  }
+
+  .vendor-category-badge {
+    left: 10px;
+  }
+
+  .verified-badge {
+    right: 10px;
+  }
+
+  .category-badge {
+    background: rgba(0, 123, 255, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  /* Vendor Info Styles */
+  .vendor-info {
+    padding: 15px;
+  }
+
+  .vendor-name {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.2;
+  }
+
+  .vendor-location {
+    margin-bottom: 10px;
+  }
+
+  .location {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .city {
+    font-size: 13px;
+    color: #666;
+  }
+
+  /* Services Tags */
+  .vendor-services {
+    margin-bottom: 10px;
+  }
+
+  .services-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .service-tag {
+    background: #f1f3f4;
+    color: #5f6368;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    transition: background-color 0.2s;
+  }
+
+  .service-tag:hover {
+    background: #e8eaed;
+  }
+
+  .more-services {
+    color: #007bff;
+    font-size: 10px;
+  }
+
+  /* Pricing Styles */
+  .vendor-pricing {
+    margin-bottom: 10px;
+  }
+
+  .price-display {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: #666;
+  }
+
+  .price-value {
+    font-weight: 600;
+    color: #333;
+  }
+
+  /* Action Buttons */
+  .vendor-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-view-details,
+  .btn-contact {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-view-details {
+    background: #007bff;
+    color: white;
+  }
+
+  .btn-view-details:hover {
+    background: #0056b3;
+    color: white;
+    text-decoration: none;
+  }
+
+  .btn-contact {
+    background: #28a745;
+    color: white;
+  }
+
+  .btn-contact:hover {
+    background: #1e7e34;
+  }
+
+  .btn-view-details:active,
+  .btn-contact:active {
+    transform: translateY(1px);
+  }
+
+  /* Ratings Styles */
+  .vendor-ratings {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+  }
+
+  .google-rating,
+  .eazy-rating {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .rating-divider {
+    width: 1px;
+    height: 12px;
+    background: #ddd;
+  }
+
+  /* Compare Bar Styles */
+  .vendor-compare-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #ddd;
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+  }
+
 .similar-venues-section {
     margin: 40px 0;
 
@@ -84,7 +389,7 @@
     }
   }
 
-  
+
 
 @font-face {
     font-family: "SegoeUI-Semibold";
