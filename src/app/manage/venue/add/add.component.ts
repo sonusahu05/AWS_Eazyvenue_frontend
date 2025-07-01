@@ -133,6 +133,7 @@ public metaDescription: string;
     public rolelist: any = [];
     public usergender: any;
     public venueownerRoleid;
+    isVenueOwner: boolean = false;
     public googleRating = environment.googleRating;
     public eazyVenueRating = environment.eazyVenueRating;
     public selectedGoogleRating;
@@ -161,6 +162,11 @@ public metaDescription: string;
         if (obj.roleid) {
             this.venueownerRoleid = obj.roleid;
         }
+
+        // Check if current user is venue owner
+        const userData = this.tokenStorageService.getUser();
+        this.isVenueOwner = userData && userData.userdata && userData.userdata.rolename === 'venueowner';
+
         this.staticPath = environment.productUploadUrl;
         this.genders = [
             { name: 'Male', code: 'Male' },
@@ -178,11 +184,12 @@ public metaDescription: string;
             description: [''],
             googleRating: ['', [Validators.required]],
             eazyVenueRating: ['', [Validators.required]],
-            peopleBooked: ['', [Validators.required]],
+            // Conditionally add validators based on user role
+            peopleBooked: [this.isVenueOwner ? 0 : '', this.isVenueOwner ? [] : [Validators.required]],
             minRevenue: ['', [Validators.required]],
             metaUrl: ['', [Validators.required]],
-    metaKeywords: ['', [Validators.required]],
-    metaDescription: ['', [Validators.required]],
+            metaKeywords: ['', [Validators.required]],
+            metaDescription: ['', [Validators.required]],
             mobileNumber: ['', [Validators.required, Validators.pattern("^[0-9]*$")]],
             capacity: ['', [Validators.required]],
             area: ['', [Validators.required]],
@@ -204,9 +211,9 @@ public metaDescription: string;
             kitchendetails: [''],
             decorationdetails: [''],
             amenities: [''],
-            views: ['', [Validators.required]],
+            // Conditionally add validators based on user role
+            views: [this.isVenueOwner ? 1 : '', this.isVenueOwner ? [] : [Validators.required]],
             disable: [false],
-            //featured: [false],
             assured: [false],
             ownerfirstName: ['', [Validators.required, Validators.pattern('^[A-Za-z][A-Za-z]*$')]],
             ownerlastName: ['', [Validators.required, Validators.pattern('^[A-Za-z][A-Za-z]*$')]],
@@ -218,6 +225,7 @@ public metaDescription: string;
         }, {
             validator: MustMatch('password', 'confirmPassword')
         });
+
         this.pagetitle = 'Add Venue';
         this.id = this.route.snapshot.paramMap.get("id");
         this.isAddMode = !this.id;
@@ -603,9 +611,11 @@ public metaDescription: string;
             }
 
             if (isVenueOwner) {
+                venueData['peopleBooked'] = 0;
+                venueData['views'] = 1;
                 venueData['status'] = false;  // inactive
                 venueData['assured'] = false; // not assured
-                venueData['pendingApproval'] = true; // flag for admin dashboard
+                venueData['pendingApproval'] = true;
             } else {
                 // Admin can create active venues directly
                 venueData['status'] = venueData.status !== undefined ? venueData.status : true;

@@ -1825,7 +1825,7 @@
         </div>
     </div>
 </div>
-<!-- HTML-Only Optimized Similar Venues Section with Horizontal Scroll -->
+<!-- Similar Venues Section (existing) -->
 <div class="similar-venues-section" *ngIf="similarVenues?.length">
     <div class="container">
         <div class="row">
@@ -1942,31 +1942,267 @@
     </div>
 </div>
 
-<!-- Add this CSS to your component's stylesheet -->
+<!-- Frequent Vendors Nearby Section (NEW) -->
+<div class="frequent-vendors-section" *ngIf="nearbyVendors?.length">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 class="section-title">Frequent Vendors Nearby</h3>
+                    <a [routerLink]="['/vendor']" class="view-all-link"
+                       style="color: #007bff; text-decoration: none; font-size: 14px; font-weight: 500;">
+                        View All Vendors <i class="pi pi-arrow-right" style="margin-left: 5px;"></i>
+                    </a>
+                </div>
+
+                <div class="frequent-vendors-wrapper">
+                    <div class="frequent-vendors-container"
+                         #frequentVendorsContainer
+                         (scroll)="onFrequentVendorsScroll()"
+                         style="display: flex; overflow-x: auto; overflow-y: hidden; gap: 20px; padding: 10px 0; scroll-behavior: smooth;">
+
+                        <div class="vendor-card"
+                             *ngFor="let vendor of nearbyVendors; trackBy: trackByVendorId"
+                             (click)="getVendorDetails(vendor.id)"
+                             style="flex: 0 0 320px; cursor: pointer; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s;"
+                             onmouseover="this.style.transform='translateY(-2px)'"
+                             onmouseout="this.style.transform='translateY(0)'">
+
+                            <!-- Vendor Image Display -->
+                            <div class="vendor-image" style="height: 180px; overflow: hidden; position: relative;">
+                                <img *ngIf="vendor.vendorImage && vendor.vendorImage[0] && vendor.vendorImage[0].vendor_image_src; else defaultVendorImg"
+                                     [src]="vendor.vendorImage[0].vendor_image_src"
+                                     [alt]="vendor.name"
+                                     loading="lazy"
+                                     style="width: 100%; height: 100%; object-fit: cover;">
+
+                                <ng-template #defaultVendorImg>
+                                    <div style="width: 100%; height: 100%; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                        <i class="pi pi-user" style="font-size: 2rem;"></i>
+                                    </div>
+                                </ng-template>
+
+                                <!-- Vendor Category Badge -->
+                                <div class="vendor-category-badge" style="position: absolute; top: 10px; left: 10px;">
+                                    <span class="category-badge"
+                                          style="background: rgba(0, 123, 255, 0.9); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 500;">
+                                        {{ vendor.category }}
+                                    </span>
+                                </div>
+
+                                <!-- Verified Badge -->
+                                <div class="verified-badge" style="position: absolute; top: 10px; right: 10px;" *ngIf="vendor.verified">
+                                    <span style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">
+                                        <i class="pi pi-check" style="margin-right: 2px;"></i> Verified
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="vendor-info" style="padding: 15px;">
+                                <h5 class="vendor-name" style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #333; line-height: 1.2;">
+                                    {{ vendor.name }}
+                                </h5>
+
+                                <!-- Location with Icon -->
+                                <div class="vendor-location" style="margin-bottom: 10px;">
+                                    <div class="location" style="display: flex; align-items: center; gap: 5px;">
+                                        <span class="icon">
+                                            <img src="assets/img/svg/location-icon.svg" style="width: 12px; height: 12px;" />
+                                        </span>
+                                        <span class="city" style="font-size: 13px; color: #666;">
+                                            <span *ngIf="vendor.subArea">{{ vendor.subArea }}</span>
+                                            <span *ngIf="vendor.subArea && vendor.city">, </span>
+                                            <span *ngIf="vendor.city">{{ vendor.city }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Services Offered -->
+                                <div class="vendor-services" style="margin-bottom: 10px; min-height: 40px; display: flex; align-items: flex-start;" *ngIf="vendor.services && vendor.services.length">
+                                    <div class="services-tags" style="display: flex; flex-wrap: wrap; gap: 4px; flex: 1;">
+                                        <!-- Show first 3 services as tags -->
+                                        <span *ngFor="let service of vendor.services.slice(0, 3)"
+                                              class="service-tag"
+                                              style="background: #f1f3f4; color: #5f6368; padding: 2px 6px; border-radius: 3px; font-size: 10px; line-height: 1.2;">
+                                            {{service.title}}
+                                        </span>
+                                        <!-- Show count of remaining services -->
+                                        <span *ngIf="vendor.services.length > 3"
+                                              class="more-services"
+                                              style="color: #007bff; font-size: 10px; line-height: 1.2;">
+                                            +{{ vendor.services.length - 3 }} more
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Price Information -->
+                                <div class="vendor-pricing" style="margin-bottom: 10px;">
+                                    <div class="price-display" style="display: flex; align-items: center; gap: 5px; font-size: 13px; color: #666;">
+                                        <i class="pi pi-tag" style="font-size: 12px;"></i>
+                                        Starting from:
+                                        <span *ngIf="vendor.minVendorPrice && vendor.minVendorPrice > 0"
+                                              class="price-value"
+                                              style="font-weight: 600; color: #333;">
+                                            ₹{{ vendor.minVendorPrice | number }}
+                                        </span>
+                                        <span *ngIf="!vendor.minVendorPrice || vendor.minVendorPrice == 0"
+                                              class="price-value"
+                                              style="font-weight: 600; color: #999;">
+                                            Contact for Price
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons and Ratings -->
+                                <div class="vendor-actions" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div class="action-buttons" style="display: flex; gap: 8px;">
+                                        <a [routerLink]="['/vendor-detail', createSlug(vendor.city), createSlug(vendor.categories[0].name), vendor.metaUrl]" [queryParams]="{slot: selectedPropertyType}"
+                                                            class="btn-custom btn-sm secondary">
+                                                            Book Now
+                                                         </a>
+                                        <button class="btn-contact"
+                                                (click)="contactVendor(vendor, $event)"
+                                                style="background: #28a745; color: white; padding: 6px 12px; border-radius: 4px; border: none; font-size: 12px; cursor: pointer;">
+                                            Contact
+                                        </button>
+                                    </div>
+
+                                    <!-- Ratings -->
+                                    <div class="vendor-ratings" style="display: flex; align-items: center; gap: 8px; font-size: 11px;">
+                                        <div class="google-rating" style="display: flex; align-items: center; gap: 2px;" *ngIf="vendor.googleRating">
+                                            <img src="assets/img/svg/google.png" alt="Google" style="width: 12px; height: 12px;" />
+                                            <i class="pi pi-star-fill" style="font-size: 10px; color: #ffc107;"></i>
+                                            <span style="color: #666;">
+                                                <b>{{ vendor.googleRating }}</b>/5
+                                            </span>
+                                        </div>
+                                        <div class="rating-divider" style="width: 1px; height: 12px; background: #ddd;" *ngIf="vendor.googleRating && vendor.eazyVenueRating"></div>
+                                        <div class="eazy-rating" style="display: flex; align-items: center; gap: 2px;" *ngIf="vendor.eazyVenueRating">
+                                            <img src="assets/images/logo.png" alt="EazyVenue" style="width: 12px; height: 12px;" />
+                                            <i class="pi pi-star-fill" style="font-size: 10px; color: #ffc107;"></i>
+                                            <span style="color: #666;">
+                                                <b>{{ vendor.eazyVenueRating }}</b>/5
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced CSS Styles -->
 <style>
-.similar-venues-container::-webkit-scrollbar {
+/* Existing similar venues styles */
+.similar-venues-container::-webkit-scrollbar,
+.frequent-vendors-container::-webkit-scrollbar {
     height: 6px;
 }
 
-.similar-venues-container::-webkit-scrollbar-track {
+.similar-venues-container::-webkit-scrollbar-track,
+.frequent-vendors-container::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 3px;
 }
 
-.similar-venues-container::-webkit-scrollbar-thumb {
+.similar-venues-container::-webkit-scrollbar-thumb,
+.frequent-vendors-container::-webkit-scrollbar-thumb {
     background: #c1c1c1;
     border-radius: 3px;
 }
 
-.similar-venues-container::-webkit-scrollbar-thumb:hover {
+.similar-venues-container::-webkit-scrollbar-thumb:hover,
+.frequent-vendors-container::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
 }
 
-.venue-card:hover {
+.venue-card:hover,
+.vendor-card:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
 }
-</style>
 
+/* New vendor-specific styles */
+.section-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.view-all-link:hover {
+    text-decoration: underline !important;
+}
+
+.category-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.vendor-card .btn-view-details:hover {
+    background: #0056b3 !important;
+}
+
+.vendor-card .btn-contact:hover {
+    background: #1e7e34 !important;
+}
+
+.vendor-card .btn-contact:active,
+.vendor-card .btn-view-details:active {
+    transform: translateY(1px);
+}
+
+.service-tag {
+    transition: background-color 0.2s;
+}
+
+.service-tag:hover {
+    background: #e8eaed !important;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .venue-card,
+    .vendor-card {
+        flex: 0 0 250px !important;
+    }
+
+    .category-buttons {
+        justify-content: center;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 10px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 4px !important;
+    }
+
+    .vendor-actions {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .venue-card,
+    .vendor-card {
+        flex: 0 0 220px !important;
+    }
+
+    .category-btn {
+        font-size: 12px !important;
+        padding: 6px 12px !important;
+    }
+}
+</style>
 <div class="venue-map-section" *ngIf="venueDetails">
     <div class="container">
       <div class="row">
@@ -2067,138 +2303,169 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Add these styles to your component's CSS or global styles -->
-  <style>
-  .venue-map-section {
-    padding: 40px 0;
-    background-color: #f8f9fa;
-  }
+    <!-- Bottom Spacer - You can adjust this height -->
+    <div class="venue-map-bottom-spacer"></div>
+</div>
 
-  .section-title {
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 30px;
-    font-size: 1.5rem;
-  }
+<!-- Add these styles to your component's CSS or global styles -->
+<style>
+.venue-map-section {
+  padding: 40px 0 0 0; /* Removed bottom padding, now controlled by spacer */
+  background-color: #f8f9fa;
+}
 
-  .section-title i {
-    color: #007bff;
-    margin-right: 10px;
-  }
+/* Bottom Spacer - Adjust the height value to control spacing */
+.venue-map-bottom-spacer {
+  height: 60px; /* Default spacing - Change this value to increase/decrease gap */
+  background-color: #f8f9fa; /* Same as section background */
+}
 
-  .map-container {
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  }
+.venue-map-bottom-spacer {
+  height: 80px; /* Medium gap */
+}
 
-  .venue-map {
-    width: 100%;
-    height: 400px;
-    border: none;
-  }
+.venue-map-bottom-spacer {
+  height: 120px; /* Large gap */
+}
 
-  .map-loading-overlay,
-  .map-error-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
+.venue-map-bottom-spacer {
+  height: 160px; /* Extra large gap */
+}
+*/
 
+.section-title {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 30px;
+  font-size: 1.5rem;
+}
+
+.section-title i {
+  color: #007bff;
+  margin-right: 10px;
+}
+
+.map-container {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.venue-map {
+  width: 100%;
+  height: 400px;
+  border: none;
+}
+
+.map-loading-overlay,
+.map-error-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.location-details-card {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+}
+
+.venue-name {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.address-details .address-line {
+  margin-bottom: 8px;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.address-details i {
+  width: 16px;
+  margin-right: 8px;
+}
+
+.map-actions {
+  margin-top: 20px;
+}
+
+.btn-whatsapp {
+  background-color: #25D366;
+  border-color: #25D366;
+  color: white;
+}
+
+.btn-whatsapp:hover {
+  background-color: #128C7E;
+  border-color: #128C7E;
+  color: white;
+}
+
+.quick-info {
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.info-label {
+  color: #666;
+  font-weight: 500;
+}
+
+.info-value {
+  color: #333;
+  font-weight: 600;
+}
+
+.rating-stars {
+  color: #ffc107;
+}
+
+/* Responsive spacing adjustments */
+@media (max-width: 991px) {
   .location-details-card {
-    background: white;
-    border-radius: 10px;
-    padding: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    height: fit-content;
-  }
-
-  .venue-name {
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 15px;
-  }
-
-  .address-details .address-line {
-    margin-bottom: 8px;
-    color: #666;
-    font-size: 0.95rem;
-  }
-
-  .address-details i {
-    width: 16px;
-    margin-right: 8px;
-  }
-
-  .map-actions {
     margin-top: 20px;
   }
 
-  .btn-whatsapp {
-    background-color: #25D366;
-    border-color: #25D366;
-    color: white;
+  .venue-map-bottom-spacer {
+    height: 50px; /* Slightly less spacing on tablets */
+  }
+}
+
+@media (max-width: 576px) {
+  .venue-map {
+    height: 300px;
   }
 
-  .btn-whatsapp:hover {
-    background-color: #128C7E;
-    border-color: #128C7E;
-    color: white;
+  .map-actions .btn {
+    margin-bottom: 10px;
   }
 
-  .quick-info {
-    border-top: 1px solid #eee;
-    padding-top: 15px;
+  .venue-map-bottom-spacer {
+    height: 40px; /* Less spacing on mobile */
   }
-
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-  }
-
-  .info-label {
-    color: #666;
-    font-weight: 500;
-  }
-
-  .info-value {
-    color: #333;
-    font-weight: 600;
-  }
-
-  .rating-stars {
-    color: #ffc107;
-  }
-
-  @media (max-width: 991px) {
-    .location-details-card {
-      margin-top: 20px;
-    }
-  }
-
-  @media (max-width: 576px) {
-    .venue-map {
-      height: 300px;
-    }
-
-    .map-actions .btn {
-      margin-bottom: 10px;
-    }
-  }
-  </style>
+}
+</style>
 <p-dialog
     header="Schedule A Visit"
     [(visible)]="displayModal"
