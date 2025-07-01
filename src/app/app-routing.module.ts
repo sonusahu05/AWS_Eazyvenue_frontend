@@ -83,361 +83,322 @@ import { CancellationComponent } from './frontend/cancellation/cancellation.comp
 import { SignupComponent } from './pages/venue-signup.component';
 @NgModule({
     imports: [
-        RouterModule.forRoot(
-            [
-                {
-                    path: '',
-                    component: FrontendComponent,
-                    canActivateChild: [AuthGuard],
-                    data: {
-                        role: ['user'],
-                    },
-                    children: [
-                        { path: '', component: HomeComponent },
-                        { path: 'about-us', component: AboutUsComponent },
-                        {
-                            path: 'cancellation',
-                            component: CancellationComponent,
-                        },
-                        { path: 'contact-us', component: ContactUsComponent },
-                        {
-                            path: 'privacy-policy',
-                            component: PrivacypolicyComponent,
-                        },
-                        {
-                            path: 'subscribe',
-                            component: SubscriptionComponent,
-                        },
-                        { path: 'terms', component: TermsComponent },
-                        {
-                            path: 'hot-muhrats',
-                            component: HotMuhuratsComponent,
-                        },
-                        { path: 'policy', component: PolicyComponent },
-                        { path: 'services', component: ServicesComponent },
-                        { path: 'blog', component: BlogComponent },
-                        { path: 'sign-in', component: SignInComponent },
-                        // { path: 'venue/:id', component: VenueDetailsComponent },
-                        // Venue Details
-                        {
-                            path: 'venue/:metaurl',
-                            component: VenueDetailsComponent,
-                        },
-                        //venue list
-                        // { path: 'venue', component: VenueCategoryListComponent },
-                        {
-                            path: 'banquet-halls',
-                            component: VenueCategoryListComponent,
-                        },
-                        //venue list with occasion
-                        {
-                            path: 'banquet-halls/:occasion',
-                            component: VenueCategoryListComponent,
-                        },
-                        //venue list with occasion and city
-                        {
-                            path: 'banquet-halls/:occasion/:city',
-                            component: VenueCategoryListComponent,
-                        },
-                        //venue list with occasion and city and subarea
-                        {
-                            path: 'banquet-halls/:occasion/:city/:subarea',
-                            component: VenueCategoryListComponent,
-                        },
-                        {
-                            path: 'banquet-halls/:occasion/:city/:subarea/:venue',
-                            component: VenueCategoryListComponent,
-                        },
-                        //vendor Details Screen
-                        {
-                            path: 'vendor-detail/:location/:category/:metaurl',
-                            component: VendorDetailsComponent,
-                        },
-
-                        {
-                            path: 'vendor',
-                            component: VendorFilterListComponent,
-                        },
-                        {
-                            path: 'vendor/:category',
-                            component: VendorFilterListComponent,
-                        },
-                        {
-                            path: 'vendor/:category/:city',
-                            component: VendorFilterListComponent,
-                        },
-                        {
-                            path: 'vendor/:category/:city/:subarea',
-                            component: VendorFilterListComponent,
-                        },
-
-                        { path: 'my-profile', component: MyAccountComponent },
-                        {
-                            path: 'edit-my-profile/:id',
-                            component: UserMyAccountEditComponent,
-                        },
-                        { path: 'order', component: OrdersComponent },
-                        {
-                            path: 'availability',
-                            component: AvailabilityComponent,
-                        },
-                        {
-                            path: 'venue-order/view/:id',
-                            component: ViewCustomerVenueOrderComponent,
-                        },
-                        {
-                            path: 'venue-availability/view/:id',
-                            component: ViewCustomerVenueAvailabilityComponent,
-                        },
-                        {
-                            path: 'auth/reset-pass/:token',
-                            component: ResetPasswordComponent,
-                        },
-                        { path: 'compare', component: compareVenue },
-                        {
-                            path: 'compare-vendor',
-                            component: VendorCompareComponent,
-                        },
-                    ],
-                },
-                { path: '', redirectTo: '/manage', pathMatch: 'full' },
-                {
-                    path: 'manage',
-                    component: AppMainComponent,
-                    canActivate: [AuthGuard],
-                    canActivateChild: [AuthGuard],
-                    data: {
-                        role: ['admin', 'vendor', 'venueowner'],
-                    },
-                    children: [
-                        {
-                            path: 'dashboard',
-                            component: DashboardDemoComponent,
-                        },
-                        { path: 'admin', component: AdminComponent },
-                        { path: 'admin/add', component: AdminAddComponent },
-                        { path: 'admin/:id', component: AdminEditComponent },
-                        {
-                            path: 'admin/view/:id',
-                            component: AdminViewComponent,
-                        },
-                        { path: 'empty', component: EmptyComponent },
-                        { path: 'role', component: RoleComponent },
-                        { path: 'role/add', component: RoleAddComponent },
-                        { path: 'role/:id', component: RoleEditComponent },
-                        { path: 'role/view/:id', component: RoleViewComponent },
-                        {
-                            path: 'category/category',
-                            component: CategoryComponent,
-                        },
-                        {
-                            path: 'category/category/add',
-                            component: CategoryAddComponent,
-                        },
-                        {
-                            path: 'category/category/:id',
-                            component: CategoryEditComponent,
-                        },
-                        {
-                            path: 'category/category/view/:id',
-                            component: CategoryViewComponent,
-                        },
-                        {
-                            path: 'category/subcategory',
-                            component: SubcategoryComponent,
-                        },
-                        {
-                            path: 'category/subcategory/add',
-                            component: SubcategoryAddComponent,
-                        },
-                        {
-                            path: 'category/subcategory/:id',
-                            component: SubcategoryEditComponent,
-                        },
-                        {
-                            path: 'category/subcategory/view/:id',
-                            component: SubcategoryViewComponent,
-                        },
-                        { path: 'customer/user', component: UserComponent },
-                        {
-                            path: 'customer/user/add',
-                            component: UserAddComponent,
-                        },
-                        {
-                            path: 'customer/user/:id',
-                            component: UserEditComponent,
-                        },
-                        {
-                            path: 'customer/user/view/:id',
-                            component: UserViewComponent,
-                        },
-                        {
-                            path: 'cmsmodule',
-                            loadChildren: () =>
-                                import(
-                                    './manage/cmsmodule/cmsmodule.module'
-                                ).then((m) => m.CmsmoduleModule),
-                        },
-                        { path: 'banner', component: BannerComponent },
-                        { path: 'banner/add', component: BannerAddComponent },
-                        { path: 'banner/:id', component: BannerEditComponent },
-                        { path: 'calendar', component: CalendarComponent },
-                        {
-                            path: 'customer/news-letter',
-                            loadChildren: () =>
-                                import(
-                                    './manage/newsletter/newsletter.module'
-                                ).then((m) => m.NewsLetterModule),
-                        },
-                        {
-                            path: 'customer/contact-us',
-                            loadChildren: () =>
-                                import(
-                                    './manage/contactus/contactus.module'
-                                ).then((m) => m.ContactUsModule),
-                        },
-                        {
-                            path: 'venue',
-                            loadChildren: () =>
-                                import('./manage/venue/venue.module').then(
-                                    (m) => m.VenuemoduleModule
-                                ),
-                        },
-                        {
-                            path: 'vendor',
-                            loadChildren: () =>
-                                import('./manage/vendor/vendor.module').then(
-                                    (m) => m.VendorModule
-                                ),
-                        },
-                        {
-                            path: 'caterer',
-                            loadChildren: () =>
-                                import('./manage/caterer/caterer.module').then(
-                                    (m) => m.CatererModule
-                                ),
-                        },
-                        {
-                            path: 'customer/productreview',
-                            loadChildren: () =>
-                                import(
-                                    './manage/productreview/productreview.module'
-                                ).then((m) => m.ProductreviewModule),
-                        },
-                        {
-                            path: 'customer/orderreview',
-                            loadChildren: () =>
-                                import(
-                                    './manage/orderreview/orderreview.module'
-                                ).then((m) => m.OrderreviewModule),
-                        },
-                        //{ path: 'location/country', loadChildren: () => import('./manage/country/country.module').then(m => m.CountryModule), },
-                        {
-                            path: 'venue/order/:venueid',
-                            component: VenueorderListComponent,
-                        },
-                        {
-                            path: 'venue/order/view/:venueid',
-                            component: ViewvenueorderComponent,
-                        },
-                        // { path: 'venue/order/add', component: AddVenueSlotManagementComponent },
-                        // { path: 'venue/order/:id', component: EditVenueSlotManagementComponent },
-                        {
-                            path: 'venue/slot',
-                            component: SlotManagementComponent,
-                        },
-                        {
-                            path: 'venue/slot/add',
-                            component: AddVenueSlotManagementComponent,
-                        },
-                        {
-                            path: 'venue/slot/:id',
-                            component: EditVenueSlotManagementComponent,
-                        },
-                        {
-                            path: 'venue/slot-availability/:id',
-                            component: VenueSlotAvailabilityComponent,
-                        },
-                        {
-                            path: 'eventplanner',
-                            component: EnquiryListComponent,
-                        },
-                        {
-                            path: 'location/state',
-                            loadChildren: () =>
-                                import('./manage/state/state.module').then(
-                                    (m) => m.StateModule
-                                ),
-                        },
-                        {
-                            path: 'location/city',
-                            loadChildren: () =>
-                                import('./manage/city/city.module').then(
-                                    (m) => m.CityModule
-                                ),
-                        },
-                        {
-                            path: 'location/subarea',
-                            loadChildren: () =>
-                                import('./manage/subarea/subarea.module').then(
-                                    (m) => m.SubareaModule
-                                ),
-                        },
-                        {
-                            path: 'utilities/display',
-                            component: DisplayComponent,
-                        },
-                        {
-                            path: 'utilities/elevation',
-                            component: ElevationComponent,
-                        },
-                        {
-                            path: 'utilities/flexbox',
-                            component: FlexboxComponent,
-                        },
-                        { path: 'utilities/grid', component: GridComponent },
-                        { path: 'utilities/icons', component: IconsComponent },
-                        {
-                            path: 'utilities/widgets',
-                            component: WidgetsComponent,
-                        },
-                        {
-                            path: 'utilities/spacing',
-                            component: SpacingComponent,
-                        },
-                        {
-                            path: 'utilities/typography',
-                            component: TypographyComponent,
-                        },
-                        { path: 'utilities/text', component: TextComponent },
-                        { path: 'pages/crud', component: AppCrudComponent },
-                        {
-                            path: 'pages/calendar',
-                            component: AppCalendarComponent,
-                        },
-                        {
-                            path: 'pages/timeline',
-                            component: AppTimelineDemoComponent,
-                        },
-                        {
-                            path: 'pages/invoice',
-                            component: AppInvoiceComponent,
-                        },
-                        { path: 'pages/help', component: AppHelpComponent },
-
-                        { path: 'wishlist', component: WishlistComponent },
-                    ],
-                },
-                { path: 'error', component: AppErrorComponent },
-                { path: 'access', component: AppAccessdeniedComponent },
-                { path: 'notfound', component: AppNotfoundComponent },
-                { path: 'manage/login', component: AppLoginComponent },
-                { path: 'signup', component: SignupComponent },
-                // { path: '**', redirectTo: '/notfound' },
-                { path: '**', redirectTo: '/' },
-            ],
-            { scrollPositionRestoration: 'enabled' }
-        ),
+        RouterModule.forRoot([
+    {
+        path: '',
+        component: FrontendComponent,
+        canActivateChild: [AuthGuard],
+        data: {
+            role: ['user'],
+        },
+        children: [
+            { path: '', component: HomeComponent },
+            { path: 'about-us', component: AboutUsComponent },
+            {
+                path: 'cancellation',
+                component: CancellationComponent,
+            },
+            { path: 'contact-us', component: ContactUsComponent },
+            {
+                path: 'privacy-policy',
+                component: PrivacypolicyComponent,
+            },
+            {
+                path: 'subscribe',
+                component: SubscriptionComponent,
+            },
+            { path: 'terms', component: TermsComponent },
+            {
+                path: 'hot-muhrats',
+                component: HotMuhuratsComponent,
+            },
+            { path: 'policy', component: PolicyComponent },
+            { path: 'services', component: ServicesComponent },
+            { path: 'blog', component: BlogComponent },
+            { path: 'sign-in', component: SignInComponent },
+            // { path: 'venue/:id', component: VenueDetailsComponent },
+            // Venue Details
+            {
+                path: 'venue/:metaurl',
+                component: VenueDetailsComponent,
+            },
+            //venue list
+            // { path: 'venue', component: VenueCategoryListComponent },
+            {
+                path: 'banquet-halls',
+                component: VenueCategoryListComponent,
+            },
+            //venue list with occasion
+            {
+                path: 'banquet-halls/:occasion',
+                component: VenueCategoryListComponent,
+            },
+            //venue list with occasion and city
+            {
+                path: 'banquet-halls/:occasion/:city',
+                component: VenueCategoryListComponent,
+            },
+            //venue list with occasion and city and subarea
+            {
+                path: 'banquet-halls/:occasion/:city/:subarea',
+                component: VenueCategoryListComponent,
+            },
+            {
+                path: 'banquet-halls/:occasion/:city/:subarea/:venue',
+                component: VenueCategoryListComponent,
+            },
+            //vendor Details Screen
+            {
+                path: 'vendor-detail/:location/:category/:metaurl',
+                component: VendorDetailsComponent,
+            },
+            {
+                path: 'vendor',
+                component: VendorFilterListComponent,
+            },
+            {
+                path: 'vendor/:category',
+                component: VendorFilterListComponent,
+            },
+            {
+                path: 'vendor/:category/:city',
+                component: VendorFilterListComponent,
+            },
+            {
+                path: 'vendor/:category/:city/:subarea',
+                component: VendorFilterListComponent,
+            },
+            { path: 'my-profile', component: MyAccountComponent },
+            {
+                path: 'edit-my-profile/:id',
+                component: UserMyAccountEditComponent,
+            },
+            { path: 'order', component: OrdersComponent },
+            {
+                path: 'availability',
+                component: AvailabilityComponent,
+            },
+            {
+                path: 'venue-order/view/:id',
+                component: ViewCustomerVenueOrderComponent,
+            },
+            {
+                path: 'venue-availability/view/:id',
+                component: ViewCustomerVenueAvailabilityComponent,
+            },
+            {
+                path: 'auth/reset-pass/:token',
+                component: ResetPasswordComponent,
+            },
+            { path: 'compare', component: compareVenue },
+            {
+                path: 'compare-vendor',
+                component: VendorCompareComponent,
+            },
+        ],
+    },
+    { path: '', redirectTo: '/manage', pathMatch: 'full' },
+    {
+        path: 'manage',
+        component: AppMainComponent,
+        canActivate: [AuthGuard],
+        canActivateChild: [AuthGuard],
+        data: {
+            role: ['admin', 'vendor', 'venueowner'],
+        },
+        children: [
+            {
+                path: 'dashboard',
+                component: DashboardDemoComponent,
+            },
+            { path: 'admin', component: AdminComponent },
+            { path: 'admin/add', component: AdminAddComponent },
+            { path: 'admin/:id', component: AdminEditComponent },
+            {
+                path: 'admin/view/:id',
+                component: AdminViewComponent,
+            },
+            { path: 'empty', component: EmptyComponent },
+            { path: 'role', component: RoleComponent },
+            { path: 'role/add', component: RoleAddComponent },
+            { path: 'role/:id', component: RoleEditComponent },
+            { path: 'role/view/:id', component: RoleViewComponent },
+            {
+                path: 'category/category',
+                component: CategoryComponent,
+            },
+            {
+                path: 'category/category/add',
+                component: CategoryAddComponent,
+            },
+            {
+                path: 'category/category/:id',
+                component: CategoryEditComponent,
+            },
+            {
+                path: 'category/category/view/:id',
+                component: CategoryViewComponent,
+            },
+            {
+                path: 'category/subcategory',
+                component: SubcategoryComponent,
+            },
+            {
+                path: 'category/subcategory/add',
+                component: SubcategoryAddComponent,
+            },
+            {
+                path: 'category/subcategory/:id',
+                component: SubcategoryEditComponent,
+            },
+            {
+                path: 'category/subcategory/view/:id',
+                component: SubcategoryViewComponent,
+            },
+            { path: 'customer/user', component: UserComponent },
+            {
+                path: 'customer/user/add',
+                component: UserAddComponent,
+            },
+            {
+                path: 'customer/user/:id',
+                component: UserEditComponent,
+            },
+            {
+                path: 'customer/user/view/:id',
+                component: UserViewComponent,
+            },
+            {
+                path: 'cmsmodule',
+                loadChildren: () => import('./manage/cmsmodule/cmsmodule.module').then((m) => m.CmsmoduleModule),
+            },
+            { path: 'banner', component: BannerComponent },
+            { path: 'banner/add', component: BannerAddComponent },
+            { path: 'banner/:id', component: BannerEditComponent },
+            { path: 'calendar', component: CalendarComponent },
+            {
+                path: 'customer/news-letter',
+                loadChildren: () => import('./manage/newsletter/newsletter.module').then((m) => m.NewsLetterModule),
+            },
+            {
+                path: 'customer/contact-us',
+                loadChildren: () => import('./manage/contactus/contactus.module').then((m) => m.ContactUsModule),
+            },
+            {
+                path: 'venue',
+                loadChildren: () => import('./manage/venue/venue.module').then((m) => m.VenuemoduleModule),
+            },
+            {
+                path: 'vendor',
+                loadChildren: () => import('./manage/vendor/vendor.module').then((m) => m.VendorModule),
+            },
+            {
+                path: 'caterer',
+                loadChildren: () => import('./manage/caterer/caterer.module').then((m) => m.CatererModule),
+            },
+            {
+                path: 'customer/productreview',
+                loadChildren: () => import('./manage/productreview/productreview.module').then((m) => m.ProductreviewModule),
+            },
+            {
+                path: 'customer/orderreview',
+                loadChildren: () => import('./manage/orderreview/orderreview.module').then((m) => m.OrderreviewModule),
+            },
+            //{ path: 'location/country', loadChildren: () => import('./manage/country/country.module').then(m => m.CountryModule), },
+            {
+                path: 'venue/order/:venueid',
+                component: VenueorderListComponent,
+            },
+            {
+                path: 'venue/order/view/:venueid',
+                component: ViewvenueorderComponent,
+            },
+            // { path: 'venue/order/add', component: AddVenueSlotManagementComponent },
+            // { path: 'venue/order/:id', component: EditVenueSlotManagementComponent },
+            {
+                path: 'venue/slot',
+                component: SlotManagementComponent,
+            },
+            {
+                path: 'venue/slot/add',
+                component: AddVenueSlotManagementComponent,
+            },
+            {
+                path: 'venue/slot/:id',
+                component: EditVenueSlotManagementComponent,
+            },
+            {
+                path: 'venue/slot-availability/:id',
+                component: VenueSlotAvailabilityComponent,
+            },
+            {
+                path: 'eventplanner',
+                component: EnquiryListComponent,
+            },
+            {
+                path: 'location/state',
+                loadChildren: () => import('./manage/state/state.module').then((m) => m.StateModule),
+            },
+            {
+                path: 'location/city',
+                loadChildren: () => import('./manage/city/city.module').then((m) => m.CityModule),
+            },
+            {
+                path: 'location/subarea',
+                loadChildren: () => import('./manage/subarea/subarea.module').then((m) => m.SubareaModule),
+            },
+            {
+                path: 'utilities/display',
+                component: DisplayComponent,
+            },
+            {
+                path: 'utilities/elevation',
+                component: ElevationComponent,
+            },
+            {
+                path: 'utilities/flexbox',
+                component: FlexboxComponent,
+            },
+            { path: 'utilities/grid', component: GridComponent },
+            { path: 'utilities/icons', component: IconsComponent },
+            {
+                path: 'utilities/widgets',
+                component: WidgetsComponent,
+            },
+            {
+                path: 'utilities/spacing',
+                component: SpacingComponent,
+            },
+            {
+                path: 'utilities/typography',
+                component: TypographyComponent,
+            },
+            { path: 'utilities/text', component: TextComponent },
+            { path: 'pages/crud', component: AppCrudComponent },
+            {
+                path: 'pages/calendar',
+                component: AppCalendarComponent,
+            },
+            {
+                path: 'pages/timeline',
+                component: AppTimelineDemoComponent,
+            },
+            {
+                path: 'pages/invoice',
+                component: AppInvoiceComponent,
+            },
+            { path: 'pages/help', component: AppHelpComponent },
+            { path: 'wishlist', component: WishlistComponent },
+        ],
+    },
+    { path: 'error', component: AppErrorComponent },
+    { path: 'access', component: AppAccessdeniedComponent },
+    { path: 'notfound', component: AppNotfoundComponent },
+    { path: 'manage/login', component: AppLoginComponent },
+    { path: 'signup', component: SignupComponent },
+    // { path: '**', redirectTo: '/notfound' },
+    { path: '**', redirectTo: '/' },
+], { scrollPositionRestoration: 'enabled', initialNavigation: 'enabled' }),
     ],
     exports: [RouterModule],
 })

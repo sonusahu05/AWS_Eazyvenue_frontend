@@ -52,3 +52,22 @@ baseline.json
 
 # Husky
 .husky/_
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.staging
+
+# Angular specific
+.angular/
+/tmp/
+
+# Testing files
+test-*.js
+*-test.js
+
+# Additional security
+*.key
+*.pem
+config/secrets.*

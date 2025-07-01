@@ -91,6 +91,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     mobileNumber: any;
     showOtpErrors: boolean = false;
     @ViewChild('ngxotp') ngxotp: NgxOtpInputComponent;
+    @ViewChild('toggleButton', { read: ElementRef }) toggleButton: ElementRef;
     public config: NgxOtpInputConfig = {
         otpLength: 4,
         autofocus: true,
@@ -447,6 +448,16 @@ export class HeaderComponent implements OnInit, AfterViewInit {
                 }
             }
         });
+
+        // Ensure aria-label is properly set on the toggle button
+        setTimeout(() => {
+            if (this.toggleButton) {
+                const buttonElement = this.toggleButton.nativeElement?.querySelector('button');
+                if (buttonElement && !buttonElement.getAttribute('aria-label')) {
+                    buttonElement.setAttribute('aria-label', 'Toggle navigation menu');
+                }
+            }
+        }, 100);
     }
 
     // convenience getter for easy access to form fields

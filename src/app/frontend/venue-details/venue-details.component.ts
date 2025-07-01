@@ -4,8 +4,11 @@ import {
     ViewChild,
     ElementRef,
     Renderer2,
+    Inject,
+    PLATFORM_ID,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { isPlatformBrowser, DOCUMENT } from '@angular/common';
 // import data from '../../../assets/demo/data/navigation.json';
 import { EnquiryService } from '../../manage/eventmanager/service/eventmanager.service';
 import { ProductService } from '../../demo/service/productservice';
@@ -349,22 +352,34 @@ export class VenueDetailsComponent implements OnInit {
         private title: Title,
         private meta: Meta,
         private razorpayService: RazorpayService,
-        private fb: FormBuilder
+        private fb: FormBuilder,
+        @Inject(PLATFORM_ID) private platformId: Object,
+        @Inject(DOCUMENT) private document: Document
     ) {
         this.bodyClass = this.availableClasses[this.currentClassIdx];
-        this.changeBodyClass();
+        if (isPlatformBrowser(this.platformId)) {
+            this.changeBodyClass();
+        }
     }
 
     ngOnInit() {
-        const canonicalLink = this.renderer.createElement('link');
         this.initReviewForm();
-        this.checkScreenSize();
-    window.addEventListener('resize', () => {
-      this.checkScreenSize();
-    });
-        this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
-        this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
-        this.renderer.appendChild(document.head, canonicalLink);
+        
+        // Browser-only code - wrapped in platform check
+        if (isPlatformBrowser(this.platformId)) {
+            const canonicalLink = this.renderer.createElement('link');
+            this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
+            this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
+            this.renderer.appendChild(this.document.head, canonicalLink);
+            
+            this.checkScreenSize();
+            window.addEventListener('resize', () => {
+                this.checkScreenSize();
+            });
+            
+            this.renderer.addClass(this.document.body, 'body-dark');
+        }
+        
         this.responsiveOptions = [
             {
                 breakpoint: '1024px',
@@ -379,7 +394,6 @@ export class VenueDetailsComponent implements OnInit {
                 numVisible: 1,
             },
         ];
-        this.renderer.addClass(document.body, 'body-dark');
         this.filterGuestArray = [
             {
                 id: 1,
