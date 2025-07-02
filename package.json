@@ -3,9 +3,9 @@
     "version": "12.0.0",
     "scripts": {
         "ng": "ng",
-        "start": "NODE_OPTIONS=\"--openssl-legacy-provider\" ng serve",
-        "build": "NODE_OPTIONS=\"--openssl-legacy-provider\" ng build",
-        "test": "NODE_OPTIONS=\"--openssl-legacy-provider\" ng test",
+        "start": "npm run serve:ssr",
+        "build": "npm install && npm run build:ssr",
+        "test": "ng test",
         "lint": "ng lint"
     },
     "private": true,
