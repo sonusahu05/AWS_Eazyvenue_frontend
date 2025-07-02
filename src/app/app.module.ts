@@ -219,7 +219,7 @@ FullCalendarModule.registerPlugins([
 
 @NgModule({
     imports: [
-        BrowserModule,
+        BrowserModule.withServerTransition({ appId: 'serverApp' }),
         AngMusicPlayerModule,
         // VimeModule,
         //NgxAudioPlayerModule,
