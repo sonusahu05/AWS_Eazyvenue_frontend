@@ -52,6 +52,10 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     selectedCountries: any[];
     venuearraylist: any[] = [];
     tmpvenueList: any[] = [];
+    dropdownStates = {
+        venues: false,
+        vendors: false
+      };
     searchkey;
     pagenumber = 1;
     totalrecordfinalve: any;
@@ -302,6 +306,37 @@ export class HeaderComponent implements OnInit, AfterViewInit {
           sidebar?.classList.remove('expanded'); // Collapse sidebar on mobile
         }
         this.isHotMuhuratsOpen = false;
+      }
+
+      showDropdown(dropdown: string): void {
+        if (dropdown === 'venues') {
+          this.dropdownStates.venues = true;
+        } else if (dropdown === 'vendors') {
+          this.dropdownStates.vendors = true;
+        }
+      }
+
+      hideDropdown(dropdown: string): void {
+        setTimeout(() => {
+          if (dropdown === 'venues') {
+            this.dropdownStates.venues = false;
+          } else if (dropdown === 'vendors') {
+            this.dropdownStates.vendors = false;
+          }
+        }, 100);
+      }
+
+      // Set active route for navigation highlighting
+      setActiveRoute(url: string): void {
+        if (url.includes('/vendor')) {
+          this.activeRoute = 'vendor';
+        } else if (url.includes('/subscribe')) {
+          this.activeRoute = 'subscribe';
+        } else if (url === '/' || url.includes('/venue')) {
+          this.activeRoute = 'venue';
+        } else {
+          this.activeRoute = '';
+        }
       }
 
       getRouteSegments(route: any): string[] {

@@ -94,6 +94,9 @@ export class VenueDetailsComponent implements OnInit {
         this.venueDetailSearch = true;
     }
     visible: boolean;
+googleReviews: any[] = [];
+showGoogleReviews = false;
+combinedRating = 0;
     selectedCountries: any[];
     filteredCountries: any[];
     showDialog() {
@@ -381,22 +384,22 @@ export class VenueDetailsComponent implements OnInit {
 
     ngOnInit() {
         this.initReviewForm();
-        
+
         // Browser-only code - wrapped in platform check
         if (isPlatformBrowser(this.platformId)) {
             const canonicalLink = this.renderer.createElement('link');
             this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
             this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
             this.renderer.appendChild(this.document.head, canonicalLink);
-            
+
             this.checkScreenSize();
             window.addEventListener('resize', () => {
                 this.checkScreenSize();
             });
-            
+
             this.renderer.addClass(this.document.body, 'body-dark');
         }
-        
+
         this.responsiveOptions = [
             {
                 breakpoint: '1024px',
@@ -795,17 +798,33 @@ export class VenueDetailsComponent implements OnInit {
         return str.replace(/\b\w/g, match => match.toUpperCase()).replace(/-/g, ' ');
       }
 
-    submitReview() {
+      submitReview() {
         if (!this.venueDetails || !this.venueDetails.id) {
             console.error('venueDetails is undefined or missing ID');
             return;
         }
 
-        this.venueService.addReview(this.venueDetails.id, this.newReview).subscribe({
+        // Get user's full name for display
+        const userName = this.fullUserDetails ?
+            `${this.fullUserDetails.firstName || ''} ${this.fullUserDetails.lastName || ''}`.trim() :
+            'Anonymous User';
+
+        // Keep reviewtitle for backend but use userName for display
+        const reviewData = {
+            reviewtitle: this.newReview.reviewtitle || userName, // Backend expects title
+            reviewdescription: this.newReview.reviewdescription,
+            reviewrating: this.newReview.reviewrating,
+            userName: userName, // Add userName for frontend display
+            created_at: new Date()
+        };
+
+        this.venueService.addReview(this.venueDetails.id, reviewData).subscribe({
             next: (response: any) => {
                 if (!this.venueDetails.reviews) {
                     this.venueDetails.reviews = [];
                 }
+                // Add userName to response for display
+                response.userName = userName;
                 this.venueDetails.reviews.unshift(response);
                 this.newReview = {
                     reviewtitle: '',
@@ -818,6 +837,24 @@ export class VenueDetailsComponent implements OnInit {
                 console.error('Error adding review:', error);
             }
         });
+    }
+
+    loadGoogleReviews() {
+        if (this.venueDetails) {
+            this.venueService.getGoogleReviews(this.venueDetails.name, this.venueDetails.cityname)
+                .subscribe({
+                    next: (data) => {
+                        this.googleReviews = data.result?.reviews || [];
+                        const googleRating = data.result?.rating || 0;
+                        const eazyRating = parseFloat(this.venueDetails.revirerating) || 0;
+                        this.combinedRating = parseFloat(((googleRating + eazyRating) / 2).toFixed(1));
+                    },
+                    error: (err) => {
+                        console.error('Error loading Google reviews:', err);
+                        this.googleReviews = [];
+                    }
+                });
+        }
     }
 
 
@@ -1326,6 +1363,25 @@ navigateToVenue(venueId: number): void {
         }
     }
 
+    // Add these methods to your component
+
+getEazyRatingPercentage(rating: number): number {
+    if (!this.venueDetails.reviews || this.venueDetails.reviews.length === 0) {
+        return 0;
+    }
+
+    const ratingCount = this.venueDetails.reviews.filter(review =>
+        Math.floor(review.reviewrating) === rating
+    ).length;
+
+    return Math.round((ratingCount / this.venueDetails.reviews.length) * 100);
+}
+
+loadMoreGoogleReviews(): void {
+    // Implement pagination for Google reviews if needed
+    console.log('Load more Google reviews');
+}
+
     getVenueDetails() {
         this.venueService.getVenueDetailsByMeta(this.metaUrl).subscribe(
             // this.venueService.getVenueDetails(this.id).subscribe(
@@ -1333,6 +1389,7 @@ navigateToVenue(venueId: number): void {
                 console.log(data);
 
                 this.venueDetails = data;
+                setTimeout(() => this.loadGoogleReviews(), 100);
                 this.title.setTitle(
                     this.venueDetails.name + ' - ' + 'Eazyvenue.com'
                 );

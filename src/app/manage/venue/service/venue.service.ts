@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { TokenStorageService } from '../../../services/token-storage.service';
+import { switchMap } from 'rxjs/operators';
 declare var google: any;
 const API_URL = environment.apiUrl + 'venue';
 @Injectable({
@@ -129,6 +130,21 @@ export class VenueService {
             this.httpOptions
         );
     }
+
+    // Add to your venue service
+getGoogleReviews(placeName: string, cityName: string): Observable<any> {
+    const query = `${placeName} ${cityName}`;
+    return this.http.get(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(query)}&inputtype=textquery&fields=place_id&key=${this.googleMapsApiKey}`)
+        .pipe(
+            switchMap((response: any) => {
+                if (response.candidates && response.candidates.length > 0) {
+                    const placeId = response.candidates[0].place_id;
+                    return this.http.get(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews,rating&key=${this.googleMapsApiKey}`);
+                }
+                return of({ result: { reviews: [], rating: 0 } });
+            })
+        );
+}
 
     getVenueDetails(id: string) {
         return this.http.get<any>(

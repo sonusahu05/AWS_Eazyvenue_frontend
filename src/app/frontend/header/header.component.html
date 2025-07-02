@@ -1,26 +1,132 @@
 <header class="sticky sigma_header style-4 can-sticky sticky-top"
     [ngClass]="isNavbarFixed?'hide-search-menu':'notfixed'" (scroll)="onScroll()">
 
+    <style>
+        /* Dropdown Styles */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1000;
+            display: none;
+            min-width: 280px;
+            padding: 1rem;
+            margin: 0;
+            background-color: #fff;
+            border: 1px solid rgba(0,0,0,.15);
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            animation: fadeInDown 0.3s ease;
+        }
 
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-category {
+            margin-bottom: 1.5rem;
+        }
+
+        .dropdown-category h6 {
+            color: #e91e63;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dropdown-category ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dropdown-category li {
+            margin-bottom: 0.5rem;
+        }
+
+        .dropdown-category a {
+            color: #555;
+            text-decoration: none;
+            font-size: 13px;
+            display: block;
+            padding: 0.25rem 0;
+            transition: color 0.2s ease;
+        }
+
+        .dropdown-category a:hover {
+            color: #e91e63;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-item:hover .dropdown-menu {
+            display: block;
+        }
+
+        .nav-link {
+            position: relative;
+            padding: 1rem !important;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .dropdown-menu {
+                position: static;
+                display: block !important;
+                width: 100%;
+                box-shadow: none;
+                border: none;
+                background-color: #f8f9fa;
+                margin-top: 0.5rem;
+            }
+        }
+
+        /* Header styling */
+        .sigma_header {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            color: #333;
+            border-right: 1px solid #eee;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: #e91e63;
+        }
+
+        .login-button, .vendor-button {
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .vendor-button {
+            color: #e91e63 !important;
+        }
+    </style>
 
     <div class="sigma_header-middle">
         <div class="container-fluid">
-
-
             <div class="navbar sticky-top">
-                <!-- <div class="sigma_header-controls style-2 d-none d-lg-block">
-                  <ul class="sigma_header-controls-inner">
-
-                      <li class="aside-toggle aside-trigger-right desktop-toggler">
-                          <span></span>
-                          <span></span>
-                          <span></span>
-                      </li>
-                  </ul>
-              </div> -->
-
                 <div class="sigma_logo-wrapper">
-                    <!-- Navbar -->
                     <nav class="navbar-expand-lg navbar-light">
                         <div class="row align-items-center">
                             <div class="col-auto">
@@ -28,39 +134,124 @@
                                     <img src="assets/images/eazyvneu-logo.svg" alt="logo" width="192px">
                                 </a>
                             </div>
-                            <!-- <div class="col-auto" style="margin:auto;">
-                                <div class="collapse navbar-collapse" id="navbarNav">
-                                    <ul class="navbar-nav">
-                                        <li class="nav-item active" [routerLinkActive]="['active']"
-                                            [routerLinkActiveOptions]="{exact:true}">
-                                            <a class="nav-link border-end active" routerLink="/">VENUES<span
-                                                    class="sr-only">(current)</span></a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link border-end" routerLink="/vendor-list">VENDORS</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#" (click)="showDialogoffer()">COUPLE DATE</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div> -->
                             <div class="col-auto" style="margin:auto;">
                                 <div class="collapse navbar-collapse" id="navbarNav">
                                     <ul class="navbar-nav">
-                                        <li class="nav-item" >
-                                            <a class="nav-link border-end" [class.active]="activeRoute === 'venue'" routerLink="/">VENUES</a>
+                                        <!-- VENUES Dropdown -->
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link border-end"
+                                               [class.active]="activeRoute === 'venue'"
+                                               routerLink="/"
+                                               (mouseenter)="showDropdown('venues')"
+                                               (mouseleave)="hideDropdown('venues')">
+                                               VENUES
+                                            </a>
+                                            <div class="dropdown-menu"
+                                                 [class.show]="dropdownStates.venues"
+                                                 (mouseenter)="showDropdown('venues')"
+                                                 (mouseleave)="hideDropdown('venues')">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <div class="dropdown-category">
+                                                            <h6>Banquet Halls</h6>
+                                                            <ul>
+                                                                <li><a href="https://eazyvenue.com/banquet-halls/wedding/Mumbai">Wedding Halls</a></li>
+                                                                <li><a href="https://eazyvenue.com/banquet-halls/party/Mumbai">Party Halls</a></li>
+                                                                <li><a href="https://eazyvenue.com/banquet-halls/corporate/Mumbai">Corporate Venues</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="dropdown-category">
+                                                            <h6>Outdoor Venues</h6>
+                                                            <ul>
+                                                                <li><a href="https://eazyvenue.com/gardens/wedding/Mumbai">Gardens</a></li>
+                                                                <li><a href="https://eazyvenue.com/farmhouses/wedding/Mumbai">Farmhouses</a></li>
+                                                                <li><a href="https://eazyvenue.com/resorts/wedding/Mumbai">Resorts</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="dropdown-category">
+                                                            <h6>Hotels</h6>
+                                                            <ul>
+                                                                <li><a href="https://eazyvenue.com/hotels/luxury/Mumbai">Luxury Hotels</a></li>
+                                                                <li><a href="https://eazyvenue.com/hotels/budget/Mumbai">Budget Hotels</a></li>
+                                                                <li><a href="https://eazyvenue.com/destination-wedding/Mumbai">Destination Wedding</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="dropdown-category">
+                                                            <h6>Special Venues</h6>
+                                                            <ul>
+                                                                <li><a href="https://eazyvenue.com/heritage-venues/Mumbai">Heritage Venues</a></li>
+                                                                <li><a href="https://eazyvenue.com/beachside-venues/Mumbai">Beachside Venues</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link border-end" [class.active]="activeRoute === 'vendor'" routerLink="/vendor">VENDORS</a>
+
+                                        <!-- VENDORS Dropdown -->
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link border-end"
+                                               [class.active]="activeRoute === 'vendor'"
+                                               routerLink="/vendor"
+                                               (mouseenter)="showDropdown('vendors')"
+                                               (mouseleave)="hideDropdown('vendors')">
+                                               VENDORS
+                                            </a>
+                                            <div class="dropdown-menu"
+                                                 [class.show]="dropdownStates.vendors"
+                                                 (mouseenter)="showDropdown('vendors')"
+                                                 (mouseleave)="hideDropdown('vendors')">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <div class="dropdown-category">
+                                                            <h6>Photography</h6>
+                                                            <ul>
+                                                                <li><a href="https://eazyvenue.com/photographers/Mumbai">Photographers</a></li>
+                                                                <li><a href="https://eazyvenue.com/videographers/Mumbai">Videographers</a></li>
+                                                                <li><a href="https://eazyvenue.com/cinematography/Mumbai">Cinematography</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="dropdown-category">
+                                                            <h6>Decor</h6>
+                                                            <ul>
+                                                                <li><a href="https://eazyvenue.com/decorators/Mumbai">Decorators</a></li>
+                                                                <li><a href="https://eazyvenue.com/wedding-planners/Mumbai">Wedding Planners</a></li>
+                                                                <li><a href="https://eazyvenue.com/florists/Mumbai">Florists</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="dropdown-category">
+                                                            <h6>Beauty</h6>
+                                                            <ul>
+                                                                <li><a href="https://eazyvenue.com/makeup-artists/Mumbai">Makeup Artists</a></li>
+                                                                <li><a href="https://eazyvenue.com/mehendi-artists/Mumbai">Mehendi Artists</a></li>
+                                                                <li><a href="https://eazyvenue.com/beauty-salons/Mumbai">Beauty Salons</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="dropdown-category">
+                                                            <h6>Grooms</h6>
+                                                            <ul>
+                                                                <li><a href="https://eazyvenue.com/djs/Mumbai">DJs</a></li>
+                                                                <li><a href="https://eazyvenue.com/bands/Mumbai">Bands</a></li>
+                                                                <li><a href="https://eazyvenue.com/dancers/Mumbai">Dancers</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </li>
+
                                         <li class="nav-item">
                                             <a class="nav-link border-end" [class.active]="activeRoute === 'subscribe'" routerLink="/subscribe">Subscription</a>
                                         </li>
+
                                         <div class="hot-muhurats-container">
                                             <li class="nav-item">
-                                              <a class="nav-link" 
-                                                 (click)="toggleHotMuhurats()" 
+                                              <a class="nav-link"
+                                                 (click)="toggleHotMuhurats()"
                                                  aria-label="View hot muhurats - auspicious dates for events"
                                                  role="button"
                                                  tabindex="0"
@@ -68,34 +259,12 @@
                                                  (keydown.space)="toggleHotMuhurats()">HOT MUHURATS</a>
                                             </li>
                                             <app-muhrats [isOpen]="isHotMuhuratsOpen" (closeDrawer)="closeHotMuhurats()"></app-muhrats>
-                                          </div>
-
-
-                                        <li class="nav-item">
-                                            <!-- <a class="nav-link" href="#" (click)="showDialogoffer()">COUPLE DATE</a> -->
-                                            <!-- <a class="nav-link"  style="color: gray;" pTooltip="Coming Soon" >COUPLE DATE</a> -->
-                                        </li>
+                                        </div>
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="col text-center topsearch" style="margin:auto;">
-                                <!-- <span class="p-input-icon-left align-items-center">
-                                    <div class="global-search-icon">
-                                        <i class="pi pi-search mt-0" style="color: 'var(--primary-color)'"></i>
-                                    </div>
-
-                                    <p-autoComplete [(ngModel)]="selectedCountries" [suggestions]="filtration"
-                                        (completeMethod)="search($event)" field="name" class="top_search_list"
-                                        placeholder="Search | Coming Soon" pTooltip="Coming Soon" [multiple]="true" [disabled]="true">
-                                    </p-autoComplete>
-
-                                    <div class="global-btn">
-                                        <button pButton pRipple type="button" icon="pi pi-search"
-                                            class="general-search p-button-rounded p-button-danger secondary btn-custom secondary">
-                                        </button>
-                                    </div>
-                                </span> -->
                             </div>
                             <div class="col-2 header-login">
                                 <div class="style-2 mr-0">
@@ -104,10 +273,10 @@
                                             <div *ngIf="!isLoggedIn" class="sigma_header-controls style-2">
                                                 <div class="text-align-text">
                                                     <p class="login-text">
-                                                        <button type="button" 
-                                                                class="login-button" 
-                                                                style="color: rgb(0, 0, 0); background: none; border: none; cursor: pointer;" 
-                                                                aria-label="Login to your account" 
+                                                        <button type="button"
+                                                                class="login-button"
+                                                                style="color: rgb(0, 0, 0); background: none; border: none; cursor: pointer;"
+                                                                aria-label="Login to your account"
                                                                 title="Login to your account"
                                                                 (click)="showDialogoffer()">
                                                             <i class="user-login-icon pi pi-user-plus"></i>
@@ -120,10 +289,10 @@
                                             <div class="sigma_header-controls style-2 vendor-login">
                                                 <div class="text-align-text">
                                                     <p class="vendor-text">
-                                                        <button type="button" 
-                                                                class="vendor-button" 
-                                                                style="color: red; background: none; border: none; cursor: pointer;" 
-                                                                aria-label="Vendor registration - Are you a vendor?" 
+                                                        <button type="button"
+                                                                class="vendor-button"
+                                                                style="color: red; background: none; border: none; cursor: pointer;"
+                                                                aria-label="Vendor registration - Are you a vendor?"
                                                                 title="Register as a vendor"
                                                                 (click)="showDialogvendor()">
                                                             ARE YOU A VENDOR?
@@ -136,19 +305,11 @@
                                             <div class="bs-example">
                                                 <ul id="nav" class="nav nav-pills userlogin clearfix right"
                                                     role="tablist" (mouseenter)="op.hide($event)">
-
-
                                                     <li class="dropdown">
                                                         <div (mouseenter)="op.toggle($event)">
                                                         <button type="button" class="list-items" style="background-color: #FFF;box-shadow: 0px 0px 6px -3px rgba(0,0,0,0.7); padding: .7rem; border-radius: 50%; border: none; cursor: pointer;" aria-label="Open user account menu" title="Access your account options">
                                                             <i class="pi pi-user p-button-rounded p-button-info dropbtn dropdown-toggle" style="color: #FF0000;  font-size: 1rem;"></i>
                                                         </button>
-                                                        <!-- <-- <a href="#" class="list-items" data-toggle="dropdown">
-
-                                                            <p-button icon="pi pi-user" data-bs-toggle="dropdown"
-                                                                aria-expanded="false"
-                                                                styleClass="p-button-rounded p-button-info dropbtn dropdown-toggle"></p-button>
-                                                        </a> -->
                                                         <p-overlayPanel #op appendTo="body">
                                                             <ng-template pTemplate="content">
                                                                 <ul class="clearfix" role="menu">
@@ -156,8 +317,6 @@
                                                                             href="/my-profile?mode=send_enquires">Availability
                                                                             Updates</a>
                                                                     </li>
-                                                                    <!-- <a [routerLink]="[my-profile]"[queryParams]="{mode: send_enquires}"></a> -->
-
                                                                     <li class="menue-list"><a class="menu-list"
                                                                             href="#">Schedule
                                                                             Visit</a></li>
@@ -178,29 +337,8 @@
                                                                 </ul>
                                                             </ng-template>
                                                         </p-overlayPanel>
-                                                        <!-- <ul id="products-menu" class="dropdown-menu clearfix"
-                                                            role="menu" >
-                                                            <li><a class="menu-list"
-                                                                    [routerLink]="'/my-profile'">Availability
-                                                                    Updates</a>
-                                                            </li>
-                                                            <li><a class="menu-list"
-                                                                    [routerLink]="'/my-profile'">Schedule Visit</a></li>
-                                                            <li><a class="menu-list"
-                                                                    [routerLink]="'/my-profile'">Bookings</a></li>
-                                                            <li><a class="menu-list"
-                                                                    [routerLink]="'/my-profile'">Rewards N Referrals</a>
-                                                            </li>
-                                                            <li><a class="menu-list"
-                                                                    [routerLink]="'/my-profile'">Profile</a></li>
-                                                            <li><a class="menu-list" [routerLink]="'/my-profile'"
-                                                                    (click)="signOut()">Sign
-                                                                    Out</a></li>
-                                                        </ul> -->
                                                     </div>
-
                                                     </li>
-
                                                 </ul>
                                             </div>
                                         </li>
@@ -208,7 +346,7 @@
                                 </div>
                             </div>
                         </div>
-                        <p-button #toggleButton (click)="sidebarVisible = true" icon="navbar-toggler-icon" class="toggle-btn" [attr.aria-label]="'Toggle navigation menu'">
+                        <p-button (click)="sidebarVisible = true" icon="navbar-toggler-icon" class="toggle-btn" ariaLabel="Toggle navigation menu">
                         </p-button>
                         <p-sidebar [(visible)]="sidebarVisible">
                             <div class="row">
@@ -220,57 +358,25 @@
                                 </div>
                             </div>
                             <a class="nav-link" [class.active]="activeRoute === 'venue'" routerLink="/">Venues<span class="sr-only">(current)</span></a>
-                            <a class="nav-link" [class.active]="activeRoute === 'venodr'" routerLink="/vendor">Vendors</a>
+                            <a class="nav-link" [class.active]="activeRoute === 'vendor'" routerLink="/vendor">Vendors</a>
                             <a class="nav-link" [class.active]="activeRoute === 'subscribe'" routerLink="/subscribe">Subscription</a>
-                                <a class="nav-link" 
-                                   (click)="toggleHotMuhurats()" 
-                                   aria-label="View hot muhurats - auspicious dates for events"
-                                   role="button"
-                                   tabindex="0"
-                                   (keydown.enter)="toggleHotMuhurats()"
-                                   (keydown.space)="toggleHotMuhurats()">HOT MUHURATS</a>
-                              <app-muhrats [isOpen]="isHotMuhuratsOpen" (closeDrawer)="closeHotMuhurats()"></app-muhrats>
-                            <!-- <a class="nav-link" style="color: gray;" pTooltip="Coming Soon" >Couple Date</a>
-                            <a class="nav-link" *ngIf="!isLoggedIn" (click)="showDialogoffer()">Login</a>
-
-                            <div class="vendor-reg">
-                                <a class="nav-link" (click)="showDialogvendor()">Are You A Vendor?</a>
-                            </div> -->
-                            <!-- <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/availability'">Availability
-                                Updates</a>
-                            <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/my-profile'">Schedule
-                                Visit</a>
-                            <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/orders'">Bookings</a>
-                            <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/my-profile'">Rewards N
-                                Referrals</a>
-                            <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/my-profile'">Profile</a>
-                            <a class="menu-list nav-link" *ngIf="isLoggedIn" [routerLink]="'/my-profile'"
-                                (click)="signOut()">Sign Out</a> -->
-
-                            <!-- <ul *ngIf="isLoggedIn" id="products-menu" role="menu">
-                                <li><a class="menu-list nav-link" [routerLink]="'/my-profile'">Availability
-                                        Updates</a>
-                                </li>
-                                <li><a class="menu-list" [routerLink]="'/my-profile'">Schedule Visit</a></li>
-                                <li><a class="menu-list" [routerLink]="'/my-profile'">Bookings</a></li>
-                                <li><a class="menu-list" [routerLink]="'/my-profile'">Rewards N Referrals</a>
-                                </li>
-                                <li><a class="menu-list" [routerLink]="'/my-profile'">Profile</a></li>
-                                <li><a class="menu-list" [routerLink]="'/my-profile'" (click)="signOut()">Sign
-                                        Out</a></li>
-                            </ul> -->
-
+                            <a class="nav-link"
+                               (click)="toggleHotMuhurats()"
+                               aria-label="View hot muhurats - auspicious dates for events"
+                               role="button"
+                               tabindex="0"
+                               (keydown.enter)="toggleHotMuhurats()"
+                               (keydown.space)="toggleHotMuhurats()">HOT MUHURATS</a>
+                            <app-muhrats [isOpen]="isHotMuhuratsOpen" (closeDrawer)="closeHotMuhurats()"></app-muhrats>
                         </p-sidebar>
-
                     </nav>
                 </div>
-
             </div>
         </div>
     </div>
 </header>
 <p-dialog [(visible)]="loginRegisterModal" [modal]="true" [breakpoints]="{'960px': '60vw', '640px': '100vw'}"
-    [baseZIndex]="10000" [draggable]="false" [resizable]="false" 
+    [baseZIndex]="10000" [draggable]="false" [resizable]="false"
     aria-label="Login and Registration" role="dialog" aria-describedby="login-register-description">
     <p-toast key="usertoastmsg"></p-toast>
     <div class="login-popup">
