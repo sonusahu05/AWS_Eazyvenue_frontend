@@ -2292,10 +2292,12 @@
     [modal]="true"
     class="offer-popup-login"
     [modal]="true"
+    [closable]="false"
     [baseZIndex]="10000"
     [draggable]="false"
     [resizable]="false"
 >
+    <!-- Close icon disabled by setting [closable]="false" -->
     <div class="login-popup">
         <h3 class="offer-popup-heading mb-0">
             Receive<span class="offer-text"> 20%</span> off on our Photography
