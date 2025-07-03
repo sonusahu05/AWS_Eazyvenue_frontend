@@ -755,9 +755,7 @@ label.mobile-number-text {
        border-color: #D32F2F;
     }
 }
-.red-user-icon{
-    background-color: red !important;
-}
+
 
 .custom-input-box{
     display: flex;
@@ -836,4 +834,14 @@ label.mobile-number-text {
     ::ng-deep .p-galleria-thumbnail-items-container{
         margin-top: 0px;
     }
+}
+
+// User icon rounded styling
+i.pi.pi-user.p-button-rounded {
+  width: 26px;
+  height: 26px;
+  border-radius: 50% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
