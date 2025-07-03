@@ -78,6 +78,10 @@ interface City {
     ],
 })
 export class VenueDetailsComponent implements OnInit {
+    // Review source & toggling states
+    selectedReviewSource: 'eazyvenue' | 'google' = 'eazyvenue';
+    showReviewForm = false;
+    showAllReviews = false;
     [x: string]: any;
     venueDetailSearch: boolean = false;
     responsiveOptions: any[] | undefined;
@@ -94,9 +98,9 @@ export class VenueDetailsComponent implements OnInit {
         this.venueDetailSearch = true;
     }
     visible: boolean;
-googleReviews: any[] = [];
-showGoogleReviews = false;
-combinedRating = 0;
+    googleReviews: any[] = [];
+    showGoogleReviews = false;
+    combinedRating = 0;
     selectedCountries: any[];
     filteredCountries: any[];
     showDialog() {
@@ -855,6 +859,35 @@ combinedRating = 0;
                     }
                 });
         }
+    }
+
+    // Toggle between review sources
+    toggleReviewSource(source: 'eazyvenue' | 'google') {
+        this.selectedReviewSource = source;
+        this.showAllReviews = false;
+
+        if (source === 'google' && this.googleReviews.length === 0) {
+            this.loadGoogleReviews();
+        }
+    }
+
+    // Show only 3 reviews initially, more if toggled
+    getDisplayedReviews() {
+        const reviews = this.selectedReviewSource === 'google' ? this.googleReviews : this.venueDetails?.reviews || [];
+        return this.showAllReviews ? reviews : reviews.slice(0, 3);
+    }
+
+    // Getter to calculate the average review rating
+    get averageReviewRating(): number {
+        const reviews = this.selectedReviewSource === 'google' ? this.googleReviews : this.venueDetails?.reviews || [];
+        if (!reviews.length) return 0;
+        const sum = reviews.reduce((acc, curr) => acc + curr.reviewrating, 0);
+        return parseFloat((sum / reviews.length).toFixed(1));
+    }
+
+    // Toggle review form
+    toggleReviewForm() {
+        this.showReviewForm = !this.showReviewForm;
     }
 
 
