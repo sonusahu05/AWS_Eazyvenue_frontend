@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserAddComponent } from './add.component';
+import { AddVenueSlotManagementComponent } from './add.component';
 
-describe('UserAddComponent', () => {
-  let component: UserAddComponent;
-  let fixture: ComponentFixture<UserAddComponent>;
+describe('AddVenueSlotManagementComponent', () => {
+  let component: AddVenueSlotManagementComponent;
+  let fixture: ComponentFixture<AddVenueSlotManagementComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UserAddComponent ]
+      declarations: [ AddVenueSlotManagementComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UserAddComponent);
+    fixture = TestBed.createComponent(AddVenueSlotManagementComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

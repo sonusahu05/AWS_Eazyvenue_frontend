@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BannerEditComponent } from './edit.component';
+import { WishlistEditComponent } from './edit.component';
 
-describe('BannerEditComponent', () => {
-  let component: BannerEditComponent;
-  let fixture: ComponentFixture<BannerEditComponent>;
+describe('WishlistEditComponent', () => {
+  let component: WishlistEditComponent;
+  let fixture: ComponentFixture<WishlistEditComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BannerEditComponent ]
+      declarations: [ WishlistEditComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BannerEditComponent);
+    fixture = TestBed.createComponent(WishlistEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

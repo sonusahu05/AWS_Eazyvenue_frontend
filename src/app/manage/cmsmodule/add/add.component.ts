@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
 import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from "@angular/forms";
 import { TreeNode } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
@@ -14,6 +14,7 @@ import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { environment } from "./../../../../environments/environment";
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-add',
@@ -85,7 +86,8 @@ export class AddComponent implements OnInit {
     private formBuilder: FormBuilder,
     private changeDetectorRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
   @ViewChild('fileInput') fileInput: FileUpload;
@@ -125,12 +127,15 @@ export class AddComponent implements OnInit {
   }
 
   picUploader(event) {
-    for (let file of event.files) {
-      this.uploadedFiles.push(file);
-      var reader = new FileReader();
-      reader.readAsDataURL(this.uploadedFiles[0]);
-      reader.onload = () => { // called once readAsDataURL is completed
-        this.uploadedpic = reader.result;
+    // Only process file upload in browser environment for SSR compatibility
+    if (isPlatformBrowser(this.platformId)) {
+      for (let file of event.files) {
+        this.uploadedFiles.push(file);
+        var reader = new FileReader();
+        reader.readAsDataURL(this.uploadedFiles[0]);
+        reader.onload = () => { // called once readAsDataURL is completed
+          this.uploadedpic = reader.result;
+        }
       }
     }
   }

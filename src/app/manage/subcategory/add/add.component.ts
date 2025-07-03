@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CategoryService } from '../../../services/category.service';
+import { isPlatformBrowser } from '@angular/common';
 @Component({
     selector: 'app-category-add',
     templateUrl: './add.component.html',
@@ -24,7 +25,7 @@ export class SubcategoryAddComponent implements OnInit {
     categorylist: any = [];
     constructor(private categoryService: CategoryService, private formBuilder: FormBuilder,
         private confirmationService: ConfirmationService, private messageService: MessageService,
-        private router: Router) { }
+        private router: Router, @Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit(): void {
         this.statuses = [
@@ -63,10 +64,12 @@ export class SubcategoryAddComponent implements OnInit {
     picUploader(event) {
         for (let file of event.files) {
             this.uploadedFiles.push(file);
-            var reader = new FileReader();
-            reader.readAsDataURL(this.uploadedFiles[0]);
-            reader.onload = () => { // called once readAsDataURL is completed
-                this.uploadedpic = reader.result;
+            if (isPlatformBrowser(this.platformId)) {
+                var reader = new FileReader();
+                reader.readAsDataURL(this.uploadedFiles[0]);
+                reader.onload = () => { // called once readAsDataURL is completed
+                    this.uploadedpic = reader.result;
+                }
             }
         }
     }
@@ -82,7 +85,7 @@ export class SubcategoryAddComponent implements OnInit {
         categoryData['parent_category'] = this.parentcategory;
         categoryData['categoryImage'] = this.uploadedpic;
         // display form values on success
-        //alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.categoryForm.value, null, 4));
+        // Form submission successful - using Angular routing for navigation
         //return;
         categoryData = JSON.stringify(categoryData, null, 4);
         this.categoryService.addCategory(categoryData).subscribe(

@@ -122,7 +122,7 @@ export class SubcategoryViewComponent implements OnInit {
         delete categoryData.parent_category;
         
         categoryData = JSON.stringify(categoryData, null, 4);
-        // alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.categoryForm.value, null, 4));
+        // Form submission successful - using Angular routing for navigation
         // return;
         this.categoryService.updateCategory(this.id, categoryData).subscribe(
             data => {

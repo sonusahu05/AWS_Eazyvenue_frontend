@@ -1,46 +1,48 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from "@angular/forms";
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router, ActivatedRoute } from '@angular/router';
-import { BannerService } from '../../../services/banner.service';
+import { WishlistService } from '../../../services/wishlist.service';
 import { FileUpload } from 'primeng/fileupload';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { environment } from "./../../../../environments/environment";
 import { Observable } from 'rxjs';
 @Component({
-  selector: 'app-banner-add',
+  selector: 'app-wishlist-add',
   templateUrl: './add.component.html',
   styleUrls: ['./add.component.scss'],
-  providers: [ConfirmationService, MessageService, BannerService]
+  providers: [ConfirmationService, MessageService, WishlistService]
 })
-export class BannerAddComponent implements OnInit {
+export class WishlistAddComponent implements OnInit {
   uploadedFiles: any[] = [];
-  banner_image: FormArray;
+  wishlist_image: FormArray;
   deletedattachments: any[] = [];
   filename: any = '';
   staticPath: string;
-  bannerImage: any;
+  wishlistImage: any;
   statuses: any;
   submitted = false;
   id: string;
   isAddMode: boolean;
   pagetitle: string;
   public isUpload: boolean = false;
-  banner_content;
-  banner_title;
-  banner_url;
-  bannerstatus: any;
-  bannerImagesArray: any;
-  banners: any[] = [
-    { name: 'Banner 1', value: 'Banner 1' },
-    { name: 'Banner 2', value: 'Banner 2' },
-    { name: 'Banner 3', value: 'Banner 3' }
+  wishlist_content;
+  wishlist_title;
+  wishlist_url;
+  wishlistStatus: any;
+  wishlistImagesArray: any;
+  wishlists: any[] = [
+    { name: 'Wishlist 1', value: 'Wishlist 1' },
+    { name: 'Wishlist 2', value: 'Wishlist 2' },
+    { name: 'Wishlist 3', value: 'Wishlist 3' }
   ];
-  selectedbannername: any = this.banners[0].value;
-  bannerForm: FormGroup;
+  selectedWishlistName: any = this.wishlists[0].value;
+  wishlistForm: FormGroup;
   constructor(
-    private BannerService: BannerService,
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private wishlistService: WishlistService,
     private router: Router,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
@@ -53,25 +55,25 @@ export class BannerAddComponent implements OnInit {
   @ViewChild('fileInput') fileInput: FileUpload;
   ngOnInit() {
     this.staticPath = environment.uploadUrl;
-    this.pagetitle = 'Add Banner';
+    this.pagetitle = 'Add Wishlist';
     this.id = this.route.snapshot.paramMap.get("id");
     this.isAddMode = !this.id;
     this.statuses = [
       { name: 'Active', code: 'Active' },
       { name: 'In-Active', code: 'In-Active' }
     ];
-    //this.bannerstatus = "Active";
-    this.bannerForm = this.formBuilder.group({
-      banner_title: ['', [Validators.required, Validators.pattern('^[A-Za-z_ ][A-Za-z_ ]*$')]],
+    //this.wishlistStatus = "Active";
+    this.wishlistForm = this.formBuilder.group({
+      wishlist_title: ['', [Validators.required, Validators.pattern('^[A-Za-z_ ][A-Za-z_ ]*$')]],
       slug: ['', [Validators.required, Validators.pattern('^[A-Za-z_][A-Za-z_]*$')]],
-      // banner_content: [''],
-      // banner_url: ['', [Validators.required, Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
+      // wishlist_content: [''],
+      // wishlist_url: ['', [Validators.required, Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]],
       status: [true, Validators.required],
       disable: [false],
     });
   }
   get f() {
-    return this.bannerForm.controls;
+    return this.wishlistForm.controls;
   }
   onUpload(event, frmCrl, form) {
     this.uploadedFiles = []
@@ -105,36 +107,36 @@ export class BannerAddComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
     // stop here if form is invalid
-    if (this.bannerForm.invalid) {
+    if (this.wishlistForm.invalid) {
       return;
     }
-    var bannerData = this.bannerForm.value;
-    //bannerData['status'] =this.bannerstatus;
-    //console.log(this.bannerImage);
-    this.bannerImagesArray = [];
-    if (this.bannerImage != undefined) {
-      this.bannerImage.forEach((element, index) => {
+    var wishlistData = this.wishlistForm.value;
+    //wishlistData['status'] =this.wishlistStatus;
+    //console.log(this.wishlistImage);
+    this.wishlistImagesArray = [];
+    if (this.wishlistImage != undefined) {
+      this.wishlistImage.forEach((element, index) => {
         index = index + 1;
-        let bannerImageAlt;
-        let bannerImageDefault;
-        // let bannerImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .banner-images #banner_image_" + index).value;
-        // let bannerImageDefault = this.elementRef.nativeElement.querySelector(".p-fileupload-content .banner-images #banner_default_" + index).checked;
-        this.bannerImagesArray.push({ 'file': element.file, 'alt': bannerImageAlt, 'default': bannerImageDefault });
+        let wishlistImageAlt;
+        let wishlistImageDefault;
+        // let wishlistImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .wishlist-images #wishlist_image_" + index).value;
+        // let wishlistImageDefault = this.elementRef.nativeElement.querySelector(".p-fileupload-content .wishlist-images #wishlist_default_" + index).checked;
+        this.wishlistImagesArray.push({ 'file': element.file, 'alt': wishlistImageAlt, 'default': wishlistImageDefault });
 
       });
     }
-    //console.log('this.bannerImagesArray', this.bannerImagesArray);
+    //console.log('this.wishlistImagesArray', this.wishlistImagesArray);
 
-    bannerData['banner_images'] = this.bannerImagesArray;
-    //console.log(bannerData['banner_images']); return;
+    wishlistData['wishlist_images'] = this.wishlistImagesArray;
+    //console.log(wishlistData['wishlist_images']); return;
     //display form values on success
-    // console.log(JSON.stringify(this.bannerForm.value, null, 4));
-    bannerData = JSON.stringify(bannerData, null, 4);
-    this.BannerService.addBanner(bannerData).subscribe(
+    // console.log(JSON.stringify(this.wishlistForm.value, null, 4));
+    wishlistData = JSON.stringify(wishlistData, null, 4);
+    this.wishlistService.addWishlist(wishlistData).subscribe(
       data => {
-        this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Banner Added Successfully!!', life: 6000 });
+        this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Wishlist Added Successfully!!', life: 6000 });
         setTimeout(() => {
-          this.router.navigate(['/manage/banner']);
+          this.router.navigate(['/manage/wishlist']);
         }, 2000);
       },
       ((err) => {
@@ -143,37 +145,39 @@ export class BannerAddComponent implements OnInit {
     );
   }
   onchangeSelect(event) {
-    this.selectedbannername = event.value.value;
+    this.selectedWishlistName = event.value.value;
     this.changeDetectorRef.detectChanges();
   }
   onStatusSelect(event) {
     if (event) {
-      this.bannerstatus = event.name;
+      this.wishlistStatus = event.name;
     }
   }
   picUploader(event) {
-    this.bannerImage = [];
-    let index = 0;
-    for (let file of event.files) {
-      this.uploadedFiles.push(file);
-      let reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        console.log(file.name);// called once readAsDataURL is completed
-        if (reader.result != null) {
-          this.bannerImage.push({ 'file': reader.result });
-          index++;
-          //let bannerImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .banner-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=banner_image_' + index + '> <label>Default:</label> <input type="radio" id=banner_default_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
-          //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
+    if (isPlatformBrowser(this.platformId)) {
+      this.wishlistImage = [];
+      let index = 0;
+      for (let file of event.files) {
+        this.uploadedFiles.push(file);
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          console.log(file.name);// called once readAsDataURL is completed
+          if (reader.result != null) {
+            this.wishlistImage.push({ 'file': reader.result });
+            index++;
+            //let wishlistImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .wishlist-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=wishlist_image_' + index + '> <label>Default:</label> <input type="radio" id=wishlist_default_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
+            //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
+          }
         }
       }
     }
   }
   onReset() {
     this.submitted = false;
-    this.bannerForm.reset();
+    this.wishlistForm.reset();
   }
   backLink() {
-    this.router.navigate(['/manage/banner']);
+    this.router.navigate(['/manage/wishlist']);
   }
 }

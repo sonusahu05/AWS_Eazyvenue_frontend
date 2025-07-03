@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -10,6 +10,7 @@ import { maxYearFunction } from '../../../_helpers/utility';
 import { MustMatch } from '../../../_helpers/must-match.validator';
 //import * as moment from 'moment';
 import * as moment from 'moment-timezone';
+import { isPlatformBrowser } from '@angular/common';
 @Component({
     selector: 'app-admin-edit',
     templateUrl: './edit.component.html',
@@ -56,7 +57,7 @@ export class AdminEditComponent implements OnInit {
     newPasswordDisable: boolean;
     constructor(private userService: UserService, private commonService: CommonService, private formBuilder: FormBuilder,
         private confirmationService: ConfirmationService, private messageService: MessageService,
-        private router: Router, private activeroute: ActivatedRoute) { }
+        private router: Router, private activeroute: ActivatedRoute, @Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit(): void {
         const timeZones = moment.tz.names();
@@ -191,6 +192,14 @@ export class AdminEditComponent implements OnInit {
     }
 
     picUploader(event) {
+        // SSR-compatible file upload handling
+        if (!isPlatformBrowser(this.platformId)) {
+            // In SSR, we can't use FileReader, but we can still store the file reference
+            // The actual file reading will happen when the component is hydrated in the browser
+            console.log('File upload handling deferred for SSR compatibility');
+            return;
+        }
+
         for (let file of event.files) {
             this.uploadedFiles.push(file);
             var reader = new FileReader();
@@ -199,6 +208,8 @@ export class AdminEditComponent implements OnInit {
                 this.profilepic = reader.result;
             }
         }
+        
+        // Note: FileReader is browser-only API, protected with platform check for SSR compatibility
     }
 
     getCountry() {

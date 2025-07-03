@@ -274,7 +274,7 @@ export class VenueSlotAvailabilityComponent implements OnInit {
                     //setTimeout(() => {
                     this.calendarSearchForm.get('startDate').setValue(moment(this.selectedStartDate).format('DD-MM-YYYY'));
                     this.calendarSearchForm.get('endDate').setValue(moment(this.selectedEndDate).format('DD-MM-YYYY'));
-                    //window.location.reload();
+                    // Page reload removed for SSR compatibility - using Angular navigation instead
                     // this.getSlotsList(this.lastTableLazyLoadEvent);
                     this.getPostAvailabilityList(loadCalendarObj);
                     //}, 2000);

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 
 import { CmsmoduleService } from '../service/cmsmodule.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -6,7 +6,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { Cmsmodule } from '../model/cmsmodule';
 import { environment } from "./../../../../environments/environment";
-import { TitleCasePipe } from '@angular/common';
+import { TitleCasePipe, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-list',
@@ -48,7 +48,7 @@ export class ListComponent implements OnInit {
   cmsmoduleDelete: any;
   // picPath: any;
 
-  constructor(private CmsmoduleService: CmsmoduleService, private messageService: MessageService, private router: Router, private titlecasePipe: TitleCasePipe, private confirmationService: ConfirmationService) { }
+  constructor(private CmsmoduleService: CmsmoduleService, private messageService: MessageService, private router: Router, private titlecasePipe: TitleCasePipe, private confirmationService: ConfirmationService, @Inject(PLATFORM_ID) private platformId: Object) { }
 
   ngOnInit() {
     this.paginationOption = environment.pagination;
@@ -66,12 +66,14 @@ export class ListComponent implements OnInit {
     ];
 
     this.refreshCmsmoduleList();
-    this.userRoles = JSON.parse(sessionStorage.getItem("userRoles"));
-    // console.log(this.userRoles.casestudy,"RRWW");  
-    // this.cmsmoduleAdd = this.userRoles.cmsmodule.add;
-    // this.cmsmoduleEdit = this.userRoles.cmsmodule.edit;
-    // this.cmsmoduleView = this.userRoles.cmsmodule.view;
-    // this.cmsmoduleDelete = this.userRoles.cmsmodule.delete;
+    if (isPlatformBrowser(this.platformId)) {
+      this.userRoles = JSON.parse(sessionStorage.getItem("userRoles"));
+      // console.log(this.userRoles.casestudy,"RRWW");  
+      // this.cmsmoduleAdd = this.userRoles.cmsmodule.add;
+      // this.cmsmoduleEdit = this.userRoles.cmsmodule.edit;
+      // this.cmsmoduleView = this.userRoles.cmsmodule.view;
+      // this.cmsmoduleDelete = this.userRoles.cmsmodule.delete;
+    }
 
   }
 

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import {Router} from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -45,7 +46,7 @@ export class UserAddComponent implements OnInit {
     yearRange;
     constructor(private roleService: RoleService, private commonService: CommonService, private userService: UserService, private formBuilder: FormBuilder, 
         private confirmationService: ConfirmationService, private messageService: MessageService, 
-        private router: Router) { }
+        private router: Router, @Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit(): void {
         this.yearRange = this.minYear + ":" + maxYearFunction();
@@ -88,13 +89,15 @@ export class UserAddComponent implements OnInit {
     }
 
     picUploader(event) {
-        for(let file of event.files) {
-            this.uploadedFiles.push(file);
-            var reader = new FileReader();
-            reader.readAsDataURL(this.uploadedFiles[0]);
-            reader.onload = () => { // called once readAsDataURL is completed
-               this.profilepic = reader.result;
-            }   
+        if (isPlatformBrowser(this.platformId)) {
+            for(let file of event.files) {
+                this.uploadedFiles.push(file);
+                var reader = new FileReader();
+                reader.readAsDataURL(this.uploadedFiles[0]);
+                reader.onload = () => { // called once readAsDataURL is completed
+                   this.profilepic = reader.result;
+                }   
+            }
         }
     }
     

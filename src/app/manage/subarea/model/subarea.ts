@@ -1,5 +1,7 @@
-  export interface Citylocation {
+  export interface Subarea {
     _id: String,
-    countryName: String,    
+    name: String,
+    stateName: String,
+    cityName: String,    
     status: String
   } 

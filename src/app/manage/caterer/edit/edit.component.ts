@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -12,6 +12,7 @@ import * as moment from 'moment';
 import { environment } from 'src/environments/environment';
 import { maxYearFunction } from '../../../_helpers/utility';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { isPlatformBrowser } from '@angular/common';
 @Component({
     selector: 'app-vendor-edit',
     templateUrl: './edit.component.html',
@@ -72,7 +73,8 @@ export class EditComponent implements OnInit {
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
         private route: ActivatedRoute,
-        private router: Router) { }
+        private router: Router,
+        @Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit(): void {
         this.yearRange = this.minYear + ":" + maxYearFunction();
@@ -228,6 +230,13 @@ export class EditComponent implements OnInit {
     }
 
     picUploader(event) {
+        // SSR-compatible file upload
+        if (!isPlatformBrowser(this.platformId)) {
+            // In SSR, we can't use FileReader, so we return early
+            console.log('File upload deferred for SSR compatibility');
+            return;
+        }
+
         for (let file of event.files) {
             this.uploadedFiles.push(file);
             var reader = new FileReader();
@@ -236,9 +245,18 @@ export class EditComponent implements OnInit {
                 this.profilepic = reader.result;
             }
         }
+        
+        // Note: FileReader is browser-only, protected with platform check for SSR compatibility
     }
 
     portfolioPicUploader(event) {
+        // SSR-compatible portfolio upload
+        if (!isPlatformBrowser(this.platformId)) {
+            // In SSR, we can't use FileReader, so we return early
+            console.log('Portfolio upload deferred for SSR compatibility');
+            return;
+        }
+
         this.portfolioImage = [];
         let index = 0;
         for (let file of event.files) {
@@ -255,6 +273,8 @@ export class EditComponent implements OnInit {
                 }
             }
         }
+        
+        // Note: FileReader is browser-only, protected with platform check for SSR compatibility
     }
 
     removeportfolioPicImages(venueImage: any): void {        

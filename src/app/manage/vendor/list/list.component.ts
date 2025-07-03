@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Inject, PLATFORM_ID } from '@angular/core';
 import { Table } from 'primeng/table';
 import { UserService } from 'src/app/services/user.service';
 import { RoleService } from 'src/app/services/role.service';
 import { ActivatedRoute, Router } from "@angular/router";
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { TitleCasePipe } from '@angular/common';
+import { TitleCasePipe, isPlatformBrowser } from '@angular/common';
 import { LazyLoadEvent } from 'primeng/api';
 import { Dropdown } from "primeng/dropdown";
 import { environment } from 'src/environments/environment';
@@ -75,7 +75,8 @@ export class ListComponent implements OnInit {
         private messageService: MessageService, 
         private confirmationService: ConfirmationService, 
         private vendorService: VendorService,
-        private categoryService: CategoryService, 
+        private categoryService: CategoryService,
+        @Inject(PLATFORM_ID) private platformId: Object
         ) { }
 
     ngOnInit() {
@@ -558,23 +559,20 @@ export class ListComponent implements OnInit {
         this.showFileUploadModal = true;
     }
     fileUploader(event) {
-
-        for (let file of event.files) {
-            this.uploadCsvFile.push(file);
-            var reader = new FileReader();
-            reader.readAsDataURL(this.uploadCsvFile[0]);
-            reader.onload = () => { // called once readAsDataURL is completed
-                // console.log(reader);
-                // console.log(reader.result);
-                this.vendorCsvFile = reader.result;
-                // localStorage.setItem("csv",this.vendorCsvFile)
-                // console.log('loop in', this.vendorCsvFile);
+        if (isPlatformBrowser(this.platformId)) {
+            for (let file of event.files) {
+                this.uploadCsvFile.push(file);
+                var reader = new FileReader();
+                reader.readAsDataURL(this.uploadCsvFile[0]);
+                reader.onload = () => { // called once readAsDataURL is completed
+                    this.vendorCsvFile = reader.result;
+                    // Note: localStorage removed for SSR compatibility
+                }
             }
+            setTimeout(function () {
+                console.log(this.venueCsvFile);
+            }, 2000)
         }
-        setTimeout(function () {
-            console.log(this.venueCsvFile);
-        }, 2000)
-
     }
     onFileUploadSubmit() {
         // console.log('submit', this.vendorCsvFile);
@@ -589,7 +587,11 @@ export class ListComponent implements OnInit {
 
                     setTimeout(() => {
                         this.showFileUploadModal = false;
-                        window.location.reload();
+                        // SSR-compatible alternative: Refresh the vendor list data
+                        this.refreshVenueList(this.lastTableLazyLoadEvent);
+                        
+                        // Note: Replaced window.location.reload() for SSR compatibility
+                        // The refreshVenueList() method reloads the vendor data without a full page refresh
                     }, 2000);
                 },
                 ((err) => {

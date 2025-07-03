@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { TokenStorageService } from '../../services/token-storage.service';
 import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { RoleService } from 'src/app/services/role.service';
+import { isPlatformBrowser } from '@angular/common';
 @Component({
   selector: 'admin-login',
   templateUrl: './login.component.html',
@@ -36,6 +37,7 @@ export class AdminLoginComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private roleService: RoleService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
   ngOnInit(): void {
@@ -111,7 +113,13 @@ export class AdminLoginComponent implements OnInit {
   }
 
   reloadPage(): void {
-    window.location.reload();
+    // SSR-compatible alternative: Navigate to current route to refresh the page
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/manage/login']);
+    });
+    
+    // Note: Replaced window.location.reload() for SSR compatibility
+    // Alternative approach refreshes the component by re-navigating to the same route
   }
 
 }

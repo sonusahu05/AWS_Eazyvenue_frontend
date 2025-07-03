@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { EnquiryService } from '../service/eventmanager.service';
 import { MessageService } from 'primeng/api';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { VenueService } from 'src/app/manage/venue/service/venue.service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-enquiry-list',
@@ -23,7 +24,8 @@ export class EnquiryListComponent implements OnInit {
     private enquiryService: EnquiryService,
     private messageService: MessageService,
     private tokenStorageService: TokenStorageService,
-    private venueService: VenueService
+    private venueService: VenueService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
   ngOnInit() {
@@ -327,7 +329,9 @@ ${venueName} Team`;
     const whatsappUrl = `https://wa.me/91${phoneNumber}?text=${encodedMessage}`;
 
     // Open WhatsApp
-    window.open(whatsappUrl, '_blank');
+    if (isPlatformBrowser(this.platformId)) {
+      window.open(whatsappUrl, '_blank');
+    }
 
     // Update status
     this.updateLeadStatus(leadData, enquiry, 'WhatsApp Contacted');
@@ -344,7 +348,9 @@ ${venueName} Team`;
     const phoneNumber = leadData.userContact.toString();
 
     // Open phone dialer
-    window.open(`tel:+91${phoneNumber}`, '_self');
+    if (isPlatformBrowser(this.platformId)) {
+      window.open(`tel:+91${phoneNumber}`, '_self');
+    }
 
     // Update status
     this.updateLeadStatus(leadData, enquiry, 'Phone Contacted');

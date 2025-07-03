@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -68,7 +69,7 @@ export class AddComponent implements OnInit {
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
         private route: ActivatedRoute,
-        private router: Router) { }
+        private router: Router, @Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit(): void {
         this.yearRange = this.minYear + ":" + maxYearFunction();        
@@ -136,30 +137,34 @@ export class AddComponent implements OnInit {
     }
 
     picUploader(event) {
-        for (let file of event.files) {
-            this.uploadedFiles.push(file);
-            var reader = new FileReader();
-            reader.readAsDataURL(this.uploadedFiles[0]);
-            reader.onload = () => { // called once readAsDataURL is completed
-                this.profilepic = reader.result;
+        if (isPlatformBrowser(this.platformId)) {
+            for (let file of event.files) {
+                this.uploadedFiles.push(file);
+                var reader = new FileReader();
+                reader.readAsDataURL(this.uploadedFiles[0]);
+                reader.onload = () => { // called once readAsDataURL is completed
+                    this.profilepic = reader.result;
+                }
             }
         }
     }
 
     portfolioPicUploader(event) {
-        this.portfolioImage = [];
-        let index = 0;
-        for (let file of event.files) {
-            this.uploadedFiles.push(file);
-            let reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                //console.log(file.name);// called once readAsDataURL is completed
-                if (reader.result != null) {
-                    this.portfolioImage.push({ 'file': reader.result });
-                    index++;
-                    //let venueImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .venue-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=venue_image_' + index + '> <label>Default:</label> <input type="radio" id=venue_default_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
-                    //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
+        if (isPlatformBrowser(this.platformId)) {
+            this.portfolioImage = [];
+            let index = 0;
+            for (let file of event.files) {
+                this.uploadedFiles.push(file);
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    //console.log(file.name);// called once readAsDataURL is completed
+                    if (reader.result != null) {
+                        this.portfolioImage.push({ 'file': reader.result });
+                        index++;
+                        //let venueImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .venue-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=venue_image_' + index + '> <label>Default:</label> <input type="radio" id=venue_default_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
+                        //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
+                    }
                 }
             }
         }

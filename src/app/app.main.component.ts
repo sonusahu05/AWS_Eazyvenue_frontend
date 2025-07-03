@@ -1,8 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, Inject, PLATFORM_ID, OnInit, OnDestroy} from '@angular/core';
 import {MenuService} from './app.menu.service';
 import {PrimeNGConfig} from 'primeng/api';
 import {AppComponent} from './app.component';
 import { TokenStorageService } from './services/token-storage.service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
     selector: 'app-main',
@@ -33,14 +34,14 @@ import { TokenStorageService } from './services/token-storage.service';
     `]
 })
 
-export class AppMainComponent {
+export class AppMainComponent implements OnInit, OnDestroy {
     userData;
     userRole;
     isActiveCss = false;
     sidebarStatic: boolean;
 
-    // Changed to true by default for desktop
-    sidebarActive = window.innerWidth > 991;
+    // Changed to true by default for desktop, with SSR safety
+    sidebarActive = false;
 
     staticMenuMobileActive: boolean;
 
@@ -66,7 +67,13 @@ export class AppMainComponent {
 
     menuHoverActive = false;
 
-    constructor(private tokenStorage: TokenStorageService, private menuService: MenuService, private primengConfig: PrimeNGConfig, public app: AppComponent) {
+    constructor(
+        private tokenStorage: TokenStorageService, 
+        private menuService: MenuService, 
+        private primengConfig: PrimeNGConfig, 
+        public app: AppComponent,
+        @Inject(PLATFORM_ID) private platformId: Object
+    ) {
     }
 
     ngOnInit() {
@@ -78,18 +85,24 @@ export class AppMainComponent {
             this.isActiveCss = false;
         }
 
-        // Add window resize listener to handle responsive behavior
-        window.addEventListener('resize', this.onResize.bind(this));
+        // Initialize sidebar state for browser only
+        if (isPlatformBrowser(this.platformId)) {
+            this.sidebarActive = window.innerWidth > 991;
+            // Add window resize listener to handle responsive behavior
+            window.addEventListener('resize', this.onResize.bind(this));
+        }
     }
 
     ngOnDestroy() {
-        // Remove event listener when component is destroyed
-        window.removeEventListener('resize', this.onResize.bind(this));
+        // Remove event listener when component is destroyed (browser only)
+        if (isPlatformBrowser(this.platformId)) {
+            window.removeEventListener('resize', this.onResize.bind(this));
+        }
     }
 
     onResize() {
-        // Auto-adjust sidebar state based on screen size
-        if (this.isDesktop()) {
+        // Auto-adjust sidebar state based on screen size (browser only)
+        if (isPlatformBrowser(this.platformId) && this.isDesktop()) {
             this.staticMenuMobileActive = false;
             this.unblockBodyScroll();
         }
@@ -221,14 +234,24 @@ export class AppMainComponent {
     }
 
     isDesktop() {
+        if (!isPlatformBrowser(this.platformId)) {
+            return true; // Default to desktop for SSR
+        }
         return window.innerWidth > 991;
     }
 
     isMobile() {
+        if (!isPlatformBrowser(this.platformId)) {
+            return false; // Default to not mobile for SSR
+        }
         return window.innerWidth <= 991;
     }
 
     blockBodyScroll(): void {
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
+        
         if (document.body.classList) {
             document.body.classList.add('blocked-scroll');
         } else {
@@ -237,6 +260,10 @@ export class AppMainComponent {
     }
 
     unblockBodyScroll(): void {
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
+        
         if (document.body.classList) {
             document.body.classList.remove('blocked-scroll');
         } else {

@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { TokenStorageService } from '../../../services/token-storage.service';
 import { switchMap } from 'rxjs/operators';
+import { isPlatformBrowser } from '@angular/common';
 declare var google: any;
 const API_URL = environment.apiUrl + 'venue';
 @Injectable({
@@ -14,7 +15,7 @@ export class VenueService {
     private httpOptions;
     private httpWithoutAuthOptions;
     private googleMapsApiKey = environment.googleMapsApiKey;
-    constructor(private http: HttpClient, private token: TokenStorageService) {
+    constructor(private http: HttpClient, private token: TokenStorageService, @Inject(PLATFORM_ID) private platformId: Object) {
         this.authtoken = this.token.getToken();
         this.httpOptions = {
             headers: new HttpHeaders()
@@ -191,6 +192,12 @@ getGoogleReviews(placeName: string, cityName: string): Observable<any> {
 
     private loadGoogleMapsScript(): Promise<void> {
         return new Promise((resolve, reject) => {
+            // Check if we're in the browser
+            if (!isPlatformBrowser(this.platformId)) {
+                resolve();
+                return;
+            }
+            
             if (typeof google !== 'undefined' && google.maps) {
                 resolve();
                 return;
@@ -212,6 +219,11 @@ getGoogleReviews(placeName: string, cityName: string): Observable<any> {
      * Perform geocoding operation
      */
     private performGeocode(address: string, resolve: Function, reject: Function): void {
+        if (!isPlatformBrowser(this.platformId)) {
+            reject('Geocoding is not available in SSR');
+            return;
+        }
+        
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode({ address: address }, (results, status) => {
             if (status === 'OK' && results[0]) {
@@ -256,6 +268,8 @@ getGoogleReviews(placeName: string, cityName: string): Observable<any> {
     shareOnWhatsApp(venueDetails: any, mapUrl: string): void {
         const message = this.generateWhatsAppMessage(venueDetails, mapUrl);
         const whatsappUrl = `https://wa.me/?text=${message}`;
-        window.open(whatsappUrl, '_blank');
+        if (isPlatformBrowser(this.platformId)) {
+            window.open(whatsappUrl, '_blank');
+        }
     }
 }

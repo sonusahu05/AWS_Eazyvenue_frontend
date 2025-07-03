@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
 import { Table } from 'primeng/table';
 import { VenueService } from '../service/venue.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { LazyLoadEvent } from 'primeng/api';
 import { Venue } from '../model/venue';
 import { environment } from './../../../../environments/environment';
-import { TitleCasePipe } from '@angular/common';
+import { TitleCasePipe, isPlatformBrowser } from '@angular/common';
 import { CategoryService } from 'src/app/services/category.service';
 import { Dropdown } from 'primeng/dropdown';
 import * as moment from 'moment';
@@ -118,7 +118,8 @@ export class ListComponent implements OnInit {
         private messageService: MessageService,
         private fb: FormBuilder,
         private titlecasePipe: TitleCasePipe,
-        private confirmationService: ConfirmationService
+        private confirmationService: ConfirmationService,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) {}
 
     ngOnInit() {
@@ -142,7 +143,9 @@ export class ListComponent implements OnInit {
             { label: 'Not Assured', value: false },
         ];
 
-        this.userRoles = JSON.parse(sessionStorage.getItem('userRoles'));
+        if (isPlatformBrowser(this.platformId)) {
+            this.userRoles = JSON.parse(sessionStorage.getItem('userRoles'));
+        }
 
         // Check if user is a venue owner
         const userData = this.tokenStorageService.getUser();
@@ -622,21 +625,23 @@ if (event.filters && !isVenueOwner) {
         });
     }
     fileUploader(event) {
-        for (let file of event.files) {
-            this.uploadCsvFile.push(file);
-            var reader = new FileReader();
-            reader.readAsDataURL(this.uploadCsvFile[0]);
-            reader.onload = () => {
-                // called once readAsDataURL is completed
-                console.log(reader);
-                console.log(reader.result);
-                this.venueCsvFile = reader.result;
-                console.log('loop in', this.venueCsvFile);
-            };
+        if (isPlatformBrowser(this.platformId)) {
+            for (let file of event.files) {
+                this.uploadCsvFile.push(file);
+                var reader = new FileReader();
+                reader.readAsDataURL(this.uploadCsvFile[0]);
+                reader.onload = () => {
+                    // called once readAsDataURL is completed
+                    console.log(reader);
+                    console.log(reader.result);
+                    this.venueCsvFile = reader.result;
+                    console.log('loop in', this.venueCsvFile);
+                };
+            }
+            setTimeout(function () {
+                console.log(this.venueCsvFile);
+            }, 2000);
         }
-        setTimeout(function () {
-            console.log(this.venueCsvFile);
-        }, 2000);
     }
     onFileUploadSubmit() {
         console.log('submit', this.venueCsvFile);

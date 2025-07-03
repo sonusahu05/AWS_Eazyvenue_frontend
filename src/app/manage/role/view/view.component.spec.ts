@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RoleAddComponent } from './add.component';
+import { RoleViewComponent } from './view.component';
 
-describe('RoleAddComponent', () => {
-  let component: RoleAddComponent;
-  let fixture: ComponentFixture<RoleAddComponent>;
+describe('RoleViewComponent', () => {
+  let component: RoleViewComponent;
+  let fixture: ComponentFixture<RoleViewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RoleAddComponent ]
+      declarations: [ RoleViewComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RoleAddComponent);
+    fixture = TestBed.createComponent(RoleViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

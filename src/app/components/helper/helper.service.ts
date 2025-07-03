@@ -1,5 +1,5 @@
-import { Injectable, HostListener, Inject, AfterViewInit, OnInit } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Injectable, HostListener, Inject, AfterViewInit, OnInit, PLATFORM_ID } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import $ from 'jquery';
 import 'magnific-popup';
 
@@ -8,16 +8,28 @@ import 'magnific-popup';
 })
 export class HelperService {
 
-  constructor(@Inject(DOCUMENT) private document: Document) { }
+  constructor(
+    @Inject(DOCUMENT) private document: Document,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
+  
   // Sticky Nav
   @HostListener('window:scroll', ['$event'])
   onWindowScroll(_e: any) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     if (window.pageYOffset > 100) {
       let element = <HTMLElement>document.getElementById('can-sticky');
-      element.classList.add('sticky');
+      if (element) {
+        element.classList.add('sticky');
+      }
     } else {
       let element = <HTMLElement>document.getElementById('can-sticky');
-      element.classList.remove('sticky');
+      if (element) {
+        element.classList.remove('sticky');
+      }
     }
   }
   // navigation
@@ -44,6 +56,10 @@ export class HelperService {
     
   }
   ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     ($('.popup-youtube') as any).magnificPopup({
       type: 'iframe'
     });

@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { Table } from 'primeng/table';
@@ -26,6 +26,7 @@ import { saveAs } from 'file-saver/src/FileSaver';
 // import { PostAvailabilityService } from 'src/app/services/postAvailability.service';
 import { LazyLoadEvent } from 'primeng/api';
 import { Dropdown } from "primeng/dropdown";
+import { isPlatformBrowser } from '@angular/common';
 @Component({
     selector: 'app-calendar',
     templateUrl: './calendar.component.html',
@@ -125,7 +126,8 @@ export class CalendarComponent implements OnInit {
         private tokenStorageService: TokenStorageService,
         private confirmationService: ConfirmationService, private messageService: MessageService, private categoryService: CategoryService, private eventService: EventService, private slotService: SlotService,
         //private postAvailabilityService: PostAvailabilityService,
-        private router: Router) { }
+        private router: Router,
+        @Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit(): void {
         this.yearDiff = environment.yearDiff;
@@ -344,10 +346,8 @@ export class CalendarComponent implements OnInit {
         //             //setTimeout(() => {
         //             this.calendarSearchForm.get('startDate').setValue(moment(this.selectedStartDate).format('DD-MM-YYYY'));
         //             this.calendarSearchForm.get('endDate').setValue(moment(this.selectedEndDate).format('DD-MM-YYYY'));
-        //             //window.location.reload();
-        //             // this.getSlotsList(this.lastTableLazyLoadEvent);
-        //             this.getPostAvailabilityList(loadCalendarObj);
-        //             //}, 2000);
+        //             // Refresh data instead of full page reload for better UX and SSR compatibility
+        //             this.refreshCalendarData();
         //         }, 2000);
         //     }, err => {
         //         this.messageService.add({ key: 'calendarSearchtoastmsg', severity: 'error', summary: 'error', detail: err.error, life: 3000 });
@@ -357,6 +357,13 @@ export class CalendarComponent implements OnInit {
     }
 
     loadViewCalendar() {
+        // SSR-compatible calendar initialization
+        if (!isPlatformBrowser(this.platformId)) {
+            // In SSR, defer calendar initialization
+            console.log('Calendar initialization deferred for SSR compatibility');
+            return;
+        }
+
         this.showViewCalendar = true;
         let startDate = moment(new Date()).format('YYYY-MM-DD');
         let endDate = moment(startDate).add(1, 'months').endOf('month').format('YYYY-MM-DD');
@@ -395,10 +402,18 @@ export class CalendarComponent implements OnInit {
                 }
             }
         };
-
+        
+        // Note: FullCalendar initialization is browser-only, protected with platform check for SSR compatibility
     }
 
     loadPostAvailabilityCalendar(event) {
+        // SSR-compatible calendar initialization  
+        if (!isPlatformBrowser(this.platformId)) {
+            // In SSR, defer calendar initialization
+            console.log('Post availability calendar initialization deferred for SSR compatibility');
+            return;
+        }
+
         let startDate = this.sDate;
         let endDate = moment(this.sDate).add('2', 'year').format("YYYY-MM-DD");
         let sDate = new Date(startDate);
@@ -483,6 +498,8 @@ export class CalendarComponent implements OnInit {
         };
         this.events = [];
         this.postAvailabilityDataArr = [];
+        
+        // Note: FullCalendar initialization is browser-only, protected with platform check for SSR compatibility
     }
 
 
@@ -1028,6 +1045,27 @@ export class CalendarComponent implements OnInit {
             filename = fileName + "_export_" + new Date().getTime() + EXCEL_EXTENSION;
             saveAs(data, filename);
         });
+    }
+
+    /**
+     * Refresh calendar data instead of full page reload
+     * Better UX and SSR compatible
+     */
+    refreshCalendarData() {
+        let loadCalendarObj = {
+            startDate: this.selectedStartDate,
+            endDate: this.selectedEndDate,
+            venueId: this.venueId
+        };
+        
+        // Refresh all relevant data
+        this.getSlotsList(this.lastTableLazyLoadEvent);
+        this.getPostAvailabilityList(loadCalendarObj);
+        this.loadViewCalendar();
+        
+        // Reset form values
+        this.calendarSearchForm.get('startDate')?.setValue(moment(this.selectedStartDate).format('DD-MM-YYYY'));
+        this.calendarSearchForm.get('endDate')?.setValue(moment(this.selectedEndDate).format('DD-MM-YYYY'));
     }
 
 }

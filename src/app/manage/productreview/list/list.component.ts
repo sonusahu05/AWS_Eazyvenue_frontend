@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 
 import { ProductreviewService } from '../service/productreview.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -6,7 +6,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { Productreview } from '../model/productreview';
 import { environment } from "./../../../../environments/environment";
-import { TitleCasePipe } from '@angular/common';
+import { TitleCasePipe, isPlatformBrowser } from '@angular/common';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -46,7 +46,7 @@ export class ListComponent implements OnInit {
   // picPath: any;
   public errorMessage;
 
-  constructor(private ProductreviewService: ProductreviewService, private messageService: MessageService, private titlecasePipe: TitleCasePipe, private router: Router, private confirmationService: ConfirmationService) { }
+  constructor(private ProductreviewService: ProductreviewService, private messageService: MessageService, private titlecasePipe: TitleCasePipe, private router: Router, private confirmationService: ConfirmationService, @Inject(PLATFORM_ID) private platformId: Object) { }
 
   ngOnInit() {
     this.paginationOption = environment.pagination;
@@ -66,11 +66,13 @@ export class ListComponent implements OnInit {
 
 
     this.refreshProductreviewList();
-    this.userRoles = JSON.parse(sessionStorage.getItem("userRoles"));
-    this.productreviewAdd = this.userRoles.productreview.add;
-    this.productreviewEdit = this.userRoles.productreview.edit;
-    this.productreviewView = this.userRoles.productreview.view;
-    this.productreviewDelete = this.userRoles.productreview.delete;
+    if (isPlatformBrowser(this.platformId)) {
+      this.userRoles = JSON.parse(sessionStorage.getItem("userRoles"));
+      this.productreviewAdd = this.userRoles.productreview.add;
+      this.productreviewEdit = this.userRoles.productreview.edit;
+      this.productreviewView = this.userRoles.productreview.view;
+      this.productreviewDelete = this.userRoles.productreview.delete;
+    }
 
   }
 

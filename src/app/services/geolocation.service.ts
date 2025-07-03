@@ -178,6 +178,10 @@ export class GeolocationService {
    * Load location from localStorage
    */
   private loadCachedLocation(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     try {
       const cached = localStorage.getItem(this.LOCATION_CACHE_KEY);
       if (cached) {
@@ -210,6 +214,10 @@ export class GeolocationService {
    * Set flag that location was denied
    */
   private setLocationDeniedFlag(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     try {
       localStorage.setItem('location_denied', 'true');
     } catch (error) {
@@ -221,6 +229,10 @@ export class GeolocationService {
    * Clear location denied flag
    */
   private clearLocationDeniedFlag(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     try {
       localStorage.removeItem('location_denied');
     } catch (error) {
@@ -232,6 +244,10 @@ export class GeolocationService {
    * Check if location was previously denied
    */
   private wasLocationDenied(): boolean {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
+    
     try {
       return localStorage.getItem('location_denied') === 'true';
     } catch (error) {
@@ -336,6 +352,10 @@ export class GeolocationService {
 
   clearCachedLocation(): void {
     this.userLocation = null;
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     try {
       localStorage.removeItem(this.LOCATION_CACHE_KEY);
       localStorage.removeItem('location_denied');

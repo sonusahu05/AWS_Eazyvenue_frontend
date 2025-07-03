@@ -1,6 +1,7 @@
-import { Injectable, AfterContentInit, OnInit } from '@angular/core';
+import { Injectable, AfterContentInit, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
+import { isPlatformBrowser } from '@angular/common';
 import authors from '../data/agents/agents.json';
 import blog from '../data/blog/blog.json';
 import blogcategory from '../data/blog/category.json';
@@ -21,9 +22,19 @@ export class BlogHelperService implements AfterContentInit, OnInit {
   public author = authors;
   public searchText: string;
   public searchQuery: string;
-  constructor(private router: Router, private route: ActivatedRoute, private sanitizer: DomSanitizer) {
+  public pageUrl: string = '';
+  
+  constructor(
+    private router: Router, 
+    private route: ActivatedRoute, 
+    private sanitizer: DomSanitizer,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
     this.searchText = '';
     this.searchQuery = '';
+    if (isPlatformBrowser(this.platformId)) {
+      this.pageUrl = window.location.href;
+    }
   }
   // category
   public getCategories(items: string | any[]) {
@@ -190,7 +201,6 @@ export class BlogHelperService implements AfterContentInit, OnInit {
     return output;
   }
   // Social Share
-  public pageUrl = window.location.href;
   public socialShare(title: string) {
     var socialIcons = [
       {
@@ -217,6 +227,8 @@ export class BlogHelperService implements AfterContentInit, OnInit {
     return socialIcons;
   } 
   openSocialPopup(social: any){
-    window.open(social.link, "MsgWindow", "width=600,height=600")
+    if (isPlatformBrowser(this.platformId)) {
+      window.open(social.link, "MsgWindow", "width=600,height=600");
+    }
   }
 }

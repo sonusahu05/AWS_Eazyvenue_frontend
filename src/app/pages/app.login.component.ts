@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { RoleService } from '../services/role.service';
 import { TokenStorageService } from '../services/token-storage.service';
 import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CategoryService } from '../services/category.service';
+import { isPlatformBrowser } from '@angular/common';
 @Component({
   selector: 'app-login',
   templateUrl: './app.login.component.html',
@@ -37,6 +38,7 @@ export class AppLoginComponent {
     private tokenStorage: TokenStorageService,
     private router: Router,
     private route: ActivatedRoute,
+    @Inject(PLATFORM_ID) private platformId: Object,
     private categoryService: CategoryService,
   ) { }
 
@@ -130,7 +132,13 @@ export class AppLoginComponent {
   }
 
   reloadPage(): void {
-    window.location.reload();
+    // SSR-compatible alternative: Navigate to login page to refresh the component
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/login']);
+    });
+    
+    // Note: Replaced window.location.reload() for SSR compatibility
+    // Alternative approach refreshes the component by re-navigating to the same route
   }
 
 }

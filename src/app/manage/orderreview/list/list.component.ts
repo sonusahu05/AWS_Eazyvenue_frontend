@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 
 import { OrderreviewService } from '../service/orderreview.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -6,7 +6,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { Orderreview } from '../model/orderreview';
 import { environment } from "./../../../../environments/environment";
-import { TitleCasePipe } from '@angular/common';
+import { TitleCasePipe, isPlatformBrowser } from '@angular/common';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -45,7 +45,7 @@ export class ListComponent implements OnInit {
   orderreviewDelete: any;
   // picPath: any;
   public errorMessage;
-  constructor(private OrderreviewService: OrderreviewService, private messageService: MessageService, private titlecasePipe: TitleCasePipe, private router: Router, private confirmationService: ConfirmationService) { }
+  constructor(private OrderreviewService: OrderreviewService, private messageService: MessageService, private titlecasePipe: TitleCasePipe, private router: Router, private confirmationService: ConfirmationService, @Inject(PLATFORM_ID) private platformId: Object) { }
 
   ngOnInit() {
     this.paginationOption = environment.pagination;
@@ -64,12 +64,14 @@ export class ListComponent implements OnInit {
 
 
     this.refreshOrderreviewList();
-    this.userRoles = JSON.parse(sessionStorage.getItem("userRoles"));
-    // console.log(this.userRoles.casestudy,"RRWW");  
-    // this.orderreviewAdd = this.userRoles.orderreview.add;
-    // this.orderreviewEdit = this.userRoles.orderreview.edit;
-    // this.orderreviewView = this.userRoles.orderreview.view;
-    // this.orderreviewDelete = this.userRoles.orderreview.delete;
+    if (isPlatformBrowser(this.platformId)) {
+      this.userRoles = JSON.parse(sessionStorage.getItem("userRoles"));
+      // console.log(this.userRoles.casestudy,"RRWW");  
+      // this.orderreviewAdd = this.userRoles.orderreview.add;
+      // this.orderreviewEdit = this.userRoles.orderreview.edit;
+      // this.orderreviewView = this.userRoles.orderreview.view;
+      // this.orderreviewDelete = this.userRoles.orderreview.delete;
+    }
 
   }
 

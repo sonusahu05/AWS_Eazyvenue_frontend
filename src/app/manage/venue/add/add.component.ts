@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, Inject, PLATFORM_ID } from '@angular/core';
 import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from "@angular/forms";
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -13,6 +13,7 @@ import { MustMatch } from '../../../_helpers/must-match.validator';
 import { HttpClient } from '@angular/common/http';
 import { environment } from "./../../../../environments/environment";
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { isPlatformBrowser } from '@angular/common';
 
 declare var google: any;
 
@@ -151,7 +152,8 @@ public metaDescription: string;
         private httpClient: HttpClient,
         private elementRef: ElementRef,
         private confirmationService: ConfirmationService,
-        private subareaService: SubareaService
+        private subareaService: SubareaService,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     @ViewChild('fileInput') fileInput: FileUpload;
@@ -238,6 +240,10 @@ public metaDescription: string;
     }
 
     loadGoogleMaps() {
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
+        
         if (typeof google !== 'undefined' && google.maps) {
             this.isGoogleMapsLoaded = true;
             this.initAutocomplete();
@@ -257,6 +263,10 @@ public metaDescription: string;
 
     // 5. ADD this new method to initialize autocomplete
     initAutocomplete() {
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
+        
         const input = document.getElementById('venue-name-input') as HTMLInputElement;
         if (!input) return;
 
@@ -360,95 +370,107 @@ public metaDescription: string;
     }
 
     videoUploader(event) {
-        for (let file of event.files) {
-            this.videoFiles.push(file);
-            var reader = new FileReader();
-            reader.readAsDataURL(this.videoFiles[0]);
-            reader.onload = () => { // called once readAsDataURL is completed
-                this.venueVideo = reader.result;
+        if (isPlatformBrowser(this.platformId)) {
+            for (let file of event.files) {
+                this.videoFiles.push(file);
+                var reader = new FileReader();
+                reader.readAsDataURL(this.videoFiles[0]);
+                reader.onload = () => { // called once readAsDataURL is completed
+                    this.venueVideo = reader.result;
+                }
             }
         }
     }
 
     picVenueOwnerUploader(event) {
-        for (let file of event.files) {
-            this.uploadedFiles.push(file);
-            var reader = new FileReader();
-            reader.readAsDataURL(this.uploadedFiles[0]);
-            reader.onload = () => { // called once readAsDataURL is completed
-                this.profilepic = reader.result;
+        if (isPlatformBrowser(this.platformId)) {
+            for (let file of event.files) {
+                this.uploadedFiles.push(file);
+                var reader = new FileReader();
+                reader.readAsDataURL(this.uploadedFiles[0]);
+                reader.onload = () => { // called once readAsDataURL is completed
+                    this.profilepic = reader.result;
+                }
             }
         }
     }
 
     picUploader(event) {
-        this.venueImage = [];
-        let index = 0;
-        for (let file of event.files) {
-            this.uploadedFiles.push(file);
-            let reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                //console.log(file.name);// called once readAsDataURL is completed
-                if (reader.result != null) {
-                    this.venueImage.push({ 'file': reader.result });
-                    index++;
-                    //let venueImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .venue-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=venue_image_' + index + '> <label>Default:</label> <input type="radio" id=venue_default_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
-                    //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
+        if (isPlatformBrowser(this.platformId)) {
+            this.venueImage = [];
+            let index = 0;
+            for (let file of event.files) {
+                this.uploadedFiles.push(file);
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    //console.log(file.name);// called once readAsDataURL is completed
+                    if (reader.result != null) {
+                        this.venueImage.push({ 'file': reader.result });
+                        index++;
+                        //let venueImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .venue-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=venue_image_' + index + '> <label>Default:</label> <input type="radio" id=venue_default_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
+                        //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
+                    }
                 }
             }
         }
     }
     picUploader1(event) {
-        this.decor1Image = [];
-        let index = 0;
-        for (let file of event.files) {
-            this.uploadedFiles.push(file);
-            let reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                //console.log(file.name);// called once readAsDataURL is completed
-                if (reader.result != null) {
-                    this.decor1Image.push({ 'file': reader.result });
-                    index++;
-                    //let venueImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .decor-one-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=decor_one_' + index + '> <label>Default:</label> <input type="radio" id=decor_one_default_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
-                    //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
+        if (isPlatformBrowser(this.platformId)) {
+            this.decor1Image = [];
+            let index = 0;
+            for (let file of event.files) {
+                this.uploadedFiles.push(file);
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    //console.log(file.name);// called once readAsDataURL is completed
+                    if (reader.result != null) {
+                        this.decor1Image.push({ 'file': reader.result });
+                        index++;
+                        //let venueImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .decor-one-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=decor_one_' + index + '> <label>Default:</label> <input type="radio" id=decor_one_default_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
+                        //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
+                    }
                 }
             }
         }
     }
     picUploader2(event) {
-        this.decor2Image = [];
-        let index = 0;
-        for (let file of event.files) {
-            this.uploadedFiles.push(file);
-            let reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                //console.log(file.name);// called once readAsDataURL is completed
-                if (reader.result != null) {
-                    this.decor2Image.push({ 'file': reader.result });
-                    index++;
-                    //let venueImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .decor-two-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=decor_two_' + index + '> <label>Default:</label> <input type="radio" id=decor_two_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
-                    //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
+        if (isPlatformBrowser(this.platformId)) {
+            this.decor2Image = [];
+            let index = 0;
+            for (let file of event.files) {
+                this.uploadedFiles.push(file);
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    //console.log(file.name);// called once readAsDataURL is completed
+                    if (reader.result != null) {
+                        this.decor2Image.push({ 'file': reader.result });
+                        index++;
+                        //let venueImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .decor-two-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=decor_two_' + index + '> <label>Default:</label> <input type="radio" id=decor_two_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
+                        //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
+                    }
                 }
             }
         }
     }
     picUploader3(event) {
-        this.decor3Image = [];
-        let index = 0;
-        for (let file of event.files) {
-            this.uploadedFiles.push(file);
-            let reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                //console.log(file.name);// called once readAsDataURL is completed
-                if (reader.result != null) {
-                    this.decor3Image.push({ 'file': reader.result });
-                    index++;
-                    //let venueImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .decor-three-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=decor_three_' + index + '> <label>Default:</label> <input type="radio" id=decor_three_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
-                    //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
+        if (isPlatformBrowser(this.platformId)) {
+            this.decor3Image = [];
+            let index = 0;
+            for (let file of event.files) {
+                this.uploadedFiles.push(file);
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    //console.log(file.name);// called once readAsDataURL is completed
+                    if (reader.result != null) {
+                        this.decor3Image.push({ 'file': reader.result });
+                        index++;
+                        //let venueImageAlt = this.elementRef.nativeElement.querySelector(".p-fileupload-content .decor-three-images").insertAdjacentHTML('beforeend', '<div class="two"><label> Alt of ' + file.name + ':<label><input type="text" id=decor_three_' + index + '> <label>Default:</label> <input type="radio" id=decor_three_' + index + ' name="groupname" value="" [(ngModel)]="selectedValue"></div>');
+                        //.insertAdjacentHTML('beforeend', '<div class="two"><label>' + file.name + '</div>');
+                    }
                 }
             }
         }

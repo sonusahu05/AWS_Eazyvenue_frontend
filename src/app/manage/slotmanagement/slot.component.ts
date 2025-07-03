@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Inject, PLATFORM_ID } from '@angular/core';
 import { Table } from 'primeng/table';
 import { UserService } from '../../services/user.service';
 import { RoleService } from '../../services/role.service';
 import { ActivatedRoute, Router } from "@angular/router";
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { TitleCasePipe } from '@angular/common';
+import { TitleCasePipe, isPlatformBrowser } from '@angular/common';
 import { LazyLoadEvent } from 'primeng/api';
 import { Dropdown } from "primeng/dropdown";
 import { environment } from 'src/environments/environment';
@@ -56,7 +56,7 @@ export class SlotManagementComponent implements OnInit {
     @ViewChild("dt", { static: false }) public dt: Table;
     @ViewChild("pDropDownId", { static: false }) pDropDownId: Dropdown;
     constructor(private el: ElementRef, private userService: UserService, private roleService: RoleService, private titlecasePipe: TitleCasePipe, private router: Router, private route: ActivatedRoute, private messageService: MessageService, private confirmationService: ConfirmationService,
-        private slotService: SlotService) { }
+        private slotService: SlotService, @Inject(PLATFORM_ID) private platformId: Object) { }
     ngOnInit() {
         this.paginationOption = environment.pagination;
         this.yearRange = this.minYear + ":" + maxYearFunction();
@@ -279,23 +279,27 @@ export class SlotManagementComponent implements OnInit {
      * Use to add more columns in the table.
     */
     addColumns() {
-        var showp1Table = this.el.nativeElement.querySelector(".p1-table-columns");
-        showp1Table.classList.remove('hide-columns');
-        showp1Table.classList.add('show-columns');
-        var hidep2Table = this.el.nativeElement.querySelector(".p2-table-columns");
-        hidep2Table.classList.remove('show-columns');
-        hidep2Table.classList.add('hide-columns');
+        if (isPlatformBrowser(this.platformId)) {
+            var showp1Table = this.el.nativeElement.querySelector(".p1-table-columns");
+            showp1Table.classList.remove('hide-columns');
+            showp1Table.classList.add('show-columns');
+            var hidep2Table = this.el.nativeElement.querySelector(".p2-table-columns");
+            hidep2Table.classList.remove('show-columns');
+            hidep2Table.classList.add('hide-columns');
+        }
     }
     /** 
     * Use to remove more columns in the table.
     */
     removeColumns() {
-        var showp2Table = this.el.nativeElement.querySelector(".p2-table-columns");
-        showp2Table.classList.remove('hide-columns');
-        showp2Table.classList.add('show-columns');
-        var hidep1Table = this.el.nativeElement.querySelector(".p1-table-columns");
-        hidep1Table.classList.add('hide-columns');
-        hidep1Table.classList.remove('show-columns');
+        if (isPlatformBrowser(this.platformId)) {
+            var showp2Table = this.el.nativeElement.querySelector(".p2-table-columns");
+            showp2Table.classList.remove('hide-columns');
+            showp2Table.classList.add('show-columns');
+            var hidep1Table = this.el.nativeElement.querySelector(".p1-table-columns");
+            hidep1Table.classList.add('hide-columns');
+            hidep1Table.classList.remove('show-columns');
+        }
     }
     setDownloadFlag() {
         this.downloadFlg = false;

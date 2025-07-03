@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {AppComponent} from './app.component';
-import {AppMainComponent} from './app.main.component';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { AppComponent } from './app.component';
+import { AppMainComponent } from './app.main.component';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
     selector: 'app-config',
@@ -112,7 +113,7 @@ export class AppConfigComponent implements OnInit {
 
     theme = 'purple';
 
-    constructor(public app: AppComponent, public appMain: AppMainComponent) {
+    constructor(public app: AppComponent, public appMain: AppMainComponent, @Inject(PLATFORM_ID) private platformId: Object) {
     }
 
     ngOnInit() {
@@ -181,7 +182,12 @@ export class AppConfigComponent implements OnInit {
     }
 
     isIE() {
-        return /(MSIE|Trident\/|Edge\/)/i.test(window.navigator.userAgent);
+        if (isPlatformBrowser(this.platformId)) {
+            return /(MSIE|Trident\/|Edge\/)/i.test(window.navigator.userAgent);
+        }
+        // In SSR, return false as we can't detect IE
+        // Alternative: You could provide a default behavior or use a different detection method
+        return false;
     }
 
     onConfigButtonClick(event) {

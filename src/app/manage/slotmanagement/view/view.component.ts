@@ -20,7 +20,7 @@ export class UserViewComponent implements OnInit {
     submitted = false;
     uploadedFiles: any[] = [];
     file: File;
-    reader: FileReader;
+    // reader: FileReader; // Removed unused FileReader for SSR compatibility
     public profilepic;
     errorMessage = '';
     public item: any[] = [];

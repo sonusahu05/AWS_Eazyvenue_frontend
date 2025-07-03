@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
 import { BannerService } from '../../services/banner.service';
 import { environment } from 'src/environments/environment';
 const USER_API = environment.apiUrl;
@@ -8,6 +8,7 @@ import { Table } from 'primeng/table';
 import { Dropdown } from "primeng/dropdown";
 import { UserService } from '../../services/user.service';
 import { RoleService } from '../../services/role.service';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from "@angular/router";
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TitleCasePipe } from '@angular/common';
@@ -215,7 +216,8 @@ export class BannerComponent implements OnInit {
     private titlecasePipe: TitleCasePipe,
     private roleService: RoleService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
   ngOnInit() {
@@ -301,7 +303,7 @@ export class BannerComponent implements OnInit {
   }
 
   openInstagramPost(url: string) {
-    if (url) {
+    if (url && isPlatformBrowser(this.platformId)) {
       window.open(url, '_blank');
     }
   }
