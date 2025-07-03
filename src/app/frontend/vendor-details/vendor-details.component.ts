@@ -1,4 +1,5 @@
-import { Component, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -123,7 +124,8 @@ export class VendorDetailsComponent implements OnInit {
     private router: Router,
     private venueService: VenueService,
     private tokenStorageService: TokenStorageService,
-    private razorpayService: RazorpayService
+    private razorpayService: RazorpayService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.occasionResponsiveOptions = [
       {
@@ -145,10 +147,12 @@ export class VendorDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const canonicalLink = this.renderer.createElement('link');
-    this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
-    this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
-    this.renderer.appendChild(document.head, canonicalLink);
+    if (isPlatformBrowser(this.platformId)) {
+      const canonicalLink = this.renderer.createElement('link');
+      this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
+      this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
+      this.renderer.appendChild(document.head, canonicalLink);
+    }
 
     this.minDateValue = new Date();
     this.vendorCategoryList = [
@@ -217,7 +221,7 @@ export class VendorDetailsComponent implements OnInit {
         const localBusinessSchema = {
           "@context": "http://schema.org/",
           "@type": "LocalBusiness",
-          "@id": location.href,
+          "@id": isPlatformBrowser(this.platformId) ? location.href : '',
           "name": res.data[0].name + " - " + "Eazyvenue.com",
           "description": res.data[0].metaDescription,
           "image": [
@@ -246,11 +250,12 @@ export class VendorDetailsComponent implements OnInit {
           "telephone": "+91 93720 91300"
         }
 
-
-        const localBusinessScript = document.createElement('script');
-        localBusinessScript.type = 'application/ld+json';
-        localBusinessScript.text = JSON.stringify(localBusinessSchema);
-        document.body.appendChild(localBusinessScript);
+        if (isPlatformBrowser(this.platformId)) {
+          const localBusinessScript = document.createElement('script');
+          localBusinessScript.type = 'application/ld+json';
+          localBusinessScript.text = JSON.stringify(localBusinessSchema);
+          document.body.appendChild(localBusinessScript);
+        }
 
         const itemListSchema = {
           "itemListElement":
@@ -267,7 +272,7 @@ export class VendorDetailsComponent implements OnInit {
                 "name": "Vendors",
                 "position": "2"
               }, {
-                "item": location.href,
+                "item": isPlatformBrowser(this.platformId) ? location.href : '',
                 "@type": "ListItem",
                 "name": res.data[0].name + " - " + "Eazyvenue.com",
                 "position": "3"
@@ -275,10 +280,12 @@ export class VendorDetailsComponent implements OnInit {
           "@context": "http://schema.org"
         }
 
-        const itemListScript = document.createElement('script');
-        itemListScript.type = 'application/ld+json';
-        itemListScript.text = JSON.stringify(itemListSchema);
-        document.body.appendChild(itemListScript);
+        if (isPlatformBrowser(this.platformId)) {
+          const itemListScript = document.createElement('script');
+          itemListScript.type = 'application/ld+json';
+          itemListScript.text = JSON.stringify(itemListSchema);
+          document.body.appendChild(itemListScript);
+        }
       }
     }, (error) => {
 

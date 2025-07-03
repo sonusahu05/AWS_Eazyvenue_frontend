@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -10,6 +10,7 @@ import { CustomValidators } from 'ng2-validation';
 import * as moment from 'moment-timezone';
 import { environment } from 'src/environments/environment';
 import { maxYearFunction } from '../_helpers/utility';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
     selector: 'app-signup',
@@ -53,7 +54,8 @@ export class SignupComponent implements OnInit {
         private formBuilder: FormBuilder,
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
-        private router: Router
+        private router: Router,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnInit(): void {
@@ -105,6 +107,11 @@ export class SignupComponent implements OnInit {
     }
 
     picUploader(event) {
+        // Only process file uploads in browser environment
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
+        
         for (let file of event.files) {
             this.uploadedFiles.push(file);
             var reader = new FileReader();

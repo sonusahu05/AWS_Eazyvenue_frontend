@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';;
+import { Injectable } from '@angular/core';
 import agents from '../data/agents/agents.json';
 import data from '../data/testimonials.json';
 

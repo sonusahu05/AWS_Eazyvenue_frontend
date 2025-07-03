@@ -43,10 +43,12 @@ interface Vendor {
 })
 export class HeaderComponent implements OnInit, AfterViewInit {
     isNavbarFixed: boolean = false;
-    isMobileView: boolean = window.innerWidth <= 768;
+    isMobileView: boolean = false; // Will be set in ngOnInit
     @HostListener('window:resize', [])
     onResize() {
-      this.isMobileView = window.innerWidth <= 768;
+      if (isPlatformBrowser(this.platformId)) {
+        this.isMobileView = window.innerWidth <= 768;
+      }
     }
     venuecityname: any;
     subarealist: any;
@@ -201,7 +203,9 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         private venueService: VenueService,
         private cityService: CityService,
         private activatedRoute: ActivatedRoute,
-        private renderer: Renderer2, private el: ElementRef
+        private renderer: Renderer2, 
+        private el: ElementRef,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) {
         this.router.events.subscribe((event) => {
             if (event instanceof NavigationEnd) {
@@ -294,7 +298,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     isHotMuhuratsOpen: boolean = false;
 
     toggleHotMuhurats() {
-        if (this.isMobileView) {
+        if (this.isMobileView && isPlatformBrowser(this.platformId)) {
           const sidebar = document.querySelector('.p-sidebar-left') as HTMLElement;
           sidebar?.classList.add('expanded'); // Expand sidebar on mobile
         }
@@ -302,7 +306,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
       }
 
       closeHotMuhurats() {
-        if (this.isMobileView) {
+        if (this.isMobileView && isPlatformBrowser(this.platformId)) {
           const sidebar = document.querySelector('.p-sidebar-left') as HTMLElement;
           sidebar?.classList.remove('expanded'); // Collapse sidebar on mobile
         }
@@ -359,6 +363,11 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         return segments.some(segment => segment.includes('venue') || segment.includes('banquet'));
       }
     ngOnInit() {
+        // Initialize mobile view detection
+        if (isPlatformBrowser(this.platformId)) {
+            this.isMobileView = window.innerWidth <= 768;
+        }
+        
         this.router.events.pipe(
             filter(event => event instanceof NavigationEnd)
           ).subscribe((event: NavigationEnd) => {
@@ -474,7 +483,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
         this.activatedRoute.queryParams.subscribe(params => {
             if (params['query'] && params['query'] === 'muhurata') {
-                if (window.innerWidth <= 768) {
+                if (isPlatformBrowser(this.platformId) && window.innerWidth <= 768) {
                     this.muhuratDialog = true;
                 } else {
                     const hotMuhuratsLink = this.el.nativeElement.querySelector('.nav-link.border-end.hot-dates-link');
@@ -757,7 +766,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         this.roleService.getRoleList(querystring).subscribe(
             data => {
                 var rolelist = data.data.items;
-                rolelist.forEach(element => {
+                rolelist.forEach((element) => {
                     rolearray.push({ "roleid": element.id, "rolename": element.user_role_name });
                 });
                 if (rolearray.length > 0) {
@@ -897,7 +906,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     pastedEvent(event){
         const val = event.target.value;
         this.showOtpErrors = false;
-        if(val.length === 4){
+        if(val.length === 4 && isPlatformBrowser(this.platformId)){
             this.otpArray = val.toString().split('');
             const txt1 = document.getElementById("txt1") as HTMLInputElement;
             const txt2 = document.getElementById("txt2") as HTMLInputElement;
@@ -1016,7 +1025,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         // }
     }
     @HostListener('window:scroll', ['$event']) onScroll() {
-        if (window.scrollY > 100) {
+        if (isPlatformBrowser(this.platformId) && window.scrollY > 100) {
             this.isNavbarFixed = true;
         } else {
             this.isNavbarFixed = false;
@@ -1026,21 +1035,24 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         this.otpError = undefined;
         this.showResendButton = false;
         this.onSubmitNumber('resendOtp');
-        const txt1 = document.getElementById("txt1") as HTMLInputElement;
-        const txt2 = document.getElementById("txt2") as HTMLInputElement;
-        const txt3 = document.getElementById("txt3") as HTMLInputElement;
-        const txt4 = document.getElementById("txt4") as HTMLInputElement;
+        
+        if (isPlatformBrowser(this.platformId)) {
+            const txt1 = document.getElementById("txt1") as HTMLInputElement;
+            const txt2 = document.getElementById("txt2") as HTMLInputElement;
+            const txt3 = document.getElementById("txt3") as HTMLInputElement;
+            const txt4 = document.getElementById("txt4") as HTMLInputElement;
 
-        txt1.value = '';
-        txt2.value = '';
-        txt3.value = '';
-        txt4.value = '';
+            txt1.value = '';
+            txt2.value = '';
+            txt3.value = '';
+            txt4.value = '';
+        }
 
         this.otp = '';
-        this.otpArray = []
-
+        this.otpArray = [];
     }
-    otpTimer(counter, tick) {
+    
+    otpTimer(counter: number, tick: number) {
         this.countDown = timer(0, this.tick)
             .pipe(take(this.counter))
             .subscribe(() => {
@@ -1070,15 +1082,18 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         this.otpError = undefined;
         this.showResendButton = false;
         this.otpError = '';
-        const txt1 = document.getElementById("txt1") as HTMLInputElement;
-        const txt2 = document.getElementById("txt2") as HTMLInputElement;
-        const txt3 = document.getElementById("txt3") as HTMLInputElement;
-        const txt4 = document.getElementById("txt4") as HTMLInputElement;
-        txt1.value = '';
-        txt2.value = '';
-        txt3.value = '';
-        txt4.value = '';
-        this.otpArray = []
+        
+        if (isPlatformBrowser(this.platformId)) {
+            const txt1 = document.getElementById("txt1") as HTMLInputElement;
+            const txt2 = document.getElementById("txt2") as HTMLInputElement;
+            const txt3 = document.getElementById("txt3") as HTMLInputElement;
+            const txt4 = document.getElementById("txt4") as HTMLInputElement;
+            txt1.value = '';
+            txt2.value = '';
+            txt3.value = '';
+            txt4.value = '';
+        }
+        this.otpArray = [];
     }
     showLoginRegisterDialog() {
         if (this.isLoggedIn == true) {
@@ -1088,7 +1103,9 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         }
     }
     signOut() {
-        window.sessionStorage.clear();
+        if (isPlatformBrowser(this.platformId)) {
+            window.sessionStorage.clear();
+        }
         this.tokenStorage.isLoggedOut();
         let currentUrl = '/';
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;

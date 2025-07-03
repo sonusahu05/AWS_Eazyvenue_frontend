@@ -4,7 +4,10 @@ import {
     Input,
     OnChanges,
     SimpleChanges,
+    Inject,
+    PLATFORM_ID,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -38,7 +41,11 @@ export class FaqComponent implements OnInit, OnChanges {
     titlePrefix: string;
     titleLocation: string;
 
-    constructor(private route: ActivatedRoute, private router: Router) {}
+    constructor(
+        private route: ActivatedRoute, 
+        private router: Router,
+        @Inject(PLATFORM_ID) private platformId: Object
+    ) {}
 
     ngOnInit(): void {
         this.route.queryParams.subscribe((params) => {
@@ -352,21 +359,24 @@ You can expect flexible services and neat rooms that are sanitized and well main
             })),
         };
 
-        // Remove any existing JSON-LD script
-        const existingScript = document.querySelector(
-            'script[type="application/ld+json"]'
-        );
-        if (existingScript) {
-            existingScript.remove();
+        // Only execute DOM manipulation in browser
+        if (isPlatformBrowser(this.platformId)) {
+            // Remove any existing JSON-LD script
+            const existingScript = document.querySelector(
+                'script[type="application/ld+json"]'
+            );
+            if (existingScript) {
+                existingScript.remove();
+            }
+
+            // Create new script element
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.text = JSON.stringify(faqSchema);
+
+            // Append to head
+            document.head.appendChild(script);
         }
-
-        // Create new script element
-        const script = document.createElement('script');
-        script.type = 'application/ld+json';
-        script.text = JSON.stringify(faqSchema);
-
-        // Append to head
-        document.head.appendChild(script);
     }
 
     updateSearches(): void {

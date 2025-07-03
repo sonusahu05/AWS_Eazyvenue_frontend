@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BannerService } from '../../services/banner.service';
 import { environment } from 'src/environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -26,7 +27,8 @@ export class BlogComponent implements OnInit {
 
   constructor(
     private bannerService: BannerService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
   ngOnInit() {
@@ -192,7 +194,7 @@ export class BlogComponent implements OnInit {
   }
 
   openInstagramPost(instagramUrl: string) {
-    if (instagramUrl) {
+    if (instagramUrl && isPlatformBrowser(this.platformId)) {
       window.open(instagramUrl, '_blank');
     }
   }
@@ -211,6 +213,10 @@ export class BlogComponent implements OnInit {
   }
 
   sharePost(post: any, platform: string) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return; // Skip sharing on server-side
+    }
+
     const url = encodeURIComponent(window.location.origin + '/blog/' + post.slug);
     const title = encodeURIComponent(post.banner_title);
     const text = encodeURIComponent(post.meta_description || post.banner_content.substring(0, 100));

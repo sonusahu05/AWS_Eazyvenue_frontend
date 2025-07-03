@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CmsmoduleService } from '../../manage/cmsmodule/service/cmsmodule.service';
 import { FormBuilder, FormGroup, FormArray, Validators, FormControl } from '@angular/forms';
 import { BannerService } from '../../services/banner.service';
@@ -54,6 +55,7 @@ export class TermsComponent implements OnInit {
   constructor(private cmsmoduleService: CmsmoduleService,
     private bannerService: BannerService,
     private formBuilder: FormBuilder, private messageService: MessageService, private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
     //private referAFriendService: ReferAFriendService
   ) {
     this.bodyClass = this.availableClasses[this.currentClassIdx];
@@ -61,22 +63,24 @@ export class TermsComponent implements OnInit {
    }
 
  changeBodyClass() {
-  // get html body element
-  const bodyElement = document.body;
+  // get html body element only in browser
+  if (isPlatformBrowser(this.platformId)) {
+    const bodyElement = document.body;
 
-  if (bodyElement) {
+    if (bodyElement) {
 
 
-    this.currentClassIdx = this.getNextClassIdx();
-    const nextClass = this.availableClasses[this.currentClassIdx];
-    const activeClass = this.availableClasses[this.getPrevClassIdx()];
+      this.currentClassIdx = this.getNextClassIdx();
+      const nextClass = this.availableClasses[this.currentClassIdx];
+      const activeClass = this.availableClasses[this.getPrevClassIdx()];
 
-    // remove existing class (needed if theme is being changed)
-    bodyElement.classList.remove(activeClass);
-    // add next theme class
-    bodyElement.classList.add(nextClass);
+      // remove existing class (needed if theme is being changed)
+      bodyElement.classList.remove(activeClass);
+      // add next theme class
+      bodyElement.classList.add(nextClass);
 
-    this.bodyClass = nextClass;
+      this.bodyClass = nextClass;
+    }
   }
 }
 

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 declare var Razorpay: any;
 
@@ -76,18 +77,20 @@ export class SubscriptionComponent {
     }
   ];
 
-  constructor() {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     // Load Razorpay script dynamically
     this.loadRazorpayScript();
   }
 
   private loadRazorpayScript(): void {
-    if (!document.getElementById('razorpay-script')) {
-      const script = document.createElement('script');
-      script.id = 'razorpay-script';
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.async = true;
-      document.head.appendChild(script);
+    if (isPlatformBrowser(this.platformId)) {
+      if (!document.getElementById('razorpay-script')) {
+        const script = document.createElement('script');
+        script.id = 'razorpay-script';
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        document.head.appendChild(script);
+      }
     }
   }
 

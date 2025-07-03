@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -7,13 +8,22 @@ import { Observable } from 'rxjs';
 })
 export class LocationService {
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
   getLocationDataFromCordinates(latitude, longitude): Observable<any> {
     return this.http.get<any>(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`)
   }
   getCurrentLocation() {
     return new Promise((resolve, reject) => {
+      // Check if we're in browser environment before accessing navigator
+      if (!isPlatformBrowser(this.platformId)) {
+        reject('Geolocation is not available during server-side rendering.');
+        return;
+      }
+
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -27,7 +37,10 @@ export class LocationService {
               })
             }
           },
-          (error) => console.log(error)
+          (error) => {
+            console.log(error);
+            reject(error);
+          }
         );
       } else {
         reject('Geolocation is not supported by this browser.');

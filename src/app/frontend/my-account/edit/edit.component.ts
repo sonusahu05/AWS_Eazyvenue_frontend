@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -63,7 +64,8 @@ export class UserMyAccountEditComponent implements OnInit {
     public profileDetails;
     constructor(private userService: UserService, private commonService: CommonService, private formBuilder: FormBuilder,
         private confirmationService: ConfirmationService, private messageService: MessageService,
-        private router: Router, private activeroute: ActivatedRoute, private tokenStorage: TokenStorageService) { }
+        private router: Router, private activeroute: ActivatedRoute, private tokenStorage: TokenStorageService,
+        @Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit(): void {
         this.loggedInUser = this.tokenStorage.getUser();
@@ -204,12 +206,14 @@ export class UserMyAccountEditComponent implements OnInit {
     }
 
     picUploader(event) {
-        for (let file of event.files) {
-            this.uploadedFiles.push(file);
-            var reader = new FileReader();
-            reader.readAsDataURL(this.uploadedFiles[0]);
-            reader.onload = () => { // called once readAsDataURL is completed
-                this.profilepic = reader.result;
+        if (isPlatformBrowser(this.platformId)) {
+            for (let file of event.files) {
+                this.uploadedFiles.push(file);
+                var reader = new FileReader();
+                reader.readAsDataURL(this.uploadedFiles[0]);
+                reader.onload = () => { // called once readAsDataURL is completed
+                    this.profilepic = reader.result;
+                }
             }
         }
     }

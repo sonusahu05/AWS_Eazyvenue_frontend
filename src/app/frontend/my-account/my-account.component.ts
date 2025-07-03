@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { MenuItem } from 'primeng/api';
 // import { OwlOptions } from 'ngx-owl-carousel-o';
 import { FormBuilder, FormGroup, FormArray, Validators, FormControl } from '@angular/forms';
@@ -63,28 +64,31 @@ export class MyAccountComponent implements OnInit {
         private stateService: StateService,
         private cityService: CityService,
         private categoryService: CategoryService,
-        private activeRoute: ActivatedRoute
+        private activeRoute: ActivatedRoute,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) {
         this.bodyClass = this.availableClasses[this.currentClassIdx];
         this.changeBodyClass();
     }
     changeBodyClass() {
-        // get html body element
-        const bodyElement = document.body;
+        // get html body element only in browser
+        if (isPlatformBrowser(this.platformId)) {
+            const bodyElement = document.body;
 
-        if (bodyElement) {
+            if (bodyElement) {
 
 
-            this.currentClassIdx = this.getNextClassIdx();
-            const nextClass = this.availableClasses[this.currentClassIdx];
-            const activeClass = this.availableClasses[this.getPrevClassIdx()];
+                this.currentClassIdx = this.getNextClassIdx();
+                const nextClass = this.availableClasses[this.currentClassIdx];
+                const activeClass = this.availableClasses[this.getPrevClassIdx()];
 
-            // remove existing class (needed if theme is being changed)
-            bodyElement.classList.remove(activeClass);
-            // add next theme class
-            bodyElement.classList.add(nextClass);
+                // remove existing class (needed if theme is being changed)
+                bodyElement.classList.remove(activeClass);
+                // add next theme class
+                bodyElement.classList.add(nextClass);
 
-            this.bodyClass = nextClass;
+                this.bodyClass = nextClass;
+            }
         }
     }
 
@@ -312,7 +316,9 @@ export class MyAccountComponent implements OnInit {
 
     }
     signOut() {
-        window.sessionStorage.clear();
+        if (isPlatformBrowser(this.platformId)) {
+            window.sessionStorage.clear();
+        }
         this.tokenStorage.isLoggedOut();
         let currentUrl = '/';
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;

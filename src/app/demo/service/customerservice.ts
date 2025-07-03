@@ -7,25 +7,22 @@ export class CustomerService {
 
     constructor(private http: HttpClient) { }
 
-    getCustomersSmall() {
+    getCustomersSmall(): Promise<Customer[]> {
         return this.http.get<any>('assets/demo/data/customers-small.json')
             .toPromise()
-            .then(res => res.data as Customer[])
-            .then(data => data);
+            .then(res => res.data as Customer[]);
     }
 
-    getCustomersMedium() {
+    getCustomersMedium(): Promise<Customer[]> {
         return this.http.get<any>('assets/demo/data/customers-medium.json')
             .toPromise()
-            .then(res => res.data as Customer[])
-            .then(data => data);
+            .then(res => res.data as Customer[]);
     }
 
-    getCustomersLarge() {
+    getCustomersLarge(): Promise<Customer[]> {
         return this.http.get<any>('assets/demo/data/customers-large.json')
             .toPromise()
-            .then(res => res.data as Customer[])
-            .then(data => data);
+            .then(res => res.data as Customer[]);
     }
 
 }

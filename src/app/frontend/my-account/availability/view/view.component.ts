@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from "@angular/forms";
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -47,16 +48,18 @@ export class ViewCustomerVenueAvailabilityComponent implements OnInit {
         private httpClient: HttpClient,
         private elementRef: ElementRef,
         private confirmationService: ConfirmationService,
-        private datePipe: DatePipe
+        private datePipe: DatePipe,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) {
         this.bodyClass = this.availableClasses[this.currentClassIdx];
         this.changeBodyClass();
     }
     changeBodyClass() {
-        // get html body element
-        const bodyElement = document.body;
+        // get html body element only in browser
+        if (isPlatformBrowser(this.platformId)) {
+            const bodyElement = document.body;
 
-        if (bodyElement) {
+            if (bodyElement) {
 
 
             this.currentClassIdx = this.getNextClassIdx();
@@ -71,6 +74,7 @@ export class ViewCustomerVenueAvailabilityComponent implements OnInit {
             this.bodyClass = nextClass;
         }
     }
+}
 
     getPrevClassIdx(): number {
         return this.currentClassIdx === 0

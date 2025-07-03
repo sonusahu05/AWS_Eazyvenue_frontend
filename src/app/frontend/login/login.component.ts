@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { RoleService } from 'src/app/services/role.service';
@@ -66,6 +67,7 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private userService: UserService,
     private messageService: MessageService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
   ngOnInit(): void {
@@ -218,7 +220,14 @@ export class LoginComponent implements OnInit {
 
 
   reloadPage(): void {
-    window.location.reload();
+    if (isPlatformBrowser(this.platformId)) {
+      window.location.reload();
+    } else {
+      // For SSR, navigate to current route to refresh
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate([this.router.url]);
+      });
+    }
   }
 
 }

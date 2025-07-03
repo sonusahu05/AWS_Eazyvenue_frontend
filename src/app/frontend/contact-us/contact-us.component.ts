@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CmsmoduleService } from 'src/app/manage/cmsmodule/service/cmsmodule.service';
 import { BannerService } from 'src/app/services/banner.service';
 //import { OwlOptions } from 'ngx-owl-carousel-o';
@@ -86,28 +87,29 @@ export class ContactUsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private messageService: MessageService,
     private router: Router,
-    private contactUsService: ContactUsService
+    private contactUsService: ContactUsService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.bodyClass = this.availableClasses[this.currentClassIdx];
     this.changeBodyClass();
    }
    changeBodyClass() {
-    // get html body element
-    const bodyElement = document.body;
+    // get html body element only in browser
+    if (isPlatformBrowser(this.platformId)) {
+      const bodyElement = document.body;
 
-    if (bodyElement) {
+      if (bodyElement) {
+        this.currentClassIdx = this.getNextClassIdx();
+        const nextClass = this.availableClasses[this.currentClassIdx];
+        const activeClass = this.availableClasses[this.getPrevClassIdx()];
 
+        // remove existing class (needed if theme is being changed)
+        bodyElement.classList.remove(activeClass);
+        // add next theme class
+        bodyElement.classList.add(nextClass);
 
-      this.currentClassIdx = this.getNextClassIdx();
-      const nextClass = this.availableClasses[this.currentClassIdx];
-      const activeClass = this.availableClasses[this.getPrevClassIdx()];
-
-      // remove existing class (needed if theme is being changed)
-      bodyElement.classList.remove(activeClass);
-      // add next theme class
-      bodyElement.classList.add(nextClass);
-
-      this.bodyClass = nextClass;
+        this.bodyClass = nextClass;
+      }
     }
   }
 
