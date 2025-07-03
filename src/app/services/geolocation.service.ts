@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../environments/environment';
 
 export interface UserLocation {
@@ -22,7 +23,7 @@ export class GeolocationService {
   private readonly LOCATION_CACHE_KEY = 'user_location_cache';
   private readonly CACHE_DURATION = 300000; // 5 minutes in milliseconds
 
-  constructor() {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.loadCachedLocation();
   }
 
@@ -30,6 +31,11 @@ export class GeolocationService {
    * Get user's current location using browser's geolocation API
    */
   async getUserLocation(forceRefresh: boolean = false, bypassDeniedCheck: boolean = false): Promise<UserLocation> {
+    // Return null/reject early if not in browser environment
+    if (!isPlatformBrowser(this.platformId)) {
+      throw new Error('Geolocation is not available during server-side rendering');
+    }
+
     // Check if we have valid cached location and not forcing refresh
     if (!forceRefresh && this.userLocation && this.isLocationCacheValid()) {
       return this.userLocation;
@@ -108,6 +114,9 @@ export class GeolocationService {
    * Check if geolocation is supported and available
    */
   isGeolocationSupported(): boolean {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
     return 'geolocation' in navigator;
   }
 
@@ -115,6 +124,10 @@ export class GeolocationService {
    * Check if location permission is likely granted (best effort)
    */
   async checkLocationPermission(): Promise<'granted' | 'denied' | 'prompt' | 'unsupported'> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return 'unsupported';
+    }
+
     if (!this.isGeolocationSupported()) {
       return 'unsupported';
     }
@@ -146,6 +159,10 @@ export class GeolocationService {
    * Save location to localStorage with timestamp
    */
   private saveCachedLocation(location: UserLocation): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     try {
       const cacheData = {
         ...location,

@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpInterceptor, HttpHandler, HttpRequest, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { isPlatformBrowser } from '@angular/common';
 
 import { TokenStorageService } from '../services/token-storage.service';
 import { Observable } from 'rxjs';
@@ -9,9 +10,18 @@ const TOKEN_HEADER_KEY = 'Authorization';       // for Spring Boot back-end
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private token: TokenStorageService, private router: Router) { }
+  constructor(
+    private token: TokenStorageService, 
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // Only handle authentication in browser environment
+    if (!isPlatformBrowser(this.platformId)) {
+      return next.handle(req);
+    }
+
     const token = this.token.getToken();
     if (token != null) {
       let headers = req.headers

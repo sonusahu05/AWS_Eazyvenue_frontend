@@ -1,4 +1,5 @@
-import { Component, OnInit, AfterViewInit, ViewChild, HostListener, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, HostListener, Renderer2, ElementRef, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 // import data from '../../../assets/demo/data/navigation.json';
 import { ProductService } from '../../demo/service/productservice';
 import { Product } from '../../demo/domain/product';

@@ -81,6 +81,7 @@ import { VendorDetailsComponent } from './frontend/vendor-details/vendor-details
 import { VendorCompareComponent } from './frontend/vendor-compare/vendor-compare.component';
 import { CancellationComponent } from './frontend/cancellation/cancellation.component';
 import { SignupComponent } from './pages/venue-signup.component';
+import { HomeDataResolver } from './services/home-data.resolver';
 @NgModule({
     imports: [
         RouterModule.forRoot([
@@ -92,7 +93,7 @@ import { SignupComponent } from './pages/venue-signup.component';
             role: ['user'],
         },
         children: [
-            { path: '', component: HomeComponent },
+            { path: '', component: HomeComponent, resolve: { homeData: HomeDataResolver } },
             { path: 'about-us', component: AboutUsComponent },
             {
                 path: 'cancellation',

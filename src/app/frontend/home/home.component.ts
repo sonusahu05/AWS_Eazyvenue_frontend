@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 // import data from '../../../assets/demo/data/navigation.json';
 import { ProductService } from '../../demo/service/productservice';
@@ -12,6 +14,7 @@ import { MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import { CustomValidators } from 'ng2-validation';
 import { EventPlannerService } from 'src/app/services/eventPlanner.service';
+import { SsrStateService } from 'src/app/services/ssr-state.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -79,18 +82,24 @@ export class HomeComponent implements OnInit {
     private formBuilder: FormBuilder,
     private eventPlannerService: EventPlannerService,
     private messageService: MessageService,
+    private ssrState: SsrStateService,
+    private route: ActivatedRoute,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.bodyClass = this.availableClasses[this.currentClassIdx];
     this.changeBodyClass();
   }
 
   changeBodyClass() {
+    // Only manipulate DOM in browser environment
+    if (!this.ssrState.isBrowser()) {
+      return;
+    }
+
     // get html body element
-    const bodyElement = document.body;
+    const bodyElement = this.ssrState.getDocument()?.body;
 
     if (bodyElement) {
-
-
       this.currentClassIdx = this.getNextClassIdx();
       const nextClass = this.availableClasses[this.currentClassIdx];
       const activeClass = this.availableClasses[this.getPrevClassIdx()];
@@ -117,9 +126,8 @@ export class HomeComponent implements OnInit {
   }
   ngOnInit() {
     this.filterCapacityArray = environment.capacity;
-    this.productService.getVenue().then(products => {
-      this.products = products;
-    });
+    
+    // Load basic data synchronously for SSR
     this.eventPlannerForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email, CustomValidators.email]],
@@ -127,8 +135,54 @@ export class HomeComponent implements OnInit {
       mobileNumber: ['', Validators.required],
       capacity: ['', Validators.required],
     });
-    this.getBannerList();
-    //this.getVenueList();
+
+    // Load async data
+    this.loadAsyncData();
+  }
+
+  private loadAsyncData() {
+    // Get resolved data from the route first
+    const resolvedData = this.route.snapshot.data['homeData'];
+    
+    if (resolvedData && resolvedData.banners && resolvedData.banners.length > 0) {
+      // Use resolved data
+      this.bannerList = resolvedData.banners;
+      this.totalRecords = resolvedData.banners.length;
+      this.loading = false;
+      
+      // Process banner images
+      this.bannerList.forEach(element => {
+        if (element.banner_image && element.banner_image.length > 0) {
+          this.bannerImageList = element.banner_image;
+          this.image = this.bannerImageList[0].banner_image_src;
+        }
+      });
+    } else {
+      // Fallback: check if we have cached banner data from SSR
+      const cachedBannerData = this.ssrState.getState<any>('bannerData');
+      
+      if (cachedBannerData) {
+        // Use cached data
+        this.bannerList = cachedBannerData.bannerList || [];
+        this.bannerImageList = cachedBannerData.bannerImageList || [];
+        this.image = cachedBannerData.image || null;
+        this.totalRecords = cachedBannerData.totalRecords || 0;
+        this.loading = false;
+        
+        // Clean up the cached state
+        this.ssrState.removeState('bannerData');
+      } else {
+        // Load banner data fresh (fallback for browser navigation)
+        this.getBannerList();
+      }
+    }
+
+    this.ssrState.onBrowser(() => {
+      // Only load heavy data in browser
+      this.productService.getVenue().then(products => {
+        this.products = products;
+      });
+    });
   }
   // convenience getter for easy access to form fields
   get f() {
@@ -146,15 +200,37 @@ export class HomeComponent implements OnInit {
     this.BannerService.getbannerList(query).subscribe(
       data => {
         this.loading = false;
-        this.bannerList = data.data.items;
-        this.totalRecords = data.data.totalCount;
-        this.bannerList.forEach(element => {
-          this.bannerImageList = element.banner_image;
-          this.image = this.bannerImageList[0].banner_image_src;
-        });
+        if (data && data.data && data.data.items) {
+          this.bannerList = data.data.items;
+          this.totalRecords = data.data.totalCount;
+          this.bannerList.forEach(element => {
+            if (element.banner_image && element.banner_image.length > 0) {
+              this.bannerImageList = element.banner_image;
+              this.image = this.bannerImageList[0].banner_image_src;
+            }
+          });
+
+          // Cache data for SSR transfer
+          if (this.ssrState.isServer()) {
+            this.ssrState.setState('bannerData', {
+              bannerList: this.bannerList,
+              bannerImageList: this.bannerImageList,
+              image: this.image,
+              totalRecords: this.totalRecords
+            });
+          }
+        }
       },
       err => {
-        this.errorMessage = err.error.message;
+        this.loading = false;
+        console.warn('Failed to load banner data:', err);
+        // Set default values for SSR fallback
+        this.bannerList = [];
+        this.bannerImageList = [];
+        this.image = null;
+        if (err && err.error && err.error.message) {
+          this.errorMessage = err.error.message;
+        }
       });
   }
   // getVenueList() {

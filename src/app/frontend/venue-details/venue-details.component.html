@@ -847,7 +847,7 @@
                                             <textarea [(ngModel)]="newReview.reviewdescription" name="reviewDescription" id="reviewDescription" class="form-control" placeholder="Share your experience..." rows="4" required style="border-radius: 6px;"></textarea>
                                         </div>
                                         <div class="d-flex justify-content-end gap-2 mt-3">
-                                            <button type="submit" class="btn btn-success px-4" [disabled]="!reviewForm.valid" style="border-radius: 6px; font-weight: 500;">
+                                            <button type="submit" class="btn btn-success px-4" [disabled]="!reviewForm.valid" style="border-radius: 6px; font-weight: 500; margin-right: 10px;">
                                                 <i class="pi pi-check" style="margin-right: 4px;"></i>Submit
                                             </button>
                                             <button type="button" class="btn btn-light px-4" (click)="toggleReviewForm()" style="border-radius: 6px; border: 1px solid #ddd; font-weight: 500;">
@@ -1606,122 +1606,7 @@
         </div>
     </div>
 </div>
-<!-- Similar Venues Section (existing) -->
-<div class="similar-venues-section" *ngIf="similarVenues?.length">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h3 class="section-title">Similar Venues</h3>
-                <div class="similar-venues-wrapper">
-                    <div class="similar-venues-container"
-                         #similarVenuesContainer
-                         (scroll)="onSimilarVenuesScroll()"
-                         style="display: flex; overflow-x: auto; overflow-y: hidden; gap: 20px; padding: 10px 0; scroll-behavior: smooth;">
 
-                        <div class="venue-card"
-                             *ngFor="let venue of similarVenues; trackBy: trackByVenueId"
-                             (click)="getVenueDetails(venue.metaUrl)"
-                             style="flex: 0 0 280px; cursor: pointer; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s;"
-                             onmouseover="this.style.transform='translateY(-2px)'"
-                             onmouseout="this.style.transform='translateY(0)'">
-
-                            <!-- Optimized Image Display -->
-                            <div class="venue-image" style="height: 200px; overflow: hidden; position: relative;">
-                                <img *ngIf="venue.venueImage && venue.venueImage[0] && venue.venueImage[0].venue_image_src; else defaultImg"
-                                     [src]="venue.venueImage[0].venue_image_src"
-                                     [alt]="venue.name"
-                                     loading="lazy"
-                                     style="width: 100%; height: 100%; object-fit: cover;">
-
-                                <ng-template #defaultImg>
-                                    <div style="width: 100%; height: 100%; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d;">
-                                        <i class="pi pi-image" style="font-size: 2rem;"></i>
-                                    </div>
-                                </ng-template>
-
-                                <!-- Assured Badge -->
-                                <div class="listing-badges" style="position: absolute; top: 10px; left: 10px;" *ngIf="venue.assured">
-                                    <span class="listing-badge Assured" style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                                        <i class="pi pi-check"></i> Assured
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="venue-info" style="padding: 15px;">
-                                <h5 class="venue-name" style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #333; line-height: 1.2;">
-                                    {{ venue.name }}
-                                </h5>
-
-                                <!-- Location with Icon -->
-                                <div class="category-icon" style="margin-bottom: 10px;">
-                                    <div class="location" style="display: flex; align-items: center; gap: 5px;">
-                                        <span class="icon">
-                                            <img src="assets/img/svg/location-icon.svg" style="width: 12px; height: 12px;" />
-                                        </span>
-                                        <span class="city" style="font-size: 13px; color: #666;">
-                                            <span *ngIf="venue.subarea">{{ venue.subarea }}</span>
-                                            <span *ngIf="venue.subarea && venue.cityname">, </span>
-                                            <span *ngIf="venue.cityname">{{ venue.cityname }}</span>
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- Price Information -->
-                                <div class="price-icons" style="margin-bottom: 10px;">
-                                    <div class="price-div">
-                                        <div class="acr-listing-icons pt-0">
-                                            <div class="acr-listing-icon" style="display: flex; align-items: center; gap: 5px; font-size: 13px; color: #666;">
-                                                <i class="pi pi-users" style="font-size: 12px;"></i>
-                                                Per Person:
-                                                <span *ngIf="venue.minPrice && venue.minPrice > 0"
-                                                      class="acr-listing-icon-value"
-                                                      style="font-weight: 600; color: #333;">
-                                                    ₹{{ venue.minPrice }}
-                                                </span>
-                                                <span *ngIf="!venue.minPrice || venue.minPrice == 0"
-                                                      class="acr-listing-icon-value"
-                                                      style="font-weight: 600; color: #999;">
-                                                    N/A
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- View Details Button -->
-                                <div class="listing-gallery-wrapper" style="display: flex; justify-content: space-between; align-items: center;">
-                                    <a class="btn-custom btn-sm secondary"
-                                       style="background: #007bff; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; border: none; cursor: pointer;">
-                                        View Details
-                                    </a>
-
-                                    <!-- Ratings -->
-                                    <div class="review-list" style="display: flex; align-items: center; gap: 8px; font-size: 11px;">
-                                        <div class="icon-review google-ratings" style="display: flex; align-items: center; gap: 2px;" *ngIf="venue.googleRating">
-                                            <img src="assets/img/svg/google.png" alt="" style="width: 12px; height: 12px;" />
-                                            <i class="pi pi-star-fill" style="font-size: 10px; color: #ffc107;"></i>
-                                            <span class="rating-style" style="color: #666;">
-                                                <b>{{ venue.googleRating }}</b>/5
-                                            </span>
-                                        </div>
-                                        <div class="vl" style="width: 1px; height: 12px; background: #ddd;" *ngIf="venue.googleRating && venue.eazyVenueRating"></div>
-                                        <div class="icon-review eazy-venue-ratings" style="display: flex; align-items: center; gap: 2px;" *ngIf="venue.eazyVenueRating">
-                                            <img src="assets/images/logo.png" alt="" style="width: 12px; height: 12px;" />
-                                            <i class="pi pi-star-fill" style="font-size: 10px; color: #ffc107;"></i>
-                                            <span class="rating-style" style="color: #666;">
-                                                <b>{{ venue.eazyVenueRating }}</b>/5
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Frequent Vendors Nearby Section (NEW) -->
 <div class="frequent-vendors-section" *ngIf="nearbyVendors?.length">
@@ -1875,6 +1760,123 @@
         </div>
     </div>
 </div>
+<!-- Similar Venues Section (existing) -->
+<div class="similar-venues-section" *ngIf="similarVenues?.length">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="section-title">Similar Venues</h3>
+                <div class="similar-venues-wrapper">
+                    <div class="similar-venues-container"
+                         #similarVenuesContainer
+                         (scroll)="onSimilarVenuesScroll()"
+                         style="display: flex; overflow-x: auto; overflow-y: hidden; gap: 20px; padding: 10px 0; scroll-behavior: smooth;">
+
+                        <div class="venue-card"
+                             *ngFor="let venue of similarVenues; trackBy: trackByVenueId"
+                             (click)="getVenueDetails(venue.metaUrl)"
+                             style="flex: 0 0 280px; cursor: pointer; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s;"
+                             onmouseover="this.style.transform='translateY(-2px)'"
+                             onmouseout="this.style.transform='translateY(0)'">
+
+                            <!-- Optimized Image Display -->
+                            <div class="venue-image" style="height: 200px; overflow: hidden; position: relative;">
+                                <img *ngIf="venue.venueImage && venue.venueImage[0] && venue.venueImage[0].venue_image_src; else defaultImg"
+                                     [src]="venue.venueImage[0].venue_image_src"
+                                     [alt]="venue.name"
+                                     loading="lazy"
+                                     style="width: 100%; height: 100%; object-fit: cover;">
+
+                                <ng-template #defaultImg>
+                                    <div style="width: 100%; height: 100%; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                        <i class="pi pi-image" style="font-size: 2rem;"></i>
+                                    </div>
+                                </ng-template>
+
+                                <!-- Assured Badge -->
+                                <div class="listing-badges" style="position: absolute; top: 10px; left: 10px;" *ngIf="venue.assured">
+                                    <span class="listing-badge Assured" style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                        <i class="pi pi-check"></i> Assured
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="venue-info" style="padding: 15px;">
+                                <h5 class="venue-name" style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #333; line-height: 1.2;">
+                                    {{ venue.name }}
+                                </h5>
+
+                                <!-- Location with Icon -->
+                                <div class="category-icon" style="margin-bottom: 10px;">
+                                    <div class="location" style="display: flex; align-items: center; gap: 5px;">
+                                        <span class="icon">
+                                            <img src="assets/img/svg/location-icon.svg" style="width: 12px; height: 12px;" />
+                                        </span>
+                                        <span class="city" style="font-size: 13px; color: #666;">
+                                            <span *ngIf="venue.subarea">{{ venue.subarea }}</span>
+                                            <span *ngIf="venue.subarea && venue.cityname">, </span>
+                                            <span *ngIf="venue.cityname">{{ venue.cityname }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Price Information -->
+                                <div class="price-icons" style="margin-bottom: 10px;">
+                                    <div class="price-div">
+                                        <div class="acr-listing-icons pt-0">
+                                            <div class="acr-listing-icon" style="display: flex; align-items: center; gap: 5px; font-size: 13px; color: #666;">
+                                                <i class="pi pi-users" style="font-size: 12px;"></i>
+                                                Per Person:
+                                                <span *ngIf="venue.minPrice && venue.minPrice > 0"
+                                                      class="acr-listing-icon-value"
+                                                      style="font-weight: 600; color: #333;">
+                                                    ₹{{ venue.minPrice }}
+                                                </span>
+                                                <span *ngIf="!venue.minPrice || venue.minPrice == 0"
+                                                      class="acr-listing-icon-value"
+                                                      style="font-weight: 600; color: #999;">
+                                                    N/A
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- View Details Button -->
+                                <div class="listing-gallery-wrapper" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <a class="btn-custom btn-sm secondary"
+                                       style="background: #007bff; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; border: none; cursor: pointer;">
+                                        View Details
+                                    </a>
+
+                                    <!-- Ratings -->
+                                    <div class="review-list" style="display: flex; align-items: center; gap: 8px; font-size: 11px;">
+                                        <div class="icon-review google-ratings" style="display: flex; align-items: center; gap: 2px;" *ngIf="venue.googleRating">
+                                            <img src="assets/img/svg/google.png" alt="" style="width: 12px; height: 12px;" />
+                                            <i class="pi pi-star-fill" style="font-size: 10px; color: #ffc107;"></i>
+                                            <span class="rating-style" style="color: #666;">
+                                                <b>{{ venue.googleRating }}</b>/5
+                                            </span>
+                                        </div>
+                                        <div class="vl" style="width: 1px; height: 12px; background: #ddd;" *ngIf="venue.googleRating && venue.eazyVenueRating"></div>
+                                        <div class="icon-review eazy-venue-ratings" style="display: flex; align-items: center; gap: 2px;" *ngIf="venue.eazyVenueRating">
+                                            <img src="assets/images/logo.png" alt="" style="width: 12px; height: 12px;" />
+                                            <i class="pi pi-star-fill" style="font-size: 10px; color: #ffc107;"></i>
+                                            <span class="rating-style" style="color: #666;">
+                                                <b>{{ venue.eazyVenueRating }}</b>/5
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Enhanced CSS Styles -->
 <style>

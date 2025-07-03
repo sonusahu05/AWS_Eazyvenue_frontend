@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanDeactivate, CanLoad, Route, RouterStateSnapshot, UrlSegment, UrlTree, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { TokenStorageService } from './token-storage.service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -11,11 +12,22 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanDeactivate<u
   rolelist: any[];
   roleId;
   userRole;
-  constructor(private authService: AuthService, private tokenStorageService: TokenStorageService, private router: Router) { }
+  constructor(
+    private authService: AuthService, 
+    private tokenStorageService: TokenStorageService, 
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
   canActivate(
     // next: ActivatedRouteSnapshot,
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    
+    // Allow access during SSR (server-side rendering)
+    if (!isPlatformBrowser(this.platformId)) {
+      return true;
+    }
+    
     var roleArray = route.data.role;
     if (!this.tokenStorageService.isLoggedIn()) {
 

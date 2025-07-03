@@ -1,6 +1,7 @@
 import { ProductService } from '../../demo/service/productservice';
 import { Product } from '../../demo/domain/product';
-import { Component, OnInit, ViewChild, ChangeDetectorRef, HostListener, AfterViewInit, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, HostListener, AfterViewInit, ElementRef, Renderer2, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 // import { OwlOptions } from 'ngx-owl-carousel-o';
 import { FormBuilder, FormGroup, FormArray, Validators, FormControl } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';

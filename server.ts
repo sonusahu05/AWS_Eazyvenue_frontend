@@ -20,6 +20,14 @@ export function app(): express.Express {
   // Our Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
   server.engine('html', ngExpressEngine({
     bootstrap: AppServerModule,
+    inlineCriticalCss: false,
+    // Add timeout for SSR requests
+    providers: [
+      {
+        provide: 'REQUEST_TIMEOUT',
+        useValue: 10000 // 10 seconds timeout
+      }
+    ]
   }));
 
   server.set('view engine', 'html');
@@ -34,7 +42,28 @@ export function app(): express.Express {
 
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
-    res.render(indexHtml, { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] });
+    // Set timeout for SSR rendering
+    res.setTimeout(15000, () => {
+      console.warn('SSR timeout, serving fallback...');
+      res.status(503).send('Server rendering timeout');
+    });
+
+    res.render(indexHtml, { 
+      req, 
+      providers: [
+        { provide: APP_BASE_HREF, useValue: req.baseUrl },
+        { provide: 'REQUEST_URL', useValue: req.url },
+        { provide: 'REQUEST_ORIGIN', useValue: req.get('origin') || '' }
+      ]
+    }, (err, html) => {
+      if (err) {
+        console.error('SSR Error:', err);
+        // Fallback to client-side rendering
+        res.sendFile(join(distFolder, 'index.html'));
+      } else {
+        res.send(html);
+      }
+    });
   });
 
   return server;

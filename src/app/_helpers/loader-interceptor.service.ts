@@ -1,5 +1,6 @@
 // loader-interceptor.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import {
   HttpResponse,
   HttpRequest,
@@ -14,17 +15,27 @@ import { LoaderService } from '../services/loader.service';
 export class LoaderInterceptor implements HttpInterceptor {
   private requests: HttpRequest<any>[] = [];
 
-  constructor(private loaderService: LoaderService) { }
+  constructor(
+    private loaderService: LoaderService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
   removeRequest(req: HttpRequest<any>) {
     const i = this.requests.indexOf(req);
     if (i >= 0) {
       this.requests.splice(i, 1);
     }
-    this.loaderService.isLoading.next(this.requests.length > 0);
+    // Only update loader state in browser
+    if (isPlatformBrowser(this.platformId)) {
+      this.loaderService.isLoading.next(this.requests.length > 0);
+    }
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // Don't show loader during SSR
+    if (!isPlatformBrowser(this.platformId)) {
+      return next.handle(req);
+    }
 
     this.requests.push(req);
 

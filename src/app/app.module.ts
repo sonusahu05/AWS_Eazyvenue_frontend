@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, BrowserTransferStateModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PathLocationStrategy, LocationStrategy } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
@@ -220,6 +220,7 @@ FullCalendarModule.registerPlugins([
 @NgModule({
     imports: [
         BrowserModule.withServerTransition({ appId: 'serverApp' }),
+        BrowserTransferStateModule,
         AngMusicPlayerModule,
         // VimeModule,
         //NgxAudioPlayerModule,
