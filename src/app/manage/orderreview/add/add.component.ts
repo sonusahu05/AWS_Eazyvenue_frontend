@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef,ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef,ViewChild, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from "@angular/forms";
 import { TreeNode } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
@@ -115,7 +116,8 @@ export class AddComponent implements OnInit {
       private formBuilder: FormBuilder,
       private changeDetectorRef: ChangeDetectorRef,
       private sanitizer: DomSanitizer,
-        private httpClient:HttpClient
+        private httpClient:HttpClient,
+        @Inject(PLATFORM_ID) private platformId: Object
 	) { }
 
 	@ViewChild('fileInput') fileInput: FileUpload;
@@ -221,7 +223,7 @@ loadFile(filepath):Observable<Blob> {
     console.log(this.fileInput,'File');
     if(this.fileInput.files.length >0){
     this.fileInput.files.forEach(file => {       
-      Utility.uploadFile(file).subscribe(fileres => {
+      Utility.uploadFile(file, this.platformId).subscribe(fileres => {
         count++;
         this.reviewImage.push(new FormControl(fileres.file));
         console.log(count);
@@ -250,7 +252,7 @@ loadFile(filepath):Observable<Blob> {
       if(this.fileInput.files.length >0){
           this.fileInput.files.forEach(file => { 
             console.log(file);
-            Utility.uploadFile(file).subscribe(fileres => {
+            Utility.uploadFile(file, this.platformId).subscribe(fileres => {
               console.log(fileres);
               count++;           
               console.log(new FormControl(fileres.file));
