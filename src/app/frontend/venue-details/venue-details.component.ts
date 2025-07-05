@@ -417,6 +417,12 @@ export class VenueDetailsComponent implements OnInit {
             });
 
             this.renderer.addClass(this.document.body, 'body-dark');
+            
+            // Initialize user location for analytics
+            this.initializeUserLocation();
+            
+            // Initialize analytics tracking
+            this.initializeAnalyticsTracking();
         }
 
         this.responsiveOptions = [
@@ -2253,13 +2259,6 @@ loadMoreGoogleReviews(): void {
                 }
                 setTimeout(() => this.getSimilarVenues(), 100);
                 this.checkAndStartEnquiryTimer();
-                
-                // Track venue view/click analytics when venue details are loaded
-                if (this.venueDetails) {
-                    setTimeout(() => {
-                        this.trackVenueClick(this.venueDetails);
-                    }, 500); // Small delay to ensure all user data is loaded
-                }
             },
             (err) => {
                 this.errorMessage = err.error.message;
