@@ -1,6 +1,7 @@
 export const environment = {
     production: false,
-    apiUrl: 'https://api.eazyvenue.com/api/',
+    // apiUrl: 'https://api.eazyvenue.com/api/',
+    apiUrl: 'http://localhost:3006/api/',
     googleMapsApiKey: 'AIzaSyDdMU6wNTU1kPRIMyuKtfLKRSpIgr5JL_s',
     ageDiff: 18,
     defaultDate: "february 01 1950 00:00",
@@ -15,7 +16,8 @@ export const environment = {
     defaultDays: 5,
     frontEnd: {
         domain: 'https://eazyvenue.com',
-        picPath: 'https://api.eazyvenue.com'
+        // picPath: 'https://api.eazyvenue.com'
+        picPath: 'http://localhost:3006',
     },
     picture: {
         profilePicFolder: 'src/public/uploads/profilepic/',

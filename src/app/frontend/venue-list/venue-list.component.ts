@@ -292,6 +292,10 @@ displayLimit: number = 25;
     public message;
     public wishlist: any[];
     public totalWishlistRecords;
+    
+    // User details property (similar to venue-details)
+    public fullUserDetails: any;
+    
     sliderimage: any;
     pagescroll: any;
     pageNumber = 1;
@@ -444,10 +448,19 @@ displayLimit: number = 25;
         if (getToken != null) {
             this.isLoggedIn = true;
         }
-        if (this.loggedInUser.userdata != undefined) {
-            this.isLoggedIn = true;
-            this.userId = this.loggedInUser.userdata.id;
+        
+        // Fix user ID assignment to handle different data structures
+        if (this.loggedInUser) {
+            if (this.loggedInUser.userdata) {
+                this.isLoggedIn = true;
+                this.userId = this.loggedInUser.userdata.id;
+            } else if (this.loggedInUser.id) {
+                // Handle direct ID on loggedInUser
+                this.isLoggedIn = true;
+                this.userId = this.loggedInUser.id;
+            }
         }
+        
         if (this.isLoggedIn == true) {
             this.loginRegisterModal = false;
         }
@@ -619,7 +632,7 @@ displayLimit: number = 25;
           }
 
           // Try to get location without bypassing denied check
-          const location = await this.geolocationService.getUserLocation(false, false);
+          const location = await this.geolocationService.getUserLocationWithAddress(false, false);
           this.userLocation = location;
           this.locationEnabled = true;
           this.showLocationPrompt = false;
@@ -666,7 +679,7 @@ displayLimit: number = 25;
           }
 
           // For manual request, bypass denied check to try again
-          const location = await this.geolocationService.getUserLocation(true, true);
+          const location = await this.geolocationService.getUserLocationWithAddress(true, true);
           this.userLocation = location;
           this.locationEnabled = true;
           this.showLocationPrompt = false;

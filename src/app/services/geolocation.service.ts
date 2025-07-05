@@ -1,4 +1,5 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../environments/environment';
 
@@ -7,6 +8,11 @@ export interface UserLocation {
   lng: number;
   accuracy?: number;
   timestamp?: number;
+  city?: string;
+  state?: string;
+  country?: string;
+  postalCode?: string;
+  address?: string;
 }
 
 export interface VenueWithDistance {
@@ -23,7 +29,10 @@ export class GeolocationService {
   private readonly LOCATION_CACHE_KEY = 'user_location_cache';
   private readonly CACHE_DURATION = 300000; // 5 minutes in milliseconds
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private http: HttpClient
+  ) {
     this.loadCachedLocation();
   }
 
@@ -362,5 +371,49 @@ export class GeolocationService {
     } catch (error) {
       console.log('Could not clear location cache:', error);
     }
+  }
+
+  /**
+   * Enhance location with address details using OpenStreetMap Nominatim API
+   */
+  async enhanceLocationWithAddress(location: UserLocation): Promise<UserLocation> {
+    if (!isPlatformBrowser(this.platformId) || !location.lat || !location.lng) {
+      return location;
+    }
+
+    try {
+      const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lng}&addressdetails=1&zoom=16`;
+      
+      const headers = new HttpHeaders({
+        'User-Agent': 'EazyVenue-App/1.0 (https://eazyvenue.com)'
+      });
+
+      const response: any = await this.http.get(nominatimUrl, { headers }).toPromise();
+      
+      if (response && response.address) {
+        const address = response.address;
+        
+        return {
+          ...location,
+          city: address.city || address.town || address.village || address.municipality || '',
+          state: address.state || address.state_district || address.county || '',
+          country: address.country || 'India',
+          postalCode: address.postcode || '',
+          address: response.display_name || ''
+        };
+      }
+    } catch (error) {
+      console.warn('Failed to get address details from OpenStreetMap:', error);
+    }
+
+    return location;
+  }
+
+  /**
+   * Get user location with enhanced address information
+   */
+  async getUserLocationWithAddress(forceRefresh: boolean = false, bypassDeniedCheck: boolean = false): Promise<UserLocation> {
+    const location = await this.getUserLocation(forceRefresh, bypassDeniedCheck);
+    return await this.enhanceLocationWithAddress(location);
   }
 }

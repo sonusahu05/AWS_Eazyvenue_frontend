@@ -52,7 +52,9 @@
                             "babel-runtime/core-js/get-iterator",
                             "babel-runtime/helpers/extends",
                             "babel-runtime/helpers/slicedToArray",
-                            "ng2-validation"
+                            "ng2-validation",
+                            "moment-timezone",
+                            "moment"
                         ]
                     },
                     "configurations": {
