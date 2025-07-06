@@ -580,6 +580,9 @@ export class AnalyticsService {
     const role = userData?.role || userData?.userdata?.role;
     const rolename = userData?.rolename || userData?.userdata?.rolename;
     
+    // Check if user is admin - check both role and rolename fields
+    const isAdmin = role === 'admin' || rolename === 'admin';
+    
     // Construct full name from firstname and lastname
     const firstname = userData?.firstname || userData?.userdata?.firstname || '';
     const lastname = userData?.lastname || userData?.userdata?.lastname || '';
@@ -590,7 +593,7 @@ export class AnalyticsService {
     const venueName = fullName || singleName;
     
     // Venue owner is someone who is not admin but has a venue name
-    const isVenueOwner = (role !== 'admin' && rolename !== 'admin') && venueName;
+    const isVenueOwner = !isAdmin && venueName;
     
     console.log('🏢 VENUE OWNER CHECK:', {
       firstname,
@@ -599,6 +602,7 @@ export class AnalyticsService {
       singleName,
       finalVenueName: venueName,
       isVenueOwner: !!isVenueOwner,
+      isAdmin,
       role,
       rolename
     });
