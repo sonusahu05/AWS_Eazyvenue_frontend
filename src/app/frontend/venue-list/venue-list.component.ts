@@ -852,7 +852,7 @@ displayLimit: number = 25;
 
       handleEnquiry() {
         console.log('Enquiry button clicked');
-        window.location.href = 'https://eazyvenue.com/banquet-halls/wedding/dubai';
+        window.location.href = `${environment.frontEnd.domain}/banquet-halls/wedding/dubai`;
       }
 
       handleShowMoreClick(): void {
@@ -861,7 +861,7 @@ displayLimit: number = 25;
         if (isMobile) {
           this.showHomeSearch();
         } else {
-          window.location.href = 'https://eazyvenue.com/banquet-halls/wedding/mumbai';
+          window.location.href = `${environment.frontEnd.domain}/banquet-halls/wedding/mumbai`;
         }
     }
     getCategoryListNew(){

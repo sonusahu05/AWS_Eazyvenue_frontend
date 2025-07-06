@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
@@ -67,11 +68,15 @@ export interface NominatimResponse {
 })
 export class AnalyticsService {
   private apiUrl = environment.apiUrl + 'analytics/geography';
+  private isBrowser: boolean;
 
   constructor(
     private http: HttpClient,
-    private tokenStorage: TokenStorageService
-  ) { }
+    private tokenStorage: TokenStorageService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { 
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   /**
    * Track venue click/view
@@ -96,9 +101,19 @@ export class AnalyticsService {
   }
 
   /**
-   * Get device information
+   * Get device information (browser only)
    */
   getDeviceInfo(): { userAgent: string; platform: string; browser: string; isMobile: boolean } {
+    if (!this.isBrowser) {
+      // Return default values for SSR
+      return {
+        userAgent: 'SSR-UserAgent',
+        platform: 'server',
+        browser: 'SSR',
+        isMobile: false
+      };
+    }
+
     const userAgent = navigator.userAgent;
     
     // Detect if mobile
@@ -122,9 +137,14 @@ export class AnalyticsService {
   }
 
   /**
-   * Get session ID from localStorage or create new one
+   * Get session ID from localStorage or create new one (browser only)
    */
   getSessionId(): string {
+    if (!this.isBrowser) {
+      // Return a temporary session ID for SSR
+      return 'ssr-temp-session-' + Math.random().toString(36).substr(2, 9);
+    }
+
     let sessionId = localStorage.getItem('analytics_session_id');
     if (!sessionId) {
       sessionId = this.generateSessionId();

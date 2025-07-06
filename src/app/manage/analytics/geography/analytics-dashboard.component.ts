@@ -1,8 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { AnalyticsService } from '../../../services/analytics.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import Chart from 'chart.js/auto';
+
+// Dynamic imports for SSR compatibility
+let jsPDF: any;
+let html2canvas: any;
 
 @Component({
     selector: 'app-analytics-dashboard',
@@ -12,6 +17,7 @@ import Chart from 'chart.js/auto';
 })
 export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     private subscriptions: Subscription = new Subscription();
+    private isBrowser: boolean;
     
     // Dashboard Data
     overviewStats: any = {};
@@ -53,8 +59,10 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     constructor(
         private analyticsService: AnalyticsService,
         private messageService: MessageService,
-        private confirmationService: ConfirmationService
+        private confirmationService: ConfirmationService,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) {
+        this.isBrowser = isPlatformBrowser(this.platformId);
         // Initialize dateRange immediately in constructor to prevent undefined errors
         this.setDefaultDateRange();
     }
@@ -62,9 +70,13 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.setDefaultDateRange(); // Set default dates FIRST
         this.checkUserAccess();
-        this.initializeChartOptions();
-        this.initializeChartData();
-        this.loadDashboardData();
+        
+        // Only initialize charts and load data in browser
+        if (this.isBrowser) {
+            this.initializeChartOptions();
+            this.initializeChartData();
+            this.loadDashboardData();
+        }
     }
     
     checkUserAccess() {
@@ -624,6 +636,11 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     }
     
     updateDeviceChart() {
+        // Only update charts in browser
+        if (!this.isBrowser) {
+            return;
+        }
+
         if (this.overviewStats) {
             this.deviceChartData = {
                 labels: ['Mobile', 'Desktop'],
@@ -780,40 +797,663 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
         };
     }
 
-    exportData() {
-        // Prepare data for export
-        const exportData = {
+    async exportData() {
+        // Check if running in browser
+        if (!this.isBrowser) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Not Available',
+                detail: 'PDF export is only available in the browser'
+            });
+            return;
+        }
+
+        try {
+            // Dynamic import of PDF libraries for SSR compatibility
+            if (!jsPDF || !html2canvas) {
+                this.messageService.add({
+                    severity: 'info',
+                    summary: 'Loading Libraries',
+                    detail: 'Loading PDF generation libraries...'
+                });
+
+                const [jsPDFModule, html2canvasModule] = await Promise.all([
+                    import('jspdf'),
+                    import('html2canvas')
+                ]);
+
+                jsPDF = (jsPDFModule as any).jsPDF || (jsPDFModule as any).default || jsPDFModule;
+                html2canvas = (html2canvasModule as any).default || html2canvasModule;
+            }
+
+            // Show loading message
+            this.messageService.add({
+                severity: 'info',
+                summary: 'Generating PDF',
+                detail: 'Please wait while we generate your high-quality analytics report...'
+            });
+
+            // Ensure all data is loaded first
+            await this.waitForDataLoad();
+            
+            // Force Angular change detection to ensure all templates are rendered
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Temporarily hide loading overlay and dialogs for clean capture
+            const originalLoading = this.loading;
+            const originalVenueDetails = this.showVenueDetails;
+            const originalUserClickDetails = this.showUserClickDetails;
+            
+            this.loading = false;
+            this.showVenueDetails = false;
+            this.showUserClickDetails = false;
+
+            // Wait longer for UI to fully update and render all dynamic content
+            await new Promise(resolve => setTimeout(resolve, 500)); // Reduced from 1000ms to 500ms
+
+            // Get the dashboard element (browser only)
+            const dashboardElement = this.isBrowser ? 
+                document.querySelector('.analytics-dashboard') as HTMLElement : null;
+            
+            if (!dashboardElement) {
+                throw new Error('Dashboard element not found or not in browser environment');
+            }
+
+            // Apply PDF export mode class
+            dashboardElement.classList.add('pdf-export-mode');
+            
+            // Wait a bit more for the PDF mode styles to apply
+            await new Promise(resolve => setTimeout(resolve, 200)); // Reduced from 300ms to 200ms
+
+            // Show processing message
+            this.messageService.add({
+                severity: 'info',
+                summary: 'Processing',
+                detail: 'Capturing dashboard content in high quality...'
+            });
+
+            // Configure html2canvas options for better quality and dynamic content capture
+            const canvas = await html2canvas(dashboardElement, {
+                scale: 2, // Increased from 1 to 1.5 for better quality
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                scrollX: 0,
+                scrollY: 0,
+                width: dashboardElement.scrollWidth,
+                height: dashboardElement.scrollHeight,
+                logging: false, // Disable logging to reduce overhead
+                ignoreElements: (element) => {
+                    // Ignore overlay elements, dialogs, and buttons
+                    return element.classList.contains('p-dialog') ||
+                           element.classList.contains('p-sidebar') ||
+                           element.classList.contains('p-toast') ||
+                           element.classList.contains('loading-overlay') ||
+                           element.tagName === 'P-DIALOG' ||
+                           element.tagName === 'P-SIDEBAR';
+                },
+                onclone: (clonedDoc) => {
+                    console.log('🔄 Processing cloned document for PDF...');
+                    
+                    // Clean up the cloned document
+                    const clonedElement = clonedDoc.querySelector('.analytics-dashboard') as HTMLElement;
+                    if (clonedElement) {
+                        // Remove any loading overlays from clone
+                        const loadingOverlays = clonedElement.querySelectorAll('.loading-overlay');
+                        loadingOverlays.forEach(overlay => overlay.remove());
+                        
+                        // Remove any dialogs or sidebars from clone
+                        const dialogs = clonedElement.querySelectorAll('p-dialog, p-sidebar, .p-dialog, .p-sidebar');
+                        dialogs.forEach(dialog => dialog.remove());
+                        
+                        // Force visibility of all content
+                        const allElements = clonedElement.querySelectorAll('*');
+                        allElements.forEach((el: any) => {
+                            if (el.style.display === 'none' && !el.classList.contains('p-dialog')) {
+                                el.style.display = '';
+                            }
+                        });
+                        
+                        // Ensure table cells and content are visible
+                        const tableCells = clonedElement.querySelectorAll('td, th, .p-datatable-tbody tr');
+                        tableCells.forEach((cell: any) => {
+                            cell.style.opacity = '1';
+                            cell.style.visibility = 'visible';
+                        });
+                        
+                        // Force render quality score values
+                        const qualityScoreCells = clonedElement.querySelectorAll('[data-quality-score]');
+                        qualityScoreCells.forEach((cell: any) => {
+                            const score = cell.getAttribute('data-quality-score');
+                            if (score && !cell.textContent) {
+                                cell.textContent = parseFloat(score).toFixed(2);
+                            }
+                        });
+                        
+                        // Make PDF fallback text visible and styled
+                        const pdfFallbacks = clonedElement.querySelectorAll('.pdf-fallback');
+                        pdfFallbacks.forEach((fallback: any) => {
+                            fallback.style.display = 'inline-block';
+                            fallback.style.padding = '4px 8px';
+                            fallback.style.fontSize = '12px';
+                            fallback.style.fontWeight = 'bold';
+                            fallback.style.color = '#333';
+                            fallback.style.backgroundColor = '#f8f9fa';
+                            fallback.style.border = '1px solid #dee2e6';
+                            fallback.style.borderRadius = '4px';
+                            fallback.style.minWidth = '40px';
+                            fallback.style.textAlign = 'center';
+                        });
+                        
+                        // Hide PrimeNG components that might not render properly
+                        const pTags = clonedElement.querySelectorAll('p-tag');
+                        pTags.forEach((tag: any) => {
+                            tag.style.display = 'none';
+                        });
+                        
+                        // Also hide any .p-tag elements (rendered tags)
+                        const renderedTags = clonedElement.querySelectorAll('.p-tag');
+                        renderedTags.forEach((tag: any) => {
+                            tag.style.display = 'none';
+                        });
+                    }
+                }
+            });
+
+            // Restore original state
+            this.loading = originalLoading;
+            this.showVenueDetails = originalVenueDetails;
+            this.showUserClickDetails = originalUserClickDetails;
+            
+            // Remove PDF export mode class
+            dashboardElement.classList.remove('pdf-export-mode');
+
+            // Calculate PDF dimensions
+            const imgWidth = 210; // A4 width in mm
+            const pageHeight = 295; // A4 height in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+
+            // Create PDF with compression
+            const pdf = new (jsPDF as any)({
+                orientation: 'p',
+                unit: 'mm',
+                format: 'a4',
+                compress: true // Enable compression
+            });
+            let position = 0;
+
+            // Add logo to the first page with maximum quality
+            try {
+                // Try to load SVG logo first for best quality
+                const svgLogo = await this.loadSvgLogo();
+                
+                if (svgLogo) {
+                    // Calculate optimal logo dimensions
+                    const maxLogoWidth = 50; // 50mm for prominent visibility
+                    const aspectRatio = svgLogo.height / svgLogo.width;
+                    const logoWidth = maxLogoWidth;
+                    const logoHeight = logoWidth * aspectRatio;
+                    
+                    // Add SVG logo with maximum quality (positioned top-right)
+                    pdf.addImage(svgLogo.dataUrl, 'PNG', 210 - logoWidth - 10, 10, logoWidth, logoHeight);
+                    
+                    console.log('✅ Ultra-high-quality SVG logo added to PDF:', {
+                        format: 'SVG->PNG',
+                        width: logoWidth,
+                        height: logoHeight,
+                        aspectRatio: aspectRatio
+                    });
+                } else {
+                    // Fallback to PNG logo with maximum quality
+                    const logoImg = new Image();
+                    logoImg.crossOrigin = 'anonymous';
+                    
+                    await new Promise<void>((resolve, reject) => {
+                        logoImg.onload = () => resolve();
+                        logoImg.onerror = () => {
+                            console.warn('Could not load PNG logo either');
+                            resolve();
+                        };
+                        logoImg.src = 'assets/images/eazyvneu-logo.png';
+                    });
+                    
+                    if (logoImg.complete && logoImg.naturalWidth > 0) {
+                        const maxLogoWidth = 50;
+                        const aspectRatio = logoImg.naturalHeight / logoImg.naturalWidth;
+                        const logoWidth = maxLogoWidth;
+                        const logoHeight = logoWidth * aspectRatio;
+                        
+                        // Add PNG logo without any compression
+                        pdf.addImage(logoImg.src, 'PNG', 210 - logoWidth - 10, 10, logoWidth, logoHeight);
+                        
+                        console.log('✅ High-quality PNG logo added to PDF');
+                    }
+                }
+            } catch (error) {
+                console.warn('Error adding logo to PDF:', error);
+            }
+
+            // Add title page content
+            pdf.setFontSize(24);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('EazyVenue', 20, 30);
+            
+            pdf.setFontSize(18);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text('Analytics Report', 20, 42);
+            
+            // Add a horizontal line
+            pdf.setDrawColor(44, 62, 80);
+            pdf.setLineWidth(0.5);
+            pdf.line(20, 50, 190, 50);
+            
+            pdf.setFontSize(12);
+            const reportDate = new Date().toLocaleDateString('en-GB');
+            const reportTime = new Date().toLocaleTimeString('en-GB');
+            pdf.text(`Generated on: ${reportDate} at ${reportTime}`, 20, 65);
+            
+            if (this.dateRange && this.dateRange.length === 2) {
+                const fromDate = this.dateRange[0].toLocaleDateString('en-GB');
+                const toDate = this.dateRange[1].toLocaleDateString('en-GB');
+                pdf.text(`Date Range: ${fromDate} - ${toDate}`, 20, 75);
+            }
+            
+            if (this.isVenueOwner && this.currentVenueName) {
+                pdf.text(`Venue: ${this.currentVenueName}`, 20, 85);
+            } else if (this.isAdmin) {
+                pdf.text('Report Type: Admin - All Venues', 20, 85);
+            }
+
+            // Add summary statistics
+            pdf.setFontSize(14);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Summary Statistics:', 20, 105);
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'normal');
+            
+            let yPos = 115;
+            if (this.overviewStats) {
+                pdf.text(`Total Clicks: ${this.formatNumber(this.overviewStats.totalClicks || 0)}`, 25, yPos);
+                yPos += 8;
+                pdf.text(`Active Venues: ${this.formatNumber(this.overviewStats.uniqueVenuesCount || 0)}`, 25, yPos);
+                yPos += 8;
+                pdf.text(`Unique Visitors: ${this.formatNumber(this.overviewStats.uniqueUsersCount || 0)}`, 25, yPos);
+                yPos += 8;
+                pdf.text(`Average Quality Score: ${(this.overviewStats.averageQualityScore || 0).toFixed(2)}`, 25, yPos);
+                yPos += 8;
+                pdf.text(`Mobile Usage: ${(this.overviewStats.mobilePercentage || 0).toFixed(1)}%`, 25, yPos);
+                yPos += 8;
+                pdf.text(`Desktop Usage: ${(100 - (this.overviewStats.mobilePercentage || 0)).toFixed(1)}%`, 25, yPos);
+            }
+
+            // Add new page for dashboard content
+            pdf.addPage();
+
+            // Add dashboard screenshot with optimized compression
+            const imgData = canvas.toDataURL('image/png'); // Increased from 0.7 to 0.85 for better quality
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            // Add additional pages if needed
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            // Generate filename
+            const venueText = this.isVenueOwner && this.currentVenueName ? 
+                `-${this.currentVenueName.replace(/[^a-zA-Z0-9]/g, '_')}` : '';
+            const dateText = new Date().toISOString().split('T')[0];
+            const filename = `EazyVenue_Analytics${venueText}_${dateText}.pdf`;
+
+            // Save the PDF
+            pdf.save(filename);
+
+            // Show success message
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Export Successful',
+                detail: `Analytics report exported as ${filename}`
+            });
+
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Export Failed',
+                detail: 'Failed to generate PDF report. Please try again.'
+            });
+        }
+    }
+    
+    /**
+     * Load SVG logo and convert to high-quality PNG for PDF (browser only)
+     */
+    private async loadSvgLogo(): Promise<{dataUrl: string, width: number, height: number} | null> {
+        // Only run in browser
+        if (!this.isBrowser) {
+            return null;
+        }
+
+        try {
+            // Fetch the SVG content
+            const response = await fetch('assets/images/logo/eazyvneu-logo.svg');
+            if (!response.ok) {
+                console.warn('Could not fetch SVG logo');
+                return null;
+            }
+            
+            const svgText = await response.text();
+            
+            // Create SVG blob
+            const svgBlob = new Blob([svgText], { type: 'image/svg+xml' });
+            const svgUrl = URL.createObjectURL(svgBlob);
+            
+            // Create image from SVG
+            const img = new Image();
+            
+            return new Promise((resolve) => {
+                img.onload = () => {
+                    // Create high-resolution canvas for SVG rendering (browser only)
+                    if (!this.isBrowser) {
+                        resolve(null);
+                        return;
+                    }
+                    
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Use high DPI for maximum quality
+                    const scaleFactor = 4; // 4x resolution for ultra-sharp logo
+                    canvas.width = img.width * scaleFactor;
+                    canvas.height = img.height * scaleFactor;
+                    
+                    // Scale context for high-DPI rendering
+                    ctx?.scale(scaleFactor, scaleFactor);
+                    
+                    // Set high-quality rendering settings
+                    if (ctx) {
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = 'high';
+                        
+                        // Clear canvas with transparent background
+                        ctx.clearRect(0, 0, img.width, img.height);
+                        
+                        // Draw SVG with maximum quality
+                        ctx.drawImage(img, 0, 0, img.width, img.height);
+                    }
+                    
+                    // Convert to PNG with maximum quality
+                    const dataUrl = canvas.toDataURL('image/png', 1.0); // 100% quality
+                    
+                    // Clean up
+                    URL.revokeObjectURL(svgUrl);
+                    
+                    console.log('🎨 SVG logo converted to ultra-high-quality PNG:', {
+                        originalSize: `${img.width}x${img.height}`,
+                        canvasSize: `${canvas.width}x${canvas.height}`,
+                        scaleFactor: scaleFactor,
+                        quality: '100%'
+                    });
+                    
+                    resolve({
+                        dataUrl: dataUrl,
+                        width: img.width,
+                        height: img.height
+                    });
+                };
+                
+                img.onerror = () => {
+                    console.warn('Could not load SVG as image');
+                    URL.revokeObjectURL(svgUrl);
+                    resolve(null);
+                };
+                
+                img.src = svgUrl;
+            });
+            
+        } catch (error) {
+            console.warn('Error processing SVG logo:', error);
+            return null;
+        }
+    }
+    
+    // Helper methods for PDF export
+    private async waitForDataLoad(): Promise<void> {
+        // Wait for any pending data loads
+        while (this.loading) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        // Check if essential data is loaded
+        let attempts = 0;
+        const maxAttempts = 50; // 5 seconds max wait
+        
+        while (attempts < maxAttempts) {
+            const hasOverviewStats = this.overviewStats && Object.keys(this.overviewStats).length > 0;
+            const hasPopularVenues = this.popularVenues && this.popularVenues.length > 0;
+            const hasTopSubareas = this.topSubareas && this.topSubareas.length > 0;
+            
+            if (hasOverviewStats && hasPopularVenues && hasTopSubareas) {
+                console.log('✅ All essential data loaded for PDF export');
+                break;
+            }
+            
+            console.log(`⏳ Waiting for data... Attempt ${attempts + 1}/${maxAttempts}`, {
+                hasOverviewStats,
+                hasPopularVenues,
+                hasTopSubareas
+            });
+            
+            await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
+        }
+        
+        // Give extra time for charts and tables to render completely
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Reduced from 2000ms to 1000ms
+        
+        console.log('📊 Data check before PDF export:', {
             overviewStats: this.overviewStats,
-            popularVenues: this.popularVenues,
-            deviceAnalytics: this.deviceAnalytics,
-            dateRange: this.dateRange,
-            exportedAt: new Date()
-        };
-        
-        // Convert to JSON and download
-        const dataStr = JSON.stringify(exportData, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `analytics-export-${new Date().toISOString().split('T')[0]}.json`;
-        link.click();
-        URL.revokeObjectURL(url);
-        
-        this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Analytics data exported successfully'
+            popularVenuesCount: this.popularVenues?.length || 0,
+            topSubareasCount: this.topSubareas?.length || 0,
+            timelineDataCount: this.timelineAnalytics?.length || 0,
+            sampleSubarea: this.topSubareas?.[0] || null,
+            sampleVenue: this.popularVenues?.[0] || null,
+            sampleVenueQualityScore: this.popularVenues?.[0]?.averageQualityScore || 'N/A',
+            overviewQualityScore: this.overviewStats?.averageQualityScore || 'N/A'
         });
     }
     
+    private enhanceChartsForPdf(): void {
+        // Enhance chart colors for better PDF visibility
+        this.updateChartColorsForPdf();
+    }
+    
+    private updateChartColorsForPdf(): void {
+        // Update device chart colors
+        if (this.deviceChartData && this.deviceChartData.datasets) {
+            this.deviceChartData.datasets.forEach((dataset: any) => {
+                if (dataset.backgroundColor && Array.isArray(dataset.backgroundColor)) {
+                    dataset.backgroundColor = [
+                        '#2C3E50', // Dark blue-gray
+                        '#E74C3C', // Red
+                        '#F39C12', // Orange
+                        '#27AE60', // Green
+                        '#8E44AD'  // Purple
+                    ];
+                }
+                if (dataset.borderColor && Array.isArray(dataset.borderColor)) {
+                    dataset.borderColor = [
+                        '#1A252F', // Darker blue-gray
+                        '#C0392B', // Darker red
+                        '#D68910', // Darker orange
+                        '#1E8449', // Darker green
+                        '#6C3483'  // Darker purple
+                    ];
+                }
+            });
+        }
+        
+        // Update venue clicks chart colors
+        if (this.venueClicksChartData && this.venueClicksChartData.datasets) {
+            this.venueClicksChartData.datasets.forEach((dataset: any) => {
+                dataset.backgroundColor = '#2C3E50';
+                dataset.borderColor = '#1A252F';
+                dataset.hoverBackgroundColor = '#34495E';
+            });
+        }
+        
+        // Update timeline chart colors
+        if (this.timelineChartData && this.timelineChartData.datasets) {
+            this.timelineChartData.datasets.forEach((dataset: any, index: number) => {
+                const colors = ['#2C3E50', '#E74C3C', '#F39C12', '#27AE60'];
+                dataset.backgroundColor = colors[index % colors.length];
+                dataset.borderColor = colors[index % colors.length];
+                dataset.pointBackgroundColor = colors[index % colors.length];
+                dataset.pointBorderColor = '#FFFFFF';
+                dataset.pointBorderWidth = 2;
+            });
+        }
+        
+        // Update subarea chart colors
+        if (this.subareaChartData && this.subareaChartData.datasets) {
+            this.subareaChartData.datasets.forEach((dataset: any) => {
+                dataset.backgroundColor = '#2C3E50';
+                dataset.borderColor = '#1A252F';
+                dataset.hoverBackgroundColor = '#34495E';
+            });
+        }
+    }
+    
+    private restoreOriginalCharts(): void {
+        // Restore original chart colors after PDF export
+        this.updateDeviceChart();
+        this.updateVenueClicksChart();
+        this.updateTimelineChart();
+        this.updateSubareaChart();
+    }
+    
+    private hideElementsForPdf(hide: boolean): void {
+        // Only run in browser
+        if (!this.isBrowser) {
+            return;
+        }
+
+        if (!this.isBrowser) {
+            return;
+        }
+
+        const dashboard = document.querySelector('.analytics-dashboard') as HTMLElement;
+        const elementsToHide = [
+            '.header-actions',
+            '.p-button',
+            'button',
+            '.loading-overlay',
+            '.p-sidebar',
+            '.p-dialog',
+            '.p-toast'
+        ];
+        
+        if (hide) {
+            // Add PDF export mode class
+            if (dashboard) {
+                dashboard.classList.add('pdf-export-mode');
+            }
+            
+            // Add PDF mode to chart contents
+            const chartContents = document.querySelectorAll('.chart-content');
+            chartContents.forEach((chart: any) => chart.classList.add('pdf-mode'));
+        } else {
+            // Remove PDF export mode class
+            if (dashboard) {
+                dashboard.classList.remove('pdf-export-mode');
+            }
+            
+            // Remove PDF mode from chart contents
+            const chartContents = document.querySelectorAll('.chart-content');
+            chartContents.forEach((chart: any) => chart.classList.remove('pdf-mode'));
+        }
+        
+        elementsToHide.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach((element: any) => {
+                if (hide) {
+                    element.style.display = 'none';
+                } else {
+                    element.style.display = '';
+                }
+            });
+        });
+    }
+    
+    private addPdfHeader(pdf: any): void {
+        // Add header background
+        pdf.setFillColor(44, 62, 80); // Dark blue-gray
+        pdf.rect(0, 0, 210, 25, 'F');
+        
+        // Add title
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(16);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('EazyVenue Analytics Dashboard', 20, 15);
+        
+        // Add generation info
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-GB');
+        const timeStr = now.toLocaleTimeString('en-GB');
+        pdf.text(`Generated on ${dateStr} at ${timeStr}`, 20, 21);
+        
+        // Add venue info if applicable
+        if (this.isVenueOwner && this.currentVenueName) {
+            pdf.text(`Venue: ${this.currentVenueName}`, 120, 15);
+        } else if (this.isAdmin) {
+            pdf.text('All Venues Report', 120, 15);
+        }
+        
+        // Add date range
+        if (this.dateRange && this.dateRange.length === 2) {
+            const fromDate = this.dateRange[0].toLocaleDateString('en-GB');
+            const toDate = this.dateRange[1].toLocaleDateString('en-GB');
+            pdf.text(`Period: ${fromDate} - ${toDate}`, 120, 21);
+        }
+        
+        // Reset text color
+        pdf.setTextColor(0, 0, 0);
+    }
+    
+    private addPdfFooter(pdf: any, pageNum: number, totalPages: number): void {
+        // Add footer line
+        pdf.setDrawColor(44, 62, 80);
+        pdf.setLineWidth(0.5);
+        pdf.line(20, 275, 190, 275);
+        
+        // Add footer text
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(100, 100, 100);
+        
+        // Left side - company info
+        pdf.text('EazyVenue Analytics Dashboard', 20, 280);
+        pdf.text('© 2025 EazyVenue. All rights reserved.', 20, 285);
+        
+        // Right side - page number
+        pdf.text(`Page ${pageNum} of ${totalPages}`, 190 - 20, 280, { align: 'right' });
+        pdf.text(new Date().toLocaleDateString('en-GB'), 190 - 20, 285, { align: 'right' });
+    }
+    
     formatNumber(num: number): string {
+        if (!num && num !== 0) return '0';
         if (num >= 1000000) {
             return (num / 1000000).toFixed(1) + 'M';
         } else if (num >= 1000) {
             return (num / 1000).toFixed(1) + 'K';
         }
-        return num?.toString() || '0';
+        return num.toString();
     }
     
     getQualityScoreColor(score: number): string {

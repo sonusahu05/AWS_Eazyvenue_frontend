@@ -47,9 +47,11 @@
             <button 
                 pButton 
                 pRipple 
-                label="Export Data" 
-                icon="pi pi-download" 
+                label="Export PDF" 
+                icon="pi pi-file-pdf" 
                 class="p-button-outlined p-button-sm"
+                pTooltip="Export analytics dashboard as PDF report"
+                tooltipPosition="bottom"
                 (click)="exportData()">
             </button>
         </div>
@@ -111,8 +113,10 @@
                         <i class="pi pi-star"></i>
                     </div>
                     <div class="stats">
-                        <h3>{{ overviewStats.averageQualityScore | number:'1.2-2' }}</h3>
+                        <h3 [attr.data-quality-score]="overviewStats.averageQualityScore">{{ overviewStats.averageQualityScore | number:'1.2-2' }}</h3>
                         <p>Avg Quality Score</p>
+                        <!-- Fallback for PDF -->
+                        <span class="pdf-fallback" style="display: none;">{{ overviewStats.averageQualityScore | number:'1.2-2' }}</span>
                     </div>
                 </div>
             </div>
@@ -263,8 +267,11 @@
                         <td>
                             <p-tag 
                                 [value]="venue.averageQualityScore | number:'1.2-2'" 
-                                [severity]="getQualityScoreColor(venue.averageQualityScore)">
+                                [severity]="getQualityScoreColor(venue.averageQualityScore)"
+                                [attr.data-quality-score]="venue.averageQualityScore">
                             </p-tag>
+                            <!-- Fallback text for PDF capture -->
+                            <span class="pdf-fallback" style="display: none;">{{ venue.averageQualityScore | number:'1.2-2' }}</span>
                         </td>
                         <td>
                             <span class="engagement-level" 
@@ -369,8 +376,11 @@
                         <td>
                             <p-tag 
                                 [value]="device.averageQualityScore | number:'1.2-2'" 
-                                [severity]="getQualityScoreColor(device.averageQualityScore)">
+                                [severity]="getQualityScoreColor(device.averageQualityScore)"
+                                [attr.data-quality-score]="device.averageQualityScore">
                             </p-tag>
+                            <!-- Fallback text for PDF capture -->
+                            <span class="pdf-fallback" style="display: none;">{{ device.averageQualityScore | number:'1.2-2' }}</span>
                         </td>
                         <td>{{ device.averageTimeSpent | number:'1.0-0' }}s</td>
                     </tr>
@@ -572,8 +582,11 @@
                     <td>
                         <p-tag 
                             [value]="subarea.averageQualityScore | number:'1.2-2'" 
-                            [severity]="getQualityScoreColor(subarea.averageQualityScore)">
+                            [severity]="getQualityScoreColor(subarea.averageQualityScore)"
+                            [attr.data-quality-score]="subarea.averageQualityScore">
                         </p-tag>
+                        <!-- Fallback text for PDF capture -->
+                        <span class="pdf-fallback" style="display: none;">{{ subarea.averageQualityScore | number:'1.2-2' }}</span>
                     </td>
                 </tr>
             </ng-template>
@@ -658,8 +671,11 @@
                     <td>
                         <p-tag 
                             [value]="getEngagementDisplay(click)"
-                            [severity]="getQualityScoreColor(click.qualityScore || 0)">
+                            [severity]="getQualityScoreColor(click.qualityScore || 0)"
+                            [attr.data-quality-score]="click.qualityScore">
                         </p-tag>
+                        <!-- Fallback text for PDF capture -->
+                        <span class="pdf-fallback" style="display: none;">{{ getEngagementDisplay(click) }}</span>
                     </td>
                     <td>
                         <i [class]="click.engagement?.submittedEnquiry ? 'pi pi-check text-green-500' : 'pi pi-times text-red-500'"></i>

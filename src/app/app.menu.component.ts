@@ -7,7 +7,6 @@ import { ModuleService } from './services/module.service';
     selector: 'app-menu',
     templateUrl: './app.menu.component.html',
     styleUrls: ['./app.menu.component.scss']
-
 })
 export class AppMenuComponent implements OnInit {
     userData;
@@ -38,14 +37,15 @@ export class AppMenuComponent implements OnInit {
             { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/manage/dashboard'] },
         ];
 
-        // Fetch fresh permissions from backend
-        // Option 1: Fetch role permissions directly
-        this.loadUserPermissions();
-        
-        // Option 2: Fetch all modules and filter by permissions (uncomment to use)
-        // this.loadMenuFromModulesAPI();
+        // Fetch fresh permissions from backend using the new permission_access array
+        this.loadMenuFromModulesAPI();
     }
 
+    /**
+     * @deprecated This method is now deprecated in favor of loadMenuFromModulesAPI 
+     * which uses the new permission_access array from the role document.
+     * This method is kept for backward compatibility only.
+     */
     loadUserPermissions() {
         // Get user ID from stored user data
         const userId = this.userData['userdata']._id;
@@ -58,14 +58,11 @@ export class AppMenuComponent implements OnInit {
                     this.loggedInUserPermissions = roleData.permissions;
                     this.buildMenuFromPermissions();
                 } else {
-                    console.warn('No permissions found for user role');
+                    this.showErrorMenu('No permissions found for user role');
                 }
             },
             error: (error) => {
-                console.error('Error fetching user permissions:', error);
-                // Fallback to localStorage if backend call fails
-                this.loggedInUserPermissions = this.tokenStorage.getUserPermissions();
-                this.buildMenuFromPermissions();
+                this.showErrorMenu('Backend connection failed - unable to load menu');
             }
         });
     }
@@ -111,12 +108,8 @@ export class AppMenuComponent implements OnInit {
     }
 
     // Method to refresh menu (can be called when modules are updated)
-    refreshMenu(useModulesAPI: boolean = false) {
-        if (useModulesAPI) {
-            this.loadMenuFromModulesAPI();
-        } else {
-            this.loadUserPermissions();
-        }
+    refreshMenu() {
+        this.loadMenuFromModulesAPI();
     }
 
     // Alternative method: Fetch modules from backend and filter by user permissions
@@ -129,27 +122,117 @@ export class AppMenuComponent implements OnInit {
             this.moduleService.getModules().toPromise(),
             this.roleService.getRoleDetails(userRoleId).toPromise()
         ]).then(([modulesResponse, roleResponse]) => {
-            if (modulesResponse && roleResponse && roleResponse.permissions) {
-                // Get user's permitted module names
-                const permittedModules = roleResponse.permissions.map(p => p.module);
+            // Handle different response formats
+            let modules = modulesResponse;
+            if (modulesResponse && modulesResponse.data) {
+                modules = modulesResponse.data;
                 
-                // Filter modules based on user permissions
-                const filteredModules = modulesResponse.filter(module => 
-                    permittedModules.includes(module.module)
-                );
-
-                // Build menu from filtered modules
-                this.buildMenuFromModules(filteredModules, roleResponse.permissions);
+                // Check if modules has items property (like {totalCount: 13, items: Array(13)})
+                if (modules.items && Array.isArray(modules.items)) {
+                    modules = modules.items;
+                }
+            }
+            
+            if (modules && Array.isArray(modules) && roleResponse) {
+                // PRIORITY 1: Check for new permission_access array
+                if (roleResponse.permission_access && Array.isArray(roleResponse.permission_access) && roleResponse.permission_access.length > 0) {
+                    this.buildMenuFromPermissionAccess(modules, roleResponse.permission_access);
+                }
+                // Check if permission_access exists but is empty
+                else if (roleResponse.permission_access && Array.isArray(roleResponse.permission_access) && roleResponse.permission_access.length === 0) {
+                    this.buildMenuFromPermissionAccess(modules, []); // This will show only Dashboard
+                }
+                // Check if permission_access field exists but is not an array
+                else if (roleResponse.permission_access !== undefined && !Array.isArray(roleResponse.permission_access)) {
+                    this.showErrorMenu('Invalid permission_access format in role');
+                }
+                // FALLBACK: Use old permissions array ONLY if permission_access doesn't exist at all
+                else if (roleResponse.permission_access === undefined && roleResponse.permissions && Array.isArray(roleResponse.permissions)) {
+                    const permittedModules = roleResponse.permissions.map(p => p.module);
+                    const filteredModules = modules.filter(module => permittedModules.includes(module.module));
+                    this.buildMenuFromModules(filteredModules, roleResponse.permissions);
+                }
+                // ERROR: No valid permission data found
+                else {
+                    this.showErrorMenu('No permission data found for user role - please update role with permission_access array');
+                }
+            } else {
+                this.model = [
+                    { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/manage/dashboard'] },
+                    { label: 'Error: Backend Required', icon: 'pi pi-exclamation-triangle', routerLink: ['/manage/dashboard'] }
+                ];
             }
         }).catch(error => {
-            console.error('Error fetching modules and permissions:', error);
-            // Fallback to localStorage approach
-            this.loggedInUserPermissions = this.tokenStorage.getUserPermissions();
-            this.buildMenuFromPermissions();
+            this.model = [
+                { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/manage/dashboard'] },
+                { label: 'Error: Backend Connection Failed', icon: 'pi pi-exclamation-triangle', routerLink: ['/manage/dashboard'] }
+            ];
         });
     }
 
+    /**
+     * Build menu using permission_access array from role (PRIMARY METHOD)
+     * This matches module names in permission_access with modules collection
+     */
+    buildMenuFromPermissionAccess(modules: any[], permissionAccess: string[]) {
+        // Store permission access for other methods
+        this.loggedInUserPermissions = permissionAccess.map(moduleName => ({
+            module: moduleName,
+            permission: { edit: true, view: true }
+        }));
+        
+        // Reset model to dashboard only
+        this.model = [
+            { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/manage/dashboard'] },
+        ];
+
+        // Filter modules based on permission_access array
+        const allowedModules = modules.filter(module => 
+            permissionAccess.includes(module.module)
+        );
+
+        // Build menu from allowed modules
+        allowedModules.forEach(module => {
+            let obj = {
+                label: module.module,
+                icon: 'pi ' + (module.icon || 'pi-circle'),
+                routerLink: [module.url || '/manage/' + module.module.toLowerCase().replace(/\s+/g, '-')]
+            };
+            
+            let subData = [];
+            if (module.submodule && module.submodule.length > 0) {
+                // Show all submodules if parent module is allowed
+                module.submodule.forEach(submod => {
+                    let subDataObj = {
+                        label: submod.module,
+                        icon: 'pi ' + (submod.icon || 'pi-circle'),
+                        routerLink: [submod.url || '/manage/' + submod.module.toLowerCase().replace(/\s+/g, '-')]
+                    };
+                    subData.push(subDataObj);
+                });
+            }
+            
+            if (subData.length > 0) {
+                let subObj = {
+                    label: module.module,
+                    icon: 'pi ' + (module.icon || 'pi-circle'),
+                    routerLink: [module.url || '/manage/' + module.module.toLowerCase().replace(/\s+/g, '-')],
+                    items: subData
+                };
+                this.model.push(subObj);
+            } else {
+                this.model.push(obj);
+            }
+        });
+        
+        // Add custom venue menu items if user has venue permissions
+        this.addCustomVenueMenuItems();
+    }
+
     buildMenuFromModules(modules, userPermissions) {
+        // Store permissions for other methods
+        this.loggedInUserPermissions = userPermissions;
+        
         // Reset model to dashboard only
         this.model = [
             { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/manage/dashboard'] },
@@ -197,7 +280,44 @@ export class AppMenuComponent implements OnInit {
                 } else {
                     this.model.push(obj);
                 }
-            }
+            } 
         });
+        
+        // Add custom venue menu items (if user has venue permissions)
+        this.addCustomVenueMenuItems();
+    }
+
+    /**
+     * Add custom venue-specific menu items for venue owners
+     */
+    addCustomVenueMenuItems() {
+        // Check if user is a venue owner or has venue-related permissions
+        if (this.userRole === 'Venue' || this.userRole === 'VenueOwner') {
+            const venueAnalyticsItem = {
+                label: 'Analytics',
+                icon: 'pi pi-chart-line',
+                items: [
+                    { label: 'Venue Analytics', icon: 'pi pi-chart-bar', routerLink: ['/manage/venue-analytics'] },
+                    { label: 'Click Analytics', icon: 'pi pi-eye', routerLink: ['/manage/click-analytics'] },
+                    { label: 'Revenue Analytics', icon: 'pi pi-dollar', routerLink: ['/manage/revenue-analytics'] }
+                ]
+            };
+            
+            // Add venue analytics if not already present
+            const existingAnalytics = this.model.find(item => item.label === 'Analytics');
+            if (!existingAnalytics) {
+                this.model.push(venueAnalyticsItem);
+            }
+        }
+    }
+
+    /**
+     * Show error menu when no valid permissions are found
+     */
+    showErrorMenu(errorMessage: string) {
+        this.model = [
+            { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/manage/dashboard'] },
+            { label: `Error: ${errorMessage}`, icon: 'pi pi-exclamation-triangle', routerLink: ['/manage/dashboard'] }
+        ];
     }
 }

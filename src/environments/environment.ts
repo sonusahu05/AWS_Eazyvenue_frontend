@@ -9,15 +9,16 @@ export const environment = {
     yearRange: "2022:2060",
     yearDiff: 1,
     pagination: [10, 20, 50, 100, 1000, { showAll: 'All' }],
-    productUploadUrl: 'https://api.eazyvenue.com/uploads/',
+    // Use production server for images since that's where they're stored
+    productUploadUrl: 'https://api.eazyvenue.com/uploads',
     uploadUrl: 'src/public/uploads/cmsPic/',
     imageSize: 2000000,
     videoSize: 20000000,
     defaultDays: 5,
     frontEnd: {
-        domain: 'https://eazyvenue.com',
-        // picPath: 'https://api.eazyvenue.com'
-        picPath: 'http://localhost:3006',
+        // Use production server for images
+        domain: 'http://localhost:4200',
+        picPath: 'https://api.eazyvenue.com'
     },
     picture: {
         profilePicFolder: 'src/public/uploads/profilepic/',
@@ -30,7 +31,7 @@ export const environment = {
         port: 3006,
         root: '/api',
     },
-    razorPayKeyLive:'rzp_test_Mn8kN9Uyp2RmWd',
+    razorPayKeyLive:'rzp_live_oyCHow0OxfS8oL',
     maxVenuePrice: 1000000,
     minVenuePrice: 10000,
     capacity: [
