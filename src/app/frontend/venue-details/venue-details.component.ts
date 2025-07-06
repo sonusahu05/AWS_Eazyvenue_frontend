@@ -1101,12 +1101,26 @@ export class VenueDetailsComponent implements OnInit {
                 lng: this.userLocation.lng,
                 // Use the enhanced address info from OpenStreetMap if available
                 city: this.userLocation.city || undefined,
+                subarea: this.userLocation.subarea || undefined,
                 state: this.userLocation.state || undefined,
                 country: this.userLocation.country || 'India',
                 pincode: this.userLocation.postalCode || undefined
             };
             console.log('Returning location data:', locationData);
             return locationData;
+        }
+        
+        // If venue details are available, use venue location as fallback
+        if (this.venueDetails) {
+            const venueLocationData = {
+                city: this.venueDetails.cityname || undefined,
+                subarea: this.venueDetails.subarea || undefined,
+                state: this.venueDetails.statename || undefined,
+                country: 'India',
+                pincode: this.venueDetails.zipcode || undefined
+            };
+            console.log('Returning venue location data:', venueLocationData);
+            return venueLocationData;
         }
         
         // Return basic India location if no specific location available

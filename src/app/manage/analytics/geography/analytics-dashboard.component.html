@@ -1,0 +1,693 @@
+<div class="analytics-dashboard">
+    <p-toast key="toastmsg"></p-toast>
+    <p-confirmDialog></p-confirmDialog>
+    
+    <!-- Header -->
+    <div class="dashboard-header p-d-flex p-jc-between p-ai-center p-mb-4">
+        <div>
+            <h1 class="page-title p-mb-2">
+                {{ isAdmin ? 'Admin Analytics Dashboard' : (isVenueOwner ? currentVenueName + ' Analytics' : 'Venue Analytics Dashboard') }}
+            </h1>
+            <p class="text-muted">
+                {{ isAdmin ? 'Comprehensive insights across all venues' : 'Insights into your venue visitor engagement and behavior' }}
+            </p>
+            <div *ngIf="isVenueOwner" class="venue-owner-notice">
+                <p-tag severity="info" value="Venue Owner View" icon="pi pi-building"></p-tag>
+            </div>
+        </div>
+        
+        <div class="header-actions p-d-flex p-ai-center">
+            <!-- Date Range Filter -->
+            <div class="p-mr-3">
+                <p-calendar 
+                    [(ngModel)]="dateRange"
+                    [showIcon]="true"
+                    [selectionMode]="'range'"
+                    [readonlyInput]="true"
+                    placeholder="Select date range"
+                    dateFormat="dd/mm/yy"
+                    (onSelect)="onDateRangeChange()"
+                    styleClass="p-inputtext-sm">
+                </p-calendar>
+            </div>
+            
+            <!-- Export Button -->
+            <button 
+                pButton 
+                pRipple 
+                label="Export Data" 
+                icon="pi pi-download" 
+                class="p-button-outlined p-button-sm"
+                (click)="exportData()">
+            </button>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div *ngIf="loading" class="loading-overlay">
+        <p-progressSpinner></p-progressSpinner>
+    </div>
+    
+    <!-- Overview Stats Cards -->
+    <div class="p-grid overview-cards p-mb-4">
+        <div class="p-col-12 p-md-3">
+            <div class="overview-card total-clicks">
+                <div class="card-content">
+                    <div class="icon">
+                        <i class="pi pi-chart-line"></i>
+                    </div>
+                    <div class="stats">
+                        <h3>{{ formatNumber(overviewStats.totalClicks) }}</h3>
+                        <p>Total Clicks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-col-12 p-md-3">
+            <div class="overview-card unique-venues">
+                <div class="card-content">
+                    <div class="icon">
+                        <i class="pi pi-building"></i>
+                    </div>
+                    <div class="stats">
+                        <h3>{{ formatNumber(overviewStats.uniqueVenuesCount) }}</h3>
+                        <p>Active Venues</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-col-12 p-md-3">
+            <div class="overview-card unique-users">
+                <div class="card-content">
+                    <div class="icon">
+                        <i class="pi pi-users"></i>
+                    </div>
+                    <div class="stats">
+                        <h3>{{ formatNumber(overviewStats.uniqueUsersCount) }}</h3>
+                        <p>Unique Visitors</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-col-12 p-md-3">
+            <div class="overview-card quality-score">
+                <div class="card-content">
+                    <div class="icon">
+                        <i class="pi pi-star"></i>
+                    </div>
+                    <div class="stats">
+                        <h3>{{ overviewStats.averageQualityScore | number:'1.2-2' }}</h3>
+                        <p>Avg Quality Score</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="p-grid charts-section p-mb-4">
+        <!-- Device Distribution Chart -->
+        <div class="p-col-12 p-md-6">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Device Distribution</h3>
+                    <p class="text-muted">Mobile vs Desktop usage</p>
+                </div>
+                <div class="chart-content" style="height: 300px;">
+                    <p-chart 
+                        type="doughnut" 
+                        [data]="deviceChartData" 
+                        [options]="deviceChartOptions"
+                        width="100%"
+                        height="300">
+                    </p-chart>
+                </div>
+                <div class="chart-footer">
+                    <div class="device-stats p-d-flex p-jc-between">
+                        <div class="stat-item">
+                            <span class="stat-label">Mobile:</span>
+                            <span class="stat-value">{{ overviewStats.mobilePercentage }}%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Desktop:</span>
+                            <span class="stat-value">{{ (100 - overviewStats.mobilePercentage) | number:'1.0-0' }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Popular Venues Chart -->
+        <div class="p-col-12 p-md-6">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Top Performing Venues</h3>
+                    <p class="text-muted">Most visited venues</p>
+                </div>
+                <div class="chart-content" style="height: 300px;">
+                    <p-chart 
+                        type="bar" 
+                        [data]="venueClicksChartData" 
+                        [options]="venueClicksChartOptions"
+                        width="100%"
+                        height="300">
+                    </p-chart>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Timeline and Subareas Charts -->
+    <div class="p-grid charts-section p-mb-4">
+        <!-- Timeline Chart -->
+        <div class="p-col-12 p-lg-8">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Activity Timeline</h3>
+                    <p class="text-muted">Clicks, users, and enquiries over time</p>
+                </div>
+                <div class="chart-content" style="height: 350px;">
+                    <p-chart 
+                        type="line" 
+                        [data]="timelineChartData" 
+                        [options]="timelineChartOptions"
+                        width="100%"
+                        height="350">
+                    </p-chart>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Top Subareas Chart -->
+        <div class="p-col-12 p-lg-4">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Top Subareas</h3>
+                    <p class="text-muted">Most active locations</p>
+                </div>
+                <div class="chart-content" style="height: 350px;">
+                    <p-chart 
+                        type="doughnut" 
+                        [data]="subareaChartData" 
+                        [options]="subareaChartOptions"
+                        width="100%"
+                        height="350">
+                    </p-chart>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Popular Venues Table -->
+    <div class="venues-table-section p-mb-4">
+        <div class="card">
+            <div class="card-header p-d-flex p-jc-between p-ai-center p-mb-3">
+                <div>
+                    <h3>Popular Venues</h3>
+                    <p class="text-muted">Detailed venue performance metrics</p>
+                </div>
+            </div>
+            
+            <p-table 
+                [value]="popularVenues" 
+                [paginator]="true" 
+                [rows]="10"
+                [responsive]="true"
+                styleClass="p-datatable-gridlines"
+                [loading]="loading">
+                
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Venue Name</th>
+                        <th>Total Clicks</th>
+                        <th>Unique Users</th>
+                        <th>Quality Score</th>
+                        <th>Engagement Level</th>
+                        <th>Enquiry Rate</th>
+                        <th>Top Cities</th>
+                        <th>Top Subareas</th>
+                        <th>Actions</th>
+                    </tr>
+                </ng-template>
+                
+                <ng-template pTemplate="body" let-venue>
+                    <tr>
+                        <td>
+                            <span class="venue-name" 
+                                  [pTooltip]="venue.venueName || venue.venueId"
+                                  tooltipPosition="top">
+                                {{ getVenueDisplayName(venue) }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="click-count">{{ venue.clicks | number }}</span>
+                        </td>
+                        <td>
+                            <span class="user-count">{{ venue.uniqueUsersCount | number }}</span>
+                        </td>
+                        <td>
+                            <p-tag 
+                                [value]="venue.averageQualityScore | number:'1.2-2'" 
+                                [severity]="getQualityScoreColor(venue.averageQualityScore)">
+                            </p-tag>
+                        </td>
+                        <td>
+                            <span class="engagement-level" 
+                                  [class]="'level-' + getEngagementLevel(venue.averageQualityScore).toLowerCase()">
+                                {{ getEngagementLevel(venue.averageQualityScore) }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="enquiry-rate">{{ venue.enquiryRate }}%</span>
+                        </td>
+                        <td>
+                            <div class="top-cities">
+                                <span *ngFor="let city of venue.topCities?.slice(0, 3); let last = last" 
+                                      class="city-tag">
+                                    {{ city }}<span *ngIf="!last">, </span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="top-subareas">
+                                <span *ngFor="let subarea of venue.topSubareas?.slice(0, 3); let last = last" 
+                                      class="subarea-tag">
+                                    {{ subarea }}<span *ngIf="!last">, </span>
+                                </span>
+                                <span *ngIf="!venue.topSubareas || venue.topSubareas.length === 0" 
+                                      class="text-muted">-</span>
+                            </div>
+                        </td>
+                        <td>
+                            <button 
+                                pButton 
+                                pRipple 
+                                icon="pi pi-eye" 
+                                class="p-button-rounded p-button-text p-button-sm p-mr-2"
+                                pTooltip="View Details"
+                                (click)="viewVenueDetails(venue)">
+                            </button>
+                            <button 
+                                pButton 
+                                pRipple 
+                                icon="pi pi-users" 
+                                class="p-button-rounded p-button-text p-button-sm"
+                                pTooltip="View User Clicks"
+                                (click)="viewUserClickDetails(venue)">
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+                
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            <div class="empty-state">
+                                <i class="pi pi-chart-bar" style="font-size: 3rem; color: #ccc;"></i>
+                                <h4>No Analytics Data</h4>
+                                <p>No venue analytics data available for the selected period.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    
+    <!-- Device Analytics Table -->
+    <div class="device-analytics-section" *ngIf="deviceAnalytics.length > 0">
+        <div class="card">
+            <div class="card-header p-mb-3">
+                <h3>Device Analytics</h3>
+                <p class="text-muted">Detailed device and platform breakdown</p>
+            </div>
+            
+            <p-table 
+                [value]="deviceAnalytics" 
+                [paginator]="true" 
+                [rows]="10"
+                [responsive]="true"
+                styleClass="p-datatable-gridlines">
+                
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Platform</th>
+                        <th>Browser</th>
+                        <th>Device Type</th>
+                        <th>Total Clicks</th>
+                        <th>Avg Quality Score</th>
+                        <th>Avg Time Spent</th>
+                    </tr>
+                </ng-template>
+                
+                <ng-template pTemplate="body" let-device>
+                    <tr>
+                        <td>{{ device.platform || 'Unknown' }}</td>
+                        <td>{{ device.browser || 'Unknown' }}</td>
+                        <td>
+                            <span class="device-type" [class]="'device-' + (device.isMobile ? 'mobile' : 'desktop')">
+                                <i class="pi" [class]="device.isMobile ? 'pi-mobile' : 'pi-desktop'"></i>
+                                {{ device.isMobile ? 'Mobile' : 'Desktop' }}
+                            </span>
+                        </td>
+                        <td>{{ device.clicks | number }}</td>
+                        <td>
+                            <p-tag 
+                                [value]="device.averageQualityScore | number:'1.2-2'" 
+                                [severity]="getQualityScoreColor(device.averageQualityScore)">
+                            </p-tag>
+                        </td>
+                        <td>{{ device.averageTimeSpent | number:'1.0-0' }}s</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+<!-- Venue Details Sidebar -->
+<p-sidebar 
+    [(visible)]="showVenueDetails" 
+    position="right" 
+    styleClass="venue-details-sidebar"
+    [style]="{width: '60vw'}">
+    
+    <ng-template pTemplate="header">
+        <div class="sidebar-header">
+            <h3>Venue Analytics Details</h3>
+            <p class="text-muted" *ngIf="selectedVenue">{{ selectedVenue.venueName || selectedVenue.venueId }}</p>
+        </div>
+    </ng-template>
+    
+    <div class="venue-details-content" *ngIf="selectedVenueInsights">
+        <!-- Venue Summary Stats -->
+        <div class="venue-summary p-mb-4">
+            <div class="p-grid">
+                <div class="p-col-6 p-md-3">
+                    <div class="summary-stat">
+                        <h4>{{ selectedVenueInsights.totalClicks | number }}</h4>
+                        <p>Total Clicks</p>
+                    </div>
+                </div>
+                <div class="p-col-6 p-md-3">
+                    <div class="summary-stat">
+                        <h4>{{ selectedVenueInsights.averageQualityScore | number:'1.2-2' }}</h4>
+                        <p>Quality Score</p>
+                    </div>
+                </div>
+                <div class="p-col-6 p-md-3">
+                    <div class="summary-stat">
+                        <h4>{{ selectedVenueInsights.averageTimeSpent | number:'1.0-0' }}s</h4>
+                        <p>Avg Time Spent</p>
+                    </div>
+                </div>
+                <div class="p-col-6 p-md-3">
+                    <div class="summary-stat">
+                        <h4>{{ selectedVenueInsights.enquirySubmissions | number }}</h4>
+                        <p>Enquiries</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Timeline Chart -->
+        <div class="timeline-section p-mb-4" *ngIf="selectedVenueTimelineData?.labels">
+            <h4 class="section-title">Click Timeline</h4>
+            <div style="height: 300px;">
+                <p-chart 
+                    type="line" 
+                    [data]="selectedVenueTimelineData" 
+                    [options]="timelineChartOptions"
+                    width="100%"
+                    height="300">
+                </p-chart>
+            </div>
+        </div>
+        
+        <!-- Device Distribution -->
+        <div class="device-section p-mb-4" *ngIf="selectedVenueInsights.deviceStats">
+            <h4 class="section-title">Device Distribution</h4>
+            <div class="device-grid p-grid">
+                <div class="p-col-4">
+                    <div class="device-stat mobile">
+                        <i class="pi pi-mobile"></i>
+                        <div class="device-info">
+                            <h5>{{ selectedVenueInsights.deviceStats.mobile | number }}</h5>
+                            <p>Mobile</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-col-4">
+                    <div class="device-stat desktop">
+                        <i class="pi pi-desktop"></i>
+                        <div class="device-info">
+                            <h5>{{ selectedVenueInsights.deviceStats.desktop | number }}</h5>
+                            <p>Desktop</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-col-4">
+                    <div class="device-stat tablet">
+                        <i class="pi pi-tablet"></i>
+                        <div class="device-info">
+                            <h5>{{ selectedVenueInsights.deviceStats.tablet | number }}</h5>
+                            <p>Tablet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Top Cities -->
+        <div class="cities-section p-mb-4" *ngIf="selectedVenueInsights.cityStats">
+            <h4 class="section-title">Top Cities</h4>
+            <div class="cities-list">
+                <div class="city-item" *ngFor="let city of selectedVenueInsights.cityStats.slice(0, 5)">
+                    <div class="city-info">
+                        <span class="city-name">{{ city.city }}</span>
+                        <span class="city-clicks">{{ city.clicks }} clicks</span>
+                    </div>
+                    <div class="city-progress">
+                        <p-progressBar 
+                            [value]="(city.clicks / selectedVenueInsights.totalClicks) * 100"
+                            [showValue]="false">
+                        </p-progressBar>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Top Pincodes -->
+        <div class="pincodes-section p-mb-4" *ngIf="selectedVenueInsights.topPincodes">
+            <h4 class="section-title">Top Pincodes</h4>
+            <div class="pincodes-list">
+                <p-tag 
+                    *ngFor="let pincode of selectedVenueInsights.topPincodes.slice(0, 5)" 
+                    [value]="pincode.pincode + ' (' + pincode.count + ')'"
+                    severity="info"
+                    styleClass="p-mr-2 p-mb-2">
+                </p-tag>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="actions-section">
+            <button 
+                pButton 
+                pRipple 
+                label="Refresh Insights" 
+                icon="pi pi-refresh" 
+                class="p-button-outlined p-mr-2"
+                (click)="refreshInsights(selectedVenue.venueId)"
+                (click)="closeVenueDetails()">
+            </button>
+            <button 
+                pButton 
+                pRipple 
+                label="Close" 
+                icon="pi pi-times" 
+                class="p-button-secondary"
+                (click)="closeVenueDetails()">
+            </button>
+        </div>
+    </div>
+</p-sidebar>
+
+<!-- Top Subareas Table -->
+<div class="subareas-table-section p-mb-4" *ngIf="topSubareas.length > 0">
+    <div class="card">
+        <div class="card-header p-d-flex p-jc-between p-ai-center p-mb-3">
+            <div>
+                <h3>Top Subareas</h3>
+                <p class="text-muted">Most active geographic locations</p>
+            </div>
+        </div>
+        
+        <p-table 
+            [value]="topSubareas" 
+            [paginator]="true" 
+            [rows]="10"
+            [responsive]="true"
+            styleClass="p-datatable-gridlines"
+            [loading]="loading">
+            
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Subarea</th>
+                    <th>Total Clicks</th>
+                    <th>Unique Users</th>
+                    <th>Unique Venues</th>
+                    <th>Quality Score</th>
+                </tr>
+            </ng-template>
+            
+            <ng-template pTemplate="body" let-subarea>
+                <tr>
+                    <td>
+                        <span class="subarea-name font-bold">{{ subarea.subarea }}</span>
+                    </td>
+                    <td>
+                        <span class="click-count">{{ subarea.clicks | number }}</span>
+                    </td>
+                    <td>
+                        <span class="user-count">{{ subarea.uniqueUsers | number }}</span>
+                    </td>
+                    <td>
+                        <span class="venue-count">{{ subarea.uniqueVenues | number }}</span>
+                    </td>
+                    <td>
+                        <p-tag 
+                            [value]="subarea.averageQualityScore | number:'1.2-2'" 
+                            [severity]="getQualityScoreColor(subarea.averageQualityScore)">
+                        </p-tag>
+                    </td>
+                </tr>
+            </ng-template>
+            
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <div class="empty-state">
+                            <i class="pi pi-map-marker" style="font-size: 3rem; color: #ccc;"></i>
+                            <h4>No Subarea Data</h4>
+                            <p>No subarea analytics data available for the selected period.</p>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<!-- User Click Details Dialog -->
+<p-dialog 
+    header="User Click Details" 
+    [(visible)]="showUserClickDetails" 
+    [modal]="true" 
+    [style]="{width: '80vw', height: '80vh'}"
+    [maximizable]="true"
+    styleClass="user-clicks-dialog">
+    
+    <div class="dialog-content" *ngIf="selectedVenue">
+        <div class="venue-header p-mb-3">
+            <h3>{{ getVenueDisplayName(selectedVenue) }}</h3>
+            <p class="text-muted">User interaction details</p>
+        </div>
+        
+        <p-table 
+            [value]="selectedVenueUserClicks" 
+            [paginator]="true" 
+            [rows]="20"
+            [responsive]="true"
+            styleClass="p-datatable-gridlines"
+            [loading]="loading">
+            
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Date/Time</th>
+                    <th>User</th>
+                    <th>Registration</th>
+                    <th>Location</th>
+                    <th>Device</th>
+                    <th>Engagement</th>
+                    <th>Enquiry</th>
+                    <th *ngIf="isAdmin">Contact Info</th>
+                </tr>
+            </ng-template>
+            
+            <ng-template pTemplate="body" let-click>
+                <tr>
+                    <td>
+                        <span class="timestamp">{{ click.timestamp | date:'dd/MM/yyyy HH:mm' }}</span>
+                    </td>
+                    <td>
+                        <span class="user-info">{{ getUserDisplayInfo(click) }}</span>
+                    </td>
+                    <td>
+                        <p-tag 
+                            [value]="isRegisteredUser(click) ? 'Registered' : 'Anonymous'"
+                            [severity]="isRegisteredUser(click) ? 'success' : 'warning'">
+                        </p-tag>
+                    </td>
+                    <td>
+                        <div class="location-info">
+                            <div>{{ click.location?.city || 'Unknown' }}</div>
+                            <small class="text-muted">{{ click.location?.subarea || '' }}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="device-info">
+                            <i [class]="click.device?.isMobile ? 'pi pi-mobile' : 'pi pi-desktop'"></i>
+                            <span class="p-ml-2">{{ click.device?.platform || 'Unknown' }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <p-tag 
+                            [value]="getEngagementDisplay(click)"
+                            [severity]="getQualityScoreColor(click.qualityScore || 0)">
+                        </p-tag>
+                    </td>
+                    <td>
+                        <i [class]="click.engagement?.submittedEnquiry ? 'pi pi-check text-green-500' : 'pi pi-times text-red-500'"></i>
+                    </td>
+                    <td *ngIf="isAdmin">
+                        <div class="contact-info" *ngIf="isRegisteredUser(click); else noContact">
+                            <div *ngIf="click.user?.userName">{{ click.user.userName }}</div>
+                            <div *ngIf="click.user?.userEmail" class="text-muted">{{ click.user.userEmail }}</div>
+                            <div *ngIf="click.user?.userContact" class="text-muted">{{ click.user.userContact }}</div>
+                        </div>
+                        <ng-template #noContact>
+                            <span class="text-muted">No contact info</span>
+                        </ng-template>
+                    </td>
+                </tr>
+            </ng-template>
+            
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="isAdmin ? 8 : 7" class="text-center">
+                        <div class="empty-state">
+                            <i class="pi pi-users" style="font-size: 3rem; color: #ccc;"></i>
+                            <h4>No User Data</h4>
+                            <p>No user click data available for the selected period.</p>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    
+    <ng-template pTemplate="footer">
+        <button 
+            pButton 
+            pRipple 
+            label="Close" 
+            icon="pi pi-times" 
+            class="p-button-text"
+            (click)="closeUserClickDetails()">
+        </button>
+    </ng-template>
+</p-dialog>
+</div>

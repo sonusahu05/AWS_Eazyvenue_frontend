@@ -13,6 +13,7 @@ export interface UserLocation {
   country?: string;
   postalCode?: string;
   address?: string;
+  subarea?: string;
 }
 
 export interface VenueWithDistance {
@@ -396,6 +397,7 @@ export class GeolocationService {
         return {
           ...location,
           city: address.city || address.town || address.village || address.municipality || '',
+          subarea: address.suburb || address.neighbourhood || address.quarter || address.residential || '',
           state: address.state || address.state_district || address.county || '',
           country: address.country || 'India',
           postalCode: address.postcode || '',

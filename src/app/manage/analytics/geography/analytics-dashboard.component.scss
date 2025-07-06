@@ -1,0 +1,572 @@
+/* Analytics Dashboard Styles */
+.analytics-dashboard {
+  padding: 20px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Header Styles */
+.dashboard-header {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.page-title {
+  color: #2c3e50;
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.text-muted {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.header-actions .p-calendar {
+  min-width: 250px;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Overview Cards */
+.overview-cards {
+  margin-bottom: 30px;
+}
+
+.overview-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-left: 4px solid;
+  height: 120px;
+}
+
+.overview-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.overview-card.total-clicks {
+  border-left-color: #3498db;
+}
+
+.overview-card.unique-venues {
+  border-left-color: #2ecc71;
+}
+
+.overview-card.unique-users {
+  border-left-color: #f39c12;
+}
+
+.overview-card.quality-score {
+  border-left-color: #e74c3c;
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.overview-card .icon {
+  font-size: 2.5rem;
+  margin-right: 20px;
+  width: 60px;
+  text-align: center;
+  opacity: 0.8;
+}
+
+.total-clicks .icon {
+  color: #3498db;
+}
+
+.unique-venues .icon {
+  color: #2ecc71;
+}
+
+.unique-users .icon {
+  color: #f39c12;
+}
+
+.quality-score .icon {
+  color: #e74c3c;
+}
+
+.overview-card .stats h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: #2c3e50;
+}
+
+.overview-card .stats p {
+  margin: 5px 0 0 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Charts Section */
+.charts-section {
+  margin-bottom: 30px;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  height: 100%;
+}
+
+.chart-header {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+}
+
+.chart-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.chart-content {
+  position: relative;
+}
+
+.chart-footer {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.device-stats {
+  gap: 20px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Tables */
+.venues-table-section .card,
+.device-analytics-section .card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.card-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Table Styling */
+.p-datatable .p-datatable-thead > tr > th {
+  background: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  border: 1px solid #dee2e6;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background: #f8f9fa;
+}
+
+.venue-id {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.85rem;
+  background: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #495057;
+}
+
+.venue-name {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.click-count,
+.user-count {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.engagement-level {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.level-high {
+  background: #d4edda;
+  color: #155724;
+}
+
+.level-medium {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.level-low,
+.level-very {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.enquiry-rate {
+  font-weight: 600;
+  color: #28a745;
+}
+
+.top-cities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.city-tag {
+  background: #e9ecef;
+  color: #495057;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.device-type {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.device-mobile {
+  color: #007bff;
+}
+
+.device-desktop {
+  color: #28a745;
+}
+
+/* Empty State */
+.empty-state {
+  padding: 40px;
+  text-align: center;
+}
+
+.empty-state h4 {
+  color: #6c757d;
+  margin: 15px 0 10px 0;
+}
+
+.empty-state p {
+  color: #adb5bd;
+}
+
+/* Venue Details Sidebar */
+.venue-details-sidebar {
+  .p-sidebar-content {
+    padding: 0;
+  }
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  background: #f8f9fa;
+}
+
+.sidebar-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.venue-details-content {
+  padding: 20px;
+}
+
+.venue-summary {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.summary-stat {
+  text-align: center;
+  padding: 15px;
+}
+
+.summary-stat h4 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #2c3e50;
+}
+
+.summary-stat p {
+  margin: 5px 0 0 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.section-title {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 15px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #3498db;
+  display: inline-block;
+}
+
+/* Device Grid */
+.device-grid .device-stat {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  gap: 15px;
+}
+
+.device-stat i {
+  font-size: 1.5rem;
+}
+
+.device-stat.mobile i {
+  color: #007bff;
+}
+
+.device-stat.desktop i {
+  color: #28a745;
+}
+
+.device-stat.tablet i {
+  color: #fd7e14;
+}
+
+.device-info h5 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.device-info p {
+  margin: 2px 0 0 0;
+  color: #7f8c8d;
+  font-size: 0.8rem;
+}
+
+/* Cities List */
+.cities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.city-item {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.city-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.city-name {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.city-clicks {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.city-progress {
+  .p-progressbar {
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+  }
+  
+  .p-progressbar-value {
+    background: linear-gradient(90deg, #3498db, #2980b9);
+  }
+}
+
+/* Pincodes */
+.pincodes-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Actions */
+.actions-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .analytics-dashboard {
+    padding: 10px;
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+  
+  .header-actions .p-calendar {
+    flex: 1;
+    min-width: auto;
+  }
+  
+  .overview-card {
+    margin-bottom: 15px;
+  }
+  
+  .chart-card {
+    margin-bottom: 20px;
+  }
+  
+  .venue-details-sidebar {
+    .p-sidebar {
+      width: 95vw !important;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .overview-card .card-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .overview-card .icon {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+  
+  .device-grid .device-stat {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .city-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+}
+
+/* Animation */
+.overview-card,
+.chart-card,
+.venues-table-section .card,
+.device-analytics-section .card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom scrollbar for sidebar */
+.venue-details-content {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.venue-details-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.venue-details-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.venue-details-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.venue-details-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
