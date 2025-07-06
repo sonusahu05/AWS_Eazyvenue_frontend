@@ -252,16 +252,20 @@ export class AnalyticsService {
   }
 
   /**
-   * Get overview analytics stats (Admin only)
+   * Get overview analytics stats (Admin and venue owners)
    */
   getOverviewStats(params?: any): Observable<AnalyticsResponse> {
     console.log('📊 ANALYTICS: Getting overview stats with params:', params);
     
     const roleCheck = this.checkUserRole();
+    const venueCheck = this.checkVenueOwnerAccess();
     console.log('📊 ANALYTICS: Role check result:', roleCheck);
+    console.log('📊 ANALYTICS: Venue owner check result:', venueCheck);
     
-    if (!roleCheck.hasAdminAccess) {
-      console.warn('📊 ANALYTICS: User does not have admin access. Current role:', roleCheck.userRole);
+    // Allow access for both admins and venue owners
+    if (!roleCheck.hasAdminAccess && !venueCheck.isVenueOwner) {
+      console.warn('📊 ANALYTICS: User does not have admin access or venue owner access.');
+      return throwError('Unauthorized access');
     }
     
     const headers = this.getAuthHeaders();
@@ -271,6 +275,7 @@ export class AnalyticsService {
       const searchParams = new URLSearchParams();
       if (params.from) searchParams.append('from', params.from);
       if (params.to) searchParams.append('to', params.to);
+      if (params.venueFilter) searchParams.append('venueFilter', params.venueFilter);
       queryParams = searchParams.toString() ? '?' + searchParams.toString() : '';
     }
     
@@ -297,7 +302,7 @@ export class AnalyticsService {
   }
 
   /**
-   * Get popular venues (Admin only)
+   * Get popular venues (Admin and venue owners)
    */
   getPopularVenues(params?: any): Observable<AnalyticsResponse> {
     const headers = this.getAuthHeaders();
@@ -308,6 +313,7 @@ export class AnalyticsService {
       if (params.from) searchParams.append('from', params.from);
       if (params.to) searchParams.append('to', params.to);
       if (params.limit) searchParams.append('limit', params.limit.toString());
+      if (params.venueFilter) searchParams.append('venueFilter', params.venueFilter);
       queryParams = searchParams.toString() ? '?' + searchParams.toString() : '';
     }
     
@@ -318,7 +324,7 @@ export class AnalyticsService {
   }
 
   /**
-   * Get device analytics (Admin only)
+   * Get device analytics (Admin and venue owners)
    */
   getDeviceAnalytics(params?: any): Observable<AnalyticsResponse> {
     const headers = this.getAuthHeaders();
@@ -328,6 +334,7 @@ export class AnalyticsService {
       const searchParams = new URLSearchParams();
       if (params.from) searchParams.append('from', params.from);
       if (params.to) searchParams.append('to', params.to);
+      if (params.venueFilter) searchParams.append('venueFilter', params.venueFilter);
       queryParams = searchParams.toString() ? '?' + searchParams.toString() : '';
     }
     
@@ -438,6 +445,7 @@ export class AnalyticsService {
       const searchParams = new URLSearchParams();
       if (params.from) searchParams.append('from', params.from);
       if (params.to) searchParams.append('to', params.to);
+      if (params.venueFilter) searchParams.append('venueFilter', params.venueFilter);
       queryParams = searchParams.toString() ? '?' + searchParams.toString() : '';
     }
     
@@ -459,6 +467,7 @@ export class AnalyticsService {
       if (params.from) searchParams.append('from', params.from);
       if (params.to) searchParams.append('to', params.to);
       if (params.limit) searchParams.append('limit', params.limit.toString());
+      if (params.venueFilter) searchParams.append('venueFilter', params.venueFilter);
       queryParams = searchParams.toString() ? '?' + searchParams.toString() : '';
     }
     
@@ -536,6 +545,13 @@ export class AnalyticsService {
   }
 
   /**
+   * Get full user data for debugging purposes
+   */
+  getFullUserData(): any {
+    return this.tokenStorage.getUser();
+  }
+
+  /**
    * Check if user has venue owner access (not admin but has venue access)
    */
   checkVenueOwnerAccess(): { isVenueOwner: boolean, venueName: string, userRole: string } {
@@ -543,10 +559,29 @@ export class AnalyticsService {
     
     const role = userData?.role || userData?.userdata?.role;
     const rolename = userData?.rolename || userData?.userdata?.rolename;
-    const venueName = userData?.name || userData?.userdata?.name;
+    
+    // Construct full name from firstname and lastname
+    const firstname = userData?.firstname || userData?.userdata?.firstname || '';
+    const lastname = userData?.lastname || userData?.userdata?.lastname || '';
+    const fullName = `${firstname} ${lastname}`.trim();
+    
+    // Also check the single name field as fallback
+    const singleName = userData?.name || userData?.userdata?.name || '';
+    const venueName = fullName || singleName;
     
     // Venue owner is someone who is not admin but has a venue name
     const isVenueOwner = (role !== 'admin' && rolename !== 'admin') && venueName;
+    
+    console.log('🏢 VENUE OWNER CHECK:', {
+      firstname,
+      lastname,
+      fullName,
+      singleName,
+      finalVenueName: venueName,
+      isVenueOwner: !!isVenueOwner,
+      role,
+      rolename
+    });
     
     return { 
       isVenueOwner: !!isVenueOwner, 

@@ -54,14 +54,17 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
         private analyticsService: AnalyticsService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
-    ) {}
+    ) {
+        // Initialize dateRange immediately in constructor to prevent undefined errors
+        this.setDefaultDateRange();
+    }
     
     ngOnInit() {
+        this.setDefaultDateRange(); // Set default dates FIRST
         this.checkUserAccess();
         this.initializeChartOptions();
         this.initializeChartData();
         this.loadDashboardData();
-        this.setDefaultDateRange();
     }
     
     checkUserAccess() {
@@ -73,11 +76,16 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
         this.isVenueOwner = venueOwnerCheck.isVenueOwner;
         this.currentVenueName = venueOwnerCheck.venueName;
         
+        // Print full user data structure for debugging
+        const fullUserData = this.analyticsService.getFullUserData();
+        console.log('🔍 FULL USER DATA STRUCTURE:', JSON.stringify(fullUserData, null, 2));
+        
         console.log('User access check:', {
             isAdmin: this.isAdmin,
             isVenueOwner: this.isVenueOwner,
             userRole: this.userRole,
-            venueName: this.currentVenueName
+            venueName: this.currentVenueName,
+            fullUserData: fullUserData
         });
     }
     
@@ -86,25 +94,69 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     }
     
     setDefaultDateRange() {
-        const today = new Date();
-        const lastMonth = new Date();
-        lastMonth.setMonth(today.getMonth() - 1);
-        this.dateRange = [lastMonth, today];
+        try {
+            const today = new Date();
+            const lastMonth = new Date();
+            lastMonth.setMonth(today.getMonth() - 1);
+            
+            // Ensure we have valid Date objects
+            if (isNaN(today.getTime()) || isNaN(lastMonth.getTime())) {
+                console.error('Invalid dates created, using fallback');
+                const fallbackToday = new Date(Date.now());
+                const fallbackLastMonth = new Date(Date.now() - (30 * 24 * 60 * 60 * 1000)); // 30 days ago
+                this.dateRange = [fallbackLastMonth, fallbackToday];
+            } else {
+                this.dateRange = [lastMonth, today];
+            }
+            
+            console.log('Default date range set:', this.dateRange);
+            
+            // Additional validation to ensure both dates are valid
+            if (!this.dateRange || this.dateRange.length !== 2 || 
+                !this.dateRange[0] || !this.dateRange[1] ||
+                isNaN(this.dateRange[0].getTime()) || isNaN(this.dateRange[1].getTime())) {
+                console.error('Date range validation failed, creating safe fallback');
+                const now = new Date();
+                const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+                this.dateRange = [thirtyDaysAgo, now];
+            }
+            
+        } catch (error) {
+            console.error('Error setting default date range:', error);
+            // Ultimate fallback - just use current timestamp
+            const now = new Date();
+            const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+            this.dateRange = [thirtyDaysAgo, now];
+        }
     }
     
     loadDashboardData() {
         this.loading = true;
-        console.log('Loading dashboard data with date range:', this.getDateParams());
+        const params = this.getDateParams();
+        console.log('Loading dashboard data with params:', params);
+        
+        // Track completed requests
+        let completedRequests = 0;
+        const totalRequests = 5; // overview, venues, devices, timeline, subareas
+        
+        const checkAllComplete = () => {
+            completedRequests++;
+            if (completedRequests >= totalRequests) {
+                this.loading = false;
+                console.log('All dashboard data loaded successfully');
+            }
+        };
         
         // Load overview stats
         this.subscriptions.add(
-            this.analyticsService.getOverviewStats(this.getDateParams()).subscribe({
+            this.analyticsService.getOverviewStats(params).subscribe({
                 next: (response) => {
                     if (response.success) {
                         this.overviewStats = response.data[0] || {};
                         this.updateDeviceChart();
                         console.log('Overview stats loaded:', this.overviewStats);
                     }
+                    checkAllComplete();
                 },
                 error: (error) => {
                     console.error('Error loading overview stats:', error);
@@ -113,19 +165,21 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
                         summary: 'Error',
                         detail: 'Failed to load overview statistics'
                     });
+                    checkAllComplete();
                 }
             })
         );
         
         // Load popular venues
         this.subscriptions.add(
-            this.analyticsService.getPopularVenues(this.getDateParams()).subscribe({
+            this.analyticsService.getPopularVenues(params).subscribe({
                 next: (response) => {
                     if (response.success) {
                         this.popularVenues = response.data || [];
                         console.log('Popular venues received:', this.popularVenues);
                         this.updateVenueClicksChart();
                     }
+                    checkAllComplete();
                 },
                 error: (error) => {
                     console.error('Error loading popular venues:', error);
@@ -134,18 +188,20 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
                         summary: 'Error',
                         detail: 'Failed to load popular venues'
                     });
+                    checkAllComplete();
                 }
             })
         );
         
         // Load device analytics
         this.subscriptions.add(
-            this.analyticsService.getDeviceAnalytics(this.getDateParams()).subscribe({
+            this.analyticsService.getDeviceAnalytics(params).subscribe({
                 next: (response) => {
                     if (response.success) {
                         this.deviceAnalytics = response.data || [];
                         console.log('Device analytics loaded:', this.deviceAnalytics);
                     }
+                    checkAllComplete();
                 },
                 error: (error) => {
                     console.error('Error loading device analytics:', error);
@@ -154,19 +210,21 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
                         summary: 'Error',
                         detail: 'Failed to load device analytics'
                     });
+                    checkAllComplete();
                 }
             })
         );
         
         // Load timeline analytics
         this.subscriptions.add(
-            this.analyticsService.getTimelineAnalytics(this.getDateParams()).subscribe({
+            this.analyticsService.getTimelineAnalytics(params).subscribe({
                 next: (response) => {
                     if (response.success) {
                         this.timelineAnalytics = response.data || [];
                         console.log('Timeline analytics loaded:', this.timelineAnalytics);
                         this.updateTimelineChart();
                     }
+                    checkAllComplete();
                 },
                 error: (error) => {
                     console.error('Error loading timeline analytics:', error);
@@ -175,46 +233,117 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
                         summary: 'Error',
                         detail: 'Failed to load timeline analytics'
                     });
+                    checkAllComplete();
                 }
             })
         );
         
         // Load top subareas
         this.subscriptions.add(
-            this.analyticsService.getTopSubareas(this.getDateParams()).subscribe({
+            this.analyticsService.getTopSubareas(params).subscribe({
                 next: (response) => {
                     if (response.success) {
                         this.topSubareas = response.data || [];
                         console.log('Top subareas loaded:', this.topSubareas);
                         this.updateSubareaChart();
                     }
+                    checkAllComplete();
                 },
                 error: (error) => {
                     console.error('Error loading top subareas:', error);
                     this.messageService.add({
-                        severity: 'error',
-                        summary: 'Error',  
+                        severity: 'error',  
+                        summary: 'Error',
                         detail: 'Failed to load top subareas'
                     });
+                    checkAllComplete();
                 }
             })
         );
-        
-        this.loading = false;
     }
     
     getDateParams() {
-        if (this.dateRange && this.dateRange.length === 2) {
-            return {
-                from: this.dateRange[0].toISOString(),
-                to: this.dateRange[1].toISOString()
-            };
+        const params: any = {};
+        
+        // Add date range if both dates are selected and valid
+        if (this.dateRange && Array.isArray(this.dateRange) && 
+            this.dateRange.length === 2 && 
+            this.dateRange[0] instanceof Date && this.dateRange[1] instanceof Date &&
+            !isNaN(this.dateRange[0].getTime()) && !isNaN(this.dateRange[1].getTime())) {
+            
+            params.from = this.dateRange[0].toISOString();
+            params.to = this.dateRange[1].toISOString();
+            
+            console.log('Valid date params created:', params);
+        } else {
+            console.log('No valid date range available, using default params');
         }
-        return {};
+        
+        // Add venue filter for non-admin users
+        if (!this.isAdmin && this.isVenueOwner && this.currentVenueName) {
+            params.venueFilter = this.currentVenueName;
+            console.log('🏢 Adding venue filter for non-admin user:', this.currentVenueName);
+        }
+        
+        console.log('Final params with filters:', params);
+        return params;
     }
     
     onDateRangeChange() {
-        this.loadDashboardData();
+        console.log('Date range change triggered:', this.dateRange);
+        
+        // Check if dateRange is properly set
+        if (!this.dateRange) {
+            console.log('Date range is null/undefined');
+            return;
+        }
+        
+        // If it's a single date (first selection), wait for the second date
+        if (this.dateRange.length === 1) {
+            console.log('Only first date selected, waiting for second date');
+            return;
+        }
+        
+        // Only reload data if both dates in the range are selected and valid
+        if (this.dateRange.length === 2 && this.dateRange[0] && this.dateRange[1]) {
+            console.log('Both dates selected, reloading data:', {
+                from: this.dateRange[0],
+                to: this.dateRange[1]
+            });
+            this.loadDashboardData();
+        } else {
+            console.log('Date range not complete or invalid:', this.dateRange);
+        }
+    }
+    
+    onCalendarSelect(event: any) {
+        console.log('Calendar select event:', event);
+        console.log('Current dateRange after select:', this.dateRange);
+        
+        // Check if we have a complete date range
+        if (this.dateRange && this.dateRange.length === 2 && this.dateRange[0] && this.dateRange[1]) {
+            console.log('Complete date range selected:', {
+                from: this.dateRange[0],
+                to: this.dateRange[1]
+            });
+            
+            // Reload dashboard data
+            this.loadDashboardData();
+            
+            // If venue details are currently open, refresh them with new date range
+            if (this.showVenueDetails && this.selectedVenue) {
+                console.log('Refreshing venue details for date range change');
+                this.loadVenueInsights(this.selectedVenue.venueId);
+            }
+            
+            // If user click details are currently open, refresh them with new date range
+            if (this.showUserClickDetails && this.selectedVenue) {
+                console.log('Refreshing user click details for date range change');
+                this.loadUserClickDetails(this.selectedVenue.venueId);
+            }
+        } else {
+            console.log('Incomplete date range, waiting for second date selection');
+        }
     }
     
     viewVenueDetails(venue: any) {
@@ -232,11 +361,13 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     loadVenueInsights(venueId: string) {
         console.log('=== loadVenueInsights called ===');
         console.log('venueId:', venueId);
-        console.log('Date params:', this.getDateParams());
         
-        // Load venue insights
+        const dateParams = this.getDateParams();
+        console.log('Date params for venue insights:', dateParams);
+        
+        // Load venue insights with date filtering
         this.subscriptions.add(
-            this.analyticsService.getVenueInsights(venueId).subscribe({
+            this.analyticsService.getVenueInsights(venueId, dateParams).subscribe({
                 next: (response) => {
                     console.log('Venue insights API response:', response);
                     if (response.success) {
@@ -279,12 +410,13 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
             })
         );
         
-        // Load venue clicks
+        // Load venue clicks with date filtering
         this.subscriptions.add(
-            this.analyticsService.getVenueClicks(venueId, this.getDateParams()).subscribe({
+            this.analyticsService.getVenueClicks(venueId, dateParams).subscribe({
                 next: (response) => {
                     if (response.success) {
                         this.selectedVenueClicks = response.data || [];
+                        console.log('Venue clicks loaded with date filter:', this.selectedVenueClicks.length);
                     }
                 },
                 error: (error) => {
@@ -293,13 +425,13 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
             })
         );
         
-        // Load venue-specific timeline analytics
+        // Load venue-specific timeline analytics with date filtering
         this.subscriptions.add(
-            this.analyticsService.getVenueTimelineAnalytics(venueId, this.getDateParams()).subscribe({
+            this.analyticsService.getVenueTimelineAnalytics(venueId, dateParams).subscribe({
                 next: (response) => {
                     if (response.success) {
                         this.selectedVenueTimelineData = response.data || [];
-                        console.log('Venue timeline data loaded:', this.selectedVenueTimelineData);
+                        console.log('Venue timeline data loaded with date filter:', this.selectedVenueTimelineData);
                         this.updateSelectedVenueTimelineChart(response.data || []);
                     }
                 },
@@ -317,15 +449,17 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     
     loadUserClickDetails(venueId: string) {
         console.log('loadUserClickDetails called with venueId:', venueId);
-        console.log('Date params:', this.getDateParams());
+        
+        const dateParams = this.getDateParams();
+        console.log('Date params for user click details:', dateParams);
         
         this.subscriptions.add(
-            this.analyticsService.getUserClickDetails(venueId, this.getDateParams()).subscribe({
+            this.analyticsService.getUserClickDetails(venueId, dateParams).subscribe({
                 next: (response) => {
                     console.log('getUserClickDetails API response:', response);
                     if (response.success) {
                         this.selectedVenueUserClicks = response.data || [];
-                        console.log('User click details loaded, count:', this.selectedVenueUserClicks.length);
+                        console.log('User click details loaded with date filter, count:', this.selectedVenueUserClicks.length);
                         console.log('Sample data:', this.selectedVenueUserClicks.slice(0, 2));
                     } else {
                         console.error('API response not successful:', response);
@@ -730,5 +864,33 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
         if (quality >= 0.7) return 'High';
         if (quality >= 0.4) return 'Medium';
         return 'Low';
+    }
+    
+    clearDateRange() {
+        console.log('Clearing date range filter');
+        
+        // Reset to default date range instead of empty array to prevent calendar errors
+        this.setDefaultDateRange();
+        
+        console.log('Date range reset to default, reloading all data');
+        this.loadDashboardData();
+        
+        // If venue details are currently open, refresh them with new date range
+        if (this.showVenueDetails && this.selectedVenue) {
+            console.log('Refreshing venue details after clearing date filter');
+            this.loadVenueInsights(this.selectedVenue.venueId);
+        }
+        
+        // If user click details are currently open, refresh them with new date range
+        if (this.showUserClickDetails && this.selectedVenue) {
+            console.log('Refreshing user click details after clearing date filter');
+            this.loadUserClickDetails(this.selectedVenue.venueId);
+        }
+        
+        this.messageService.add({
+            severity: 'info',
+            summary: 'Date Filter Cleared',
+            detail: 'Showing data for the last 30 days'
+        });
     }
 }

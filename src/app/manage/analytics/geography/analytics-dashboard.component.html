@@ -13,22 +13,34 @@
             </p>
             <div *ngIf="isVenueOwner" class="venue-owner-notice">
                 <p-tag severity="info" value="Venue Owner View" icon="pi pi-building"></p-tag>
+                <p-tag severity="warning" [value]="'Filtered for: ' + currentVenueName" icon="pi pi-filter" class="p-ml-2"></p-tag>
             </div>
         </div>
         
         <div class="header-actions p-d-flex p-ai-center">
             <!-- Date Range Filter -->
-            <div class="p-mr-3">
+            <div class="p-mr-3 p-d-flex p-ai-center">
                 <p-calendar 
                     [(ngModel)]="dateRange"
                     [showIcon]="true"
                     [selectionMode]="'range'"
-                    [readonlyInput]="true"
+                    [readonlyInput]="false"
                     placeholder="Select date range"
                     dateFormat="dd/mm/yy"
-                    (onSelect)="onDateRangeChange()"
+                    (onSelect)="onCalendarSelect($event)"
+                    [numberOfMonths]="2"
+                    [touchUI]="false"
                     styleClass="p-inputtext-sm">
                 </p-calendar>
+                <button 
+                    pButton 
+                    pRipple 
+                    icon="pi pi-times" 
+                    class="p-button-text p-button-sm p-ml-2"
+                    pTooltip="Clear date filter"
+                    (click)="clearDateRange()"
+                    *ngIf="dateRange && dateRange.length > 0">
+                </button>
             </div>
             
             <!-- Export Button -->
