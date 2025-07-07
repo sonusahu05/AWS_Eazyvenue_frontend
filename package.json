@@ -9,7 +9,6 @@
         "serve:ssr": "node dist/freya-ng/server/main.js",
         "build:ssr": "ng build && ng run freya-ng:server"
     },
-
     "private": true,
     "dependencies": {
         "@angular-slider/ngx-slider": "^2.0.4",
