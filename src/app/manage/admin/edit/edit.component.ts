@@ -55,6 +55,18 @@ export class AdminEditComponent implements OnInit {
     cpassword: boolean;
     newPasswordCheck: boolean;
     newPasswordDisable: boolean;
+    services: any[] = [
+        {
+            name: '',
+            actualPrice: 0,
+            fullDayPrice: 0,
+            hours4Price: 0,
+            hours8Price: 0,
+            hours12Price: 0,
+            slug: '',
+            price: ''
+        }
+    ];
     constructor(private userService: UserService, private commonService: CommonService, private formBuilder: FormBuilder,
         private confirmationService: ConfirmationService, private messageService: MessageService,
         private router: Router, private activeroute: ActivatedRoute, @Inject(PLATFORM_ID) private platformId: Object) { }
@@ -99,6 +111,17 @@ export class AdminEditComponent implements OnInit {
             currentPassword: [''],
             password: [''],
             confirmPassword: [''],
+            name: ['', [Validators.required]],
+            contact: ['', [Validators.required]],
+            googleRating: [0],
+            eazyvenueRating: [0],
+            responseTime: [''],
+            workExperience: [''],
+            deal: [''],
+            shortDescription: [''],
+            metaUrl: ['', [Validators.required]],
+            metaDescription: [''],
+            metaKeywords: [''],
         }, {
             validator: MustMatch('password', 'confirmPassword')
         });
@@ -155,6 +178,24 @@ export class AdminEditComponent implements OnInit {
                         dob: this.bDate,
                     });
 
+                    // Add new field assignments
+                    this.userForm.controls.name.setValue(this.item['name'] || '');
+                    this.userForm.controls.contact.setValue(this.item['contact'] || '');
+                    this.userForm.controls.googleRating.setValue(this.item['googleRating'] || 0);
+                    this.userForm.controls.eazyvenueRating.setValue(this.item['eazyvenueRating'] || 0);
+                    this.userForm.controls.responseTime.setValue(this.item['responseTime'] || '');
+                    this.userForm.controls.workExperience.setValue(this.item['workExperience'] || '');
+                    this.userForm.controls.deal.setValue(this.item['deal'] || '');
+                    this.userForm.controls.shortDescription.setValue(this.item['shortDescription'] || '');
+                    this.userForm.controls.metaUrl.setValue(this.item['metaUrl'] || '');
+                    this.userForm.controls.metaDescription.setValue(this.item['metaDescription'] || '');
+                    this.userForm.controls.metaKeywords.setValue(this.item['metaKeywords'] || '');
+                    
+                    // Load services
+                    if (this.item['services']) {
+                        this.services = this.item['services'];
+                    }
+
                     this.countrycode = this.item['countrycode'];
                     this.countryname = this.item['countryname'];
                     this.statecode = this.item['statecode'];
@@ -167,6 +208,7 @@ export class AdminEditComponent implements OnInit {
                     } else {
                         statusobj = { label: 'In-Active', value: false };
                     }
+                    
                     this.userForm.get('status').setValue(statusobj);
                     this.userForm.get('gender').setValue({ name: this.item['gender'], code: this.item['gender'] });
                     this.userForm.get('timeZone').setValue({ name: this.item['timeZone'], code: this.item['timeZoneOffset'] });
@@ -281,6 +323,7 @@ export class AdminEditComponent implements OnInit {
             this.userstatus = event.value;
         }
     }
+    
 
     onGenderSelect(event) {
         if (event) {
@@ -297,12 +340,58 @@ export class AdminEditComponent implements OnInit {
         this.dobdt = $event; //moment($event).format("MM/DD/YYYY");
     }
 
+    addService() {
+        this.services.push({
+            name: '',
+            actualPrice: 0,
+            fullDayPrice: 0,
+            hours4Price: 0,
+            hours8Price: 0,
+            hours12Price: 0,
+            slug: '',
+            price: ''
+        });
+    }
+
+    removeService(index: number) {
+        this.services.splice(index, 1);
+    }
+
+    generateSlug(serviceName: string): string {
+        return serviceName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+    }
+
     onSubmit() {
         this.submitted = true;
         if (this.userForm.invalid) {
             return;
         }
         var userData = this.userForm.value;
+        userData['name'] = this.userForm.get('name')?.value;
+        userData['contact'] = this.userForm.get('contact')?.value;
+        userData['googleRating'] = this.userForm.get('googleRating')?.value || 0;
+        userData['eazyvenueRating'] = this.userForm.get('eazyvenueRating')?.value || 0;
+        userData['responseTime'] = this.userForm.get('responseTime')?.value || '';
+        userData['workExperience'] = this.userForm.get('workExperience')?.value || '';
+        userData['deal'] = this.userForm.get('deal')?.value || '';
+        userData['shortDescription'] = this.userForm.get('shortDescription')?.value || '';
+        userData['metaUrl'] = this.userForm.get('metaUrl')?.value;
+        userData['metaDescription'] = this.userForm.get('metaDescription')?.value || '';
+        userData['metaKeywords'] = this.userForm.get('metaKeywords')?.value || '';
+        // Process services
+        userData['services'] = this.services.map(service => ({
+            ...service,
+            slug: this.generateSlug(service.name),
+            price: `${service.fullDayPrice} Full Day`,
+            hours12Price: service.actualPrice * 3 // or your calculation logic
+        }));
+        // Calculate min vendor price
+        const prices = this.services.map(s => s.actualPrice).filter(p => p > 0);
+        userData['minVendorPrice'] = prices.length > 0 ? Math.min(...prices) : 0;
+        // Add missing fields with default values
+        userData['availableInCities'] = [];
+        userData['views'] = 0;
+        userData['disable'] = false;
         userData['profilepic'] = this.profilepic;
         userData['status'] = this.userstatus;
         userData['countrycode'] = this.countrycode;
