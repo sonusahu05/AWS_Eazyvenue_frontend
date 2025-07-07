@@ -112,4 +112,4 @@ export const environment = {
         { name: 'DJ', slug: 'dj', status: false },
         { name: 'Entertainment License', slug: 'entertainment_license', status: false },
     ],
-};
+}

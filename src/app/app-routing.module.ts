@@ -390,6 +390,10 @@ import { HomeDataResolver } from './services/home-data.resolver';
             },
             { path: 'pages/help', component: AppHelpComponent },
             { path: 'wishlist', component: WishlistComponent },
+            {
+                path: 'analytics/geography',
+                loadChildren: () => import('./manage/analytics/geography/analytics.module').then((m) => m.AnalyticsModule),
+            },
         ],
     },
     { path: 'error', component: AppErrorComponent },

@@ -45,6 +45,8 @@ import { SlotService } from 'src/app/services/slot.service';
 import { CityService } from 'src/app/manage/city/service/city.service';
 import { SubareaService } from 'src/app/services/subarea.service';
 import { RazorpayService } from 'src/app/services/razorpay.service';
+import { AnalyticsService } from '../../services/analytics.service';
+import { GeolocationService, UserLocation, VenueWithDistance } from '../../services/geolocation.service';
 import { Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 declare var google: any;
@@ -345,6 +347,17 @@ export class VenueDetailsComponent implements OnInit {
     similarVenues: any[] = [];
     private enquiryTimer: any;
     private hasCreatedEnquiry = false;
+    userLocation: UserLocation | null = null;
+    
+    // Analytics tracking properties
+    private pageLoadTime: number = 0;
+    private maxScrollDepth: number = 0;
+    private currentScrollDepth: number = 0;
+    private qualityScore: number = 0;
+    private trackingInterval: any;
+    private scrollThrottleTimer: any;
+    private boundBeforeUnloadHandler: any;
+    
 @ViewChild('similarVenuesContainer') similarVenuesContainer!: ElementRef;
     @ViewChild('paginator', { static: true }) paginator: Paginator;
     @ViewChild('searchCalendar', { static: true }) datePicker;
@@ -376,6 +389,8 @@ export class VenueDetailsComponent implements OnInit {
         private title: Title,
         private meta: Meta,
         private razorpayService: RazorpayService,
+        private analyticsService: AnalyticsService,
+        private geolocationService: GeolocationService,
         private fb: FormBuilder,
         @Inject(PLATFORM_ID) private platformId: Object,
         @Inject(DOCUMENT) private document: Document
@@ -402,6 +417,12 @@ export class VenueDetailsComponent implements OnInit {
             });
 
             this.renderer.addClass(this.document.body, 'body-dark');
+            
+            // Initialize user location for analytics
+            this.initializeUserLocation();
+            
+            // Initialize analytics tracking
+            this.initializeAnalyticsTracking();
         }
 
         this.responsiveOptions = [
@@ -843,6 +864,475 @@ export class VenueDetailsComponent implements OnInit {
         });
     }
 
+
+    /**
+     * Track venue click for analytics
+     */
+    trackVenueClick(venue: any): void {
+        try {
+            // Get current engagement data
+            const engagementData = this.getEngagementData();
+            
+            // Prepare analytics data matching backend schema
+            const clickData = {
+                venueId: venue._id || venue.id,
+                venueName: venue.name || '',
+                userId: this.userId || undefined,
+                userName: this.getUserName(),
+                userEmail: this.getUserEmail(),
+                userContact: this.getUserContact(),
+                sessionId: this.analyticsService.getSessionId(),
+                location: this.getUserLocationData(),
+                device: this.analyticsService.getDeviceInfo(),
+                engagement: engagementData
+            };
+
+            console.log('Tracking venue click with engagement data:', clickData);
+
+            // Track the venue click with enhanced geocoding
+            this.analyticsService.trackVenueClickWithGeocode(clickData).subscribe({
+                next: (response) => {
+                    console.log('Venue click tracked successfully:', response);
+                },
+                error: (error) => {
+                    console.error('Failed to track venue click:', error);
+                }
+            });
+        } catch (error) {
+            console.error('Error preparing venue click data:', error);
+        }
+    }
+
+    /**
+     * Get user name from logged in user data
+     */
+    private getUserName(): string {
+        console.log('Getting user name - fullUserDetails:', this.fullUserDetails);
+        console.log('Getting user name - loggedInUser:', this.loggedInUser);
+        
+        // Use fullUserDetails first, then fallback to loggedInUser
+        if (this.fullUserDetails) {
+            const fullName = `${this.fullUserDetails.firstName || ''} ${this.fullUserDetails.lastName || ''}`.trim();
+            if (fullName) {
+                console.log('User name from fullUserDetails (full name):', fullName);
+                return fullName;
+            }
+            const name = this.fullUserDetails.name || this.fullUserDetails.username || '';
+            console.log('User name from fullUserDetails (name/username):', name);
+            return name;
+        }
+        
+        // Check loggedInUser structure - it might have the data directly or in userdata
+        if (this.loggedInUser) {
+            // First check if user data is directly on loggedInUser
+            if (this.loggedInUser.firstname || this.loggedInUser.lastname) {
+                const fullName = `${this.loggedInUser.firstname || ''} ${this.loggedInUser.lastname || ''}`.trim();
+                if (fullName) {
+                    console.log('User name from loggedInUser (direct firstname/lastname):', fullName);
+                    return fullName;
+                }
+            }
+            
+            // Check userdata property
+            if (this.loggedInUser.userdata) {
+                const userData = this.loggedInUser.userdata;
+                const fullName = `${userData.firstName || userData.firstname || ''} ${userData.lastName || userData.lastname || ''}`.trim();
+                if (fullName) {
+                    console.log('User name from loggedInUser.userdata (full name):', fullName);
+                    return fullName;
+                }
+                const name = userData.name || userData.username || '';
+                console.log('User name from loggedInUser.userdata (name/username):', name);
+                return name;
+            }
+        }
+        
+        console.log('User name not found, returning empty string');
+        return '';
+    }
+
+    /**
+     * Get user email from logged in user data
+     */
+    private getUserEmail(): string {
+        console.log('Getting user email - fullUserDetails:', this.fullUserDetails);
+        console.log('Getting user email - loggedInUser:', this.loggedInUser);
+        
+        // Use fullUserDetails first, then fallback to loggedInUser
+        if (this.fullUserDetails && this.fullUserDetails.email) {
+            console.log('User email from fullUserDetails:', this.fullUserDetails.email);
+            return this.fullUserDetails.email;
+        }
+        
+        // Check loggedInUser structure
+        if (this.loggedInUser) {
+            // First check if email is directly on loggedInUser
+            if (this.loggedInUser.email) {
+                console.log('User email from loggedInUser (direct):', this.loggedInUser.email);
+                return this.loggedInUser.email;
+            }
+            
+            // Check userdata property
+            if (this.loggedInUser.userdata && this.loggedInUser.userdata.email) {
+                const email = this.loggedInUser.userdata.email;
+                console.log('User email from loggedInUser.userdata:', email);
+                return email;
+            }
+        }
+        
+        console.log('User email not found, returning empty string');
+        return '';
+    }
+
+    /**
+     * Get user contact from logged in user data
+     */
+    private getUserContact(): string {
+        console.log('Getting user contact - fullUserDetails:', this.fullUserDetails);
+        console.log('Getting user contact - loggedInUser:', this.loggedInUser);
+        
+        // Use fullUserDetails first, then fallback to loggedInUser
+        if (this.fullUserDetails) {
+            const contact = this.fullUserDetails.mobile || 
+                           this.fullUserDetails.phone || 
+                           this.fullUserDetails.contact || 
+                           this.fullUserDetails.mobileNumber || 
+                           '';
+            console.log('User contact from fullUserDetails:', contact);
+            if (contact) return contact;
+        }
+        
+        // Check loggedInUser structure
+        if (this.loggedInUser) {
+            // First check if contact fields are directly on loggedInUser
+            const directContact = this.loggedInUser.mobile || 
+                                 this.loggedInUser.phone || 
+                                 this.loggedInUser.contact || 
+                                 this.loggedInUser.mobileNumber ||
+                                 this.loggedInUser.mobilenumber ||
+                                 '';
+            if (directContact) {
+                console.log('User contact from loggedInUser (direct):', directContact);
+                return directContact;
+            }
+            
+            // Check userdata property
+            if (this.loggedInUser.userdata) {
+                const contact = this.loggedInUser.userdata.mobile || 
+                               this.loggedInUser.userdata.phone || 
+                               this.loggedInUser.userdata.contact ||
+                               this.loggedInUser.userdata.mobileNumber ||
+                               this.loggedInUser.userdata.mobilenumber ||
+                               '';
+                console.log('User contact from loggedInUser.userdata:', contact);
+                return contact;
+            }
+        }
+        
+        console.log('User contact not found, returning empty string');
+        return '';
+    }
+
+    /**
+     * Initialize user location for analytics
+     */
+    private async initializeUserLocation(): Promise<void> {
+        try {
+            // Check if we have cached location first
+            const cachedLocation = this.geolocationService.getCachedUserLocation();
+            if (cachedLocation) {
+                this.userLocation = cachedLocation;
+                console.log('Using cached location for analytics:', this.userLocation);
+                return;
+            }
+
+            // Try to get fresh location automatically (no prompts)
+            await this.requestUserLocationAuto();
+        } catch (error) {
+            console.log('Could not initialize user location for analytics:', error);
+            // Don't show error to user, just log it
+        }
+    }
+
+    /**
+     * Request user location automatically without prompting
+     */
+    private async requestUserLocationAuto(): Promise<void> {
+        try {
+            // Check permission status first
+            const permissionStatus = await this.geolocationService.checkLocationPermission();
+            
+            if (permissionStatus === 'granted') {
+                // Permission already granted, get location with address
+                const location = await this.geolocationService.getUserLocationWithAddress(false, false);
+                this.userLocation = location;
+                console.log('Auto-retrieved user location for analytics:', this.userLocation);
+            } else {
+                console.log('Location permission not granted, analytics will use default location');
+            }
+        } catch (error) {
+            console.log('Auto location request failed:', error);
+            // Fail silently for analytics
+        }
+    }
+
+    /**
+     * Request user location manually (with user interaction)
+     */
+    public async requestUserLocationManual(): Promise<void> {
+        try {
+            console.log('Manual location request initiated...');
+            const location = await this.geolocationService.getUserLocationWithAddress(true, true);
+            this.userLocation = location;
+            console.log('Manual location retrieved for analytics:', this.userLocation);
+        } catch (error) {
+            console.error('Manual location request failed:', error);
+            // Could show user-friendly error message here if needed
+        }
+    }
+
+    /**
+     * Get user location data for analytics with OpenStreetMap supportqualityScore
+     */
+    private getUserLocationData(): any {
+        if (this.userLocation) {
+            const locationData = {
+                lat: this.userLocation.lat,
+                lng: this.userLocation.lng,
+                // Use the enhanced address info from OpenStreetMap if available
+                city: this.userLocation.city || undefined,
+                subarea: this.userLocation.subarea || undefined,
+                state: this.userLocation.state || undefined,
+                country: this.userLocation.country || 'India',
+                pincode: this.userLocation.postalCode || undefined
+            };
+            console.log('Returning location data:', locationData);
+            return locationData;
+        }
+        
+        // If venue details are available, use venue location as fallback
+        if (this.venueDetails) {
+            const venueLocationData = {
+                city: this.venueDetails.cityname || undefined,
+                subarea: this.venueDetails.subarea || undefined,
+                state: this.venueDetails.statename || undefined,
+                country: 'India',
+                pincode: this.venueDetails.zipcode || undefined
+            };
+            console.log('Returning venue location data:', venueLocationData);
+            return venueLocationData;
+        }
+        
+        // Return basic India location if no specific location available
+        const defaultLocation = {
+            country: 'India'
+        };
+        console.log('Returning default location:', defaultLocation);
+        return defaultLocation;
+    }
+
+    /**
+     * Initialize analytics tracking for time and scroll
+     */
+    private initializeAnalyticsTracking(): void {
+        // Record page load time
+        this.pageLoadTime = Date.now();
+        
+        // Set up scroll tracking
+        this.setupScrollTracking();
+        
+        // Set up periodic quality score updates (every 5 seconds)
+        this.trackingInterval = setInterval(() => {
+            this.updateQualityScore();
+        }, 5000);
+        
+        // Set up beforeunload handler to send final analytics
+        if (isPlatformBrowser(this.platformId)) {
+            this.boundBeforeUnloadHandler = (event: BeforeUnloadEvent) => {
+                this.sendFinalAnalytics();
+            };
+            window.addEventListener('beforeunload', this.boundBeforeUnloadHandler);
+        }
+        
+        console.log('Analytics tracking initialized');
+    }
+
+    /**
+     * Set up scroll depth tracking
+     */
+    private setupScrollTracking(): void {
+        if (isPlatformBrowser(this.platformId)) {
+            const trackScroll = () => {
+                if (this.scrollThrottleTimer) {
+                    clearTimeout(this.scrollThrottleTimer);
+                }
+                
+                this.scrollThrottleTimer = setTimeout(() => {
+                    this.calculateScrollDepth();
+                }, 100); // Throttle scroll events
+            };
+
+            window.addEventListener('scroll', trackScroll, { passive: true });
+            
+            // Also track on resize
+            window.addEventListener('resize', trackScroll, { passive: true });
+        }
+    }
+
+    /**
+     * Calculate current scroll depth percentage
+     */
+    private calculateScrollDepth(): void {
+        if (!isPlatformBrowser(this.platformId)) return;
+
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Calculate scroll percentage
+        const scrollPercent = Math.round(((scrollTop + windowHeight) / documentHeight) * 100);
+        
+        // Update current scroll depth
+        this.currentScrollDepth = Math.min(scrollPercent, 100);
+        
+        // Update max scroll depth (only increases, never decreases)
+        if (this.currentScrollDepth > this.maxScrollDepth) {
+            this.maxScrollDepth = this.currentScrollDepth;
+            console.log(`Max scroll depth updated: ${this.maxScrollDepth}%`);
+        }
+    }
+
+    /**
+     * Get time spent on page in seconds
+     */
+    private getTimeSpentSeconds(): number {
+        if (this.pageLoadTime === 0) return 0;
+        return Math.round((Date.now() - this.pageLoadTime) / 1000);
+    }
+
+    /**
+     * Calculate quality score based on engagement metrics
+     */
+    private calculateQualityScore(): number {
+        const timeSpentSeconds = this.getTimeSpentSeconds();
+        const scrollDepthPercent = this.maxScrollDepth;
+        const submittedEnquiry = this.hasCreatedEnquiry;
+
+        // Calculate quality score components
+        const timeScore = Math.min(timeSpentSeconds / 60, 1); // Max score at 1 minute
+        const scrollScore = scrollDepthPercent / 100;
+        const enquiryScore = submittedEnquiry ? 1 : 0;
+        
+        // Weighted quality score calculation
+        const qualityScore = ((timeScore * 0.4) + (scrollScore * 0.3) + (enquiryScore * 0.3));
+        
+        return Math.round(qualityScore * 100) / 100; // Round to 2 decimal places
+    }
+
+    /**
+     * Update quality score and log metrics
+     */
+    private updateQualityScore(): void {
+        this.qualityScore = this.calculateQualityScore();
+        
+        console.log('Analytics Update:', {
+            timeSpent: this.getTimeSpentSeconds() + 's',
+            maxScrollDepth: this.maxScrollDepth + '%',
+            currentScrollDepth: this.currentScrollDepth + '%',
+            hasEnquiry: this.hasCreatedEnquiry,
+            qualityScore: this.qualityScore
+        });
+    }
+
+    /**
+     * Get current engagement data for analytics
+     */
+    private getEngagementData(): any {
+        return {
+            timeSpentSeconds: this.getTimeSpentSeconds(),
+            scrollDepthPercent: this.maxScrollDepth,
+            submittedEnquiry: this.hasCreatedEnquiry,
+            qualityScore: this.calculateQualityScore()
+        };
+    }
+
+    /**
+     * Mark that user has submitted an enquiry (call this when enquiry is submitted)
+     */
+    public markEnquirySubmitted(): void {
+        this.hasCreatedEnquiry = true;
+        console.log('Enquiry submitted - updating quality score');
+        this.updateQualityScore();
+    }
+
+    /**
+     * Manually trigger analytics tracking with current data (for testing or manual calls)
+     */
+    public sendCurrentAnalytics(): void {
+        if (this.venueDetails) {
+            console.log('📊 MANUAL: Sending current analytics data...');
+            this.trackVenueClick(this.venueDetails);
+        } else {
+            console.warn('📊 MANUAL: Cannot send analytics - venue details not loaded');
+        }
+    }
+
+    /**
+     * Get current analytics summary (for debugging)
+     */
+    public getAnalyticsSummary(): any {
+        return {
+            timeSpent: this.getTimeSpentSeconds(),
+            maxScrollDepth: this.maxScrollDepth,
+            currentScrollDepth: this.currentScrollDepth,
+            hasSubmittedEnquiry: this.hasCreatedEnquiry,
+            qualityScore: this.calculateQualityScore(),
+            pageLoadTime: new Date(this.pageLoadTime).toISOString()
+        };
+    }
+
+    /**
+     * Send final analytics when user is leaving the page
+     */
+    private sendFinalAnalytics(): void {
+        try {
+            // Calculate final metrics
+            const finalTimeSpent = this.getTimeSpentSeconds();
+            const finalQualityScore = this.calculateQualityScore();
+            
+            console.log('📊 SENDING FINAL ANALYTICS:', {
+                totalTimeSpent: finalTimeSpent + 's',
+                maxScrollDepth: this.maxScrollDepth + '%',
+                finalQualityScore: finalQualityScore,
+                enquirySubmitted: this.hasCreatedEnquiry
+            });
+
+            // Only send analytics if venue details exist and we have meaningful data
+            if (this.venueDetails && finalTimeSpent > 0) {
+                // Send the final analytics via trackVenueClick with updated engagement data
+                this.trackVenueClick(this.venueDetails);
+                console.log('✅ Final analytics sent successfully');
+            } else {
+                console.log('⚠️ Skipping final analytics - insufficient data or no venue');
+            }
+        } catch (error) {
+            console.error('❌ Error sending final analytics:', error);
+        }
+    }
+
+    /**
+     * Manual method to trigger final analytics (for testing)
+     */
+    public sendFinalAnalyticsManually(): void {
+        console.log('🧪 MANUAL TRIGGER: Sending final analytics');
+        this.sendFinalAnalytics();
+    }
+
+    /**
+     * Get user details from the API (similar to venue-list)
+     */
+
+
     loadGoogleReviews() {
         if (this.venueDetails) {
             this.venueService.getGoogleReviews(this.venueDetails.name, this.venueDetails.cityname)
@@ -1223,6 +1713,26 @@ navigateToVenue(venueId: number): void {
             clearTimeout(this.enquiryTimer);
             console.log('🏢 VENUE: Timer cleared on destroy');
         }
+        
+        // Send final analytics before cleanup
+        this.sendFinalAnalytics();
+        
+        // Clean up analytics tracking
+        if (this.trackingInterval) {
+            clearInterval(this.trackingInterval);
+            console.log('📊 ANALYTICS: Tracking interval cleared');
+        }
+        
+        if (this.scrollThrottleTimer) {
+            clearTimeout(this.scrollThrottleTimer);
+            console.log('📊 ANALYTICS: Scroll throttle timer cleared');
+        }
+        
+        // Remove beforeunload listener if it exists
+        if (this.boundBeforeUnloadHandler) {
+            window.removeEventListener('beforeunload', this.boundBeforeUnloadHandler);
+        }
+        
         this.renderer.removeClass(document.body, 'body-dark');
     }
     get forgotPassValidation() {
@@ -1883,6 +2393,8 @@ loadMoreGoogleReviews(): void {
                     if (response && response.success) {
                         console.log('✅ VENUE: Enquiry created successfully with ID:', response.id);
                         this.hasCreatedEnquiry = true;
+                        // Update analytics tracking for enquiry submission
+                        this.markEnquirySubmitted();
                     }
                 },
                 (error) => {
@@ -3139,6 +3651,9 @@ loadMoreGoogleReviews(): void {
                         const rzp = new Razorpay(options);
                         rzp.open();
                     } else {
+                        // Enquiry was successful
+                        this.markEnquirySubmitted(); // Track analytics for enquiry submission
+                        
                         this.messageService.add({
                             key: 'toastMsg',
                             severity: 'success',
@@ -3165,7 +3680,7 @@ loadMoreGoogleReviews(): void {
                 this.messageService.add({
                     key: 'toastMsg',
                     severity: 'error',
-                    summary: err.error.message,
+                    summary: 'error',
                     detail: 'Venue order booked failed',
                     life: 6000,
                 });

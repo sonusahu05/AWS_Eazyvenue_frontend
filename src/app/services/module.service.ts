@@ -25,6 +25,21 @@ export class ModuleService {
     return this.http.get(API_URL+"module/"+moduleid);
   }
 
+  // Add new module
+  addModule(moduledata): Observable<any> {
+    return this.http.post(API_URL + 'module', moduledata);
+  }
+
+  // Update existing module
+  updateModule(id: string, moduledata): Observable<any> {
+    return this.http.put(API_URL + 'module/' + id, moduledata);
+  }
+
+  // Delete module
+  deleteModule(id: string): Observable<any> {
+    return this.http.delete(API_URL + 'module/' + id);
+  }
+
 //   searchRoleDetails(querystring): Observable<any> {
 //     return this.http.get(API_URL+'userrole/?'+querystring);
 //   }
