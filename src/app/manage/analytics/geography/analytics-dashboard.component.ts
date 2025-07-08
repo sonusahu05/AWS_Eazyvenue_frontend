@@ -1473,9 +1473,8 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
         // console.log('getVenueDisplayName called with:', venue); // Debug log
         if (venue.venueName && venue.venueName.trim()) {
             // console.log('Using venue name:', venue.venueName); // Debug log
-            return venue.venueName.length > 25 ? 
-                venue.venueName.substring(0, 25) + '...' : 
-                venue.venueName;
+            // Return full name since CSS will handle line wrapping and truncation
+            return `${venue.venueName.substring(0, 15)}...`;
         }
         console.log('Using fallback for venue:', venue.venueId); // Debug log
         return `Venue ${venue.venueId.substring(0, 8)}...`;

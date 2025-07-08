@@ -1,0 +1,372 @@
+<div class="competition-analysis-container">
+  <div class="competition-analysis-dashboard">
+  <p-toast key="toastmsg"></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+  
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Competition Analysis</h1>
+        <p class="page-subtitle">Analyze competing venues in your area and compare pricing strategies</p>
+        
+        <!-- Current Venue Badge -->
+        <div class="venue-owner-notice" *ngIf="currentVenue">
+          <p-tag severity="info" [value]="'Analyzing for: ' + currentVenue.name" icon="pi pi-building"></p-tag>
+          <p-tag severity="warning" [value]="'Within ' + selectedDistanceFilter.label" icon="pi pi-map-marker" class="ml-2"></p-tag>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <!-- Distance Filter -->
+        <div class="filter-group">
+          <label class="filter-label">Search Radius</label>
+          <p-dropdown 
+            [options]="distanceFilters" 
+            [(ngModel)]="selectedDistanceFilter" 
+            optionLabel="label" 
+            placeholder="Select Distance"
+            (onChange)="onDistanceFilterChange()"
+            styleClass="distance-dropdown">
+          </p-dropdown>
+        </div>
+        
+        <!-- Export Actions -->
+        <div class="export-actions">
+          <button 
+            pButton 
+            pRipple 
+            label="Export PDF" 
+            icon="pi pi-file-pdf" 
+            class="p-button-outlined p-button-sm"
+            (click)="exportToPDF()"
+            [disabled]="!filteredVenues.length">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Overview Stats Cards -->
+  <div class="overview-cards">
+    <div class="stats-grid">
+      <div class="overview-card total-competitors">
+        <div class="card-content">
+          <div class="icon">
+            <i class="pi pi-building"></i>
+          </div>
+          <div class="stats">
+            <h3>{{ statistics?.totalCompetitors || 0 }}</h3>
+            <p>Total Competitors</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="overview-card avg-price">
+        <div class="card-content">
+          <div class="icon">
+            <i class="pi pi-dollar"></i>
+          </div>
+          <div class="stats">
+            <h3>{{ getPriceDisplay(statistics?.avgCompetitorPrice || 0) }}</h3>
+            <p>Avg Competitor Price</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="overview-card price-range">
+        <div class="card-content">
+          <div class="icon">
+            <i class="pi pi-chart-bar"></i>
+          </div>
+          <div class="stats">
+            <h3>{{ getPriceDisplay(statistics?.minCompetitorPrice || 0) }} - {{ getPriceDisplay(statistics?.maxCompetitorPrice || 0) }}</h3>
+            <p>Price Range</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="overview-card price-advantage" 
+           [ngClass]="{
+             'advantage-positive': (statistics?.priceAdvantage || 0) > 0,
+             'advantage-negative': (statistics?.priceAdvantage || 0) < 0,
+             'advantage-neutral': (statistics?.priceAdvantage || 0) === 0
+           }">
+        <div class="card-content">
+          <div class="icon">
+            <i class="pi" [ngClass]="{
+              'pi-arrow-up': (statistics?.priceAdvantage || 0) > 0,
+              'pi-arrow-down': (statistics?.priceAdvantage || 0) < 0,
+              'pi-minus': (statistics?.priceAdvantage || 0) === 0
+            }"></i>
+          </div>
+          <div class="stats">
+            <h3>
+              <span *ngIf="(statistics?.priceAdvantage || 0) > 0">+</span>{{ statistics ? getPriceDisplay(getAbsoluteValue(statistics?.priceAdvantage || 0)) : '₹0' }}
+            </h3>
+            <p>Price Advantage</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Current Venue Summary Card -->
+    <div class="current-venue-card" *ngIf="currentVenue">
+      <div class="venue-info-section">
+        <div class="venue-title">
+          <h3>{{ currentVenue.name }}</h3>
+          <p-badge value="Your Venue" severity="info" class="venue-badge"></p-badge>
+        </div>
+        <div class="venue-location">
+          <i class="pi pi-map-marker location-icon"></i>
+          <span>{{ currentVenue.subarea }}, {{ currentVenue.cityname }}</span>
+        </div>
+      </div>
+      <div class="venue-stats-horizontal">
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="pi pi-users"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Capacity</span>
+            <span class="stat-value">{{ getCapacityDisplay(currentVenue.capacity) }}</span>
+          </div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="pi pi-dollar"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Avg Price</span>
+            <span class="stat-value">{{ getPriceDisplay(currentVenue.avgPrice) }}</span>
+          </div>
+        </div>
+        <div class="stat-divider" *ngIf="(statistics?.avgDistance || 0) > 0"></div>
+        <div class="stat-item" *ngIf="(statistics?.avgDistance || 0) > 0">
+          <div class="stat-icon">
+            <i class="pi pi-compass"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Avg Distance to Competitors</span>
+            <span class="stat-value">{{ getDistanceDisplay(statistics?.avgDistance || 0) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Competition Table -->
+  <div class="venues-table-section">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="header-content">
+          <div>
+            <h3>Competing Venues</h3>
+            <p class="text-muted">Detailed analysis of venues within {{ selectedDistanceFilter.label }}</p>
+          </div>
+          <div class="table-info">
+            <span class="venue-count">{{ filteredVenues.length }} venues found</span>
+          </div>
+        </div>
+      </div>
+
+      <p-table 
+        #dt
+        [value]="filteredVenues" 
+        [loading]="loading"
+        [rows]="10"
+        [showCurrentPageReport]="true" 
+        [rowsPerPageOptions]="[10,25,50]" 
+        [paginator]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} venues"
+        [globalFilterFields]="['name','cityname','subarea','propertyType']"
+        styleClass="p-datatable-gridlines modern-table"
+        [scrollable]="true"
+        [exportFilename]="'competition-analysis'"
+        [reorderableColumns]="true"
+        [resizableColumns]="true">
+        
+        <!-- Global Filter -->
+        <ng-template pTemplate="caption">
+          <div class="table-caption">
+            <div class="search-section">
+              <span class="p-input-icon-right search-container">
+                <input 
+                  pInputText 
+                  type="text" 
+                  [(ngModel)]="searchValue"
+                  (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
+                  placeholder="Search venues by name..."
+                  class="search-input" />
+                <i class="pi pi-search search-icon"></i>
+              </span>
+              <div class="search-hint">
+                <i class="pi pi-info-circle"></i>
+                <span>Find venues by typing their name</span>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- Table Header -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="name" pReorderableColumn class="venue-name-col">
+              <div class="flex align-items-center">
+                Venue Name
+                <p-sortIcon field="name"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="distance" pReorderableColumn *ngIf="userLocation" class="distance-col">
+              <div class="flex align-items-center">
+                Distance
+                <p-sortIcon field="distance"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="cityname" pReorderableColumn class="location-col">
+              <div class="flex align-items-center">
+                Location
+                <p-sortIcon field="cityname"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="capacity" pReorderableColumn class="capacity-col">
+              <div class="flex align-items-center">
+                Capacity
+                <p-sortIcon field="capacity"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="avgPrice" pReorderableColumn class="price-col">
+              <div class="flex align-items-center">
+                Avg Price
+                <p-sortIcon field="avgPrice"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="vegPrice" pReorderableColumn class="price-col">
+              <div class="flex align-items-center">
+                Veg Price
+                <p-sortIcon field="vegPrice"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="nonVegPrice" pReorderableColumn class="price-col">
+              <div class="flex align-items-center">
+                Non-Veg Price
+                <p-sortIcon field="nonVegPrice"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="propertyType" pReorderableColumn class="property-col">
+              <div class="flex align-items-center">
+                Property Type
+                <p-sortIcon field="propertyType"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="rating" pReorderableColumn class="rating-col">
+              <div class="flex align-items-center">
+                Rating
+                <p-sortIcon field="rating"></p-sortIcon>
+              </div>
+            </th>
+            <th pSortableColumn="isAssured" pReorderableColumn class="assured-col">
+              <div class="flex align-items-center">
+                Assured
+                <p-sortIcon field="isAssured"></p-sortIcon>
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+
+        <!-- Table Body -->
+        <ng-template pTemplate="body" let-venue>
+          <tr [ngClass]="{
+            'current-venue-row': venue.isCurrentVenue || venue.distance === 0, 
+            'competitor-venue-row': !venue.isCurrentVenue && venue.distance !== 0,
+            'same-venue-highlight': venue.distance === 0
+          }">
+            <td class="venue-name-cell">
+              <div class="venue-name-container">
+                <span 
+                  class="venue-name"
+                  [ngClass]="{
+                    'current-venue-name': venue.isCurrentVenue || venue.distance === 0,
+                    'same-venue-name': venue.distance === 0
+                  }">
+                  {{ venue.name }}
+                </span>
+                <p-badge 
+                  *ngIf="venue.isCurrentVenue || venue.distance === 0" 
+                  [value]="venue.distance === 0 ? 'Your Venue' : 'Current Venue'" 
+                  [severity]="venue.distance === 0 ? 'success' : 'info'"
+                  class="venue-badge">
+                </p-badge>
+                <p-tag 
+                  *ngIf="venue.distance === 0 && !venue.isCurrentVenue"
+                  value="Same Location"
+                  severity="warning"
+                  icon="pi pi-map-marker"
+                  class="ml-2">
+                </p-tag>
+              </div>
+            </td>
+            <td *ngIf="userLocation" class="distance-cell">
+              <span class="distance-value">{{ getDistanceDisplay(venue.distance) }}</span>
+            </td>
+            <td class="location-cell">
+              <div class="location-info">
+                <div class="city-name">{{ venue.cityname }}</div>
+                <div class="subarea-name" *ngIf="venue.subarea">{{ venue.subarea }}</div>
+              </div>
+            </td>
+            <td class="capacity-cell">
+              <span class="capacity-value">{{ getCapacityDisplay(venue.capacity) }}</span>
+            </td>
+            <td class="price-cell">
+              <span class="price-value primary-price">{{ getPriceDisplay(venue.avgPrice) }}</span>
+            </td>
+            <td class="price-cell">
+              <span class="price-value">{{ getPriceDisplay(venue.vegPrice) }}</span>
+            </td>
+            <td class="price-cell">
+              <span class="price-value">{{ getPriceDisplay(venue.nonVegPrice) }}</span>
+            </td>
+            <td class="property-cell">
+              <span class="property-type">{{ getPropertyTypeDisplay(venue.propertyType) }}</span>
+            </td>
+            <td class="rating-cell">
+              <div class="rating-container" *ngIf="venue.rating > 0">
+                <span class="rating-value">{{ getRatingDisplay(venue.rating) }}</span>
+                <i class="pi pi-star-fill rating-star"></i>
+              </div>
+              <span *ngIf="venue.rating === 0" class="no-rating">No rating</span>
+            </td>
+            <td class="assured-cell">
+              <p-badge 
+                [value]="getAssuredDisplay(venue.isAssured)"
+                [severity]="venue.isAssured ? 'success' : 'secondary'"
+                class="assured-badge">
+              </p-badge>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Empty State -->
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="userLocation ? 10 : 9" class="empty-state">
+              <div class="empty-content">
+                <i class="pi pi-search empty-icon"></i>
+                <div class="empty-title">No competing venues found</div>
+                <div class="empty-subtitle">Try adjusting your search radius or location settings</div>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Debug Section (for development only) -->
+  <div class="debug-section" *ngIf="false">
+    <div class="debug-card">
+  </div>
+</div>
+</div>

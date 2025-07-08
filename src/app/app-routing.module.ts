@@ -394,6 +394,10 @@ import { HomeDataResolver } from './services/home-data.resolver';
                 path: 'analytics/geography',
                 loadChildren: () => import('./manage/analytics/geography/analytics.module').then((m) => m.AnalyticsModule),
             },
+            {
+                path: 'analytics/competition',
+                loadChildren: () => import('./manage/analytics/competition/competition-analysis.module').then((m) => m.CompetitionAnalysisModule),
+            },
         ],
     },
     { path: 'error', component: AppErrorComponent },

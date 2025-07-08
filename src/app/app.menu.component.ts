@@ -299,7 +299,8 @@ export class AppMenuComponent implements OnInit {
                 items: [
                     { label: 'Venue Analytics', icon: 'pi pi-chart-bar', routerLink: ['/manage/venue-analytics'] },
                     { label: 'Click Analytics', icon: 'pi pi-eye', routerLink: ['/manage/click-analytics'] },
-                    { label: 'Revenue Analytics', icon: 'pi pi-dollar', routerLink: ['/manage/revenue-analytics'] }
+                    { label: 'Revenue Analytics', icon: 'pi pi-dollar', routerLink: ['/manage/revenue-analytics'] },
+                    { label: 'Competition Analysis', icon: 'pi pi-users', routerLink: ['/manage/analytics/competition'] }
                 ]
             };
             

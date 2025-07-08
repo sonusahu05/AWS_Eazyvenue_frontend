@@ -272,4 +272,15 @@ getGoogleReviews(placeName: string, cityName: string): Observable<any> {
             window.open(whatsappUrl, '_blank');
         }
     }
+
+    /**
+     * Get competition analysis for a venue
+     */
+    getCompetitionAnalysis(venueId: string, params: any): Observable<any> {
+        const queryParams = new URLSearchParams(params).toString();
+        return this.http.get<any>(
+            `${API_URL}/competition/${venueId}?${queryParams}`,
+            this.httpOptions
+        );
+    }
 }

@@ -252,11 +252,13 @@
                 <ng-template pTemplate="body" let-venue>
                     <tr>
                         <td>
-                            <span class="venue-name" 
-                                  [pTooltip]="venue.venueName || venue.venueId"
-                                  tooltipPosition="top">
-                                {{ getVenueDisplayName(venue) }}
-                            </span>
+                            <div class="venue-name-container" 
+                                 [pTooltip]="venue.venueName || venue.venueId"
+                                 tooltipPosition="top">
+                                <span class="venue-name multiline-text">
+                                    {{ getVenueDisplayName(venue) }}
+                                </span>
+                            </div>
                         </td>
                         <td>
                             <span class="click-count">{{ venue.clicks | number }}</span>

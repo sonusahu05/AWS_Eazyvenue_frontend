@@ -212,8 +212,22 @@
   border: 1px solid #dee2e6;
 }
 
-.p-datatable .p-datatable-tbody > tr:hover {
-  background: #f8f9fa;
+.p-datatable .p-datatable-tbody > tr {
+  &:hover {
+    background: #f8f9fa;
+  }
+  
+  > td {
+    vertical-align: top;
+    padding: 12px 8px; /* Increased padding for multiline content */
+    
+    /* Ensure venue name column has appropriate width */
+    &:first-child {
+      width: 20%;
+      min-width: 150px;
+      max-width: 250px;
+    }
+  }
 }
 
 .venue-id {
@@ -225,16 +239,39 @@
   color: #495057;
 }
 
+.venue-name-container {
+  max-width: 250px;
+  min-width: 150px;
+}
+
 .venue-name {
   font-weight: 600;
   color: #2c3e50;
   font-size: 0.9rem;
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: inline-block;
-  vertical-align: middle;
+  display: block;
+  
+  &.multiline-text {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+    max-height: 4.2em; /* Approximately 3 lines */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+  
+  /* Fallback for browsers that don't support -webkit-line-clamp */
+  &.multiline-text:not(:-webkit-any-link) {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
+  }
 }
 
 .click-count,
