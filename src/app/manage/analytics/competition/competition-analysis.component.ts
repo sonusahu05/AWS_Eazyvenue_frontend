@@ -14,6 +14,7 @@ let html2canvas: any;
 interface CompetitionVenue {
   id: string;
   name: string;
+  metaUrl?: string;
   cityname: string;
   subarea: string;
   capacity: number;
@@ -27,6 +28,8 @@ interface CompetitionVenue {
   floatingCapacity: number;
   amenities: string[];
   rating: number;
+  eazyVenueRating?: number;
+  googleRating?: number;
   isAssured: boolean;
   latitude?: number;
   longitude?: number;
@@ -79,6 +82,10 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
   isVenueOwner = false;
   currentUserEmail = '';
   venueOwnerVenueId: string = '';
+  
+  // Admin venue selection
+  availableVenues: any[] = [];
+  selectedVenueForAdmin: any = null;
   
   // Statistics
   statistics = {
@@ -177,10 +184,126 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
     if (this.isVenueOwner) {
       this.loadVenueOwnerVenue();
     } else if (this.isAdmin) {
-      // For admin, we'll need to select a venue or get it from route params
-      this.loadAdminSelectedVenue();
+      // For admin, load available venues first
+      this.loadAvailableVenuesForAdmin();
     } else {
       this.showAccessDeniedMessage();
+    }
+  }
+
+  private loadAvailableVenuesForAdmin() {
+    console.log('Loading venues for admin selection...');
+    
+    // Load all active venues for admin to choose from - increased page size for better selection
+    const query = `?admin=true&pageSize=500&pageNumber=1&filterByDisable=false&filterByStatus=true`;
+    
+    const sub = this.venueService.getVenueListForFilter(query).subscribe({
+      next: (response) => {
+        if (response?.data?.items && response.data.items.length > 0) {
+          console.log(`Loaded ${response.data.items.length} venues from API before deduplication`);
+          
+          // Remove duplicates by venue name before processing
+          const uniqueVenues = this.removeDuplicateVenuesByName(response.data.items);
+          console.log(`Unique venues after deduplication: ${uniqueVenues.length}`);
+          
+          // Create enhanced venue options with better formatting
+          this.availableVenues = uniqueVenues.map(venue => {
+            // Calculate average price for display
+            let avgPrice = 0;
+            if (venue.foodMenuType) {
+              const vegPrice = venue.foodMenuType.veg_food?.[0]?.value || 0;
+              const nonVegPrice = venue.foodMenuType.non_veg_food?.[0]?.value || 0;
+              if (vegPrice > 0 && nonVegPrice > 0) {
+                avgPrice = (vegPrice + nonVegPrice) / 2;
+              } else if (vegPrice > 0) {
+                avgPrice = vegPrice;
+              } else if (nonVegPrice > 0) {
+                avgPrice = nonVegPrice;
+              }
+            }
+
+            return {
+              label: `${venue.name} - ${venue.cityname}${venue.subarea ? ', ' + venue.subarea : ''}`,
+              value: {
+                ...venue,
+                avgPrice: avgPrice
+              }
+            };
+          }).sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
+          
+          console.log(`Final available venues for admin selection: ${this.availableVenues.length}`);
+          
+          // Don't auto-select any venue - let admin choose
+          this.selectedVenueForAdmin = null;
+          this.currentVenue = null;
+          this.competitionVenues = [];
+          this.filteredVenues = [];
+          this.statistics = this.getEmptyStatistics();
+          
+          // Show message to admin
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Admin Mode',
+            detail: `${this.availableVenues.length} unique venues available. Please select a venue to analyze.`,
+            life: 5000
+          });
+        } else {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'No Venues Found',
+            detail: 'No active venues found in the system'
+          });
+        }
+        
+        // Set loading to false since admin needs to select venue manually
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading venues for admin:', error);
+        this.loading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load venue list'
+        });
+      }
+    });
+    
+    this.subscriptions.add(sub);
+  }
+
+  onAdminVenueSelection() {
+    if (this.selectedVenueForAdmin && this.selectedVenueForAdmin.value) {
+      const venueData = this.selectedVenueForAdmin.value;
+      this.currentVenue = this.mapToCompetitionVenue(venueData, true);
+      
+      console.log('Admin selected venue changed:', this.currentVenue);
+      
+      // Show loading state while fetching competition data
+      this.loading = true;
+      
+      // Reset previous data
+      this.competitionVenues = [];
+      this.filteredVenues = [];
+      this.statistics = this.getEmptyStatistics();
+      
+      // Show selection confirmation
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Venue Selected',
+        detail: `Analyzing competition for ${venueData.name} in ${venueData.cityname}`,
+        life: 3000
+      });
+      
+      // Load competition data for selected venue
+      this.loadCompetitionVenues();
+    } else {
+      // Clear data if no venue selected
+      this.currentVenue = null;
+      this.competitionVenues = [];
+      this.filteredVenues = [];
+      this.statistics = this.getEmptyStatistics();
+      this.loading = false;
     }
   }
 
@@ -218,40 +341,6 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
     this.subscriptions.add(sub);
   }
 
-  private loadAdminSelectedVenue() {
-    // For now, load first available venue for admin
-    // TODO: Add venue selection dropdown for admin
-    const query = `?admin=true&pageSize=1&pageNumber=1&filterByDisable=false&filterByStatus=true`;
-    
-    const sub = this.venueService.getVenueListForFilter(query).subscribe({
-      next: (response) => {
-        if (response?.data?.items && response.data.items.length > 0) {
-          const venueData = response.data.items[0];
-          this.currentVenue = this.mapToCompetitionVenue(venueData, true);
-          
-          console.log('Admin selected venue loaded:', this.currentVenue);
-          this.loadCompetitionVenues();
-        } else {
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'No Venues Found',
-            detail: 'No active venues found in the system'
-          });
-        }
-      },
-      error: (error) => {
-        console.error('Error loading admin venue:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load venue details'
-        });
-      }
-    });
-    
-    this.subscriptions.add(sub);
-  }
-
   private loadCompetitionVenues() {
     if (!this.currentVenue) {
       console.log('=== LOAD COMPETITION VENUES: NO CURRENT VENUE ===');
@@ -264,13 +353,12 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
 
     this.loading = true;
 
-    // Use the new competition analysis API
+    // Use the competition analysis API to get all venues (backend no longer filters by distance)
     const sub = this.venueService.getCompetitionAnalysis(
       this.currentVenue.id,
       {
-        distance: this.selectedDistanceFilter.value,
         pageNumber: 1,
-        pageSize: 500 // Get more venues to ensure good coverage
+        pageSize: 1000 // Get all venues available
       }
     ).subscribe({
       next: (response) => {
@@ -299,16 +387,23 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
         if (response?.success && response?.data) {
           // Map the API response to our interface
           console.log('=== MAPPING VENUES ===');
-          this.competitionVenues = response.data.competitionVenues.map(venue => {
+          const mappedVenues = response.data.competitionVenues.map(venue => {
             const mapped = this.mapApiResponseToCompetitionVenue(venue);
             console.log(`Mapped venue ${venue.name}:`, mapped);
             return mapped;
           });
           
-          this.statistics = response.data.statistics || this.getEmptyStatistics();
+          // Remove duplicate venues by name
+          console.log('=== REMOVING DUPLICATES ===');
+          console.log(`Venues before deduplication: ${mappedVenues.length}`);
+          this.competitionVenues = this.removeDuplicateVenues(mappedVenues);
+          console.log(`Venues after deduplication: ${this.competitionVenues.length}`);
           
-          // Apply client-side distance filter if needed
+          // Apply frontend-based distance filtering and calculate distances
           this.applyDistanceFilter();
+          
+          // Calculate statistics based on filtered venues
+          this.calculateStatistics();
           
           // Force UI refresh after data is loaded
           setTimeout(() => {
@@ -325,8 +420,6 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
           this.filteredVenues = [];
           this.statistics = this.getEmptyStatistics();
         }
-        
-        this.calculateStatistics();
       },
       error: (error) => {
         this.loading = false;
@@ -346,7 +439,16 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
         // Check if this is a 400 error with coordinate issues but still has data structure
         if (error.status === 400 && error.error?.data) {
           // Handle 400 error but with data (coordinates missing)
-          this.competitionVenues = error.error.data.competitionVenues || [];
+          console.log('=== 400 ERROR WITH DATA - APPLYING DEDUPLICATION ===');
+          const rawVenues = error.error.data.competitionVenues || [];
+          console.log(`Venues from error response before deduplication: ${rawVenues.length}`);
+          
+          // Map venues and apply deduplication
+          const mappedVenues = rawVenues.map(venue => this.mapApiResponseToCompetitionVenue(venue));
+          this.competitionVenues = this.removeDuplicateVenues(mappedVenues);
+          
+          console.log(`Venues after deduplication: ${this.competitionVenues.length}`);
+          
           this.filteredVenues = this.competitionVenues;
           this.statistics = error.error.data.statistics || this.getEmptyStatistics();
           
@@ -425,9 +527,18 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       }
     }
 
+    // Extract coordinates from multiple possible field names
+    const latitude = venue.latitude ? parseFloat(venue.latitude) : 
+                    (venue.lat ? parseFloat(venue.lat) : undefined);
+    const longitude = venue.longitude ? parseFloat(venue.longitude) : 
+                     (venue.lng ? parseFloat(venue.lng) : undefined);
+
+    console.log(`Mapping venue ${venue.name}: coordinates lat=${latitude}, lng=${longitude}, isCurrentVenue=${isCurrentVenue}`);
+
     return {
       id: venue.id || venue._id,
       name: venue.name || 'Unknown Venue',
+      metaUrl: venue.metaUrl || venue.metaurl || venue.slug,
       cityname: venue.cityname || '',
       subarea: venue.subarea || venue.subareadata?.[0]?.name || '',
       capacity: venue.capacity || 0,
@@ -439,10 +550,12 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       theatreCapacity: venue.theaterSitting || venue.theatreCapacity || 0,
       floatingCapacity: venue.floatingCapacity || venue.capacity || 0,
       amenities: amenitiesList,
-      rating: venue.eazyVenueRating || venue.googleRating || 0,
+      rating: venue.eazyVenueRating || venue.googleRating || venue.rating || 0,
+      eazyVenueRating: venue.eazyVenueRating || venue.rating || 0,
+      googleRating: venue.googleRating || 0,
       isAssured: venue.assured || false,
-      latitude: venue.latitude ? parseFloat(venue.latitude) : undefined,
-      longitude: venue.longitude ? parseFloat(venue.longitude) : undefined,
+      latitude: latitude,
+      longitude: longitude,
       bookingPrice: venue.bookingPrice || 0,
       address: venue.address || '',
       email: venue.email || '',
@@ -453,15 +566,27 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
   }
 
   private mapApiResponseToCompetitionVenue(venue: any): CompetitionVenue {
-    console.log('Mapping venue:', venue); // Debug log
+    console.log('Mapping venue:', venue.name); // Debug log
+    console.log('Raw coordinates from API:', { 
+      latitude: venue.latitude, 
+      longitude: venue.longitude, 
+      lat: venue.lat, 
+      lng: venue.lng 
+    });
+    
+    const latitude = venue.latitude ? parseFloat(venue.latitude) : (venue.lat ? parseFloat(venue.lat) : undefined);
+    const longitude = venue.longitude ? parseFloat(venue.longitude) : (venue.lng ? parseFloat(venue.lng) : undefined);
+    
+    console.log('Parsed coordinates:', { latitude, longitude });
     
     return {
       id: venue.id || venue._id,
       name: venue.name || 'Unknown Venue',
+      metaUrl: venue.metaUrl || venue.metaurl || venue.slug,
       cityname: venue.cityname || '',
       subarea: venue.subarea || '',
       capacity: venue.capacity || 0,
-      distance: venue.distance,
+      distance: undefined, // Don't set default distance, let frontend calculate it
       minPrice: venue.minPrice || 0,
       maxPrice: venue.maxPrice || 0,
       avgPrice: venue.avgPrice || 0,
@@ -471,15 +596,17 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       floatingCapacity: venue.capacity || 0,
       amenities: venue.amenities || [],
       rating: venue.rating || venue.eazyVenueRating || venue.googleRating || 0,
+      eazyVenueRating: venue.eazyVenueRating || venue.rating || 0,
+      googleRating: venue.googleRating || 0,
       isAssured: venue.assured || false,
-      latitude: venue.latitude ? parseFloat(venue.latitude) : (venue.lat ? parseFloat(venue.lat) : undefined),
-      longitude: venue.longitude ? parseFloat(venue.longitude) : (venue.lng ? parseFloat(venue.lng) : undefined),
+      latitude: latitude,
+      longitude: longitude,
       bookingPrice: venue.bookingPrice || 0,
       address: venue.address || '',
       email: venue.email || '',
       mobileNumber: venue.mobileNumber || '',
       propertyType: venue.propertyType || '',
-      isCurrentVenue: false
+      isCurrentVenue: venue.isCurrentVenue || false // Use the flag from backend
     };
   }
 
@@ -497,35 +624,174 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
   onDistanceFilterChange() {
     console.log('=== DISTANCE FILTER CHANGED ===');
     console.log('New distance filter:', this.selectedDistanceFilter);
-    console.log('About to reload competition venues...');
-    this.loadCompetitionVenues(); // Reload with new distance
+    console.log('Reapplying distance filter without reloading data...');
+    
+    // Don't reload from backend, just reapply the frontend filter
+    this.applyDistanceFilter();
+    this.calculateStatistics();
+    
+    // Force change detection
+    this.cdr.detectChanges();
   }
 
   private applyDistanceFilter() {
-    // Since we're getting filtered data from API, just assign it
-    this.filteredVenues = this.competitionVenues || [];
-    console.log(`=== APPLY DISTANCE FILTER ===`);
-    console.log(`Competition venues: ${this.competitionVenues.length}`);
-    console.log(`Filtered venues: ${this.filteredVenues.length}`);
-    console.log(`Showing ${this.filteredVenues.length} venues within ${this.selectedDistanceFilter.value}km`);
-    
-    // DEBUG: Log each filtered venue
-    this.filteredVenues.forEach((venue, index) => {
-      console.log(`Filtered venue ${index + 1}:`, {
-        id: venue.id,
-        name: venue.name,
-        distance: venue.distance,
-        avgPrice: venue.avgPrice
-      });
+    console.log('=== APPLY DISTANCE FILTER START ===');
+    console.log(`Current venue:`, this.currentVenue);
+    console.log(`Competition venues:`, this.competitionVenues?.length || 0);
+    console.log(`Selected distance filter:`, this.selectedDistanceFilter.value);
+
+    if (!this.competitionVenues || this.competitionVenues.length === 0) {
+      this.filteredVenues = [];
+      console.log('No competition venues to filter');
+      return;
+    }
+
+    // Get current venue coordinates - use current venue if available
+    let baseVenueLatitude: number | undefined;
+    let baseVenueLongitude: number | undefined;
+
+    // Debug: check current venue coordinates in detail
+    console.log('=== CURRENT VENUE COORDINATES DEBUG ===');
+    console.log('Current venue object:', this.currentVenue);
+    console.log('Current venue latitude:', this.currentVenue?.latitude);
+    console.log('Current venue longitude:', this.currentVenue?.longitude);
+    console.log('Latitude type:', typeof this.currentVenue?.latitude);
+    console.log('Longitude type:', typeof this.currentVenue?.longitude);
+
+    if (this.currentVenue && this.currentVenue.latitude && this.currentVenue.longitude) {
+      baseVenueLatitude = this.currentVenue.latitude;
+      baseVenueLongitude = this.currentVenue.longitude;
+      console.log(`Using current venue coordinates: lat=${baseVenueLatitude}, lng=${baseVenueLongitude}`);
+    } else {
+      console.log('Current venue coordinates not available, cannot filter by distance');
+      console.log('Current venue lat check:', !!this.currentVenue?.latitude);
+      console.log('Current venue lng check:', !!this.currentVenue?.longitude);
+      
+      // Fallback: show all venues but mark distances as N/A
+      this.filteredVenues = [...this.competitionVenues];
+      this.sortVenuesWithCurrentFirst();
+      return;
+    }
+
+    // Calculate distances for all venues using geolocation service
+    const venuesWithCalculatedDistance = this.competitionVenues.map(venue => {
+      const updatedVenue = { ...venue };
+
+      if (venue.isCurrentVenue) {
+        // Current venue gets distance 0
+        updatedVenue.distance = 0;
+        console.log(`Current venue ${venue.name}: distance set to 0`);
+      } else if (venue.latitude && venue.longitude) {
+        // Calculate distance using geolocation service
+        const distance = this.geolocationService.calculateDistance(
+          baseVenueLatitude!,
+          baseVenueLongitude!,
+          venue.latitude,
+          venue.longitude
+        );
+        updatedVenue.distance = distance;
+        console.log(`Competitor venue ${venue.name}: calculated distance = ${distance} km (from ${baseVenueLatitude},${baseVenueLongitude} to ${venue.latitude},${venue.longitude})`);
+      } else {
+        // No coordinates available
+        updatedVenue.distance = undefined;
+        console.log(`Venue ${venue.name}: no coordinates available (lat=${venue.latitude}, lng=${venue.longitude})`);
+      }
+
+      return updatedVenue;
+    });
+
+    // Filter by selected distance
+    this.filteredVenues = venuesWithCalculatedDistance.filter(venue => {
+      // Always include current venue
+      if (venue.isCurrentVenue) {
+        return true;
+      }
+
+      // Include venues within the selected distance
+      return venue.distance !== undefined && venue.distance <= this.selectedDistanceFilter.value;
+    });
+
+    // Sort with current venue first, then by distance ascending
+    this.sortVenuesWithCurrentFirst();
+
+    console.log(`=== APPLY DISTANCE FILTER COMPLETE ===`);
+    console.log(`Total venues after distance calculation: ${venuesWithCalculatedDistance.length}`);
+    console.log(`Filtered venues within ${this.selectedDistanceFilter.value}km: ${this.filteredVenues.length}`);
+    console.log(`Venues with distances:`, this.filteredVenues.slice(0, 5).map(v => ({ 
+      name: v.name, 
+      distance: v.distance, 
+      isCurrentVenue: v.isCurrentVenue 
+    })));
+  }
+
+  private sortVenuesWithCurrentFirst() {
+    this.filteredVenues.sort((a, b) => {
+      // Current venue always comes first
+      if (a.isCurrentVenue && !b.isCurrentVenue) return -1;
+      if (!a.isCurrentVenue && b.isCurrentVenue) return 1;
+      
+      // If neither or both are current venue, sort by distance
+      const distA = a.distance !== undefined ? a.distance : Infinity;
+      const distB = b.distance !== undefined ? b.distance : Infinity;
+      return distA - distB;
     });
   }
 
   private calculateStatistics() {
-    // Since we get statistics from API, we can use them directly
-    // This method can be used for any additional client-side calculations if needed
-    if (!this.statistics) {
-      this.statistics = this.getEmptyStatistics();
+    console.log('=== CALCULATE STATISTICS START ===');
+    console.log('Filtered venues:', this.filteredVenues?.length || 0);
+    
+    // Initialize empty statistics
+    this.statistics = this.getEmptyStatistics();
+    
+    if (!this.filteredVenues || this.filteredVenues.length === 0) {
+      console.log('No filtered venues for statistics calculation');
+      return;
     }
+
+    // Get only competitor venues (exclude current venue)
+    const competitorVenues = this.filteredVenues.filter(venue => !venue.isCurrentVenue);
+    console.log('Competitor venues for stats:', competitorVenues.length);
+
+    if (competitorVenues.length === 0) {
+      console.log('No competitor venues found for statistics');
+      this.statistics.totalCompetitors = 0;
+      return;
+    }
+
+    // Calculate statistics from filtered competitor venues
+    this.statistics.totalCompetitors = competitorVenues.length;
+
+    // Calculate price statistics (excluding venues with 0 or undefined avgPrice)
+    const venuesWithPrice = competitorVenues.filter(venue => venue.avgPrice > 0);
+    
+    if (venuesWithPrice.length > 0) {
+      const prices = venuesWithPrice.map(venue => venue.avgPrice);
+      this.statistics.avgCompetitorPrice = Math.round(prices.reduce((sum, price) => sum + price, 0) / prices.length);
+      this.statistics.minCompetitorPrice = Math.min(...prices);
+      this.statistics.maxCompetitorPrice = Math.max(...prices);
+    }
+
+    // Calculate average distance (excluding venues with undefined distance)
+    const venuesWithDistance = competitorVenues.filter(venue => venue.distance !== undefined);
+    
+    if (venuesWithDistance.length > 0) {
+      const distances = venuesWithDistance.map(venue => venue.distance!);
+      this.statistics.avgDistance = Math.round((distances.reduce((sum, distance) => sum + distance, 0) / distances.length) * 10) / 10;
+    }
+
+    // Calculate price advantage (if current venue has a price)
+    if (this.currentVenue && this.currentVenue.avgPrice > 0 && this.statistics.avgCompetitorPrice > 0) {
+      this.statistics.priceAdvantage = Math.round(this.statistics.avgCompetitorPrice - this.currentVenue.avgPrice);
+    }
+
+    console.log('=== CALCULATED STATISTICS ===');
+    console.log('Total competitors:', this.statistics.totalCompetitors);
+    console.log('Avg competitor price:', this.statistics.avgCompetitorPrice);
+    console.log('Min competitor price:', this.statistics.minCompetitorPrice);
+    console.log('Max competitor price:', this.statistics.maxCompetitorPrice);
+    console.log('Avg distance:', this.statistics.avgDistance);
+    console.log('Price advantage:', this.statistics.priceAdvantage);
   }
 
   // Navigation and actions
@@ -790,8 +1056,10 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
 
   // Utility methods for template
   getDistanceDisplay(distance?: number): string {
-    if (distance === undefined) return 'N/A';
-    if (distance === 0) return '-';
+    if (distance === undefined || distance === null) return 'N/A';
+    if (distance === 0) return '0.0 km';
+    if (distance < 0.1) return '< 0.1 km';
+    if (distance < 1) return `${(distance * 1000).toFixed(0)} m`;
     return `${distance.toFixed(1)} km`;
   }
 
@@ -801,12 +1069,95 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
   }
 
   getRatingDisplay(rating: number): string {
-    if (!rating) return 'N/A';
+    if (!rating || rating === 0) return 'N/A';
     return rating.toFixed(1);
   }
 
-  getPropertyTypeDisplay(propertyType: string): string {
-    return propertyType || 'N/A';
+  // Check if venue has any ratings
+  hasRatings(venue: any): boolean {
+    return (venue.eazyVenueRating && venue.eazyVenueRating > 0) || 
+           (venue.googleRating && venue.googleRating > 0);
+  }
+
+  // Remove duplicate venues based on venue names
+  private removeDuplicateVenues(venues: CompetitionVenue[]): CompetitionVenue[] {
+    if (!venues || venues.length === 0) {
+      return [];
+    }
+
+    console.log('=== DEDUPLICATION START ===');
+    const uniqueVenues: CompetitionVenue[] = [];
+    const seenVenueNames = new Set<string>();
+    const duplicatesFound: string[] = [];
+
+    venues.forEach((venue, index) => {
+      // Normalize venue name for comparison (trim, lowercase)
+      const normalizedName = venue.name.trim().toLowerCase();
+      
+      if (!seenVenueNames.has(normalizedName)) {
+        // First occurrence of this venue name
+        seenVenueNames.add(normalizedName);
+        uniqueVenues.push(venue);
+        console.log(`✓ Keeping venue: "${venue.name}" (${venue.cityname})`);
+      } else {
+        // Duplicate found
+        duplicatesFound.push(venue.name);
+        console.log(`✗ Duplicate removed: "${venue.name}" (${venue.cityname}) - already exists`);
+      }
+    });
+
+    console.log('=== DEDUPLICATION COMPLETE ===');
+    console.log(`Original venues: ${venues.length}`);
+    console.log(`Unique venues: ${uniqueVenues.length}`);
+    console.log(`Duplicates removed: ${duplicatesFound.length}`);
+    
+    if (duplicatesFound.length > 0) {
+      console.log('Duplicate venue names found:', duplicatesFound);
+    }
+
+    return uniqueVenues;
+  }
+
+  // Remove duplicate venues based on venue names (for raw venue data from API)
+  private removeDuplicateVenuesByName(venues: any[]): any[] {
+    if (!venues || venues.length === 0) {
+      return [];
+    }
+
+    console.log('=== ADMIN VENUE DEDUPLICATION START ===');
+    const uniqueVenues: any[] = [];
+    const seenVenueNames = new Set<string>();
+    const duplicatesFound: string[] = [];
+
+    venues.forEach((venue, index) => {
+      // Normalize venue name for comparison (trim, lowercase)
+      const normalizedName = venue.name ? venue.name.trim().toLowerCase() : '';
+      
+      if (normalizedName && !seenVenueNames.has(normalizedName)) {
+        // First occurrence of this venue name
+        seenVenueNames.add(normalizedName);
+        uniqueVenues.push(venue);
+        console.log(`✓ Keeping venue: "${venue.name}" (${venue.cityname || 'N/A'})`);
+      } else if (normalizedName) {
+        // Duplicate found
+        duplicatesFound.push(venue.name);
+        console.log(`✗ Duplicate removed: "${venue.name}" (${venue.cityname || 'N/A'}) - already exists`);
+      } else {
+        // Venue with no name - skip
+        console.log(`✗ Skipping venue with no name`);
+      }
+    });
+
+    console.log('=== ADMIN VENUE DEDUPLICATION COMPLETE ===');
+    console.log(`Original venues: ${venues.length}`);
+    console.log(`Unique venues: ${uniqueVenues.length}`);
+    console.log(`Duplicates removed: ${duplicatesFound.length}`);
+    
+    if (duplicatesFound.length > 0) {
+      console.log('Duplicate venue names found:', duplicatesFound);
+    }
+
+    return uniqueVenues;
   }
 
   getAssuredDisplay(isAssured: boolean): string {
@@ -827,5 +1178,10 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
   // Helper method for Math.abs in template
   getAbsoluteValue(value: number): number {
     return Math.abs(value);
+  }
+
+  // Get the number of visible columns for table formatting
+  getColumnCount(): number {
+    return 9; // Fixed columns: name, distance, location, capacity, avg price, veg price, non-veg price, ratings, assured
   }
 }

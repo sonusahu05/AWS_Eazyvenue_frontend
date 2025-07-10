@@ -112,6 +112,10 @@
   min-width: 150px;
 }
 
+.venue-dropdown {
+  min-width: 300px;
+}
+
 .export-actions {
   display: flex;
   align-items: center;
@@ -494,6 +498,17 @@
 
 /* Table Styles */
 ::ng-deep .modern-table {
+  table-layout: fixed;
+  width: 100%;
+  
+  .p-datatable-wrapper {
+    overflow-x: auto;
+  }
+  
+  .p-datatable-table {
+    min-width: 800px; // Minimum table width for horizontal scroll
+  }
+  
   .p-datatable-header {
     background: #f8f9fa;
     border: none;
@@ -509,6 +524,9 @@
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .p-datatable-tbody > tr > td {
@@ -516,6 +534,9 @@
     border-bottom: 1px solid #f1f1f1;
     padding: 15px 12px;
     vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .p-datatable-tbody > tr:hover {
@@ -529,6 +550,53 @@
   }
 }
 
+// Column width definitions for better layout
+.venue-name-col, .venue-name-cell {
+  min-width: 200px;
+  width: 25%;
+  max-width: 300px;
+}
+
+.distance-col, .distance-cell {
+  min-width: 100px;
+  width: 10%;
+  max-width: 120px;
+  text-align: center;
+}
+
+.location-col, .location-cell {
+  min-width: 150px;
+  width: 15%;
+  max-width: 200px;
+}
+
+.capacity-col, .capacity-cell {
+  min-width: 100px;
+  width: 10%;
+  max-width: 120px;
+  text-align: center;
+}
+
+.price-col, .price-cell {
+  min-width: 110px;
+  width: 12%;
+  max-width: 130px;
+  text-align: right;
+}
+
+.rating-col, .rating-cell {
+  min-width: 160px;
+  width: 18%;
+  max-width: 200px;
+}
+
+.assured-col, .assured-cell {
+  min-width: 80px;
+  width: 10%;
+  max-width: 100px;
+  text-align: center;
+}
+
 /* Table Cell Styles */
 .venue-name-container {
   display: flex;
@@ -537,23 +605,38 @@
   flex-wrap: wrap;
 }
 
+.venue-name-cell {
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+.rating-cell {
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+.location-cell {
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
 .venue-name {
   font-weight: 600;
   color: #2c3e50;
   transition: color 0.2s ease;
-  padding: 4px 0;
+  cursor: pointer;
 }
 
-.venue-name:hover {
+.venue-name-link:hover .venue-name {
   color: #3498db;
 }
 
-.current-venue-name {
+.current-venue-name .venue-name {
   color: #3498db !important;
   font-weight: 700;
 }
 
-.same-venue-name {
+.same-venue-name .venue-name {
   color: #27ae60 !important;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(39, 174, 96, 0.1);
@@ -605,19 +688,83 @@
   font-size: 0.9rem;
 }
 
-.rating-container {
+/* Review List Styles - Vertical Layout */
+.review-list-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+  padding: 4px 0;
+  min-width: 120px;
+}
+
+.icon-review {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  width: 100%;
+  
+  img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  
+  .pi-star-fill {
+    color: #ffc107;
+    margin-right: 4px;
+  }
+  
+  .rating-style {
+    font-size: 12px;
+    color: #495057;
+    font-weight: 600;
+    white-space: nowrap;
+    
+    b {
+      color: #212529;
+      font-weight: 700;
+    }
+  }
 }
 
-.rating-value {
-  font-weight: 600;
-  color: #2c3e50;
+.google-ratings {
+  border-color: #4285f4;
+  background-color: rgba(66, 133, 244, 0.05);
+  
+  .rating-style {
+    color: #4285f4;
+  }
 }
 
-.rating-star {
-  color: #f39c12;
+.eazy-venue-ratings {
+  border-color: #ec3539;
+  background-color: rgba(236, 53, 57, 0.05);
+  
+  .rating-style {
+    color: #ec3539;
+  }
+}
+
+.no-ratings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px dashed #dee2e6;
+}
+
+.rating-empty-icon {
+  color: #bdc3c7;
   font-size: 0.9rem;
 }
 
@@ -664,33 +811,269 @@
   background: #f8f9fa !important;
 }
 
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
+/* Enhanced Empty State Styles */
+.empty-state-cell {
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
 }
 
-.empty-content {
+.empty-state-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 15px;
+  min-height: 400px;
+  width: 100%;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 12px;
+  margin: 20px 0;
 }
 
-.empty-icon {
-  font-size: 3rem;
-  color: #bdc3c7;
+.empty-state-content {
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  padding: 40px 30px;
 }
 
-.empty-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #6c757d;
+.empty-state-icon {
+  margin-bottom: 30px;
+  
+  i {
+    font-size: 4rem;
+    color: #6c5ce7;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 2px 4px rgba(108, 92, 231, 0.2));
+  }
 }
 
-.empty-subtitle {
-  color: #95a5a6;
-  font-size: 0.9rem;
+.empty-state-message {
+  margin-bottom: 30px;
+  text-align: center;
+  
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2d3436;
+    margin: 0 0 15px 0;
+    line-height: 1.3;
+    text-align: center;
+  }
+  
+  p {
+    font-size: 1rem;
+    color: #636e72;
+    line-height: 1.6;
+    margin: 0;
+    text-align: left;
+  }
+}
+
+/* Admin Empty State Specific Styles */
+.admin-empty-state {
+  .empty-state-instructions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 25px;
+  }
+  
+  .instruction-step {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    background: rgba(108, 92, 231, 0.05);
+    border-radius: 10px;
+    border-left: 4px solid #6c5ce7;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: rgba(108, 92, 231, 0.1);
+      transform: translateX(5px);
+    }
+  }
+  
+  .step-number {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(108, 92, 231, 0.3);
+  }
+  
+  .step-text {
+    font-size: 0.95rem;
+    color: #2d3436;
+    font-weight: 500;
+    text-align: center;
+    flex: 1;
+  }
+}
+
+/* Regular Empty State Specific Styles */
+.regular-empty-state {
+  .empty-state-suggestions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+  }
+  
+  .suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    background: rgba(116, 185, 255, 0.1);
+    border-radius: 25px;
+    color: #0984e3;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(116, 185, 255, 0.2);
+    
+    &:hover {
+      background: rgba(116, 185, 255, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(116, 185, 255, 0.2);
+    }
+    
+    i {
+      font-size: 1rem;
+      color: #0984e3;
+    }
+  }
+}
+
+/* Responsive Table Styles */
+@media (max-width: 1200px) {
+  ::ng-deep .modern-table {
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 12px 8px;
+      font-size: 0.8rem;
+    }
+  }
+  
+  .venue-name-col, .venue-name-cell {
+    width: 22%;
+    min-width: 180px;
+  }
+  
+  .rating-col, .rating-cell {
+    width: 20%;
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 992px) {
+  ::ng-deep .modern-table {
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 10px 6px;
+      font-size: 0.75rem;
+    }
+  }
+  
+  .venue-name-col, .venue-name-cell {
+    width: 20%;
+    min-width: 160px;
+  }
+  
+  .location-col, .location-cell {
+    width: 12%;
+    min-width: 120px;
+  }
+  
+  .price-col, .price-cell {
+    width: 11%;
+    min-width: 90px;
+  }
+  
+  .rating-col, .rating-cell {
+    width: 16%;
+    min-width: 120px;
+  }
+}
+
+/* Responsive Design for Empty State */
+@media (max-width: 768px) {
+  .empty-state-container {
+    min-height: 350px;
+    margin: 15px 0;
+  }
+  
+  .empty-state-content {
+    padding: 30px 20px;
+  }
+  
+  .empty-state-icon i {
+    font-size: 3rem;
+  }
+  
+  .empty-state-message h3 {
+    font-size: 1.3rem;
+  }
+  
+  .empty-state-message p {
+    font-size: 0.9rem;
+  }
+  
+  .admin-empty-state {
+    .instruction-step {
+      padding: 12px 15px;
+      gap: 12px;
+    }
+    
+    .step-number {
+      width: 30px;
+      height: 30px;
+      font-size: 0.8rem;
+    }
+    
+    .step-text {
+      font-size: 0.85rem;
+    }
+  }
+  
+  .regular-empty-state {
+    .empty-state-suggestions {
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .empty-state-container {
+    min-height: 300px;
+    margin: 10px 0;
+  }
+  
+  .empty-state-content {
+    padding: 25px 15px;
+  }
+  
+  .empty-state-icon i {
+    font-size: 2.5rem;
+  }
+  
+  .empty-state-message h3 {
+    font-size: 1.2rem;
+  }
 }
 
 /* Debug Section (hidden by default) */
@@ -717,6 +1100,220 @@
 
 .debug-content p {
   margin: 5px 0;
+}
+
+/* Venue Name Link Styles */
+.venue-name-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  
+  &:hover {
+    text-decoration: none;
+    color: #3498db;
+    background-color: rgba(52, 152, 219, 0.05);
+    transform: translateY(-1px);
+  }
+  
+  &:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+    text-decoration: none;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* Admin Venue Selection Styles */
+.admin-venue-selection {
+  position: relative;
+}
+
+.admin-venue-selection .filter-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #3498db;
+}
+
+.admin-venue-selection .filter-label i {
+  font-size: 0.9rem;
+}
+
+.admin-helper-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #7f8c8d;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.admin-helper-text i {
+  color: #3498db;
+  font-size: 0.75rem;
+}
+
+/* Enhanced Dropdown Options */
+::ng-deep .venue-dropdown .p-dropdown-panel {
+  max-height: 300px;
+}
+
+::ng-deep .venue-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+::ng-deep .venue-option:last-child {
+  border-bottom: none;
+}
+
+::ng-deep .venue-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+::ng-deep .venue-option .venue-name {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+::ng-deep .venue-option .venue-location {
+  color: #7f8c8d;
+  font-size: 0.8rem;
+}
+
+::ng-deep .venue-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+::ng-deep .venue-capacity {
+  color: #3498db;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+::ng-deep .venue-price {
+  color: #27ae60;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Selected Item Styling */
+::ng-deep .selected-venue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+::ng-deep .selected-venue .venue-icon {
+  color: #3498db;
+  font-size: 0.9rem;
+}
+
+::ng-deep .selected-venue .venue-name {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+::ng-deep .selected-venue .venue-location {
+  color: #7f8c8d;
+  font-size: 0.85rem;
+  margin-left: auto;
+}
+
+/* Admin Welcome Card */
+.admin-welcome-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 40px;
+  margin: 20px 0;
+  color: white;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+  animation: slideInUp 0.6s ease-out;
+}
+
+.welcome-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
+
+.welcome-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.welcome-icon i {
+  font-size: 2.5rem;
+  color: white;
+}
+
+.welcome-text h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-text p {
+  margin: 0 0 25px 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+  max-width: 500px;
+}
+
+.welcome-instructions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.instruction-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.instruction-item i {
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  flex-shrink: 0;
 }
 
 /* Responsive Design */
@@ -781,6 +1378,50 @@
     padding: 20px;
   }
   
+  // Mobile table adjustments
+  ::ng-deep .modern-table {
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 8px 4px;
+      font-size: 0.7rem;
+    }
+  }
+  
+  .venue-name-col, .venue-name-cell {
+    width: 25%;
+    min-width: 140px;
+  }
+  
+  .distance-col, .distance-cell {
+    width: 8%;
+    min-width: 70px;
+  }
+  
+  .location-col, .location-cell {
+    width: 15%;
+    min-width: 100px;
+  }
+  
+  .capacity-col, .capacity-cell {
+    width: 8%;
+    min-width: 70px;
+  }
+  
+  .price-col, .price-cell {
+    width: 10%;
+    min-width: 80px;
+  }
+  
+  .rating-col, .rating-cell {
+    width: 20%;
+    min-width: 120px;
+  }
+  
+  .assured-col, .assured-cell {
+    width: 8%;
+    min-width: 60px;
+  }
+  
   .venue-stats-horizontal {
     flex-direction: column;
     gap: 16px;
@@ -812,6 +1453,63 @@
     font-size: 0.8rem;
     margin-left: 0;
     margin-top: 6px;
+  }
+  
+  .admin-venue-selection {
+    width: 100%;
+  }
+  
+  .admin-venue-selection .venue-dropdown {
+    min-width: 100%;
+  }
+  
+  .admin-welcome-card {
+    padding: 25px 20px;
+    margin: 15px 0;
+  }
+  
+  .welcome-content {
+    gap: 20px;
+  }
+  
+  .welcome-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .welcome-icon i {
+    font-size: 2rem;
+  }
+  
+  .welcome-text h3 {
+    font-size: 1.5rem;
+  }
+  
+  .welcome-text p {
+    font-size: 1rem;
+  }
+  
+  .welcome-instructions {
+    align-items: center;
+    text-align: center;
+  }
+  
+  .instruction-item {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  
+  ::ng-deep .venue-option {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  
+  ::ng-deep .venue-meta {
+    align-items: flex-start;
+    flex-direction: row;
+    gap: 10px;
   }
 }
 
@@ -847,13 +1545,31 @@
   .venue-stats {
     grid-template-columns: 1fr;
   }
-  
-  .venue-name-container {
+   .venue-name-container {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
   
+  .review-list-vertical {
+    gap: 4px;
+    min-width: 100px;
+  }
+  
+  .icon-review {
+    padding: 3px 6px;
+    
+    img {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+    }
+    
+    .rating-style {
+      font-size: 11px;
+    }
+  }
+
   .search-input {
     padding: 12px 16px 12px 40px;
     font-size: 0.95rem;
