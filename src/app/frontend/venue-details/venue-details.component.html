@@ -197,7 +197,7 @@
     </div> -->
 </div>
 <div [ngStyle]="{
-    'display': 'flex',
+    'display': isMobile ? 'flex' : 'none',
     'width': '100%',
     'margin': '0',
     'padding': '0',
@@ -760,348 +760,129 @@
                                 <hr class="mb-2" />
                                 <!---Review Section-->
                                 <div class="review-section-Bottom">
-                                    <div class="col-md-12">
-                                        <div class="row">
-                                            <!-- <div class="col-md-12">
-                                                <div class="pull-right">
-                                                    <select class="reviews-fillter" name="">
-                                                        <option value="">Top reviews</option>
-                                                        <option value="">Most recent</option>
-                                                    </select>
-                                                </div>
-                                            </div> -->
-                                            <div
-                                                class="col-md-12 reiew-top-right-side"
-                                            >
-                                                <div class="row">
-                                                    <div
-                                                        class="col-md-12 headign-revies-section-k"
-                                                    >
-                                                        <h3
-                                                            style="
-                                                                font-weight: 600;
-                                                            "
-                                                        >
-                                                            Reviews
-                                                        </h3>
-                                                    </div>
-                                                    <div
-                                                        class="col-md-3 mg-auto rTig"
-                                                    >
-                                                        <div
-                                                            class="col-md-12 review-main-p"
-                                                        >
-                                                            <div
-                                                                class="review-div"
-                                                            >
-                                                                <div
-                                                                    class="Ratings-point col-md-12"
-                                                                >
-                                                                <h5>
-                                                                    {{
-                                                                        venueDetails.revirerating
-                                                                    }}
-                                                                </h5>
-                                                                </div>
-                                                                <div
-                                                                    class="rateing-star col-md-12"
-                                                                >
-                                                                    <ul>
-                                                                        <li>
-                                                                            <span
-                                                                                ><i
-                                                                                    class="pi pi-star-fill"
-                                                                                ></i
-                                                                            ></span>
-                                                                        </li>
-                                                                        <li>
-                                                                            <span
-                                                                                ><i
-                                                                                    class="pi pi-star-fill"
-                                                                                ></i
-                                                                            ></span>
-                                                                        </li>
-                                                                        <li>
-                                                                            <span
-                                                                                ><i
-                                                                                    class="pi pi-star-fill"
-                                                                                ></i
-                                                                            ></span>
-                                                                        </li>
-                                                                        <li>
-                                                                            <span
-                                                                                ><i
-                                                                                    class="pi pi-star"
-                                                                                ></i
-                                                                            ></span>
-                                                                        </li>
-                                                                        <li>
-                                                                            <span
-                                                                                ><i
-                                                                                    class="pi pi-star"
-                                                                                ></i
-                                                                            ></span>
-                                                                        </li>
-                                                                    </ul>
-                                                                    <div
-                                                                        class="review-counting col-md-12"
-                                                                    >
-                                                                        <h2
-                                                                            class="reviews-number"
-                                                                        >
-                                                                            (3
-                                                                            Reviews)
-                                                                        </h2>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div
-                                                        class="col-md-4 progress-rating P-ratr"
-                                                    >
-                                                        <ul>
-                                                            <li>
-                                                                <div
-                                                                    class="media"
-                                                                >
-                                                                    <div
-                                                                        class="media-left"
-                                                                    >
-                                                                        <span
-                                                                            >5</span
-                                                                        >
-                                                                    </div>
-                                                                    <div
-                                                                        class="media-body"
-                                                                    >
-                                                                        <div
-                                                                            class="progress"
-                                                                        >
-                                                                            <div
-                                                                                class="progress-bar"
-                                                                                role="progressbar"
-                                                                                aria-valuenow="40"
-                                                                                aria-valuemin="0"
-                                                                                aria-valuemax="100"
-                                                                                style="
-                                                                                    max-width: 40%;
-                                                                                "
-                                                                            ></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                            <li>
-                                                                <div
-                                                                    class="media"
-                                                                >
-                                                                    <div
-                                                                        class="media-left"
-                                                                    >
-                                                                        <span
-                                                                            >4</span
-                                                                        >
-                                                                    </div>
-                                                                    <div
-                                                                        class="media-body"
-                                                                    >
-                                                                        <div
-                                                                            class="progress"
-                                                                        >
-                                                                            <div
-                                                                                class="progress-bar"
-                                                                                role="progressbar"
-                                                                                aria-valuenow="80"
-                                                                                aria-valuemin="0"
-                                                                                aria-valuemax="100"
-                                                                                style="
-                                                                                    max-width: 80%;
-                                                                                "
-                                                                            ></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                            <li>
-                                                                <div
-                                                                    class="media"
-                                                                >
-                                                                    <div
-                                                                        class="media-left"
-                                                                    >
-                                                                        <span
-                                                                            >3</span
-                                                                        >
-                                                                    </div>
-                                                                    <div
-                                                                        class="media-body"
-                                                                    >
-                                                                        <div
-                                                                            class="progress"
-                                                                        >
-                                                                            <div
-                                                                                class="progress-bar"
-                                                                                role="progressbar"
-                                                                                aria-valuenow="30"
-                                                                                aria-valuemin="0"
-                                                                                aria-valuemax="100"
-                                                                                style="
-                                                                                    max-width: 30%;
-                                                                                "
-                                                                            ></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                            <li>
-                                                                <div
-                                                                    class="media"
-                                                                >
-                                                                    <div
-                                                                        class="media-left"
-                                                                    >
-                                                                        <span
-                                                                            >2</span
-                                                                        >
-                                                                    </div>
-                                                                    <div
-                                                                        class="media-body"
-                                                                    >
-                                                                        <div
-                                                                            class="progress"
-                                                                        >
-                                                                            <div
-                                                                                class="progress-bar"
-                                                                                role="progressbar"
-                                                                                aria-valuenow="20"
-                                                                                aria-valuemin="0"
-                                                                                aria-valuemax="100"
-                                                                                style="
-                                                                                    max-width: 20%;
-                                                                                "
-                                                                            ></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                            <li>
-                                                                <div
-                                                                    class="media"
-                                                                >
-                                                                    <div
-                                                                        class="media-left"
-                                                                    >
-                                                                        <span
-                                                                            >1</span
-                                                                        >
-                                                                    </div>
-                                                                    <div
-                                                                        class="media-body"
-                                                                    >
-                                                                        <div
-                                                                            class="progress"
-                                                                        >
-                                                                            <div
-                                                                                class="progress-bar"
-                                                                                role="progressbar"
-                                                                                aria-valuenow="50"
-                                                                                aria-valuemin="0"
-                                                                                aria-valuemax="100"
-                                                                                style="
-                                                                                    max-width: 50%;
-                                                                                "
-                                                                            ></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                             <!-- Add Review Form -->
-                                            <div class="review-form mb-4">
-                                                <form #reviewForm="ngForm" (ngSubmit)="submitReview()">
-                                                    <div class="form-group mb-3">
-                                                        <input
-                                                            type="text"
-                                                            class="form-control"
-                                                            placeholder="Review Title"
-                                                            name="reviewTitle"
-                                                            [(ngModel)]="newReview.reviewtitle"
-                                                            required>
-                                                    </div>
-                                                    <div class="form-group mb-3">
-                                                        <select
-                                                            class="form-control"
-                                                            name="rating"
-                                                            [(ngModel)]="newReview.reviewrating"
-                                                            required>
-                                                            <option value="1">1 Star</option>
-                                                            <option value="2">2 Stars</option>
-                                                            <option value="3">3 Stars</option>
-                                                            <option value="4">4 Stars</option>
-                                                            <option value="5">5 Stars</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group mb-3">
-                                                        <textarea
-                                                            class="form-control"
-                                                            rows="3"
-                                                            placeholder="Write your review..."
-                                                            name="reviewDescription"
-                                                            [(ngModel)]="newReview.reviewdescription"
-                                                            required></textarea>
-                                                    </div>
-                                                    <button
-                                                        type="submit"
-                                                        class="btn btn-primary"
-                                                        [disabled]="!reviewForm.valid">
-                                                        Submit Review
-                                                    </button>
-                                                </form>
-                                            </div>
-                                            <!--rihgt-sidee section-->
-                                            <div class="col-md-12 mian-li-review-details">
-                                                <h3 style="font-weight: 600; font-size: 16px;">Reviews</h3>
-
-                                                <!--Main review list -->
-                                                <ul>
-                                                    <li class="reviw-user-main" *ngFor="let review of venueDetails.reviews">
-                                                        <div class="review-comment-show">
-                                                            <div class="media">
-                                                                <img class="align-self-center mr-3" src="assets/images/category-icons/user-icon.svg" alt="customer-profile"/>
-                                                                <div class="media-body reviews-comment">
-                                                                    <div class="customer-name">
-                                                                        <h4>{{review.reviewtitle}}</h4>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="rateing-star-customer">
-                                                                <ul>
-                                                                    <li *ngFor="let star of [].constructor(review.reviewrating)">
-                                                                        <span><i class="pi pi-star-fill"></i></span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <div class="customer-comment">
-                                                                <span>{{review.reviewdescription}}</span>
-                                                            </div>
-                                                            <div class="review-date">
-                                                                <small>{{review.created_at | date}}</small>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                                <!--Main review list close -->
-
-                                                <button type="button" name="button" class="reviw-more-button" *ngIf="venueDetails.reviews?.length > 3" (click)="seeAllReviews()">
-                                                    See All Reviews
-                                                </button>
-                                            </div>
+                                <div class="ratings-header d-flex justify-content-between align-items-center">
+                                    <h2>Ratings & Reviews</h2>
+                                    <div class="rating-badge d-flex align-items-center" style="gap: 18px;">
+                                        <!-- EazyVenue Rating -->
+                                        <div class="d-flex align-items-center" style="gap: 4px;">
+                                            <img src="assets/images/logo.png" alt="EazyVenue" style="width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 1px solid #eee;" />
+                                            <ng-container *ngIf="venueDetails.eazyVenueRating > 0; else noEazyVenueReviews">
+                                                <i class="pi pi-star-fill" style="color: #ffc107; vertical-align: middle;"></i>
+                                                <span class="rating-value" style="height: 28px; line-height: 28px; font-size: 1.1rem; display: inline-block; vertical-align: middle;">{{ venueDetails.eazyVenueRating }}/5</span>
+                                            </ng-container>
+                                            <ng-template #noEazyVenueReviews>
+                                                <span class="no-reviews-text" style="color: #fff;">No reviews</span>
+                                            </ng-template>
+                                        </div>
+                                        <!-- Google Rating -->
+                                        <div class="d-flex align-items-center" style="gap: 4px;">
+                                            <img src="assets/img/svg/google.png" alt="Google" style="width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 1px solid #eee;" />
+                                            <ng-container *ngIf="venueDetails.googleRating > 0; else noGoogleReviews">
+                                                <i class="pi pi-star-fill" style="color: #ffc107; vertical-align: middle;"></i>
+                                                <span class="rating-value"style="height: 28px; line-height: 28px; font-size: 1.1rem; display: inline-block; vertical-align: middle;">{{ venueDetails.googleRating }}/5</span>
+                                            </ng-container>
+                                            <ng-template #noGoogleReviews>
+                                                <span class="no-reviews-text" style="color: #fff;">No reviews</span>
+                                            </ng-template>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div class="review-toggle-buttons mt-2" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <button 
+                                        [ngClass]="{ active: selectedReviewSource === 'eazyvenue' }" 
+                                        (click)="toggleReviewSource('eazyvenue')" 
+                                        style="display: flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: 4px; border: 1px solid #ddd; font-weight: 500; cursor: pointer; white-space: nowrap; font-size: 14px;">
+                                        <img src="assets/images/logo.png" alt="EazyVenue" style="width: 20px; height: 20px; border: 1px solid #fff; border-radius: 50%; background: #fff;" />
+                                        <span style="white-space: nowrap;">EazyVenue Reviews</span>
+                                    </button>
+                                    <button 
+                                        [ngClass]="{ active: selectedReviewSource === 'google' }" 
+                                        (click)="toggleReviewSource('google')" 
+                                        style="display: flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: 4px; border: 1px solid #ddd; font-weight: 500; cursor: pointer; white-space: nowrap; font-size: 14px;">
+                                        <img src="assets/img/svg/google.png" alt="Google" style="width: 20px; height: 20px; border: 1px solid #fff; border-radius: 50%; background: #fff;" />
+                                        <span style="white-space: nowrap;">Google Reviews</span>
+                                    </button>
+                                </div>
+                                <style>
+                                @media (max-width: 480px) {
+                                    .review-toggle-buttons {
+                                        flex-direction: column !important;
+                                        gap: 8px !important;
+                                        width: 100%;
+                                    }
+                                    .review-toggle-buttons button {
+                                        width: 100%;
+                                        justify-content: center;
+                                        font-size: 13px !important;
+                                        padding: 8px 0 !important;
+                                    }
+                                }
+                                </style>
+
+                                <button class="btn-outline-red mt-3" (click)="toggleReviewForm()" style="height: 32px; line-height: 1.2; padding: 4px 16px; font-size: 15px;">
+                                    <i class="pi pi-pencil" style="margin-right: 6px;"></i> Write a Review
+                                </button>
+
+                                <div *ngIf="showReviewForm" class="review-form-container mt-3 p-4" style="background: #f9f9fb; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); max-width: 500px; margin-left: 0; margin-right: auto;">
+                                    <form #reviewForm="ngForm" (ngSubmit)="submitReview()">
+                                        <div class="form-group mb-3">
+                                            <label for="reviewTitle" style="font-weight: 500; color: #333;">Review Title</label>
+                                            <input type="text" [(ngModel)]="newReview.reviewtitle" name="reviewTitle" id="reviewTitle" placeholder="Enter a short title" class="form-control" required style="border-radius: 6px;"/>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="rating" style="font-weight: 500; color: #333;">Your Rating</label>
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <ng-container *ngFor="let r of [1,2,3,4,5]">
+                                                    <input type="radio" [(ngModel)]="newReview.reviewrating" name="rating" [value]="r" id="star{{r}}" required style="display: none;"/>
+                                                    <label [for]="'star'+r" style="cursor: pointer; font-size: 1.5rem; color: #ffc107; margin-bottom: 0;">
+                                                        <i class="pi" [ngClass]="{'pi-star-fill': newReview.reviewrating >= r, 'pi-star': newReview.reviewrating < r}"></i>
+                                                    </label>
+                                                </ng-container>
+                                                <span *ngIf="newReview.reviewrating" style="margin-left: 8px; color: #666; font-size: 1rem;">{{newReview.reviewrating}}/5</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="reviewDescription" style="font-weight: 500; color: #333;">Your Review</label>
+                                            <textarea [(ngModel)]="newReview.reviewdescription" name="reviewDescription" id="reviewDescription" class="form-control" placeholder="Share your experience..." rows="4" required style="border-radius: 6px;"></textarea>
+                                        </div>
+                                        <div class="d-flex justify-content-end gap-2 mt-3">
+                                            <button type="submit" class="btn btn-success px-4" [disabled]="!reviewForm.valid" style="border-radius: 6px; font-weight: 500; margin-right: 10px;">
+                                                <i class="pi pi-check" style="margin-right: 4px;"></i>Submit
+                                            </button>
+                                            <button type="button" class="btn btn-light px-4" (click)="toggleReviewForm()" style="border-radius: 6px; border: 1px solid #ddd; font-weight: 500;">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <ul class="review-list" *ngIf="getDisplayedReviews()?.length > 0; else noReviewsMsg">
+                                    <li class="review-card" *ngFor="let review of getDisplayedReviews()">
+                                        <div class="review-header">
+                                            <span class="rating-stars">{{ review.reviewrating }}★</span>
+                                            <span class="review-title">{{ review.reviewtitle }}</span>
+                                        </div>
+                                        <p class="review-description">{{ review.reviewdescription }}</p>
+                                        <div class="review-footer">
+                                            <small>{{ review.created_at | date }}</small>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ng-template #noReviewsMsg>
+                                    <div class="no-reviews-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 0; color: #888;">
+                                        <div class="no-reviews-text" style="font-size: 1.1rem; font-weight: 500; margin-bottom: 6px;">
+                                            No reviews yet
+                                        </div>
+                                        <div style="font-size: 0.95rem; color: #aaa; margin-bottom: 10px;">
+                                            Be the first to share your experience!
+                                        </div>
+                                    </div>
+                                </ng-template>
+
+                                  <button class="btn-link" *ngIf="(selectedReviewSource === 'google' ? googleReviews.length : venueDetails.reviews?.length) > 3 && !showAllReviews" (click)="showAllReviews = true">
+                                    Show all reviews
+                                  </button>
                                 </div>
                                 <!---Review Section close -->
                                 <!-- <hr>
@@ -1148,7 +929,7 @@
                             pButton
                             class="btn btn-custom"
                         >
-                            Send Enquiry
+                            Check Availability
                         </button>
                     </div>
                     <div class="sidebar sticky-sidebar">
@@ -1825,122 +1606,7 @@
         </div>
     </div>
 </div>
-<!-- Similar Venues Section (existing) -->
-<div class="similar-venues-section" *ngIf="similarVenues?.length">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h3 class="section-title">Similar Venues</h3>
-                <div class="similar-venues-wrapper">
-                    <div class="similar-venues-container"
-                         #similarVenuesContainer
-                         (scroll)="onSimilarVenuesScroll()"
-                         style="display: flex; overflow-x: auto; overflow-y: hidden; gap: 20px; padding: 10px 0; scroll-behavior: smooth;">
 
-                        <div class="venue-card"
-                             *ngFor="let venue of similarVenues; trackBy: trackByVenueId"
-                             (click)="getVenueDetails(venue.metaUrl)"
-                             style="flex: 0 0 280px; cursor: pointer; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s;"
-                             onmouseover="this.style.transform='translateY(-2px)'"
-                             onmouseout="this.style.transform='translateY(0)'">
-
-                            <!-- Optimized Image Display -->
-                            <div class="venue-image" style="height: 200px; overflow: hidden; position: relative;">
-                                <img *ngIf="venue.venueImage && venue.venueImage[0] && venue.venueImage[0].venue_image_src; else defaultImg"
-                                     [src]="venue.venueImage[0].venue_image_src"
-                                     [alt]="venue.name"
-                                     loading="lazy"
-                                     style="width: 100%; height: 100%; object-fit: cover;">
-
-                                <ng-template #defaultImg>
-                                    <div style="width: 100%; height: 100%; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d;">
-                                        <i class="pi pi-image" style="font-size: 2rem;"></i>
-                                    </div>
-                                </ng-template>
-
-                                <!-- Assured Badge -->
-                                <div class="listing-badges" style="position: absolute; top: 10px; left: 10px;" *ngIf="venue.assured">
-                                    <span class="listing-badge Assured" style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                                        <i class="pi pi-check"></i> Assured
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="venue-info" style="padding: 15px;">
-                                <h5 class="venue-name" style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #333; line-height: 1.2;">
-                                    {{ venue.name }}
-                                </h5>
-
-                                <!-- Location with Icon -->
-                                <div class="category-icon" style="margin-bottom: 10px;">
-                                    <div class="location" style="display: flex; align-items: center; gap: 5px;">
-                                        <span class="icon">
-                                            <img src="assets/img/svg/location-icon.svg" style="width: 12px; height: 12px;" />
-                                        </span>
-                                        <span class="city" style="font-size: 13px; color: #666;">
-                                            <span *ngIf="venue.subarea">{{ venue.subarea }}</span>
-                                            <span *ngIf="venue.subarea && venue.cityname">, </span>
-                                            <span *ngIf="venue.cityname">{{ venue.cityname }}</span>
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- Price Information -->
-                                <div class="price-icons" style="margin-bottom: 10px;">
-                                    <div class="price-div">
-                                        <div class="acr-listing-icons pt-0">
-                                            <div class="acr-listing-icon" style="display: flex; align-items: center; gap: 5px; font-size: 13px; color: #666;">
-                                                <i class="pi pi-users" style="font-size: 12px;"></i>
-                                                Per Person:
-                                                <span *ngIf="venue.minPrice && venue.minPrice > 0"
-                                                      class="acr-listing-icon-value"
-                                                      style="font-weight: 600; color: #333;">
-                                                    ₹{{ venue.minPrice }}
-                                                </span>
-                                                <span *ngIf="!venue.minPrice || venue.minPrice == 0"
-                                                      class="acr-listing-icon-value"
-                                                      style="font-weight: 600; color: #999;">
-                                                    N/A
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- View Details Button -->
-                                <div class="listing-gallery-wrapper" style="display: flex; justify-content: space-between; align-items: center;">
-                                    <a class="btn-custom btn-sm secondary"
-                                       style="background: #007bff; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; border: none; cursor: pointer;">
-                                        View Details
-                                    </a>
-
-                                    <!-- Ratings -->
-                                    <div class="review-list" style="display: flex; align-items: center; gap: 8px; font-size: 11px;">
-                                        <div class="icon-review google-ratings" style="display: flex; align-items: center; gap: 2px;" *ngIf="venue.googleRating">
-                                            <img src="assets/img/svg/google.png" alt="" style="width: 12px; height: 12px;" />
-                                            <i class="pi pi-star-fill" style="font-size: 10px; color: #ffc107;"></i>
-                                            <span class="rating-style" style="color: #666;">
-                                                <b>{{ venue.googleRating }}</b>/5
-                                            </span>
-                                        </div>
-                                        <div class="vl" style="width: 1px; height: 12px; background: #ddd;" *ngIf="venue.googleRating && venue.eazyVenueRating"></div>
-                                        <div class="icon-review eazy-venue-ratings" style="display: flex; align-items: center; gap: 2px;" *ngIf="venue.eazyVenueRating">
-                                            <img src="assets/images/logo.png" alt="" style="width: 12px; height: 12px;" />
-                                            <i class="pi pi-star-fill" style="font-size: 10px; color: #ffc107;"></i>
-                                            <span class="rating-style" style="color: #666;">
-                                                <b>{{ venue.eazyVenueRating }}</b>/5
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Frequent Vendors Nearby Section (NEW) -->
 <div class="frequent-vendors-section" *ngIf="nearbyVendors?.length">
@@ -2094,6 +1760,123 @@
         </div>
     </div>
 </div>
+<!-- Similar Venues Section (existing) -->
+<div class="similar-venues-section" *ngIf="similarVenues?.length">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="section-title">Similar Venues</h3>
+                <div class="similar-venues-wrapper">
+                    <div class="similar-venues-container"
+                         #similarVenuesContainer
+                         (scroll)="onSimilarVenuesScroll()"
+                         style="display: flex; overflow-x: auto; overflow-y: hidden; gap: 20px; padding: 10px 0; scroll-behavior: smooth;">
+
+                        <div class="venue-card"
+                             *ngFor="let venue of similarVenues; trackBy: trackByVenueId"
+                             (click)="getVenueDetails(venue.metaUrl)"
+                             style="flex: 0 0 280px; cursor: pointer; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s;"
+                             onmouseover="this.style.transform='translateY(-2px)'"
+                             onmouseout="this.style.transform='translateY(0)'">
+
+                            <!-- Optimized Image Display -->
+                            <div class="venue-image" style="height: 200px; overflow: hidden; position: relative;">
+                                <img *ngIf="venue.venueImage && venue.venueImage[0] && venue.venueImage[0].venue_image_src; else defaultImg"
+                                     [src]="venue.venueImage[0].venue_image_src"
+                                     [alt]="venue.name"
+                                     loading="lazy"
+                                     style="width: 100%; height: 100%; object-fit: cover;">
+
+                                <ng-template #defaultImg>
+                                    <div style="width: 100%; height: 100%; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                        <i class="pi pi-image" style="font-size: 2rem;"></i>
+                                    </div>
+                                </ng-template>
+
+                                <!-- Assured Badge -->
+                                <div class="listing-badges" style="position: absolute; top: 10px; left: 10px;" *ngIf="venue.assured">
+                                    <span class="listing-badge Assured" style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                        <i class="pi pi-check"></i> Assured
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="venue-info" style="padding: 15px;">
+                                <h5 class="venue-name" style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #333; line-height: 1.2;">
+                                    {{ venue.name }}
+                                </h5>
+
+                                <!-- Location with Icon -->
+                                <div class="category-icon" style="margin-bottom: 10px;">
+                                    <div class="location" style="display: flex; align-items: center; gap: 5px;">
+                                        <span class="icon">
+                                            <img src="assets/img/svg/location-icon.svg" style="width: 12px; height: 12px;" />
+                                        </span>
+                                        <span class="city" style="font-size: 13px; color: #666;">
+                                            <span *ngIf="venue.subarea">{{ venue.subarea }}</span>
+                                            <span *ngIf="venue.subarea && venue.cityname">, </span>
+                                            <span *ngIf="venue.cityname">{{ venue.cityname }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Price Information -->
+                                <div class="price-icons" style="margin-bottom: 10px;">
+                                    <div class="price-div">
+                                        <div class="acr-listing-icons pt-0">
+                                            <div class="acr-listing-icon" style="display: flex; align-items: center; gap: 5px; font-size: 13px; color: #666;">
+                                                <i class="pi pi-users" style="font-size: 12px;"></i>
+                                                Per Person:
+                                                <span *ngIf="venue.minPrice && venue.minPrice > 0"
+                                                      class="acr-listing-icon-value"
+                                                      style="font-weight: 600; color: #333;">
+                                                    ₹{{ venue.minPrice }}
+                                                </span>
+                                                <span *ngIf="!venue.minPrice || venue.minPrice == 0"
+                                                      class="acr-listing-icon-value"
+                                                      style="font-weight: 600; color: #999;">
+                                                    N/A
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- View Details Button -->
+                                <div class="listing-gallery-wrapper" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <a class="btn-custom btn-sm secondary"
+                                       style="background: #007bff; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; border: none; cursor: pointer;">
+                                        View Details
+                                    </a>
+
+                                    <!-- Ratings -->
+                                    <div class="review-list" style="display: flex; align-items: center; gap: 8px; font-size: 11px;">
+                                        <div class="icon-review google-ratings" style="display: flex; align-items: center; gap: 2px;" *ngIf="venue.googleRating">
+                                            <img src="assets/img/svg/google.png" alt="" style="width: 12px; height: 12px;" />
+                                            <i class="pi pi-star-fill" style="font-size: 10px; color: #ffc107;"></i>
+                                            <span class="rating-style" style="color: #666;">
+                                                <b>{{ venue.googleRating }}</b>/5
+                                            </span>
+                                        </div>
+                                        <div class="vl" style="width: 1px; height: 12px; background: #ddd;" *ngIf="venue.googleRating && venue.eazyVenueRating"></div>
+                                        <div class="icon-review eazy-venue-ratings" style="display: flex; align-items: center; gap: 2px;" *ngIf="venue.eazyVenueRating">
+                                            <img src="assets/images/logo.png" alt="" style="width: 12px; height: 12px;" />
+                                            <i class="pi pi-star-fill" style="font-size: 10px; color: #ffc107;"></i>
+                                            <span class="rating-style" style="color: #666;">
+                                                <b>{{ venue.eazyVenueRating }}</b>/5
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Enhanced CSS Styles -->
 <style>
@@ -2526,10 +2309,12 @@
     [modal]="true"
     class="offer-popup-login"
     [modal]="true"
+    [closable]="false"
     [baseZIndex]="10000"
     [draggable]="false"
     [resizable]="false"
 >
+    <!-- Close icon disabled by setting [closable]="false" -->
     <div class="login-popup">
         <h3 class="offer-popup-heading mb-0">
             Receive<span class="offer-text"> 20%</span> off on our Photography
@@ -2587,7 +2372,7 @@
         </form>
     </div>
 </p-dialog>
-<p-dialog [(visible)]="otpPopup" [modal]="true" class="otp-popup-login">
+<p-dialog [(visible)]="otpPopup" [modal]="true" [closable]="false" class="otp-popup-login">
     <div class="login-popup">
         <!-- <h2 class="offer-popup-heading">Receive<span class="offer-popup-heading1"> 20%</span> off on our Photography now!</h2> -->
         <form (ngSubmit)="otpSubmit()">
@@ -3208,7 +2993,7 @@
                 pButton
                 class="btn btn-custom"
             >
-                Send Enquiry
+                Check Availability
             </button>
         </div>
         <div class="sidebar sticky-sidebar">
@@ -4118,7 +3903,7 @@
                     pButton
                     class="btn btn-custom w-100 price-btn"
                 >
-                    Send Enquiry
+                    Check Availability
                 </button>
             </div>
         </div>
