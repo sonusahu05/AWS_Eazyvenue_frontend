@@ -6,19 +6,53 @@
                 Venue Enquiry Dashboard
             </h2>
             <div class="header-stats">
-                <span class="stat-badge">{{totalRecords}} Total Enquiries</span>
+<!-- Update only the filter section in your HTML -->
+<div class="filter-dropdown">
+    <button 
+        class="stat-badge filter-button"
+        (click)="toggleVenueFilter()"
+        [class.active]="showVenueFilter">
+        <i class="fas fa-filter"></i>
+        {{selectedVenueFilter ? getSelectedVenueInfo() : totalRecords + ' Total Venues'}}
+        <i class="fas fa-chevron-down" [class.rotate]="showVenueFilter"></i>
+    </button>
+    
+    <!-- Add overlay for mobile -->
+    <div class="filter-overlay" 
+         *ngIf="showVenueFilter" 
+         (click)="clearVenueFilter()">
+    </div>
+    
+    <div class="venue-filter-dropdown" *ngIf="showVenueFilter">
+        <div class="filter-header">
+            <span>Filter by Venue</span>
+            <button class="clear-filter" (click)="clearVenueFilter()" *ngIf="selectedVenueFilter">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="venue-options">
+            <div 
+                class="venue-option"
+                *ngFor="let venue of uniqueVenues"
+                (click)="selectVenueFilter(venue)"
+                [class.selected]="selectedVenueFilter === venue.id">
+                <span class="venue-name">{{venue.name}}</span>
+                <span class="venue-count">{{venue.totalLeads}} leads</span>
             </div>
+        </div>
+    </div>
+</div>
         </div>
     </div>
 
     <div class="table-wrapper">
-        <p-table
-            [value]="enquiryList"
-            [loading]="loading"
-            [paginator]="true"
-            [rows]="10"
-            [totalRecords]="totalRecords"
-            styleClass="modern-datatable">
+<p-table
+    [value]="getDisplayEnquiries()"
+    [loading]="loading"
+    [paginator]="true"
+    [rows]="10"
+    [totalRecords]="getDisplayEnquiries().length"
+    styleClass="modern-datatable">
 
             <ng-template pTemplate="header">
                 <tr>
@@ -34,31 +68,37 @@
             <ng-template pTemplate="body" let-enquiry>
                 <tr class="data-row">
                     <td class="venue-cell">
-                        <div class="venue-info">
-                            <div class="venue-name">
-                                <i class="fas fa-map-marker-alt venue-icon"></i>
-                                <strong>{{enquiry.venueName}}</strong>
-                            </div>
+    <div class="venue-info">
+        <div class="venue-name">
+            <i class="fas fa-map-marker-alt venue-icon"></i>
+            <strong>{{enquiry.venueName}}</strong>
+        </div>
 
-                            <div *ngIf="enquiry.leadCount > 1" class="leads-dropdown">
-                                <p-dropdown
-                                    [options]="getLeadOptions(enquiry)"
-                                    [(ngModel)]="enquiry.selectedLead"
-                                    optionLabel="label"
-                                    optionValue="value"
-                                    placeholder="View all {{enquiry.leadCount}} leads"
-                                    (onChange)="onLeadChange(enquiry, $event)"
-                                    styleClass="custom-dropdown">
-                                    <ng-template pTemplate="selectedItem" let-option>
-                                        <div class="dropdown-item-content">
-                                            <i class="fas fa-users"></i>
-                                            <span>{{option.label}}</span>
-                                        </div>
-                                    </ng-template>
-                                </p-dropdown>
-                            </div>
-                        </div>
-                    </td>
+        <!-- Show dropdown only when no venue filter is active -->
+        <div *ngIf="enquiry.leadCount > 1 && !selectedVenueFilter" class="leads-dropdown">
+            <p-dropdown
+                [options]="getLeadOptions(enquiry)"
+                [(ngModel)]="enquiry.selectedLead"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="View all {{enquiry.leadCount}} leads"
+                (onChange)="onLeadChange(enquiry, $event)"
+                styleClass="custom-dropdown">
+                <ng-template pTemplate="selectedItem" let-option>
+                    <div class="dropdown-item-content">
+                        <i class="fas fa-users"></i>
+                        <span>{{option.label}}</span>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+        </div>
+        
+        <!-- Show lead info when venue filter is active -->
+        <div *ngIf="selectedVenueFilter" class="lead-indicator">
+            <span class="lead-number">Lead {{enquiry.leadIndex}}</span>
+        </div>
+    </div>
+</td>
 
                     <td class="contact-cell">
                         <div class="contact-info">
@@ -74,11 +114,14 @@
                     </td>
 
                     <td class="leads-cell">
-                        <div class="leads-count">
-                            <span class="leads-badge">{{enquiry.leadCount}}</span>
-                            <small>leads</small>
-                        </div>
-                    </td>
+    <div class="leads-count">
+        <!-- Show total count when no filter, show "1 of X" when filtered -->
+        <span class="leads-badge" *ngIf="!selectedVenueFilter">{{enquiry.leadCount}}</span>
+        <span class="leads-badge" *ngIf="selectedVenueFilter">1</span>
+        <small *ngIf="!selectedVenueFilter">leads</small>
+        <small *ngIf="selectedVenueFilter">of {{enquiry.originalLeadCount}}</small>
+    </div>
+</td>
 
                     <td class="date-cell">
                         <div class="date-info">
@@ -123,7 +166,7 @@
                 </tr>
 
                 <!-- Expanded Lead Details Row -->
-                <tr *ngIf="enquiry.showLeadDetails && enquiry.selectedLeadData" class="expanded-row">
+               <tr *ngIf="enquiry.showLeadDetails && enquiry.selectedLeadData && enquiry.showDropdown" class="expanded-row">
                     <td colspan="6" class="expanded-content">
                         <div class="lead-details-card">
                             <div class="lead-header">

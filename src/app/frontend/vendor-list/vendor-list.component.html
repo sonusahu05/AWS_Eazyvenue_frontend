@@ -1,0 +1,430 @@
+<p-toast key="toastMsg"></p-toast>
+<div class="tint">
+    <div class="search-bar-locations p-p-0">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-8 col-sm-12 animation-text-one">
+                <div class="verticalFlip mb-10">
+                    Eaziest Way to discover and book vendors&nbsp;
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-4 col-sm-12 animation-text-two">
+                <div class="verticalFlip mb-10">
+                    <b><span *ngFor="let category of vendorCategoryList">for {{category.name}}</span></b>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center search-bar search_bar_listing_page">
+        <div class="vendor-text w-100 text-primary h-50 v-center padding-h-10 h6 bg-white text-bold f-space-between"
+            (click)="showVendorSearchDialog()">
+            <i class="find-venue-search-icon pi pi-search"></i><span class="venue-search">Search Vendor</span>
+            <span class="find-venue-icon">
+                <i class="pi pi-angle-right"></i>
+            </span>
+        </div>
+        <div [ngClass]="isNavbarFixed?'fixed':'notfixed'" (scroll)="onScroll()" style="width: 75%;">
+            <div class="city-field col-md-3 p-p-0">
+                <span class="p-fluid">
+                    <label for="" class="icons-image"> <img src="assets/images/category-icons/celebration.svg"> </label>
+                    <p-dropdown [options]="vendorCategoryList" [filter]="true"
+                        [(ngModel)]="selectedVendorCategory" placeholder="Vendor" optionLabel="name" optionValue="name"
+                        (onChange)="onClickCategory($event)"></p-dropdown>
+                </span>
+            </div>
+            <div class="serch-bar-field col-3 p-p-0">
+                <span class="p-fluid">
+                    <label for="" class="icons-image search-icon"> <img src="assets/images/category-icons/search.png"
+                            class="search-icon"> </label>
+                    <p-autoComplete [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedLocationFilter"
+                        [suggestions]="locationList" (completeMethod)="onLocationSearch($event)"
+                        (onSelect)="onSelectLocationSearch($event)" (onUnselect)="onUnselectSearchLocationItem($event)"
+                        field="name" placeholder="City/Area" [multiple]="true">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center">
+                                {{ item.name }}
+                                <span *ngIf="item.mode=='subarea'">
+                                    <span *ngIf="item.city">, {{item.city}}</span>
+                                    <span *ngIf="item.statename">, {{item.statename}}</span>
+                                </span>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                </span>
+            </div>
+
+            <div class="col-md-auto p-p-0 calendar-div">
+                <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg"></label>
+                <p-calendar #searchCalendar dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
+                    appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
+                    [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
+                    <ng-template pTemplate="header">
+                        <div class="ui-g">
+                          <div class="ui-g-10">
+                            <ng-content></ng-content>
+                          </div>
+                          <div class="ui-g-2 ui-text-right" style="float: right; padding:10px; border-bottom: 1px solid #D4D6D9">
+                            <span class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+                              (click)="clearDatesAndClose()" style="cursor: pointer;" pRipple>
+                              <i class="pi pi-times"></i>
+                            </span>
+                          </div>
+                        </div>
+                      </ng-template>
+                </p-calendar>
+                <button (click)="onClickSearch()" pButton pRipple type="button" icon="pi pi-search"
+                    class="p-button-rounded p-button-danger secondary btn-custom secondary"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section desktop-view">
+    <div class="container-fluid">
+        <div class="listing-page">
+            <div class="top-link">
+                <div class="row">
+                    <div class="col-10">
+                        <div class="BreadCrumbs regular" style="line-height: normal;">
+                            <span class="crumb">
+                                <a href="/" class="display-name text-tertiary">Home</a>
+                            </span>
+                            <span>
+                                <a class="display-name text-tertiary active" href="#">Vendor</a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <p-button class="venuelistfilter" (click)="showVendorSearchDialog()"> Search</p-button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="header-part">
+                    </div>
+                </div>
+                
+                <!-- Vendor Cards Grid -->
+                <div class="col-lg-12 vendor-cards-container">
+                    <div *ngIf="finalVendorList.length > 0" class="vendor-grid-wrapper">
+                        <div infinite-scroll (scrolled)="onScrollDown()" class="vendor-grid">
+                            <div class="vendor-card" *ngFor="let vendor of finalVendorList">
+                                <!-- Vendor Image -->
+                                <div class="vendor-image-wrapper">
+                                    <div class="vendor-image">
+                                        <img *ngIf="vendor.vendorImage && vendor.vendorImage.length > 0" 
+                                             [src]="vendor.vendorImage[0].vendor_image_src" 
+                                             [alt]="vendor.vendorName"
+                                             (click)="open(vendor.id)">
+                                    </div>
+                                    <div class="vendor-badge">
+                                        <span class="badge-text">Instant Available</span>
+                                    </div>
+                                </div>
+
+                                <!-- Vendor Details -->
+                                <div class="vendor-details">
+                                    <!-- Vendor Name & Category -->
+                                    <div class="vendor-header">
+                                        <a [routerLink]="['/vendor-detail',createSlug(vendor.city),createSlug(vendor.categories[0].name),vendor.metaUrl]" 
+                                           [queryParams]="{slot: selectedPropertyType}">
+                                            <h3 class="vendor-name">{{vendor.vendorName}}</h3>
+                                            <span class="vendor-category">{{vendor.categories[0].name}}</span>
+                                        </a>
+                                    </div>
+
+                                    <!-- Location -->
+                                    <div class="vendor-location">
+                                        <i class="pi pi-map-marker"></i>
+                                        <span>{{vendor.city}}, {{vendor.subArea}}</span>
+                                    </div>
+
+                                    <!-- Price -->
+                                    <div class="vendor-price">
+                                        <span class="price-amount">{{vendor.minVendorPrice|currency:"INR"}}</span>
+                                        <span class="price-label">Per Day Package Approx.</span>
+                                    </div>
+
+                                    <!-- Response Time -->
+                                    <div class="vendor-response">
+                                        <i class="pi pi-clock"></i>
+                                        <span>Response: {{vendor.responseTime}}</span>
+                                    </div>
+
+                                    <!-- Ratings -->
+                                    <div class="vendor-ratings">
+                                        <div class="rating-item">
+                                            <img src="assets/img/svg/google.png" alt="Google" class="rating-icon">
+                                            <span class="rating-score">
+                                                <i class="pi pi-star-fill"></i>
+                                                {{vendor.googleRating}}/5
+                                            </span>
+                                        </div>
+                                        <div class="rating-item">
+                                            <img src="assets/layout/images/pages/logo.png" alt="EazyVenue" class="rating-icon">
+                                            <span class="rating-score">
+                                                <i class="pi pi-star-fill"></i>
+                                                {{vendor.eazyvenueRating}}/5
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Book Now Button -->
+                                    <div class="vendor-action">
+                                        <a [routerLink]="['/vendor-detail', createSlug(vendor.city), createSlug(vendor.categories[0].name), vendor.metaUrl]" 
+                                           [queryParams]="{slot: selectedPropertyType}"
+                                           class="btn-book-now">
+                                            Book Now
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div *ngIf="finalVendorList.length == 0" class="no-vendors">
+                        <h3 class="text-center">No Vendors matching your query found.</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-sidebar class="compare-popup-sidebar" (onHide)="clearVendorCompare()" [(visible)]="showCompareBar" position="bottom"
+    [baseZIndex]="10000">
+    <div class="row justify-content-center">
+        <div class="compare-row">
+            <div class="col-lg-2 col-md-2 compare-item" *ngFor="let vendor of vendorCompareList">
+                <div class="card compare-img">
+                    <div class="card-body img-select">
+                        <div class="venue-img-select">
+                            <img src="{{vendor['vendorImage'][0]['vendor_image_src']}}" [alt]="vendor.vendorName"
+                                class="venue-img-select" alt="">
+                        </div>
+                        <div class="img-close-btn" style="cursor: pointer;" (click)="onChangeListCompareCheckbox(vendor, $event)">
+                            <i class="pi pi-times"></i>
+                        </div>
+                        <div class="venue-name-comapare">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h4 class="venue-name-detail">{{vendor.vendorName}}</h4>
+                                    <h5 class="venue-add-detail">{{vendor.city}}, {{vendor.subArea}}</h5>
+                                </div>
+                                <div class="col-12 venue-price-col">
+                                    <h5 class="venue-price-detail">
+                                        {{vendor.minVendorPrice|currency:"INR"}}
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="venue-buttons compare-btn">
+                <div class="div-compare">
+                    <a class="compare-btns btn-custom btn-sm secondary" value="compare"
+                        (click)="vendorCompareClick()">Compare</a>
+                </div>
+                <div class="div clear-all-btn">
+                    <a (click)="clearVendorCompare()" class="compare-btns btn-custom btn-sm secondary">Clear All
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-sidebar>
+
+<p-dialog header="Search Vendor" [(visible)]="isVendorSearchDialogVisible" [modal]="true"
+    [style]="{ width: '90%' , height: '300px', 'overflow':'visible' }">
+    <div class="home-search-fields">
+        <div class="row justify-content-center popup_venue-list_search search-bar search_bar_listing_page">
+            <div class="city-field col-md-2 p-p-0">
+                <span class="p-fluid">
+                    <label for="mobile-vendor-list" class="icons-image"> <img
+                            src="assets/images/category-icons/celebration.svg">
+                    </label>
+                    <p-dropdown [options]="vendorCategoryList" [filter]="true"
+                        [(ngModel)]="selectedVendorCategory" placeholder="Vendor" optionLabel="name" optionValue="name"
+                        (onChange)="onClickCategory($event)" ></p-dropdown>
+                </span>
+            </div>
+            <div class="serch-bar-field col-3 p-p-0">
+                <span class="p-fluid">
+                    <label for="" class="icons-image search-icon"> <img src="assets/images/category-icons/search.png"
+                            class="search-icon"> </label>
+                    <p-autoComplete [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedLocationFilter"
+                        [suggestions]="locationList" (completeMethod)="onLocationSearch($event)"
+                        (onSelect)="onSelectLocationSearch($event)" (onUnselect)="onClearResetAllData($event)"
+                        field="name" placeholder="City/Area" [multiple]="true">
+                        <ng-template let-item pTemplate="item">
+                            <div class="flex align-items-center">
+                                {{ item.name }}
+                                <span *ngIf="item.mode=='subarea'">
+                                    <span *ngIf="item.city">, {{item.city}}</span>
+                                    <span *ngIf="item.statename">, {{item.statename}}</span>
+                                </span> 
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                </span>
+            </div>
+
+            <div class="col-md-12 p-p-0 calendar-div">
+                <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg"></label>
+                <p-calendar #searchCalendarMobile dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
+                    appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
+                    [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
+                    <ng-template pTemplate="header">
+                        <div class="ui-g">
+                          <div class="ui-g-10">
+                            <ng-content></ng-content>
+                          </div>
+                          <div class="ui-g-2 ui-text-right" style="float: right; padding:10px; border-bottom: 1px solid #D4D6D9">
+                            <span class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+                              (click)="closeDatesMobileView()" style="cursor: pointer;" pRipple>
+                              <i class="pi pi-times"></i>
+                            </span>
+                          </div>
+                        </div>
+                      </ng-template>
+                </p-calendar>
+            </div>
+            <div class="col-md-12 p-p-0 calendar-div">
+                <button (click)="onClickSearch()" pButton pRipple type="button"
+                    class="p-button-rounded p-button-danger secondary btn-custom secondary w-100">Search</button>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog header="Venue Filters" [(visible)]="isVendorFilterDialogVisible" [modal]="true" [style]="{ width: '90%' }"
+    [draggable]="false" [resizable]="false">
+    <div class="popupfilter sidebar Filter-siderbar sidebar-left popupfilter">
+        <div class="sidebar-widget">
+            <p-accordion>
+                <p-accordionTab header="Services"  [selected]="true" >
+                    <div class="Guest-fillter">
+                        <ul>
+                            <li class="amenitiessection" *ngFor="let service of servicesArray">
+                                <div class="p-field-checkbox mb-0">
+                                    <p-checkbox name="group" [value]="service"
+                                        [(ngModel)]="selectedService"
+                                        (onChange)="onSelectServices(service, $event)"
+                                        [inputId]="service.key"></p-checkbox>
+                                    <label [for]="service.key">{{ service.name }}</label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </p-accordionTab>
+                <p-accordionTab  header="Budget" class="filter-head-text" style="margin-top: -10px;">
+                    <div *ngIf="vendorPriceRangeValues != undefined" class="min-max-price-heading">
+                        <div class="min-heading">
+                            <h5 style="font-size: 12px!important;font-weight: 500;">Min : <span
+                                    class="text-center">
+                                    {{ ' ₹ ' + vendorPriceRangeValues[0]}}
+                                </span></h5>
+                        </div>
+                        <div class="max-heading">
+                            <h5 style="font-size: 12px!important;font-weight: 500;">Max : <span
+                                    class="text-center">
+                                    {{ ' ₹ ' + vendorPriceRangeValues[1]}}
+                                </span></h5>
+                        </div>
+                    </div>
+                    <p-slider [(ngModel)]="rangeValues" [step]="step" [range]="true" [min]="vendorPriceRangeValues[0]" [max]="vendorPriceRangeValues[1]"></p-slider>
+                    <div class="price-input">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <input *ngIf="vendorPriceRangeValues != undefined" type="number"
+                                    #minVenuePriceInput [style]="{'width':'100px'}"
+                                    [value]="rangeValues[0]" [step]="step"
+                                    [min]="vendorPriceRangeValues[0]"
+                                    [max]="vendorPriceRangeValues[1]"
+                                    (change)="vendorBudgetInputChange('min',$event)"
+                                    style="margin-bottom: 18px;font-size: 14px;padding-left: 10px;">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input *ngIf="vendorPriceRangeValues != undefined" type="number"
+                                    #maxVenuePriceInput [style]="{'width':'100px'}"
+                                    [value]="rangeValues[1]" [step]="step"
+                                    [min]="vendorPriceRangeValues[0]"
+                                    [max]="vendorPriceRangeValues[1]"
+                                    (change)="vendorBudgetInputChange('max',$event)"
+                                    style="margin-bottom: 18px;font-size: 14px;padding-left: 10px;">
+                            </div>
+                        </div>
+                        <div class="perpax-cost">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="min-heading">
+                                        <h5 style="font-size: 12px!important;font-weight: 500;">MIN PER DAY COST</h5>
+                                        <p style="text-align: center;">
+                                            <span *ngIf="vendorPriceRangeValues != undefined"
+                                                class="text-center perpax-cost-price"> {{' ₹ ' + rangeValues[0]}}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="max-heading">
+                                        <h5 style="font-size: 12px!important;font-weight: 500;">MAX PER DAY COST</h5>
+                                        <p style="text-align: center;"><span
+                                                *ngIf="vendorPriceRangeValues != undefined"
+                                                class="text-center perpax-cost-price">{{ ' ₹ ' + rangeValues[1]}}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p-accordionTab>
+                <p-accordionTab header="Time Slot" style="display: none;">
+                    <div *ngIf="slotList.length>0" class="row">
+                        <div class="col text-center" *ngFor="let slot of slotList">
+                            <h5 class="decor-name pb-1 slot-name">{{slot.slot}}</h5>
+                            <p-radioButton [value]="slot" [(ngModel)]="selectedSlot"
+                                (click)="onSlotClick(slot)">
+                            </p-radioButton>
+                        </div>
+                    </div>
+                </p-accordionTab>
+                <p-accordionTab header="Time Slot">
+                    <div class="slider-Property">
+                        <div class="col">
+                            <p-carousel [value]="vendorTypesList" [numVisible]="3" [numScroll]="1"
+                                [circular]="false" [showIndicators]="false"
+                                [responsiveOptions]="carouselResponsiveOptions">
+                                <ng-template let-propertyType pTemplate="item">
+                                    <div class="product-item"
+                                        [ngClass]="propertyType.selected ? 'property-active' : ''">
+                                        <div class="propertyType">
+                                            <div (click)="onClickPropertyType(propertyType)"
+                                                class="product-item-content">
+                                                <div class="p-mb-1">
+                                                    <img src="assets/images/category-icons/{{propertyType.slug}}.svg"
+                                                        class="product-image" tooltipPosition="top"
+                                                        pTooltip={{propertyType.name}} />
+                                                </div>
+                                                <div>
+                                                    <h4 class="p-mb-1">{{propertyType.name}}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </p-carousel>
+                        </div>
+                    </div>
+                </p-accordionTab>
+                <div class="filter-popup-btn">
+                    <p-button label="Apply" (click)="closeVendorFilterDialog()"
+                        styleClass="p-button-denger apply-btn"></p-button>
+                </div>
+            </p-accordion>
+        </div>
+    </div>
+</p-dialog>

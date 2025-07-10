@@ -77,6 +77,7 @@ import { ResetPasswordComponent } from './frontend/reset-password/reset-password
 import { WishlistComponent } from './manage/wishlist/wishlist.component';
 import { compareVenue } from './frontend/compare/compare.component';
 import { VendorFilterListComponent } from './frontend/vendor-filter-list/vendor-filter-list.component';
+import { VendorListComponent } from './frontend/vendor-list/vendor-list.component';
 import { VendorDetailsComponent } from './frontend/vendor-details/vendor-details.component';
 import { VendorCompareComponent } from './frontend/vendor-compare/vendor-compare.component';
 import { CancellationComponent } from './frontend/cancellation/cancellation.component';
@@ -156,6 +157,10 @@ import { HomeDataResolver } from './services/home-data.resolver';
             {
                 path: 'vendor',
                 component: VendorFilterListComponent,
+            },
+            {
+                path: 'vendor-list',
+                component: VendorListComponent,
             },
             {
                 path: 'vendor/:category',

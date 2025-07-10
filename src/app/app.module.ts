@@ -205,6 +205,7 @@ import { NgxOtpInputModule } from 'ngx-otp-input';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { AvailabilityComponent } from './frontend/my-account/availability/availability.component';
 import { VendorFilterListComponent } from './frontend/vendor-filter-list/vendor-filter-list.component';
+import { VendorListComponent } from './frontend/vendor-list/vendor-list.component';
 import { VendorDetailsComponent } from './frontend/vendor-details/vendor-details.component';
 import { VendorCompareComponent } from './frontend/vendor-compare/vendor-compare.component';
 import { CancellationComponent } from './frontend/cancellation/cancellation.component';
@@ -415,6 +416,7 @@ FullCalendarModule.registerPlugins([
         AvailabilityComponent,
         ViewCustomerVenueAvailabilityComponent,
         VendorFilterListComponent,
+        VendorListComponent,
         VendorDetailsComponent,
         VendorCompareComponent,
         CancellationComponent,

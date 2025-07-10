@@ -17,6 +17,10 @@ export class EnquiryListComponent implements OnInit {
   totalRecords = 0;
   cols: any[];
   isVenueOwner: boolean = false;
+  showVenueFilter: boolean = false;
+selectedVenueFilter: string | null = null;
+uniqueVenues: any[] = [];
+filteredEnquiryList: any[] = [];
   userEmail: string = '';
   userVenueIds: string[] = []; // Store venue IDs owned by this user
 
@@ -55,6 +59,85 @@ export class EnquiryListComponent implements OnInit {
       console.log('📊 ENQUIRY: Venue owner email:', this.userEmail);
     }
   }
+
+generateUniqueVenues() {
+    const venueMap = new Map();
+    
+    this.enquiryList.forEach(enquiry => {
+        const venueId = enquiry.venueId || enquiry.venue_id;
+        const venueName = enquiry.venueName;
+        
+        if (venueMap.has(venueId)) {
+            venueMap.get(venueId).count++;
+            venueMap.get(venueId).totalLeads += enquiry.leadCount || 1;
+        } else {
+            venueMap.set(venueId, {
+                id: venueId,
+                name: venueName,
+                count: 1,
+                totalLeads: enquiry.leadCount || 1
+            });
+        }
+    });
+    
+    this.uniqueVenues = Array.from(venueMap.values())
+        .sort((a, b) => b.count - a.count);
+}
+
+selectVenueFilter(venue: any) {
+    this.selectedVenueFilter = venue.id;
+    this.showVenueFilter = false;
+    this.applyVenueFilter();
+}
+
+applyVenueFilter() {
+    if (this.selectedVenueFilter) {
+        // When venue filter is active, expand all leads as individual rows
+        this.filteredEnquiryList = [];
+        
+        this.enquiryList.forEach(enquiry => {
+            const venueId = enquiry.venueId || enquiry.venue_id;
+            
+            if (venueId === this.selectedVenueFilter) {
+                // If enquiry has multiple leads, create separate rows for each
+                if (enquiry.allEnquiries && enquiry.allEnquiries.length > 1) {
+                    enquiry.allEnquiries.forEach((lead: any, index: number) => {
+                        this.filteredEnquiryList.push({
+                            ...enquiry,
+                            // Override with individual lead data
+                            userName: lead.userName,
+                            userContact: lead.userContact,
+                            userEmail: lead.userEmail,
+                            created_at: lead.created_at,
+                            status: lead.status,
+                            _id: lead._id || lead.id,
+                            // Keep original data for reference
+                            originalLeadCount: enquiry.leadCount,
+                            leadIndex: index + 1,
+                            individualLead: true,
+                            leadData: lead
+                        });
+                    });
+                } else {
+                    // Single lead, just add as is
+                    this.filteredEnquiryList.push({
+                        ...enquiry,
+                        originalLeadCount: enquiry.leadCount,
+                        leadIndex: 1,
+                        individualLead: true
+                    });
+                }
+            }
+        });
+    } else {
+        // No filter, show original format
+        this.filteredEnquiryList = [...this.enquiryList];
+    }
+}
+
+getDisplayEnquiries() {
+    return this.selectedVenueFilter ? this.filteredEnquiryList : this.enquiryList;
+}
 
   loadEnquiries() {
     console.log('📊 DASHBOARD: Starting to load enquiries...');
@@ -233,6 +316,7 @@ export class EnquiryListComponent implements OnInit {
         });
       }
     );
+    this.applyVenueFilter();
   }
 
   // Filter enquiries by venue IDs
@@ -281,19 +365,28 @@ export class EnquiryListComponent implements OnInit {
   }
 
   // Get current user data (latest or selected)
-  getCurrentUser(enquiry: any): any {
+getCurrentUser(enquiry: any): any {
+    // If this is an individual lead from filtering, return the lead data
+    if (enquiry.individualLead && enquiry.leadData) {
+        return enquiry.leadData;
+    }
+    
+    // If this is individual lead without separate leadData, return enquiry itself
+    if (enquiry.individualLead) {
+        return enquiry;
+    }
+    
+    // Original logic for dropdown mode
     if (enquiry.selectedLeadData) {
-      return enquiry.selectedLeadData;
+        return enquiry.selectedLeadData;
     }
 
-    // Return the latest lead (first in the allEnquiries array since backend sorts by latest)
     if (enquiry.allEnquiries && enquiry.allEnquiries.length > 0) {
-      return enquiry.allEnquiries[0];
+        return enquiry.allEnquiries[0];
     }
 
-    // Fallback to main enquiry data
     return enquiry;
-  }
+}
 
   // Contact via WhatsApp for main lead
   contactViaWhatsApp(enquiry: any) {
@@ -357,46 +450,78 @@ ${venueName} Team`;
   }
 
   // Update status for specific lead - works with existing backend
-  updateLeadStatus(leadData: any, enquiry: any, status: string) {
+ updateLeadStatus(leadData: any, enquiry: any, status: string) {
     const updateData = { status: status };
-    // Use the individual lead ID if available, otherwise use the main enquiry ID
-    const leadId = leadData._id || leadData.id || enquiry.id;
+    
+    // For individual leads from filtering, use the lead's own ID
+    let leadId;
+    if (enquiry.individualLead) {
+        leadId = enquiry._id || enquiry.id;
+    } else {
+        leadId = leadData._id || leadData.id || enquiry.id;
+    }
 
     console.log('📞 Updating lead status:', leadId, 'to:', status);
 
     this.enquiryService.updateEnquiry(leadId, updateData).subscribe(
-      res => {
-        this.messageService.add({
-          key: 'toastmsg',
-          severity: 'success',
-          summary: 'Updated',
-          detail: `Status updated to ${status}`
-        });
+        res => {
+            this.messageService.add({
+                key: 'toastmsg',
+                severity: 'success',
+                summary: 'Updated',
+                detail: `Status updated to ${status}`
+            });
 
-        // Update the status in the current data
-        leadData.status = status;
-
-        // If this is the main lead (first in allEnquiries), update the main enquiry status too
-        if (enquiry.allEnquiries && enquiry.allEnquiries[0] === leadData) {
-          enquiry.status = status;
+            // Update the status in current data
+            if (enquiry.individualLead) {
+                enquiry.status = status;
+                if (enquiry.leadData) {
+                    enquiry.leadData.status = status;
+                }
+            } else {
+                leadData.status = status;
+                if (enquiry.allEnquiries && enquiry.allEnquiries[0] === leadData) {
+                    enquiry.status = status;
+                }
+                if (enquiry.selectedLeadData === leadData) {
+                    enquiry.selectedLeadData.status = status;
+                }
+            }
+        },
+        err => {
+            console.error('📞 Error updating status:', err);
+            this.messageService.add({
+                key: 'toastmsg',
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to update status'
+            });
         }
-
-        // If this is the currently displayed lead, update it
-        if (enquiry.selectedLeadData === leadData) {
-          enquiry.selectedLeadData.status = status;
-        }
-      },
-      err => {
-        console.error('📞 Error updating status:', err);
-        this.messageService.add({
-          key: 'toastmsg',
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update status'
-        });
-      }
     );
-  }
+}
+
+getSelectedVenueInfo(): string {
+    if (!this.selectedVenueFilter) return '';
+    
+    const venue = this.uniqueVenues.find(v => v.id === this.selectedVenueFilter);
+    if (venue) {
+        return `${venue.name} - ${venue.count} enquiries, ${venue.totalLeads} leads`;
+    }
+    return '';
+}
+
+toggleVenueFilter() {
+    this.showVenueFilter = !this.showVenueFilter;
+    if (this.showVenueFilter) {
+        this.generateUniqueVenues();
+    }
+}
+
+clearVenueFilter() {
+    this.selectedVenueFilter = null;
+    this.showVenueFilter = false;
+    this.applyVenueFilter();
+}
 
   updateStatus(enquiry: any, status: string) {
     const currentUser = this.getCurrentUser(enquiry);
