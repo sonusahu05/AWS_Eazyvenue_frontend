@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -12,7 +12,6 @@ import { CalendarModule } from 'primeng/calendar';
 import * as moment from 'moment-timezone';
 import { environment } from 'src/environments/environment';
 import { maxYearFunction } from '../../../_helpers/utility';
-import { isPlatformBrowser } from '@angular/common';
 
 @Component({
     selector: 'app-admin-add',
@@ -49,22 +48,10 @@ export class AdminAddComponent implements OnInit {
     timeZoneArray = [];
     timeZoneOffset;
     timeZone;
-    services: any[] = [
-        {
-            name: '',
-            actualPrice: 0,
-            fullDayPrice: 0,
-            hours4Price: 0,
-            hours8Price: 0,
-            hours12Price: 0,
-            slug: '',
-            price: ''
-        }
-    ];
 
     constructor(private roleService: RoleService, private commonService: CommonService, private userService: UserService, private formBuilder: FormBuilder,
         private confirmationService: ConfirmationService, private messageService: MessageService,
-        private router: Router, @Inject(PLATFORM_ID) private platformId: Object) { }
+        private router: Router) { }
 
     ngOnInit(): void {
         const timeZones = moment.tz.names();
@@ -101,18 +88,7 @@ export class AdminAddComponent implements OnInit {
             disable: [false],
             gender: ['', Validators.required],
             dob: ['', Validators.required],
-            timeZone: [{ name: this.timeZone, code: this.timeZoneOffset }, Validators.required],
-            name: ['', [Validators.required]],
-            contact: ['', [Validators.required]],
-            googleRating: [0],
-            eazyvenueRating: [0],
-            responseTime: [''],
-            workExperience: [''],
-            deal: [''],
-            shortDescription: [''],
-            metaUrl: ['', [Validators.required]],
-            metaDescription: [''],
-            metaKeywords: ['']
+            timeZone: [{ name: this.timeZone, code: this.timeZoneOffset }, Validators.required]
         }, {
             validator: MustMatch('password', 'confirmPassword')
         });
@@ -125,14 +101,6 @@ export class AdminAddComponent implements OnInit {
     }
 
     picUploader(event) {
-        // SSR-compatible file upload handling
-        if (!isPlatformBrowser(this.platformId)) {
-            // In SSR, we can't use FileReader, but we can still store the file reference
-            // The actual file reading will happen when the component is hydrated in the browser
-            console.log('File upload handling deferred for SSR compatibility');
-            return;
-        }
-
         for (let file of event.files) {
             this.uploadedFiles.push(file);
             var reader = new FileReader();
@@ -141,8 +109,6 @@ export class AdminAddComponent implements OnInit {
                 this.profilepic = reader.result;
             }
         }
-        
-        // Note: FileReader is browser-only API, protected with platform check for SSR compatibility
     }
 
     getRoleid() {
@@ -217,27 +183,6 @@ export class AdminAddComponent implements OnInit {
         this.timeZoneOffset = event.code;
     }
 
-    addService() {
-        this.services.push({
-            name: '',
-            actualPrice: 0,
-            fullDayPrice: 0,
-            hours4Price: 0,
-            hours8Price: 0,
-            hours12Price: 0,
-            slug: '',
-            price: ''
-        });
-    }
-
-    removeService(index: number) {
-        this.services.splice(index, 1);
-    }
-
-    generateSlug(serviceName: string): string {
-        return serviceName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
-    }
-
     onSubmit() {
         this.submitted = true;
         // stop here if form is invalid
@@ -245,37 +190,6 @@ export class AdminAddComponent implements OnInit {
             return;
         }
         var userData = this.userForm.value;
-        
-        // Add new fields
-        userData['name'] = this.userForm.get('name')?.value;
-        userData['contact'] = this.userForm.get('contact')?.value;
-        userData['googleRating'] = this.userForm.get('googleRating')?.value || 0;
-        userData['eazyvenueRating'] = this.userForm.get('eazyvenueRating')?.value || 0;
-        userData['responseTime'] = this.userForm.get('responseTime')?.value || '';
-        userData['workExperience'] = this.userForm.get('workExperience')?.value || '';
-        userData['deal'] = this.userForm.get('deal')?.value || '';
-        userData['shortDescription'] = this.userForm.get('shortDescription')?.value || '';
-        userData['metaUrl'] = this.userForm.get('metaUrl')?.value;
-        userData['metaDescription'] = this.userForm.get('metaDescription')?.value || '';
-        userData['metaKeywords'] = this.userForm.get('metaKeywords')?.value || '';
-        
-        // Process services
-        userData['services'] = this.services.map(service => ({
-            ...service,
-            slug: this.generateSlug(service.name),
-            price: `${service.fullDayPrice} Full Day`,
-            hours12Price: service.actualPrice * 3 // or your calculation logic
-        }));
-        
-        // Calculate min vendor price
-        const prices = this.services.map(s => s.actualPrice).filter(p => p > 0);
-        userData['minVendorPrice'] = prices.length > 0 ? Math.min(...prices) : 0;
-        
-        // Add missing fields with default values
-        userData['availableInCities'] = [];
-        userData['views'] = 0;
-        userData['disable'] = false;
-        
         userData['profilepic'] = this.profilepic;
         userData['role'] = this.adminRoleId;
         userData['status'] = this.userstatus;

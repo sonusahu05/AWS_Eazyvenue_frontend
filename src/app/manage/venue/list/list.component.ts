@@ -255,12 +255,13 @@ refreshVenueList(event: LazyLoadEvent) {
 
     // Build query parameters - Remove email filtering from server side for venue owners
     // Let server return all venues and we'll filter client-side
-    let query = new URLSearchParams({
-        admin: 'true',
-        pageSize: '1000', // Get more records to ensure we catch all venues for this owner
-        pageNumber: '1',
-        filterByDisable: 'false'
-    });
+    // Build query parameters
+let query = new URLSearchParams({
+    admin: 'true',
+    pageSize: isVenueOwner ? '1000' : (event.rows || 10).toString(), // Use actual pagination for admin
+    pageNumber: isVenueOwner ? '1' : Math.floor((event.first || 0) / (event.rows || 10) + 1).toString(),
+    filterByDisable: 'false'
+});
 
     // Handle search by date range if selected
     if (this.searchby && this.startDate && this.endDate) {
@@ -386,13 +387,17 @@ if (event.filters && !isVenueOwner) {
                 });
             }
 
-            // Apply client-side pagination for venue owners
-            const startIndex = (event.first || 0);
-            const endIndex = startIndex + (event.rows || 10);
-            const paginatedVenues = isVenueOwner ? venues.slice(startIndex, endIndex) : venues;
-
-            this.venueList = paginatedVenues;
-            this.totalRecords = venues.length; // Total after filtering
+            // Apply client-side pagination only for venue owners
+if (isVenueOwner) {
+    const startIndex = (event.first || 0);
+    const endIndex = startIndex + (event.rows || 10);
+    this.venueList = venues.slice(startIndex, endIndex);
+    this.totalRecords = venues.length;
+} else {
+    // For admin users, use server-side pagination
+    this.venueList = venues;
+    this.totalRecords = data.data.totalCount || data.data.total || venues.length;
+}
 
 
             // Special handling for venue owners - show message if no venues found

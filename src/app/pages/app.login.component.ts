@@ -9,6 +9,7 @@ import { isPlatformBrowser } from '@angular/common';
 @Component({
   selector: 'app-login',
   templateUrl: './app.login.component.html',
+  styleUrls: ['./app.login.component.scss']
 })
 export class AppLoginComponent {
   type = 'admin';
@@ -136,7 +137,7 @@ export class AppLoginComponent {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigate(['/login']);
     });
-    
+
     // Note: Replaced window.location.reload() for SSR compatibility
     // Alternative approach refreshes the component by re-navigating to the same route
   }

@@ -1,27 +1,121 @@
 <app-loader></app-loader>
-<form [formGroup]="loginform" (ngSubmit)="onSubmit()">
-    <div class="login-body">
-        <div class="login-wrapper">
-            <div class="login-panel">
-                <a [routerLink]="['/manage/login']" class="p-3">
-                    <img src="assets/images/logo.png" alt="Eazy Venue" height="100px" width="100px" />
-                </a>
-                <div class="form-group">
-                    <div class="alert alert-danger" role="alert" *ngIf="isLoginFailed">
-                        Login failed: {{ errorMessage }}
-                    </div>
-                </div>
 
-                <input pInputText id="email" formControlName="email" placeholder="Email" />
-                <input pPassword id="password" type="password" formControlName="password" placeholder="Password" />
-
-                <button pButton type="submit" label="LOGIN" [disabled]="!loginform.valid"></button>
-                <p>Don't have an account? <a [routerLink]="['/signup']">Sign up</a></p>
-            </div>
-            <!-- <div class="login-footer">
-                <h4>freya</h4>
-                <h6>Copyright Ⓒ PrimeTek Informatics</h6>
-            </div> -->
+<div class="login-container">
+  <!-- Left side - Image and branding -->
+  <div class="login-left">
+    <div class="image-overlay">
+      <div class="brand-content">
+        <div class="logo-section">
+          <img src="assets/images/logo.png" alt="Eazy Venue" class="logo" />
         </div>
+        <div class="tagline-section">
+          <h1 class="main-tagline">Join the crew</h1>
+          <h2 class="sub-tagline">get noticed with EazyVenue!</h2>
+          <p class="description">Create unforgettable moments with our comprehensive wedding planning platform</p>
+        </div>
+      </div>
     </div>
-</form>
+  </div>
+
+  <!-- Right side - Login form -->
+  <div class="login-right">
+    <div class="login-form-container">
+      <div class="form-header">
+        <h3 class="form-title">Log in to your account</h3>
+        <p class="form-subtitle">
+          Don't have an account?
+          <a [routerLink]="['/signup']" class="signup-link">Free sign up</a>
+        </p>
+      </div>
+
+      <!-- Social login buttons -->
+      <div class="social-login-section">
+        <button class="social-btn facebook-btn">
+          <i class="fab fa-facebook-f"></i>
+          <span>Sign in with Facebook</span>
+        </button>
+        <button class="social-btn google-btn">
+          <i class="fab fa-google"></i>
+          <span>Sign in with Google</span>
+        </button>
+        <button class="social-btn apple-btn">
+          <i class="fab fa-apple"></i>
+          <span>Sign in with Apple</span>
+        </button>
+      </div>
+
+      <div class="divider">
+        <span class="divider-text">Or log in with your email</span>
+      </div>
+
+      <!-- Login form -->
+      <form [formGroup]="loginform" (ngSubmit)="onSubmit()" class="login-form">
+        <div class="form-group" *ngIf="isLoginFailed">
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle"></i>
+            Login failed: {{ errorMessage }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Your email</label>
+          <div class="input-wrapper">
+            <i class="fas fa-envelope input-icon"></i>
+            <input
+              pInputText
+              id="email"
+              formControlName="email"
+              placeholder="Enter your email address"
+              class="form-input"
+              [class.error]="loginform.get('email')?.invalid && loginform.get('email')?.touched"
+            />
+          </div>
+          <div class="error-message" *ngIf="loginform.get('email')?.invalid && loginform.get('email')?.touched">
+            Email is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Your password</label>
+          <div class="input-wrapper">
+            <i class="fas fa-lock input-icon"></i>
+            <input
+              pPassword
+              id="password"
+              type="password"
+              formControlName="password"
+              placeholder="Enter your password"
+              class="form-input"
+              [class.error]="loginform.get('password')?.invalid && loginform.get('password')?.touched"
+            />
+          </div>
+          <div class="error-message" *ngIf="loginform.get('password')?.invalid && loginform.get('password')?.touched">
+            Password is required
+          </div>
+        </div>
+
+        <div class="form-options">
+          <div class="remember-me">
+            <input type="checkbox" id="remember" class="checkbox">
+            <label for="remember" class="checkbox-label">Remember me</label>
+          </div>
+          <a href="#" class="forgot-password">Forgot your username/password?</a>
+        </div>
+
+        <button
+          pButton
+          type="submit"
+          class="login-btn"
+          [disabled]="!loginform.valid || loading"
+          [class.loading]="loading"
+        >
+          <span *ngIf="!loading">Log in</span>
+          <span *ngIf="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            Logging in...
+          </span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
