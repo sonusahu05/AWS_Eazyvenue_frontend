@@ -172,7 +172,7 @@ export class GeolocationService {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    
+
     try {
       const cacheData = {
         ...location,
@@ -191,7 +191,7 @@ export class GeolocationService {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    
+
     try {
       const cached = localStorage.getItem(this.LOCATION_CACHE_KEY);
       if (cached) {
@@ -227,7 +227,7 @@ export class GeolocationService {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    
+
     try {
       localStorage.setItem('location_denied', 'true');
     } catch (error) {
@@ -242,7 +242,7 @@ export class GeolocationService {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    
+
     try {
       localStorage.removeItem('location_denied');
     } catch (error) {
@@ -257,7 +257,7 @@ export class GeolocationService {
     if (!isPlatformBrowser(this.platformId)) {
       return false;
     }
-    
+
     try {
       return localStorage.getItem('location_denied') === 'true';
     } catch (error) {
@@ -335,12 +335,12 @@ export class GeolocationService {
     totalFound: number;
   } {
     const venuesWithDistance = this.addDistanceToVenues(venues, userLocation);
-    const distanceRanges = [5, 10, 25, 50, 100];
+    const distanceRanges = [5, 10, 25];
 
     for (const radius of distanceRanges) {
       const filteredVenues = this.filterVenuesByDistance(venuesWithDistance, radius);
 
-      if (filteredVenues.length >= 20 || radius === distanceRanges[distanceRanges.length - 1]) {
+      if (filteredVenues.length >= 15 || radius === distanceRanges[distanceRanges.length - 1]) {
         return {
           venues: this.sortVenuesByDistance(filteredVenues),
           radiusUsed: radius,
@@ -365,7 +365,7 @@ export class GeolocationService {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    
+
     try {
       localStorage.removeItem(this.LOCATION_CACHE_KEY);
       localStorage.removeItem('location_denied');
@@ -384,16 +384,16 @@ export class GeolocationService {
 
     try {
       const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lng}&addressdetails=1&zoom=16`;
-      
+
       const headers = new HttpHeaders({
         'User-Agent': 'EazyVenue-App/1.0 (https://eazyvenue.com)'
       });
 
       const response: any = await this.http.get(nominatimUrl, { headers }).toPromise();
-      
+
       if (response && response.address) {
         const address = response.address;
-        
+
         return {
           ...location,
           city: address.city || address.town || address.village || address.municipality || '',
