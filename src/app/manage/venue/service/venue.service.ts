@@ -124,27 +124,100 @@ export class VenueService {
         );
     }
 
-    addReview(venueId: string, review: any): Observable<any> {
-        return this.http.post<any>(
-            `${API_URL}s/${venueId}/reviews`,
-            review,
-            this.httpOptions
-        );
-    }
+    getGoogleReviews(placeName: string, cityName: string): Observable<any> {
+    return new Observable(observer => {
+        if (!isPlatformBrowser(this.platformId)) {
+            observer.next({ result: { reviews: [], rating: 0 } });
+            observer.complete();
+            return;
+        }
 
-    // Add to your venue service
-getGoogleReviews(placeName: string, cityName: string): Observable<any> {
-    const query = `${placeName} ${cityName}`;
-    return this.http.get(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(query)}&inputtype=textquery&fields=place_id&key=${this.googleMapsApiKey}`)
-        .pipe(
-            switchMap((response: any) => {
-                if (response.candidates && response.candidates.length > 0) {
-                    const placeId = response.candidates[0].place_id;
-                    return this.http.get(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews,rating&key=${this.googleMapsApiKey}`);
+        // Ensure Google Maps is loaded
+        this.loadGoogleMapsScript().then(() => {
+            const service = new google.maps.places.PlacesService(document.createElement('div'));
+
+            // Search for the place
+            const request = {
+                query: `${placeName} ${cityName}`,
+                fields: ['place_id', 'name', 'rating', 'user_ratings_total']
+            };
+
+            service.findPlaceFromQuery(request, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK && results && results.length > 0) {
+                    const place = results[0];
+
+                    // Get detailed information including reviews
+                    const detailsRequest = {
+                        placeId: place.place_id,
+                        fields: ['reviews', 'rating', 'user_ratings_total']
+                    };
+
+                    service.getDetails(detailsRequest, (placeDetails, detailsStatus) => {
+                        if (detailsStatus === google.maps.places.PlacesServiceStatus.OK && placeDetails) {
+                            observer.next({
+                                result: {
+                                    reviews: placeDetails.reviews || [],
+                                    rating: placeDetails.rating || 0,
+                                    user_ratings_total: placeDetails.user_ratings_total || 0
+                                }
+                            });
+                        } else {
+                            observer.next({ result: { reviews: [], rating: 0, user_ratings_total: 0 } });
+                        }
+                        observer.complete();
+                    });
+                } else {
+                    observer.next({ result: { reviews: [], rating: 0, user_ratings_total: 0 } });
+                    observer.complete();
                 }
-                return of({ result: { reviews: [], rating: 0 } });
-            })
-        );
+            });
+        }).catch(error => {
+            console.error('Error loading Google Maps:', error);
+            observer.next({ result: { reviews: [], rating: 0, user_ratings_total: 0 } });
+            observer.complete();
+        });
+    });
+}
+
+// Make sure this method exists in your service
+private loadGoogleMapsScript(): Promise<void> {
+    return new Promise((resolve, reject) => {
+        if (!isPlatformBrowser(this.platformId)) {
+            resolve();
+            return;
+        }
+
+        if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+            resolve();
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${this.googleMapsApiKey}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+
+        script.onload = () => resolve();
+        script.onerror = () => reject('Failed to load Google Maps script');
+
+        document.head.appendChild(script);
+    });
+}
+
+// Update your addReview method
+addReview(venueId: string, review: any): Observable<any> {
+    const reviewPayload = {
+        reviewtitle: review.reviewtitle,
+        reviewrating: review.reviewrating,
+        reviewdescription: review.reviewdescription,
+        venueId: venueId
+    };
+
+    return this.http.post<any>(
+        `${API_URL}/${venueId}/reviews`,
+        reviewPayload,
+        this.httpOptions
+    );
 }
 
     getVenueDetails(id: string) {
@@ -190,30 +263,30 @@ getGoogleReviews(placeName: string, cityName: string): Observable<any> {
     }
 
 
-    private loadGoogleMapsScript(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            // Check if we're in the browser
-            if (!isPlatformBrowser(this.platformId)) {
-                resolve();
-                return;
-            }
-            
-            if (typeof google !== 'undefined' && google.maps) {
-                resolve();
-                return;
-            }
+    // private loadGoogleMapsScript(): Promise<void> {
+    //     return new Promise((resolve, reject) => {
+    //         // Check if we're in the browser
+    //         if (!isPlatformBrowser(this.platformId)) {
+    //             resolve();
+    //             return;
+    //         }
 
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${this.googleMapsApiKey}&libraries=geometry,places`;
-            script.async = true;
-            script.defer = true;
+    //         if (typeof google !== 'undefined' && google.maps) {
+    //             resolve();
+    //             return;
+    //         }
 
-            script.onload = () => resolve();
-            script.onerror = () => reject('Failed to load Google Maps script');
+    //         const script = document.createElement('script');
+    //         script.src = `https://maps.googleapis.com/maps/api/js?key=${this.googleMapsApiKey}&libraries=geometry,places`;
+    //         script.async = true;
+    //         script.defer = true;
 
-            document.head.appendChild(script);
-        });
-    }
+    //         script.onload = () => resolve();
+    //         script.onerror = () => reject('Failed to load Google Maps script');
+
+    //         document.head.appendChild(script);
+    //     });
+    // }
 
     /**
      * Perform geocoding operation
@@ -223,7 +296,7 @@ getGoogleReviews(placeName: string, cityName: string): Observable<any> {
             reject('Geocoding is not available in SSR');
             return;
         }
-        
+
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode({ address: address }, (results, status) => {
             if (status === 'OK' && results[0]) {

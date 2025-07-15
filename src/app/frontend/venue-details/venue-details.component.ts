@@ -79,18 +79,25 @@ interface City {
 })
 export class VenueDetailsComponent implements OnInit {
     // Review source & toggling states
-    selectedReviewSource: 'eazyvenue' | 'google' = 'eazyvenue';
-    showReviewForm = false;
-    showAllReviews = false;
+
     [x: string]: any;
     venueDetailSearch: boolean = false;
     responsiveOptions: any[] | undefined;
-    newReview = {
-        reviewtitle: '',
-        reviewdescription: '',
-        reviewrating: 5,
-        created_at: new Date()
-    };
+    selectedReviewSource: string = 'eazyvenue';
+  showReviewForm: boolean = false;
+  showAllReviews: boolean = false;
+  googleReviews: any[] = [];
+  isLoadingGoogleReviews: boolean = false;
+   expandedReviews: boolean[] = [];
+   currentSlide: number = 0;
+  reviewsPerSlide: number = 3;
+  userPhotos: any[] = [];
+
+  newReview = {
+    reviewtitle: '',
+    reviewrating: 0,
+    reviewdescription: ''
+  };
     displayCustomAmountModal: boolean = false;
     reviewForm: FormGroup;
 
@@ -98,7 +105,6 @@ export class VenueDetailsComponent implements OnInit {
         this.venueDetailSearch = true;
     }
     visible: boolean;
-    googleReviews: any[] = [];
     showGoogleReviews = false;
     combinedRating = 0;
     selectedCountries: any[];
@@ -685,12 +691,512 @@ export class VenueDetailsComponent implements OnInit {
                 this.rangeDates.push(new Date(this.endDate));
             }
         });
+        this.updateReviewsPerSlide();
+
+    // Listen for window resize
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', () => {
+        this.updateReviewsPerSlide();
+      });
+    }
         this.getVenueDetails();
         this.loadNearbyVendors();
     }
     get h() {
         return this.mobileForm.controls;
     }
+getCarouselReviews() {
+    const reviews = this.selectedReviewSource === 'google' ? this.googleReviews : (this.venueDetails.reviews || []);
+    return reviews;
+  }
+
+  // Get total number of slides
+  getTotalSlides(): number {
+    const reviews = this.getCarouselReviews();
+    return Math.ceil(reviews.length / this.reviewsPerSlide);
+  }
+
+  // Get reviews for current slide
+  getCurrentSlideReviews() {
+    const reviews = this.getCarouselReviews();
+    const startIndex = this.currentSlide * this.reviewsPerSlide;
+    const endIndex = startIndex + this.reviewsPerSlide;
+    return reviews.slice(startIndex, endIndex);
+  }
+
+  // Navigate to next slide
+  nextSlide() {
+    const totalSlides = this.getTotalSlides();
+    if (this.currentSlide < totalSlides - 1) {
+      this.currentSlide++;
+    }
+  }
+
+  // Navigate to previous slide
+  previousSlide() {
+    if (this.currentSlide > 0) {
+      this.currentSlide--;
+    }
+  }
+
+  // Go to specific slide
+  goToSlide(slideIndex: number) {
+    this.currentSlide = slideIndex;
+  }
+
+  // Check if previous button should be disabled
+  isPreviousDisabled(): boolean {
+    return this.currentSlide === 0;
+  }
+
+  // Check if next button should be disabled
+  isNextDisabled(): boolean {
+    return this.currentSlide >= this.getTotalSlides() - 1;
+  }
+
+  // Update reviews per slide based on screen size
+  updateReviewsPerSlide() {
+    if (typeof window !== 'undefined') {
+      const width = window.innerWidth;
+      if (width < 768) {
+        this.reviewsPerSlide = 1; // Mobile: 1 review per slide
+      } else if (width < 1200) {
+        this.reviewsPerSlide = 2; // Tablet: 2 reviews per slide
+      } else {
+        this.reviewsPerSlide = 3; // Desktop: 3 reviews per slide
+      }
+
+      // Reset to first slide when changing reviews per slide
+      this.currentSlide = 0;
+    }
+  }
+
+  // Override the toggleReviewSource method to reset carousel
+//   toggleReviewSource(source: string) {
+//     this.selectedReviewSource = source;
+//     this.currentSlide = 0; // Reset to first slide when switching sources
+//   }
+
+    toggleExpandReview(index: number) {
+    this.expandedReviews[index] = !this.expandedReviews[index];
+  }
+
+  // Check if review should show "Read more" button
+  shouldShowReadMore(reviewText: string): boolean {
+    return reviewText && reviewText.length > 150;
+  }
+
+  // Get truncated review text
+  getTruncatedReviewText(reviewText: string): string {
+    if (!reviewText) return '';
+    return reviewText.length > 150 ? reviewText.substring(0, 150) + '...' : reviewText;
+  }
+
+  // Check if there are user photos available
+  hasUserPhotos(): boolean {
+    return this.userPhotos && this.userPhotos.length > 0;
+  }
+
+  // Get user photos from reviews
+  getUserPhotos(): any[] {
+    // This would extract photos from Google reviews if available
+    const photos: any[] = [];
+
+    if (this.selectedReviewSource === 'google' && this.googleReviews) {
+      this.googleReviews.forEach(review => {
+        if (review.profile_photo_url) {
+          photos.push({
+            url: review.profile_photo_url,
+            alt: `Photo by ${review.author_name}`,
+            reviewer: review.author_name
+          });
+        }
+      });
+    }
+
+    return photos.slice(0, 6); // Limit to 6 photos
+  }
+
+  // Open photo modal (if you want to implement photo viewing)
+  openPhotoModal(photo: any) {
+    // Implement photo modal logic here
+    console.log('Opening photo modal for:', photo);
+  }
+
+  // Enhanced getDisplayedReviews with better sorting
+  getDisplayedReviews() {
+    let reviews = [];
+
+    if (this.selectedReviewSource === 'google') {
+      reviews = this.googleReviews || [];
+    } else {
+      reviews = this.venueDetails.reviews || [];
+    }
+
+    // Sort reviews by rating (highest first) and then by date (newest first)
+    reviews = reviews.sort((a, b) => {
+      if (a.reviewrating !== b.reviewrating) {
+        return b.reviewrating - a.reviewrating;
+      }
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+
+    return this.showAllReviews ? reviews : reviews.slice(0, 6);
+  }
+
+  // Get reviews count with better formatting
+  getReviewsCountText(): string {
+    const count = this.getTotalReviewsCount();
+    if (count === 0) return 'No reviews';
+    if (count === 1) return '1 Review';
+    return `${count} Reviews`;
+  }
+
+  // Enhanced getCurrentRating with fallback logic
+  getCurrentRating(): number {
+    if (this.selectedReviewSource === 'google') {
+      return this.venueDetails.googleRating || 0;
+    } else {
+      // If no EazyVenue reviews, show Google rating as fallback
+      const eazyRating = this.venueDetails.eazyVenueRating || 0;
+      const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
+
+      if (eazyReviewsCount === 0 && this.venueDetails.googleRating) {
+        return this.venueDetails.googleRating;
+      }
+
+      return eazyRating;
+    }
+  }
+
+  // Enhanced setInitialReviewSource with better logic
+  setInitialReviewSource() {
+    const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
+    const googleReviewsCount = this.googleReviews?.length || 0;
+
+    if (eazyReviewsCount <= 2 && googleReviewsCount > 0) {
+      this.selectedReviewSource = 'google';
+    } else if (eazyReviewsCount > 0) {
+      this.selectedReviewSource = 'eazyvenue';
+    } else if (googleReviewsCount > 0) {
+      this.selectedReviewSource = 'google';
+    } else {
+      this.selectedReviewSource = 'eazyvenue'; // Default to EazyVenue for writing reviews
+    }
+  }
+
+  // Enhanced loadGoogleReviews with better error handling
+  loadGoogleReviews() {
+    if (!this.venueDetails.name || !this.venueDetails.cityname) {
+      console.log('Venue name or city not available for Google reviews');
+      return;
+    }
+
+    this.isLoadingGoogleReviews = true;
+
+    this.venueService.getGoogleReviews(this.venueDetails.name, this.venueDetails.cityname)
+      .subscribe({
+        next: (response) => {
+          console.log('Google reviews response:', response);
+
+          if (response.result && response.result.reviews) {
+            this.googleReviews = response.result.reviews.map(review => ({
+              ...review,
+              reviewtitle: this.generateReviewTitle(review.rating),
+              reviewdescription: review.text || 'No review text available',
+              reviewrating: review.rating,
+              created_at: review.time ? new Date(review.time * 1000).toISOString() : new Date().toISOString(),
+              author_name: review.author_name || 'Anonymous',
+              profile_photo_url: review.profile_photo_url
+            }));
+
+            // Update Google rating if available
+            if (response.result.rating) {
+              this.venueDetails.googleRating = response.result.rating;
+            }
+          } else {
+            this.googleReviews = [];
+          }
+
+          this.isLoadingGoogleReviews = false;
+          this.setInitialReviewSource();
+        },
+        error: (error) => {
+          console.error('Error loading Google reviews:', error);
+          this.googleReviews = [];
+          this.isLoadingGoogleReviews = false;
+          this.setInitialReviewSource();
+        }
+      });
+  }
+
+  // Enhanced generateReviewTitle with more variety
+  generateReviewTitle(rating: number): string {
+    const titles = {
+      5: ['Outstanding Experience', 'Perfect Venue', 'Excellent Choice', 'Highly Recommended'],
+      4: ['Great Experience', 'Very Good Venue', 'Good Choice', 'Recommended'],
+      3: ['Average Experience', 'Decent Venue', 'Okay Choice', 'Fair Experience'],
+      2: ['Below Average', 'Could Be Better', 'Not Impressed', 'Disappointing'],
+      1: ['Poor Experience', 'Not Recommended', 'Very Disappointing', 'Avoid']
+    };
+
+    const ratingGroup = Math.floor(rating);
+    const titleArray = titles[ratingGroup] || titles[3];
+    return titleArray[Math.floor(Math.random() * titleArray.length)];
+  }
+
+  // Enhanced submitReview with better success handling
+  submitReview() {
+    if (!this.newReview.reviewtitle || !this.newReview.reviewrating || !this.newReview.reviewdescription) {
+      alert('Please fill all required fields');
+      return;
+    }
+
+    const reviewData = {
+      ...this.newReview,
+      venueId: this.venueDetails.id,
+      created_at: new Date().toISOString(),
+      author_name: 'You' // You can get this from user service
+    };
+
+    this.venueService.addReview(this.venueDetails.id, reviewData).subscribe({
+      next: (response) => {
+        console.log('Review submitted successfully:', response);
+
+        // Add the new review to the existing reviews
+        if (!this.venueDetails.reviews) {
+          this.venueDetails.reviews = [];
+        }
+        this.venueDetails.reviews.unshift(reviewData);
+
+        // Update the EazyVenue rating
+        this.updateEazyVenueRating();
+
+        // Reset form and close it
+        this.resetReviewForm();
+        this.showReviewForm = false;
+
+        // Switch to EazyVenue reviews to show the new review
+        this.selectedReviewSource = 'eazyvenue';
+        this.showAllReviews = false;
+
+        // Show success message
+        this.showSuccessMessage('Review submitted successfully!');
+      },
+      error: (error) => {
+        console.error('Error submitting review:', error);
+        this.showErrorMessage('Error submitting review. Please try again.');
+      }
+    });
+  }
+
+  // Show success message (you can implement toast notifications)
+  showSuccessMessage(message: string) {
+    // Implement your success message display logic here
+    alert(message); // Replace with proper toast notification
+  }
+
+  // Show error message
+  showErrorMessage(message: string) {
+    // Implement your error message display logic here
+    alert(message); // Replace with proper toast notification
+  }
+
+  // Method to handle review card interactions
+  onReviewCardClick(review: any, index: number) {
+    // You can implement review detail modal or expand functionality
+    console.log('Review card clicked:', review);
+  }
+
+  // Method to get review statistics for the selected source
+  getReviewStatistics() {
+    const reviews = this.selectedReviewSource === 'google' ? this.googleReviews : (this.venueDetails.reviews || []);
+
+    const stats = {
+      5: 0, 4: 0, 3: 0, 2: 0, 1: 0
+    };
+
+    reviews.forEach(review => {
+      const rating = Math.floor(review.reviewrating);
+      if (stats[rating] !== undefined) {
+        stats[rating]++;
+      }
+    });
+
+    return stats;
+  }
+
+  // Method to get percentage for each rating
+  getRatingPercentage(rating: number): number {
+    const stats = this.getReviewStatistics();
+    const total = Object.values(stats).reduce((sum, count) => sum + count, 0);
+    return total > 0 ? Math.round((stats[rating] / total) * 100) : 0;
+  }
+
+//     setInitialReviewSource() {
+//     const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
+
+//     if (eazyReviewsCount <= 2) {
+//       // If EazyVenue has 2 or fewer reviews, show Google reviews by default
+//       this.selectedReviewSource = 'google';
+//     } else {
+//       // If EazyVenue has more than 2 reviews, show EazyVenue reviews by default
+//       this.selectedReviewSource = 'eazyvenue';
+//     }
+//   }
+
+//   // Updated loadGoogleReviews method
+//   loadGoogleReviews() {
+//     if (!this.venueDetails.name || !this.venueDetails.cityname) {
+//       console.log('Venue name or city not available for Google reviews');
+//       return;
+//     }
+
+//     this.isLoadingGoogleReviews = true;
+//     this.venueService.getGoogleReviews(this.venueDetails.name, this.venueDetails.cityname)
+//       .subscribe(
+//         (response) => {
+//           console.log('Google reviews response:', response);
+//           if (response.result && response.result.reviews) {
+//             this.googleReviews = response.result.reviews.map(review => ({
+//               ...review,
+//               reviewtitle: this.generateReviewTitle(review.rating),
+//               reviewdescription: review.text,
+//               reviewrating: review.rating,
+//               created_at: new Date(review.time * 1000).toISOString(),
+//               author_name: review.author_name,
+//               profile_photo_url: review.profile_photo_url
+//             }));
+//           }
+//           this.isLoadingGoogleReviews = false;
+//         },
+//         (error) => {
+//           console.error('Error loading Google reviews:', error);
+//           this.isLoadingGoogleReviews = false;
+//         }
+//       );
+//   }
+
+//   // Helper method to generate review titles for Google reviews
+//   generateReviewTitle(rating: number): string {
+//     if (rating >= 4.5) return 'Excellent Experience';
+//     if (rating >= 4) return 'Great Place';
+//     if (rating >= 3.5) return 'Good Experience';
+//     if (rating >= 3) return 'Average Experience';
+//     return 'Below Average';
+//   }
+
+  // Toggle review source
+  toggleReviewSource(source: string) {
+    this.selectedReviewSource = source;
+  }
+
+  // Toggle review form
+  toggleReviewForm() {
+    this.showReviewForm = !this.showReviewForm;
+    if (!this.showReviewForm) {
+      this.resetReviewForm();
+    }
+  }
+
+  // Reset review form
+  resetReviewForm() {
+    this.newReview = {
+      reviewtitle: '',
+      reviewrating: 0,
+      reviewdescription: ''
+    };
+  }
+
+  // Submit new review
+//   submitReview() {
+//     if (!this.newReview.reviewtitle || !this.newReview.reviewrating || !this.newReview.reviewdescription) {
+//       alert('Please fill all required fields');
+//       return;
+//     }
+
+//     const reviewData = {
+//       ...this.newReview,
+//       venueId: this.venueDetails.id,
+//       created_at: new Date().toISOString()
+//     };
+
+//     this.venueService.addReview(this.venueDetails.id, reviewData).subscribe(
+//       (response) => {
+//         console.log('Review submitted successfully:', response);
+//         // Add the new review to the existing reviews
+//         if (!this.venueDetails.reviews) {
+//           this.venueDetails.reviews = [];
+//         }
+//         this.venueDetails.reviews.unshift(reviewData);
+
+//         // Update the EazyVenue rating
+//         this.updateEazyVenueRating();
+
+//         // Reset form and close it
+//         this.resetReviewForm();
+//         this.showReviewForm = false;
+
+//         // Switch to EazyVenue reviews to show the new review
+//         this.selectedReviewSource = 'eazyvenue';
+
+//         alert('Review submitted successfully!');
+//       },
+//       (error) => {
+//         console.error('Error submitting review:', error);
+//         alert('Error submitting review. Please try again.');
+//       }
+//     );
+//   }
+
+  // Update EazyVenue rating based on all reviews
+  updateEazyVenueRating() {
+    if (this.venueDetails.reviews && this.venueDetails.reviews.length > 0) {
+      const totalRating = this.venueDetails.reviews.reduce((sum, review) => sum + review.reviewrating, 0);
+      this.venueDetails.eazyVenueRating = Math.round((totalRating / this.venueDetails.reviews.length) * 10) / 10;
+    }
+  }
+
+  // Get displayed reviews based on selected source
+//   getDisplayedReviews() {
+//     if (this.selectedReviewSource === 'google') {
+//       return this.showAllReviews ? this.googleReviews : this.googleReviews.slice(0, 3);
+//     } else {
+//       const eazyReviews = this.venueDetails.reviews || [];
+//       return this.showAllReviews ? eazyReviews : eazyReviews.slice(0, 3);
+//     }
+//   }
+
+  // Get total reviews count for selected source
+  getTotalReviewsCount(): number {
+    if (this.selectedReviewSource === 'google') {
+      return this.googleReviews.length;
+    } else {
+      return this.venueDetails.reviews?.length || 0;
+    }
+  }
+
+  // Get rating for selected source
+//   getCurrentRating(): number {
+//     if (this.selectedReviewSource === 'google') {
+//       return this.venueDetails.googleRating || 0;
+//     } else {
+//       return this.venueDetails.eazyVenueRating || 0;
+//     }
+//   }
+
+//   // Get reviews count text
+//   getReviewsCountText(): string {
+//     const count = this.getTotalReviewsCount();
+//     return count === 1 ? '1 Review' : `${count} Reviews`;
+//   }
+
+  // Check if should show "Show all reviews" button
+  shouldShowAllReviewsButton(): boolean {
+    const totalReviews = this.getTotalReviewsCount();
+    return totalReviews > 3 && !this.showAllReviews;
+  }
+
 
     loadNearbyVendors(): void {
         if (this.vendorLoading) return;
@@ -801,94 +1307,6 @@ export class VenueDetailsComponent implements OnInit {
       private capitalizeWords(str: string): string {
         return str.replace(/\b\w/g, match => match.toUpperCase()).replace(/-/g, ' ');
       }
-
-      submitReview() {
-        if (!this.venueDetails || !this.venueDetails.id) {
-            console.error('venueDetails is undefined or missing ID');
-            return;
-        }
-
-        // Get user's full name for display
-        const userName = this.fullUserDetails ?
-            `${this.fullUserDetails.firstName || ''} ${this.fullUserDetails.lastName || ''}`.trim() :
-            'Anonymous User';
-
-        // Keep reviewtitle for backend but use userName for display
-        const reviewData = {
-            reviewtitle: this.newReview.reviewtitle || userName, // Backend expects title
-            reviewdescription: this.newReview.reviewdescription,
-            reviewrating: this.newReview.reviewrating,
-            userName: userName, // Add userName for frontend display
-            created_at: new Date()
-        };
-
-        this.venueService.addReview(this.venueDetails.id, reviewData).subscribe({
-            next: (response: any) => {
-                if (!this.venueDetails.reviews) {
-                    this.venueDetails.reviews = [];
-                }
-                // Add userName to response for display
-                response.userName = userName;
-                this.venueDetails.reviews.unshift(response);
-                this.newReview = {
-                    reviewtitle: '',
-                    reviewdescription: '',
-                    reviewrating: 5,
-                    created_at: new Date()
-                };
-            },
-            error: (error) => {
-                console.error('Error adding review:', error);
-            }
-        });
-    }
-
-    loadGoogleReviews() {
-        if (this.venueDetails) {
-            this.venueService.getGoogleReviews(this.venueDetails.name, this.venueDetails.cityname)
-                .subscribe({
-                    next: (data) => {
-                        this.googleReviews = data.result?.reviews || [];
-                        const googleRating = data.result?.rating || 0;
-                        const eazyRating = parseFloat(this.venueDetails.revirerating) || 0;
-                        this.combinedRating = parseFloat(((googleRating + eazyRating) / 2).toFixed(1));
-                    },
-                    error: (err) => {
-                        console.error('Error loading Google reviews:', err);
-                        this.googleReviews = [];
-                    }
-                });
-        }
-    }
-
-    // Toggle between review sources
-    toggleReviewSource(source: 'eazyvenue' | 'google') {
-        this.selectedReviewSource = source;
-        this.showAllReviews = false;
-
-        if (source === 'google' && this.googleReviews.length === 0) {
-            this.loadGoogleReviews();
-        }
-    }
-
-    // Show only 3 reviews initially, more if toggled
-    getDisplayedReviews() {
-        const reviews = this.selectedReviewSource === 'google' ? this.googleReviews : this.venueDetails?.reviews || [];
-        return this.showAllReviews ? reviews : reviews.slice(0, 3);
-    }
-
-    // Getter to calculate the average review rating
-    get averageReviewRating(): number {
-        const reviews = this.selectedReviewSource === 'google' ? this.googleReviews : this.venueDetails?.reviews || [];
-        if (!reviews.length) return 0;
-        const sum = reviews.reduce((acc, curr) => acc + curr.reviewrating, 0);
-        return parseFloat((sum / reviews.length).toFixed(1));
-    }
-
-    // Toggle review form
-    toggleReviewForm() {
-        this.showReviewForm = !this.showReviewForm;
-    }
 
 
     initReviewForm() {
