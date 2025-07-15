@@ -69,7 +69,7 @@ export class ListComponent implements OnInit {
     minYear = environment.minYear;
     startDate: Date;
     endDate: Date;
-    rowsPerPageOptions: number[] = [10, 50, 100];
+    rowsPerPageOptions: number[] = [10, 50, 100,500,1000,2000];
     statuses: any[];
     assuredlist: any[];
     cmsmoduleDialog: boolean;
@@ -256,10 +256,14 @@ refreshVenueList(event: LazyLoadEvent) {
     // Build query parameters - Remove email filtering from server side for venue owners
     // Let server return all venues and we'll filter client-side
     // Build query parameters
+const hasClientFilters = event.filters && Object.keys(event.filters).some(key => 
+    event.filters[key].value !== null && event.filters[key].value !== undefined
+);
+
 let query = new URLSearchParams({
     admin: 'true',
-    pageSize: isVenueOwner ? '1000' : (event.rows || 10).toString(), // Use actual pagination for admin
-    pageNumber: isVenueOwner ? '1' : Math.floor((event.first || 0) / (event.rows || 10) + 1).toString(),
+    pageSize: (isVenueOwner || hasClientFilters) ? '1000' : (event.rows || 10).toString(),
+    pageNumber: (isVenueOwner || hasClientFilters) ? '1' : Math.floor((event.first || 0) / (event.rows || 10) + 1).toString(),
     filterByDisable: 'false'
 });
 
@@ -388,13 +392,13 @@ if (event.filters && !isVenueOwner) {
             }
 
             // Apply client-side pagination only for venue owners
-if (isVenueOwner) {
+if (isVenueOwner || hasClientFilters) {
     const startIndex = (event.first || 0);
     const endIndex = startIndex + (event.rows || 10);
     this.venueList = venues.slice(startIndex, endIndex);
     this.totalRecords = venues.length;
 } else {
-    // For admin users, use server-side pagination
+    // For admin users without filters, use server-side pagination
     this.venueList = venues;
     this.totalRecords = data.data.totalCount || data.data.total || venues.length;
 }
