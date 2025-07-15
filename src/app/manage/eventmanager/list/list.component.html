@@ -6,9 +6,17 @@
                 Venue Enquiry Dashboard
             </h2>
             <div class="header-stats">
+       <button 
+    class="action-btn add-enquiry-btn"
+    (click)="openAddEnquiryModal()"
+    *ngIf="!isVenueOwner"
+    title="Add Manual Enquiries">
+    <i class="fas fa-plus"></i>
+    Add Enquiries
+</button>
 <!-- Update only the filter section in your HTML -->
 <div class="filter-dropdown">
-    <button 
+    <button
         class="stat-badge filter-button"
         (click)="toggleVenueFilter()"
         [class.active]="showVenueFilter">
@@ -16,13 +24,13 @@
         {{selectedVenueFilter ? getSelectedVenueInfo() : totalRecords + ' Total Venues'}}
         <i class="fas fa-chevron-down" [class.rotate]="showVenueFilter"></i>
     </button>
-    
+
     <!-- Add overlay for mobile -->
-    <div class="filter-overlay" 
-         *ngIf="showVenueFilter" 
+    <div class="filter-overlay"
+         *ngIf="showVenueFilter"
          (click)="clearVenueFilter()">
     </div>
-    
+
     <div class="venue-filter-dropdown" *ngIf="showVenueFilter">
         <div class="filter-header">
             <span>Filter by Venue</span>
@@ -31,7 +39,7 @@
             </button>
         </div>
         <div class="venue-options">
-            <div 
+            <div
                 class="venue-option"
                 *ngFor="let venue of uniqueVenues"
                 (click)="selectVenueFilter(venue)"
@@ -92,7 +100,7 @@
                 </ng-template>
             </p-dropdown>
         </div>
-        
+
         <!-- Show lead info when venue filter is active -->
         <div *ngIf="selectedVenueFilter" class="lead-indicator">
             <span class="lead-number">Lead {{enquiry.leadIndex}}</span>
@@ -248,7 +256,187 @@
             </ng-template>
         </p-table>
     </div>
-</div>
+<div class="modal-overlay" *ngIf="showAddEnquiryModal" (click)="closeAddEnquiryModal()">
+    <div class="add-enquiry-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3><i class="fas fa-plus-circle"></i> Add Manual Enquiries</h3>
+            <button class="close-btn" (click)="closeAddEnquiryModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="enquiry-form-container">
+            <!-- Venue Selection Section -->
+            <div class="venue-selection-section">
+                <div class="form-group">
+                    <label>Select Venue(s) *</label>
+                    <p-multiSelect
+                        [options]="venueOptions"
+                        [(ngModel)]="selectedVenues"
+                        placeholder="Search and select venues..."
+                        [filter]="true"
+                        filterBy="label"
+                        optionLabel="label"
+                        optionValue="value"
+                        [showClear]="true"
+                        [maxSelectedLabels]="2"
+                        selectedItemsLabel="{0} venues selected"
+                        styleClass="venue-multi-select">
+                    </p-multiSelect>
+                    <small class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        Select one or more venues. Each lead will be added to all selected venues.
+                    </small>
+                </div>
+            </div>
 
-<p-toast key="toastmsg"></p-toast>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            <!-- Bulk Leads Entry Section -->
+            <div class="bulk-leads-section">
+                <div class="section-header">
+                    <h4><i class="fas fa-users"></i> Customer Details</h4>
+                    <div class="bulk-actions">
+                        <button type="button" 
+                                class="btn btn-outline-primary btn-sm"
+                                (click)="addNewLead()"
+                                [disabled]="leadEntries.length >= 10">
+                            <i class="fas fa-plus"></i>
+                            Add Lead
+                        </button>
+                        <button type="button" 
+                                class="btn btn-outline-secondary btn-sm"
+                                (click)="clearAllLeads()"
+                                *ngIf="leadEntries.length > 1">
+                            <i class="fas fa-trash"></i>
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="leads-container">
+                    <div class="lead-entry" 
+                         *ngFor="let lead of leadEntries; let i = index; trackBy: trackByLeadId">
+                        <div class="lead-header">
+                            <span class="lead-number">Lead #{{ i + 1 }}</span>
+                            <button type="button" 
+                                    class="remove-lead-btn"
+                                    (click)="removeLead(i)"
+                                    *ngIf="leadEntries.length > 1"
+                                    title="Remove this lead">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="lead-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Customer Name *</label>
+                                    <input type="text" 
+                                           [(ngModel)]="lead.userName" 
+                                           placeholder="Enter customer name"
+                                           class="form-control"
+                                           [class.error]="!lead.userName && showValidationErrors">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Contact Number *</label>
+                                    <input type="tel" 
+                                           [(ngModel)]="lead.userContact" 
+                                           placeholder="Enter contact number"
+                                           class="form-control"
+                                           [class.error]="!lead.userContact && showValidationErrors"
+                                           (input)="validateContactNumber(lead)">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" 
+                                           [(ngModel)]="lead.userEmail" 
+                                           placeholder="Enter email address"
+                                           class="form-control"
+                                           [class.error]="lead.userEmail && !isValidEmail(lead.userEmail) && showValidationErrors">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <p-dropdown
+                                        [options]="statusOptions"
+                                        [(ngModel)]="lead.status"
+                                        placeholder="Select status"
+                                        optionLabel="label"
+                                        optionValue="value"
+                                        styleClass="status-dropdown"
+                                        >
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Enquiry Date *</label>
+                                    <p-calendar 
+                                        [(ngModel)]="lead.enquiryDate"
+                                        [showTime]="true"
+                                        [hourFormat]="24"
+                                        dateFormat="dd/mm/yy"
+                                        placeholder="Select date & time"
+                                        styleClass="calendar-control"
+                                        >
+                                    </p-calendar>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Notes</label>
+                                    <textarea 
+                                        [(ngModel)]="lead.notes"
+                                        placeholder="Add notes for this lead..."
+                                        class="form-control textarea-control"
+                                        rows="2">
+                                    </textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="add-more-section" *ngIf="leadEntries.length < 10">
+                    <button type="button" 
+                            class="btn btn-dashed"
+                            (click)="addNewLead()">
+                        <i class="fas fa-plus"></i>
+                        Add Another Lead ({{ leadEntries.length }}/10)
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <button type="button" 
+                        class="btn btn-secondary" 
+                        (click)="closeAddEnquiryModal()">
+                    Cancel
+                </button>
+                <button type="button" 
+                        class="btn btn-primary" 
+                        (click)="submitBulkEnquiries()"
+                        [disabled]="!isFormValid() || submittingEnquiry">
+                    <i class="fas fa-save" *ngIf="!submittingEnquiry"></i>
+                    <i class="fas fa-spinner fa-spin" *ngIf="submittingEnquiry"></i>
+                    {{ submittingEnquiry ? 'Saving...' : 'Save All Enquiries' }}
+                </button>
+            </div>
+            
+            <!-- Summary Section -->
+            <div class="summary-section" *ngIf="selectedVenues.length > 0 && leadEntries.length > 0">
+                <div class="summary-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>
+                        Total entries to be created: 
+                        <strong>{{ selectedVenues.length }} venue(s) × {{ getValidLeadsCount() }} lead(s) = {{ selectedVenues.length * getValidLeadsCount() }} enquiries</strong>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

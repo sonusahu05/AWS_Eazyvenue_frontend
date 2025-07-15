@@ -11,7 +11,608 @@ $text-muted: #6b7280;
 $whatsapp: #25d366;
 $phone: #3b82f6;
 
-// Add to your SCSS for the overlay:
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.add-enquiry-modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  position: relative;
+  z-index: 10001;
+  
+  .enquiry-form-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    // CRITICAL: Add this to contain dropdown overlays
+    position: relative;
+  }
+}
+
+// Enhanced PrimeNG dropdown fixes for modal
+:host ::ng-deep {
+  .venue-multi-select {
+    width: 100%;
+    
+    .p-multiselect {
+      width: 100%;
+      max-width: 100%;
+      
+      .p-multiselect-label {
+        max-width: calc(100% - 2rem);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      &:hover {
+        border-color: $primary;
+      }
+      
+      &.p-focus {
+        border-color: $primary;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+    }
+
+    // CRITICAL FIX: Force dropdown panel to stay within modal bounds
+    .p-multiselect-panel {
+      position: absolute !important;
+      z-index: 10002 !important;
+      max-height: 200px !important;
+      overflow-y: auto !important;
+      
+      // Ensure it doesn't overflow modal
+      max-width: calc(100vw - 4rem) !important;
+      
+      // Better positioning
+      transform: translateY(0) !important;
+      top: 100% !important;
+      left: 0 !important;
+      right: auto !important;
+      
+      // Responsive positioning
+      @media (max-width: 768px) {
+        max-width: calc(100vw - 2rem) !important;
+        left: 0 !important;
+        right: 0 !important;
+      }
+    }
+  }
+  
+  .status-dropdown {
+    width: 100%;
+    
+    .p-dropdown {
+      width: 100%;
+      border: 1px solid $border;
+      border-radius: 6px;
+      
+      &:hover {
+        border-color: $primary;
+      }
+      
+      &.p-focus {
+        border-color: $primary;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+    }
+
+    // CRITICAL FIX: Force dropdown panel to stay within modal bounds
+    .p-dropdown-panel {
+      position: absolute !important;
+      z-index: 10002 !important;
+      max-height: 200px !important;
+      overflow-y: auto !important;
+      
+      // Ensure it doesn't overflow modal
+      max-width: calc(100vw - 4rem) !important;
+      
+      // Better positioning
+      transform: translateY(0) !important;
+      top: 100% !important;
+      left: 0 !important;
+      right: auto !important;
+      
+      // Responsive positioning
+      @media (max-width: 768px) {
+        max-width: calc(100vw - 2rem) !important;
+        left: 0 !important;
+        right: 0 !important;
+      }
+    }
+  }
+  
+  .calendar-control {
+    width: 100%;
+    
+    .p-calendar {
+      width: 100%;
+      
+      .p-inputtext {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid $border;
+        border-radius: 6px;
+        
+        &:focus {
+          border-color: $primary;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+      }
+    }
+
+    // CRITICAL FIX: Force calendar panel to stay within modal bounds
+    .p-datepicker,
+    .p-calendar-panel {
+      position: absolute !important;
+      z-index: 10002 !important;
+      max-height: 300px !important;
+      overflow-y: auto !important;
+      
+      // Ensure it doesn't overflow modal
+      max-width: calc(100vw - 4rem) !important;
+      
+      // Better positioning
+      transform: translateY(0) !important;
+      top: 100% !important;
+      left: 0 !important;
+      right: auto !important;
+      
+      // Responsive positioning
+      @media (max-width: 768px) {
+        max-width: calc(100vw - 2rem) !important;
+        left: 0 !important;
+        right: 0 !important;
+      }
+    }
+  }
+}
+
+//   // ENHANCED: Global fix for all PrimeNG overlays in modal context
+//   .add-enquiry-modal {
+//     .p-multiselect-panel,
+//     .p-dropdown-panel,
+//     .p-datepicker,
+//     .p-calendar-panel,
+//     .p-overlay {
+//       position: absolute !important;
+//       z-index: 10002 !important;
+//       max-height: 250px !important;
+//       overflow-y: auto !important;
+      
+//       // Containment within modal
+//       max-width: 100% !important;
+      
+//       // Prevent overflow
+//       box-sizing: border-box !important;
+      
+//       // Better scrolling
+//       &::-webkit-scrollbar {
+//         width: 6px;
+//       }
+      
+//       &::-webkit-scrollbar-track {
+//         background: #f1f1f1;
+//       }
+      
+//       &::-webkit-scrollbar-thumb {
+//         background: #c1c1c1;
+//         border-radius: 3px;
+//       }
+      
+//       &::-webkit-scrollbar-thumb:hover {
+//         background: #a8a8a8;
+//       }
+//     }
+//   }
+// }
+
+// // BACKUP: Global override as fallback
+// .p-multiselect-panel,
+// .p-dropdown-panel,
+// .p-datepicker,
+// .p-calendar-panel {
+//   &.p-connected-overlay {
+//     position: absolute !important;
+//     z-index: 10002 !important;
+    
+//     // Ensure proper containment
+//     max-width: calc(100vw - 2rem) !important;
+//     max-height: 250px !important;
+//     overflow-y: auto !important;
+//   }
+// }
+
+.header-stats {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  
+  .add-enquiry-btn {
+    background: $success;
+    border: 1px solid $success;
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    &:hover {
+      background: darken($success, 5%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+  }
+}
+
+// Modal styles with fixed overflow and proper z-index
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.add-enquiry-modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  position: relative;
+  z-index: 10001;
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid $border;
+    flex-shrink: 0;
+    
+    h3 {
+      margin: 0;
+      color: $dark;
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      i {
+        color: $success;
+      }
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      color: $text-muted;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 4px;
+      
+      &:hover {
+        background: rgba(239, 68, 68, 0.1);
+        color: $danger;
+      }
+    }
+  }
+  
+  .enquiry-form-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    
+    // Venue Selection Section
+    .venue-selection-section {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid $border;
+      
+      .help-text {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: $text-muted;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        
+        i {
+          color: $primary;
+        }
+      }
+    }
+    
+    // Bulk Leads Section
+    .bulk-leads-section {
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        
+        h4 {
+          margin: 0;
+          color: $dark;
+          font-size: 1.125rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          
+          i {
+            color: $primary;
+          }
+        }
+        
+        .bulk-actions {
+          display: flex;
+          gap: 0.5rem;
+        }
+      }
+      
+      .leads-container {
+        .lead-entry {
+          background: white;
+          border: 1px solid $border;
+          border-radius: 8px;
+          margin-bottom: 1rem;
+          overflow: hidden;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          }
+          
+          .lead-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: #f8fafc;
+            border-bottom: 1px solid $border;
+            
+            .lead-number {
+              font-weight: 600;
+              color: $dark;
+              font-size: 0.875rem;
+            }
+            
+            .remove-lead-btn {
+              background: none;
+              border: none;
+              color: $text-muted;
+              cursor: pointer;
+              padding: 0.25rem;
+              border-radius: 4px;
+              
+              &:hover {
+                background: rgba(239, 68, 68, 0.1);
+                color: $danger;
+              }
+            }
+          }
+          
+          .lead-form {
+            padding: 1.5rem;
+          }
+        }
+      }
+      
+      .add-more-section {
+        text-align: center;
+        margin-top: 1rem;
+        
+        .btn-dashed {
+          background: none;
+          border: 2px dashed $border;
+          color: $text-muted;
+          padding: 1rem 2rem;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          
+          &:hover {
+            border-color: $primary;
+            color: $primary;
+            background: rgba(37, 99, 235, 0.05);
+          }
+        }
+      }
+    }
+    
+    // Form Elements
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .form-group {
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: $dark;
+        font-size: 0.875rem;
+      }
+      
+      .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid $border;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        transition: border-color 0.2s ease;
+        
+        &:focus {
+          outline: none;
+          border-color: $primary;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        &.error {
+          border-color: $danger;
+          
+          &:focus {
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+          }
+        }
+        
+        &.textarea-control {
+          resize: vertical;
+          min-height: 60px;
+        }
+      }
+    }
+    
+    // Summary Section
+    .summary-section {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #f0f9ff;
+      border-radius: 8px;
+      border: 1px solid #bfdbfe;
+      
+      .summary-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #1e40af;
+        font-size: 0.875rem;
+        
+        i {
+          color: #3b82f6;
+        }
+      }
+    }
+    
+    // Action Buttons
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid $border;
+      flex-shrink: 0;
+      
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: 1px solid;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+        
+        &.btn-sm {
+          padding: 0.5rem 1rem;
+          font-size: 0.8125rem;
+        }
+        
+        &.btn-secondary {
+          background: white;
+          border-color: $border;
+          color: $text-muted;
+          
+          &:hover:not(:disabled) {
+            background: $light;
+            border-color: $secondary;
+          }
+        }
+        
+        &.btn-primary {
+          background: $primary;
+          border-color: $primary;
+          color: white;
+          
+          &:hover:not(:disabled) {
+            background: darken($primary, 5%);
+            transform: translateY(-1px);
+          }
+        }
+        
+        &.btn-outline-primary {
+          background: none;
+          border-color: $primary;
+          color: $primary;
+          
+          &:hover:not(:disabled) {
+            background: $primary;
+            color: white;
+          }
+        }
+        
+        &.btn-outline-secondary {
+          background: none;
+          border-color: $secondary;
+          color: $secondary;
+          
+          &:hover:not(:disabled) {
+            background: $secondary;
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}
+
 .filter-overlay {
     position: fixed;
     top: 0;
@@ -21,11 +622,12 @@ $phone: #3b82f6;
     background: rgba(0, 0, 0, 0.1);
     z-index: 9998;
     display: none;
-    
+
     @media (max-width: 768px) {
         display: block;
     }
-}    
+}
+
 .header-stats {
     position: relative;
 
@@ -45,21 +647,21 @@ $phone: #3b82f6;
             border-radius: 8px;
             color: $dark;
             font-weight: 500;
-            
+
             &:hover {
                 border-color: $primary;
                 box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
             }
-            
+
             &.active {
                 border-color: $primary;
                 color: $primary;
-                
+
                 .fa-chevron-down.rotate {
                     transform: rotate(180deg);
                 }
             }
-            
+
             .fa-chevron-down {
                 transition: transform 0.2s ease;
                 font-size: 0.75rem;
@@ -76,19 +678,19 @@ $phone: #3b82f6;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
             min-width: 280px;
             z-index: 9999;
-            
+
             .filter-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 padding: 1rem;
                 border-bottom: 1px solid $border;
-                
+
                 span {
                     font-weight: 600;
                     color: $dark;
                 }
-                
+
                 .clear-filter {
                     background: none;
                     border: none;
@@ -96,18 +698,18 @@ $phone: #3b82f6;
                     cursor: pointer;
                     padding: 0.25rem;
                     border-radius: 4px;
-                    
+
                     &:hover {
                         background: rgba(239, 68, 68, 0.1);
                         color: $danger;
                     }
                 }
             }
-            
+
             .venue-options {
                 max-height: 250px;
                 overflow-y: auto;
-                
+
                 .venue-option {
                     display: flex;
                     justify-content: space-between;
@@ -115,21 +717,21 @@ $phone: #3b82f6;
                     padding: 0.75rem 1rem;
                     cursor: pointer;
                     transition: background-color 0.2s ease;
-                    
+
                     &:hover {
                         background: #f8fafc;
                     }
-                    
+
                     &.selected {
                         background: rgba(37, 99, 235, 0.05);
                         border-left: 3px solid $primary;
                     }
-                    
+
                     .venue-name {
                         font-weight: 500;
                         color: $dark;
                     }
-                    
+
                     .venue-count {
                         background: $primary;
                         color: white;
@@ -194,62 +796,6 @@ $phone: #3b82f6;
     }
 }
 
-:host ::ng-deep {
-    .modern-datatable {
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid $border;
-
-        .p-datatable-thead > tr > th {
-            background: #f8fafc;
-            color: $dark;
-            border: 1px solid $border;
-            padding: 1rem;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .p-datatable-tbody > tr {
-            transition: background-color 0.2s ease;
-            border-bottom: 1px solid $border;
-
-            &:hover {
-                background: #f8fafc;
-            }
-
-            > td {
-                border: 1px solid $border;
-                padding: 1rem;
-                vertical-align: middle;
-            }
-        }
-
-        .p-paginator {
-            background: white;
-            border: 1px solid $border;
-            border-top: none;
-            padding: 1rem;
-        }
-    }
-
-    .custom-dropdown {
-        .p-dropdown {
-            border: 1px solid $border;
-            border-radius: 6px;
-            background: white;
-
-            &:hover {
-                border-color: $primary;
-            }
-
-            .p-dropdown-label {
-                padding: 0.5rem 0.75rem;
-                font-size: 0.875rem;
-            }
-        }
-    }
-}
-
 .venue-info {
     .venue-name {
         display: flex;
@@ -270,7 +816,7 @@ $phone: #3b82f6;
 
     .lead-indicator {
         margin-top: 0.5rem;
-        
+
         .lead-number {
             background: rgba(37, 99, 235, 0.1);
             color: $primary;
@@ -455,6 +1001,157 @@ $phone: #3b82f6;
     }
 }
 
+// FIXED: PrimeNG component overrides with proper z-index for modal
+:host ::ng-deep {
+    .modern-datatable {
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid $border;
+
+        .p-datatable-thead > tr > th {
+            background: #f8fafc;
+            color: $dark;
+            border: 1px solid $border;
+            padding: 1rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .p-datatable-tbody > tr {
+            transition: background-color 0.2s ease;
+            border-bottom: 1px solid $border;
+
+            &:hover {
+                background: #f8fafc;
+            }
+
+            > td {
+                border: 1px solid $border;
+                padding: 1rem;
+                vertical-align: middle;
+            }
+        }
+
+        .p-paginator {
+            background: white;
+            border: 1px solid $border;
+            border-top: none;
+            padding: 1rem;
+        }
+    }
+
+    .custom-dropdown {
+        .p-dropdown {
+            border: 1px solid $border;
+            border-radius: 6px;
+            background: white;
+
+            &:hover {
+                border-color: $primary;
+            }
+
+            .p-dropdown-label {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+            }
+        }
+    }
+    
+
+    // Modal-specific PrimeNG overrides with higher z-index
+    .venue-multi-select {
+    width: 100%;
+    
+    .p-multiselect {
+        width: 100%;
+        max-width: 100%;
+        
+        .p-multiselect-label {
+            max-width: calc(100% - 2rem);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+            
+            &:hover {
+                border-color: $primary;
+            }
+            
+            &.p-focus {
+                border-color: $primary;
+                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            }
+        }
+    }
+    
+    .status-dropdown {
+        width: 100%;
+        
+        .p-dropdown {
+            width: 100%;
+            border: 1px solid $border;
+            border-radius: 6px;
+            
+            &:hover {
+                border-color: $primary;
+            }
+            
+            &.p-focus {
+                border-color: $primary;
+                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            }
+        }
+    }
+    
+    .calendar-control {
+        width: 100%;
+        
+        .p-calendar {
+            width: 100%;
+            
+            .p-inputtext {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid $border;
+                border-radius: 6px;
+                
+                &:focus {
+                    border-color: $primary;
+                    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+                }
+            }
+        }
+    }
+
+    // Critical Fix: Override PrimeNG overlay z-index when modal is open
+    .add-enquiry-modal ~ .p-multiselect-panel,
+    .add-enquiry-modal ~ .p-dropdown-panel,
+    .add-enquiry-modal ~ .p-datepicker,
+    .add-enquiry-modal ~ .p-calendar-panel {
+        z-index: 10002 !important;
+    }
+
+    // Alternative approach: Global override for all PrimeNG overlays when modal is present
+    body.modal-open {
+        .p-multiselect-panel,
+        .p-dropdown-panel,
+        .p-datepicker,
+        .p-calendar-panel,
+        .p-overlay {
+            z-index: 10002 !important;
+        }
+    }
+}
+
+// Global PrimeNG overlay z-index fix for modals
+.p-multiselect-panel,
+.p-dropdown-panel,
+.p-datepicker,
+.p-calendar-panel {
+    z-index: 10002 !important;
+}
+
 // Responsive Design
 @media (max-width: 768px) {
     .dashboard-container {
@@ -479,6 +1176,32 @@ $phone: #3b82f6;
         right: 0;
         left: 0;
         min-width: auto;
+    }
+
+    .add-enquiry-modal {
+        margin: 0.5rem;
+        max-width: none;
+        
+        .modal-header {
+            padding: 1rem;
+            
+            h3 {
+                font-size: 1.125rem;
+            }
+        }
+        
+        .enquiry-form-container {
+            padding: 1rem;
+            
+            .form-actions {
+                flex-direction: column;
+                
+                .btn {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+        }
     }
 
     :host ::ng-deep {

@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { EnquiryService } from '../service/eventmanager.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { VenueService } from 'src/app/manage/venue/service/venue.service';
@@ -19,6 +20,19 @@ export class EnquiryListComponent implements OnInit {
   isVenueOwner: boolean = false;
   showVenueFilter: boolean = false;
 selectedVenueFilter: string | null = null;
+showAddEnquiryModal: boolean = false;
+venueOptions: any[] = [];
+selectedVenues: any[] = [];
+leadEntries: any[] = [];
+statusOptions: any[] = [
+  { label: 'New', value: 'New' },
+  { label: 'WhatsApp Contacted', value: 'WhatsApp Contacted' },
+  { label: 'Phone Contacted', value: 'Phone Contacted' },
+  { label: 'Closed', value: 'Closed' }
+];
+submittingEnquiry: boolean = false;
+showValidationErrors: boolean = false;
+private leadIdCounter: number = 1;
 uniqueVenues: any[] = [];
 filteredEnquiryList: any[] = [];
   userEmail: string = '';
@@ -29,8 +43,11 @@ filteredEnquiryList: any[] = [];
     private messageService: MessageService,
     private tokenStorageService: TokenStorageService,
     private venueService: VenueService,
+    private fb: FormBuilder,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) { }
+  ) { 
+    this.initializeLeadEntries();
+  }
 
   ngOnInit() {
     this.cols = [
@@ -47,6 +64,217 @@ filteredEnquiryList: any[] = [];
     this.loadEnquiries();
   }
 
+  // Add these methods to your component class
+
+initializeLeadEntries() {
+  this.leadEntries = [this.createNewLead()];
+}
+
+createNewLead() {
+  return {
+    id: this.leadIdCounter++,
+    userName: '',
+    userContact: '',
+    userEmail: '',
+    enquiryDate: new Date(),
+    status: 'New',
+    notes: ''
+  };
+}
+
+loadVenueOptions() {
+  let query = new URLSearchParams({
+    admin: 'true',
+    pageSize: '1000',
+    pageNumber: '1',
+    filterByDisable: 'false'
+  });
+
+  const queryString = '?' + query.toString();
+
+  this.venueService.getVenueListForFilter(queryString).subscribe(
+    (data) => {
+      if (data && data.data && data.data.items) {
+        this.venueOptions = data.data.items.map(venue => ({
+          label: `${venue.name} - ${venue.address || venue.location || ''}`,
+          value: venue.id || venue._id,
+          venueName: venue.name
+        }));
+      }
+    },
+    (error) => {
+      console.error('Error loading venues:', error);
+      this.messageService.add({
+        key: 'toastmsg',
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to load venues for selection'
+      });
+    }
+  );
+}
+
+openAddEnquiryModal() {
+  this.showAddEnquiryModal = true;
+  this.loadVenueOptions();
+  this.resetForm();
+}
+
+closeAddEnquiryModal() {
+  this.showAddEnquiryModal = false;
+  this.resetForm();
+}
+
+resetForm() {
+  this.selectedVenues = [];
+  this.leadEntries = [this.createNewLead()];
+  this.showValidationErrors = false;
+  this.submittingEnquiry = false;
+  this.leadIdCounter = 1;
+}
+
+addNewLead() {
+  if (this.leadEntries.length < 10) {
+    this.leadEntries.push(this.createNewLead());
+  }
+}
+
+removeLead(index: number) {
+  if (this.leadEntries.length > 1) {
+    this.leadEntries.splice(index, 1);
+  }
+}
+
+clearAllLeads() {
+  this.leadEntries = [this.createNewLead()];
+  this.showValidationErrors = false;
+}
+
+trackByLeadId(index: number, lead: any): number {
+  return lead.id;
+}
+
+validateContactNumber(lead: any) {
+  const phoneRegex = /^[0-9]{10}$/;
+  lead.contactValid = phoneRegex.test(lead.userContact);
+}
+
+isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+isFormValid(): boolean {
+  if (this.selectedVenues.length === 0) {
+    return false;
+  }
+  
+  const validLeads = this.leadEntries.filter(lead => 
+    lead.userName && lead.userName.trim() && 
+    lead.userContact && lead.userContact.trim() && 
+    this.isValidContactNumber(lead.userContact)
+  );
+  
+  return validLeads.length > 0;
+}
+
+isValidContactNumber(contact: string): boolean {
+  return /^[0-9]{10}$/.test(contact);
+}
+
+getValidLeadsCount(): number {
+  return this.leadEntries.filter(lead => 
+    lead.userName && lead.userName.trim() && 
+    lead.userContact && lead.userContact.trim() && 
+    this.isValidContactNumber(lead.userContact)
+  ).length;
+}
+
+submitBulkEnquiries() {
+  if (!this.isFormValid()) {
+    this.showValidationErrors = true;
+    this.messageService.add({
+      key: 'toastmsg',
+      severity: 'warn',
+      summary: 'Validation Error',
+      detail: 'Please fill in all required fields and select at least one venue'
+    });
+    return;
+  }
+
+  this.submittingEnquiry = true;
+  
+  // Filter valid leads
+  const validLeads = this.leadEntries.filter(lead => 
+    lead.userName && lead.userName.trim() && 
+    lead.userContact && lead.userContact.trim() && 
+    this.isValidContactNumber(lead.userContact)
+  );
+
+  // Create enquiries for each venue-lead combination
+  const enquiriesToCreate = [];
+  
+  this.selectedVenues.forEach(venueId => {
+    const selectedVenue = this.venueOptions.find(v => v.value === venueId);
+    
+    validLeads.forEach(lead => {
+      const enquiryData = {
+        venueId: venueId,
+        venueName: selectedVenue ? selectedVenue.venueName : '',
+        userName: lead.userName.trim(),
+        userContact: lead.userContact.trim(),
+        userEmail: lead.userEmail ? lead.userEmail.trim() : '',
+        status: lead.status || 'New',
+        notes: lead.notes ? lead.notes.trim() : '',
+        created_at: lead.enquiryDate,
+        isManualEntry: true
+      };
+      
+      enquiriesToCreate.push(enquiryData);
+    });
+  });
+
+  console.log('📝 BULK ENQUIRY: Creating', enquiriesToCreate.length, 'enquiries');
+  
+  // Submit all enquiries
+  this.createEnquiriesSequentially(enquiriesToCreate, 0);
+}
+
+createEnquiriesSequentially(enquiries: any[], currentIndex: number) {
+  if (currentIndex >= enquiries.length) {
+    // All enquiries created successfully
+    this.submittingEnquiry = false;
+    this.closeAddEnquiryModal();
+    
+    this.messageService.add({
+      key: 'toastmsg',
+      severity: 'success',
+      summary: 'Success',
+      detail: `Successfully created ${enquiries.length} enquiries!`
+    });
+    
+    this.loadEnquiries();
+    return;
+  }
+
+  const currentEnquiry = enquiries[currentIndex];
+  
+  this.enquiryService.createEnquiry(currentEnquiry).subscribe(
+    (response) => {
+      console.log(`📝 BULK ENQUIRY: Created enquiry ${currentIndex + 1}/${enquiries.length}`);
+      
+      // Create next enquiry
+      this.createEnquiriesSequentially(enquiries, currentIndex + 1);
+    },
+    (error) => {
+      console.error(`📝 BULK ENQUIRY: Error creating enquiry ${currentIndex + 1}:`, error);
+      
+      // Continue with next enquiry even if one fails
+      this.createEnquiriesSequentially(enquiries, currentIndex + 1);
+    }
+  );
+}
+
   checkUserRole() {
     const userData = this.tokenStorageService.getUser();
     console.log('📊 ENQUIRY: User data:', userData);
@@ -62,11 +290,11 @@ filteredEnquiryList: any[] = [];
 
 generateUniqueVenues() {
     const venueMap = new Map();
-    
+
     this.enquiryList.forEach(enquiry => {
         const venueId = enquiry.venueId || enquiry.venue_id;
         const venueName = enquiry.venueName;
-        
+
         if (venueMap.has(venueId)) {
             venueMap.get(venueId).count++;
             venueMap.get(venueId).totalLeads += enquiry.leadCount || 1;
@@ -79,7 +307,7 @@ generateUniqueVenues() {
             });
         }
     });
-    
+
     this.uniqueVenues = Array.from(venueMap.values())
         .sort((a, b) => b.count - a.count);
 }
@@ -94,10 +322,10 @@ applyVenueFilter() {
     if (this.selectedVenueFilter) {
         // When venue filter is active, expand all leads as individual rows
         this.filteredEnquiryList = [];
-        
+
         this.enquiryList.forEach(enquiry => {
             const venueId = enquiry.venueId || enquiry.venue_id;
-            
+
             if (venueId === this.selectedVenueFilter) {
                 // If enquiry has multiple leads, create separate rows for each
                 if (enquiry.allEnquiries && enquiry.allEnquiries.length > 1) {
@@ -370,12 +598,12 @@ getCurrentUser(enquiry: any): any {
     if (enquiry.individualLead && enquiry.leadData) {
         return enquiry.leadData;
     }
-    
+
     // If this is individual lead without separate leadData, return enquiry itself
     if (enquiry.individualLead) {
         return enquiry;
     }
-    
+
     // Original logic for dropdown mode
     if (enquiry.selectedLeadData) {
         return enquiry.selectedLeadData;
@@ -452,7 +680,7 @@ ${venueName} Team`;
   // Update status for specific lead - works with existing backend
  updateLeadStatus(leadData: any, enquiry: any, status: string) {
     const updateData = { status: status };
-    
+
     // For individual leads from filtering, use the lead's own ID
     let leadId;
     if (enquiry.individualLead) {
@@ -502,7 +730,7 @@ ${venueName} Team`;
 
 getSelectedVenueInfo(): string {
     if (!this.selectedVenueFilter) return '';
-    
+
     const venue = this.uniqueVenues.find(v => v.id === this.selectedVenueFilter);
     if (venue) {
         return `${venue.name} - ${venue.count} enquiries, ${venue.totalLeads} leads`;
