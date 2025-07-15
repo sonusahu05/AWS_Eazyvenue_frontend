@@ -81,7 +81,7 @@
                     placeholder="Search for*"
                     #searechAutoComplete
                     (onFocus)="searechAutoComplete.handleDropdownClick()"
-                    style="position: relative; height: 25px"
+                    [ngStyle]="{'position': 'relative', 'height': '25px'}"
                 >
                 </p-autoComplete>
             </span>
