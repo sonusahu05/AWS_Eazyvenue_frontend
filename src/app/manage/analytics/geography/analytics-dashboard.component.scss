@@ -827,3 +827,39 @@
 .quality-score h3 {
   text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
+
+/* Quality Score N/A Styling */
+.quality-score-na {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: center;
+}
+
+.engagement-level.level-na {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.engagement-level.level-unknown {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}

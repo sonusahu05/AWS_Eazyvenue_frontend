@@ -107,6 +107,21 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     
     setDefaultDateRange() {
         try {
+            // Check if we want to show ALL data or apply default filtering
+            console.log('🗓️ Setting up date range...');
+            
+            // For calendar display, we need valid dates even if we don't want filtering
+            // Option 1: Set to null/undefined for no filtering but keep calendar functional
+            const showAllData = true; // Set to false to apply last 30 days filter
+            
+            if (showAllData) {
+                console.log('📊 NO DATE FILTERING - Will show all data from database');
+                // Set to null instead of empty array to allow calendar to work
+                this.dateRange = null as any; // This will allow calendar to show but won't filter data
+                return;
+            }
+            
+            // Option 2: Default last 30 days filtering
             const today = new Date();
             const lastMonth = new Date();
             lastMonth.setMonth(today.getMonth() - 1);
@@ -135,17 +150,18 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
             
         } catch (error) {
             console.error('Error setting default date range:', error);
-            // Ultimate fallback - just use current timestamp
-            const now = new Date();
-            const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
-            this.dateRange = [thirtyDaysAgo, now];
+            // Ultimate fallback - set to null for calendar functionality
+            this.dateRange = null as any;
         }
     }
     
     loadDashboardData() {
         this.loading = true;
         const params = this.getDateParams();
-        console.log('Loading dashboard data with params:', params);
+        console.log('📊 Loading dashboard data with params:', params);
+        
+        // Call debugging method to help identify issues
+        this.debugDataDiscrepancy();
         
         // Track completed requests
         let completedRequests = 0;
@@ -155,7 +171,9 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
             completedRequests++;
             if (completedRequests >= totalRequests) {
                 this.loading = false;
-                console.log('All dashboard data loaded successfully');
+                console.log('✅ All dashboard data loaded successfully');
+                // Call debugging again after all data is loaded
+                setTimeout(() => this.debugDataDiscrepancy(), 1000);
             }
         };
         
@@ -165,8 +183,20 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
                 next: (response) => {
                     if (response.success) {
                         this.overviewStats = response.data[0] || {};
-                        this.updateDeviceChart();
-                        console.log('Overview stats loaded:', this.overviewStats);
+                        console.log('📊 Overview stats loaded:', this.overviewStats);
+                        console.log('🔍 Click count analysis:', {
+                            totalClicks: this.overviewStats.totalClicks,
+                            mobileClicks: this.overviewStats.mobileClicks,
+                            desktopClicks: this.overviewStats.desktopClicks,
+                            dateRangeApplied: params.from && params.to ? `${params.from} to ${params.to}` : 'No date filter',
+                            venueFilter: params.venueFilter || 'All venues',
+                            rawResponse: response.data
+                        });
+                        
+                        // Update device chart as fallback if device analytics is not available
+                        if (!this.deviceAnalytics || this.deviceAnalytics.length === 0) {
+                            this.updateDeviceChart();
+                        }
                     }
                     checkAllComplete();
                 },
@@ -188,7 +218,16 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
                 next: (response) => {
                     if (response.success) {
                         this.popularVenues = response.data || [];
-                        console.log('Popular venues received:', this.popularVenues);
+                        console.log('🏢 Popular venues received:', this.popularVenues);
+                        console.log('🎯 Quality score analysis for venues:', this.popularVenues.map(v => ({
+                            venueId: v.venueId,
+                            venueName: v.venueName,
+                            clicks: v.clicks,
+                            averageQualityScore: v.averageQualityScore,
+                            qualityScore: v.qualityScore,
+                            avgQualityScore: v.avgQualityScore,
+                            hasScore: this.hasQualityScore ? this.hasQualityScore(v) : 'method not available yet'
+                        })));
                         this.updateVenueClicksChart();
                     }
                     checkAllComplete();
@@ -212,6 +251,8 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
                     if (response.success) {
                         this.deviceAnalytics = response.data || [];
                         console.log('Device analytics loaded:', this.deviceAnalytics);
+                        // Update device chart after loading device analytics data
+                        this.updateDeviceChart();
                     }
                     checkAllComplete();
                 },
@@ -277,18 +318,48 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     getDateParams() {
         const params: any = {};
         
-        // Add date range if both dates are selected and valid
+        console.log('🗓️ Creating date params. Current dateRange:', this.dateRange);
+        
+        // Only add date range if both dates are selected and valid
+        // If dateRange is empty array, don't add any date filtering
         if (this.dateRange && Array.isArray(this.dateRange) && 
             this.dateRange.length === 2 && 
             this.dateRange[0] instanceof Date && this.dateRange[1] instanceof Date &&
             !isNaN(this.dateRange[0].getTime()) && !isNaN(this.dateRange[1].getTime())) {
             
-            params.from = this.dateRange[0].toISOString();
-            params.to = this.dateRange[1].toISOString();
+            const startDate = new Date(this.dateRange[0]);
+            const endDate = new Date(this.dateRange[1]);
             
-            console.log('Valid date params created:', params);
+            // Set start date to beginning of day (00:00:00)
+            startDate.setHours(0, 0, 0, 0);
+            
+            // Check if it's a single day selection (same date)
+            const isSingleDay = startDate.toDateString() === endDate.toDateString();
+            
+            if (isSingleDay) {
+                // For single day, set end time to end of that day (23:59:59)
+                endDate.setHours(23, 59, 59, 999);
+                console.log('📅 Single day selection detected - adjusting time range for full day coverage');
+            } else {
+                // For date range, set end date to end of the selected end day
+                endDate.setHours(23, 59, 59, 999);
+            }
+            
+            params.from = startDate.toISOString();
+            params.to = endDate.toISOString();
+            
+            console.log('✅ Valid date params created (FILTERING ACTIVE):', {
+                from: params.from,
+                to: params.to,
+                isSingleDay: isSingleDay,
+                daysDifference: Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)),
+                originalStartDate: this.dateRange[0].toISOString(),
+                originalEndDate: this.dateRange[1].toISOString()
+            });
+            console.log('⚠️ DATE FILTERING IS ACTIVE - This may explain lower click counts!');
         } else {
-            console.log('No valid date range available, using default params');
+            console.log('ℹ️ No date filtering - should show ALL data from database');
+            console.log('💡 Calendar is available for user to select dates when needed');
         }
         
         // Add venue filter for non-admin users
@@ -297,8 +368,46 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
             console.log('🏢 Adding venue filter for non-admin user:', this.currentVenueName);
         }
         
-        console.log('Final params with filters:', params);
+        console.log('📋 Final params with filters:', params);
+        
         return params;
+    }
+    
+    debugDataDiscrepancy() {
+        console.log('🔍 DATA DISCREPANCY ANALYSIS:');
+        console.log('================================');
+        console.log('Current Date Range:', this.dateRange);
+        console.log('Is Date Filtering Active:', this.dateRange && this.dateRange.length === 2);
+        console.log('Overview Stats:', this.overviewStats);
+        console.log('Popular Venues Count:', this.popularVenues?.length);
+        console.log('Device Analytics:', this.deviceAnalytics);
+        console.log('Timeline Analytics Count:', this.timelineAnalytics?.length);
+        console.log('Top Subareas Count:', this.topSubareas?.length);
+        console.log('================================');
+        
+        // Check if default date range is being applied
+        if (this.dateRange && this.dateRange.length === 2) {
+            const daysDiff = Math.ceil((this.dateRange[1].getTime() - this.dateRange[0].getTime()) / (1000 * 60 * 60 * 24));
+            console.log(`📅 Date range spans ${daysDiff} days`);
+            console.log('📊 This might explain why you see 297 instead of 400 clicks!');
+            console.log('💡 Try clearing the date filter to see all data');
+        }
+    }
+    
+    clearDateRangeAndShowAll() {
+        console.log('🔄 Clearing date range to show ALL data from database');
+        
+        // Clear date range completely (set to null to keep calendar functional)
+        this.dateRange = null as any;
+        
+        console.log('📊 Reloading data without any date filtering...');
+        this.loadDashboardData();
+        
+        this.messageService.add({
+            severity: 'info',
+            summary: 'Date Filter Removed',
+            detail: 'Now showing ALL data from database (should show ~400 clicks if that\'s your total)'
+        });
     }
     
     onDateRangeChange() {
@@ -641,31 +750,94 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
             return;
         }
 
-        if (this.overviewStats) {
-            this.deviceChartData = {
-                labels: ['Mobile', 'Desktop'],
-                datasets: [{
-                    data: [
-                        this.overviewStats.mobileClicks || 0,
-                        this.overviewStats.desktopClicks || 0
-                    ],
-                    backgroundColor: [
-                        '#42A5F5',
-                        '#FFA726'
-                    ],
-                    borderColor: [
-                        '#1E88E5',
-                        '#FF9800'
-                    ],
-                    borderWidth: 1
-                }]
-            };
+        console.log('� Device Chart Update - Available data:', {
+            deviceAnalytics: this.deviceAnalytics,
+            deviceAnalyticsLength: this.deviceAnalytics?.length,
+            overviewStats: this.overviewStats,
+            hasOverviewMobile: this.overviewStats?.mobileClicks !== undefined,
+            hasOverviewDesktop: this.overviewStats?.desktopClicks !== undefined
+        });
+
+        // Initialize default values
+        let mobileClicks = 0;
+        let desktopClicks = 0;
+
+        // Try to use device analytics data first
+        if (this.deviceAnalytics && this.deviceAnalytics.length > 0) {
+            console.log('✅ Using device analytics data:', this.deviceAnalytics);
+            
+            // Handle different possible data structures
+            this.deviceAnalytics.forEach(item => {
+                console.log('📊 Processing device item:', item);
+                
+                // Try different possible property names for device type
+                const deviceType = item.device || item.deviceType || item._id || item.platform;
+                const clicks = item.clicks || item.count || item.total || 0;
+                
+                if (deviceType) {
+                    const deviceLower = deviceType.toString().toLowerCase();
+                    if (deviceLower.includes('mobile') || deviceLower.includes('phone') || deviceLower.includes('tablet')) {
+                        mobileClicks += clicks;
+                    } else if (deviceLower.includes('desktop') || deviceLower.includes('computer') || deviceLower.includes('pc')) {
+                        desktopClicks += clicks;
+                    }
+                }
+            });
+            
+            console.log('📱 Device analytics processed:', { mobileClicks, desktopClicks });
+        } 
+        
+        // Fallback to overview stats if device analytics didn't provide data
+        if ((mobileClicks === 0 && desktopClicks === 0) && this.overviewStats) {
+            console.log('📊 Using overview stats fallback:', {
+                mobileClicks: this.overviewStats.mobileClicks,
+                desktopClicks: this.overviewStats.desktopClicks,
+                mobilePercentage: this.overviewStats.mobilePercentage,
+                totalClicks: this.overviewStats.totalClicks
+            });
+            
+            // Use direct mobile/desktop clicks if available
+            if (this.overviewStats.mobileClicks !== undefined && this.overviewStats.desktopClicks !== undefined) {
+                mobileClicks = this.overviewStats.mobileClicks || 0;
+                desktopClicks = this.overviewStats.desktopClicks || 0;
+            } 
+            // Or calculate from percentage and total
+            else if (this.overviewStats.mobilePercentage !== undefined && this.overviewStats.totalClicks) {
+                const totalClicks = this.overviewStats.totalClicks || 0;
+                const mobilePercentage = this.overviewStats.mobilePercentage || 0;
+                mobileClicks = Math.round((totalClicks * mobilePercentage) / 100);
+                desktopClicks = totalClicks - mobileClicks;
+            }
         }
+
+        // Update chart with calculated values
+        console.log('📈 Final device chart data:', { mobileClicks, desktopClicks });
+        
+        this.deviceChartData = {
+            labels: ['Mobile', 'Desktop'],
+            datasets: [{
+                data: [mobileClicks, desktopClicks],
+                backgroundColor: [
+                    '#42A5F5',
+                    '#FFA726'
+                ],
+                borderColor: [
+                    '#1E88E5',
+                    '#FF9800'
+                ],
+                borderWidth: 1,
+                label: 'Device Distribution'
+            }]
+        };
+
+        console.log('✅ Device chart updated successfully');
     }
     
     updateVenueClicksChart() {
         if (this.popularVenues.length > 0) {
             const topVenues = this.popularVenues.slice(0, 10);
+            console.log('Updating venue clicks chart with data:', topVenues);
+            
             this.venueClicksChartData = {
                 labels: topVenues.map(v => this.getVenueDisplayName(v)),
                 datasets: [{
@@ -676,11 +848,18 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
                     borderWidth: 1
                 }]
             };
+            
+            console.log('Venue clicks chart data updated:', this.venueClicksChartData);
+        } else {
+            console.log('No popular venues data available for chart update');
         }
     }
     
     updateTimelineChart() {
+        console.log('📈 Timeline Chart Update - Raw data:', this.timelineAnalytics);
+        
         if (!this.timelineAnalytics || this.timelineAnalytics.length === 0) {
+            console.log('❌ No timeline analytics data available - chart will be empty');
             this.timelineChartData = {
                 labels: [],
                 datasets: []
@@ -688,10 +867,22 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
             return;
         }
 
+        console.log('✅ Updating timeline chart with data:', this.timelineAnalytics);
+        
         const dates = this.timelineAnalytics.map(item => item.date);
         const clicks = this.timelineAnalytics.map(item => item.clicks || 0);
         const users = this.timelineAnalytics.map(item => item.uniqueUsers || 0);
         const enquiries = this.timelineAnalytics.map(item => item.enquiries || 0);
+
+        console.log('📊 Timeline chart data processed:', {
+            totalRecords: this.timelineAnalytics.length,
+            dates: dates.length,
+            clicks: clicks.length,
+            users: users.length,
+            enquiries: enquiries.length,
+            clicksTotal: clicks.reduce((a, b) => a + b, 0),
+            sampleData: this.timelineAnalytics.slice(0, 3)
+        });
 
         this.timelineChartData = {
             labels: dates,
@@ -725,7 +916,10 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     }
     
     updateSubareaChart() {
+        console.log('🗺️ Subarea Chart Update - Raw data:', this.topSubareas);
+        
         if (!this.topSubareas || this.topSubareas.length === 0) {
+            console.log('❌ No top subareas data available - chart will be empty');
             this.subareaChartData = {
                 labels: [],
                 datasets: []
@@ -733,8 +927,18 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
             return;
         }
 
+        console.log('✅ Updating subarea chart with data:', this.topSubareas);
+
         const subareas = this.topSubareas.slice(0, 8).map(item => item.subarea);
         const clicks = this.topSubareas.slice(0, 8).map(item => item.clicks);
+        
+        console.log('📊 Subarea chart data processed:', {
+            totalRecords: this.topSubareas.length,
+            subareas: subareas.length,
+            clicks: clicks.length,
+            clicksTotal: clicks.reduce((a, b) => a + b, 0),
+            sampleData: this.topSubareas.slice(0, 3)
+        });
         
         // Generate colors for the chart
         const colors = [
@@ -1457,12 +1661,18 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     }
     
     getQualityScoreColor(score: number): string {
+        if (score === null || score === undefined || isNaN(score)) {
+            return 'secondary'; // Gray for N/A
+        }
         if (score >= 0.8) return 'success';
         if (score >= 0.6) return 'warning';
         return 'danger';
     }
     
     getEngagementLevel(score: number): string {
+        if (score === null || score === undefined || isNaN(score)) {
+            return 'Unknown';
+        }
         if (score >= 0.8) return 'High';
         if (score >= 0.6) return 'Medium';
         if (score >= 0.4) return 'Low';
@@ -1470,14 +1680,32 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     }
     
     getVenueDisplayName(venue: any): string {
-        // console.log('getVenueDisplayName called with:', venue); // Debug log
+        console.log('🏢 getVenueDisplayName called with venue:', venue);
+        
         if (venue.venueName && venue.venueName.trim()) {
-            // console.log('Using venue name:', venue.venueName); // Debug log
+            console.log('✅ Using venue name:', venue.venueName);
             // Return full name since CSS will handle line wrapping and truncation
-            return `${venue.venueName.substring(0, 15)}...`;
+            return venue.venueName.length > 15 ? `${venue.venueName.substring(0, 15)}...` : venue.venueName;
         }
-        console.log('Using fallback for venue:', venue.venueId); // Debug log
-        return `Venue ${venue.venueId.substring(0, 8)}...`;
+        
+        console.log('⚠️ Using fallback for venue:', venue.venueId);
+        return `Venue ${venue.venueId ? venue.venueId.substring(0, 8) : 'Unknown'}...`;
+    }
+    
+    getQualityScoreDisplay(venue: any): string {
+        const score = venue.averageQualityScore || venue.qualityScore || venue.avgQualityScore;
+        
+        if (score === null || score === undefined || isNaN(score)) {
+            console.log('⚠️ No quality score available for venue:', venue.venueId || venue._id);
+            return 'N/A';
+        }
+        
+        return Number(score).toFixed(2);
+    }
+    
+    hasQualityScore(venue: any): boolean {
+        const score = venue.averageQualityScore || venue.qualityScore || venue.avgQualityScore;
+        return score !== null && score !== undefined && !isNaN(score);
     }
     
     isRegisteredUser(click: any): boolean {
@@ -1508,28 +1736,53 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     clearDateRange() {
         console.log('Clearing date range filter');
         
-        // Reset to default date range instead of empty array to prevent calendar errors
-        this.setDefaultDateRange();
+        // Set to null to allow calendar to work but remove date filtering
+        this.dateRange = null as any;
         
-        console.log('Date range reset to default, reloading all data');
+        console.log('Date range cleared, reloading all data');
         this.loadDashboardData();
-        
-        // If venue details are currently open, refresh them with new date range
-        if (this.showVenueDetails && this.selectedVenue) {
-            console.log('Refreshing venue details after clearing date filter');
-            this.loadVenueInsights(this.selectedVenue.venueId);
-        }
-        
-        // If user click details are currently open, refresh them with new date range
-        if (this.showUserClickDetails && this.selectedVenue) {
-            console.log('Refreshing user click details after clearing date filter');
-            this.loadUserClickDetails(this.selectedVenue.venueId);
-        }
         
         this.messageService.add({
             severity: 'info',
             summary: 'Date Filter Cleared',
-            detail: 'Showing data for the last 30 days'
+            detail: 'Now showing all data. Use calendar to apply date filters.'
         });
+    }
+    
+    // Add this method to help debug single day selections
+    debugSingleDaySelection() {
+        if (this.dateRange && this.dateRange.length === 2) {
+            const startDate = new Date(this.dateRange[0]);
+            const endDate = new Date(this.dateRange[1]);
+            const isSingleDay = startDate.toDateString() === endDate.toDateString();
+            
+            console.log('🔍 SINGLE DAY SELECTION DEBUG:');
+            console.log('==============================');
+            console.log('Selected dates:', {
+                start: this.dateRange[0],
+                end: this.dateRange[1],
+                isSingleDay: isSingleDay,
+                startDateString: startDate.toDateString(),
+                endDateString: endDate.toDateString()
+            });
+            
+            if (isSingleDay) {
+                console.log('✅ Single day detected - should show data for:', startDate.toDateString());
+                console.log('📊 Data counts after API calls:');
+                console.log('- Popular Venues:', this.popularVenues?.length || 0);
+                console.log('- Device Analytics:', this.deviceAnalytics?.length || 0);
+                console.log('- Timeline Analytics:', this.timelineAnalytics?.length || 0);
+                console.log('- Top Subareas:', this.topSubareas?.length || 0);
+                console.log('- Overview Stats present:', !!this.overviewStats && Object.keys(this.overviewStats).length > 0);
+                
+                // Check which charts have data
+                console.log('📈 Chart data status:');
+                console.log('- Device Chart data points:', this.deviceChartData?.datasets?.[0]?.data?.length || 0);
+                console.log('- Venue Clicks Chart data points:', this.venueClicksChartData?.datasets?.[0]?.data?.length || 0);
+                console.log('- Timeline Chart data points:', this.timelineChartData?.datasets?.[0]?.data?.length || 0);
+                console.log('- Subarea Chart data points:', this.subareaChartData?.datasets?.[0]?.data?.length || 0);
+            }
+            console.log('==============================');
+        }
     }
 }

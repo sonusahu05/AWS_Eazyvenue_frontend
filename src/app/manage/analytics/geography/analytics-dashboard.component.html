@@ -113,10 +113,20 @@
                         <i class="pi pi-star"></i>
                     </div>
                     <div class="stats">
-                        <h3 [attr.data-quality-score]="overviewStats.averageQualityScore">{{ overviewStats.averageQualityScore | number:'1.2-2' }}</h3>
+                        <h3 *ngIf="overviewStats.averageQualityScore !== null && overviewStats.averageQualityScore !== undefined" 
+                            [attr.data-quality-score]="overviewStats.averageQualityScore">
+                            {{ overviewStats.averageQualityScore | number:'1.2-2' }}
+                        </h3>
+                        <h3 *ngIf="overviewStats.averageQualityScore === null || overviewStats.averageQualityScore === undefined" 
+                            class="quality-score-na">
+                            N/A
+                        </h3>
                         <p>Avg Quality Score</p>
                         <!-- Fallback for PDF -->
-                        <span class="pdf-fallback" style="display: none;">{{ overviewStats.averageQualityScore | number:'1.2-2' }}</span>
+                        <span class="pdf-fallback" style="display: none;">
+                            {{ overviewStats.averageQualityScore !== null && overviewStats.averageQualityScore !== undefined ? 
+                               (overviewStats.averageQualityScore | number:'1.2-2') : 'N/A' }}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -268,17 +278,23 @@
                         </td>
                         <td>
                             <p-tag 
-                                [value]="venue.averageQualityScore | number:'1.2-2'" 
-                                [severity]="getQualityScoreColor(venue.averageQualityScore)"
-                                [attr.data-quality-score]="venue.averageQualityScore">
+                                *ngIf="hasQualityScore(venue)"
+                                [value]="getQualityScoreDisplay(venue)" 
+                                [severity]="getQualityScoreColor(venue.averageQualityScore || venue.qualityScore || venue.avgQualityScore)"
+                                [attr.data-quality-score]="getQualityScoreDisplay(venue)">
                             </p-tag>
+                            <span *ngIf="!hasQualityScore(venue)" class="quality-score-na">N/A</span>
                             <!-- Fallback text for PDF capture -->
-                            <span class="pdf-fallback" style="display: none;">{{ venue.averageQualityScore | number:'1.2-2' }}</span>
+                            <span class="pdf-fallback" style="display: none;">{{ getQualityScoreDisplay(venue) }}</span>
                         </td>
                         <td>
-                            <span class="engagement-level" 
-                                  [class]="'level-' + getEngagementLevel(venue.averageQualityScore).toLowerCase()">
-                                {{ getEngagementLevel(venue.averageQualityScore) }}
+                            <span *ngIf="hasQualityScore(venue)" 
+                                  class="engagement-level" 
+                                  [class]="'level-' + getEngagementLevel(venue.averageQualityScore || venue.qualityScore || venue.avgQualityScore).toLowerCase()">
+                                {{ getEngagementLevel(venue.averageQualityScore || venue.qualityScore || venue.avgQualityScore) }}
+                            </span>
+                            <span *ngIf="!hasQualityScore(venue)" class="engagement-level level-na">
+                                N/A
                             </span>
                         </td>
                         <td>
@@ -377,12 +393,18 @@
                         <td>{{ device.clicks | number }}</td>
                         <td>
                             <p-tag 
+                                *ngIf="device.averageQualityScore !== null && device.averageQualityScore !== undefined"
                                 [value]="device.averageQualityScore | number:'1.2-2'" 
                                 [severity]="getQualityScoreColor(device.averageQualityScore)"
                                 [attr.data-quality-score]="device.averageQualityScore">
                             </p-tag>
+                            <span *ngIf="device.averageQualityScore === null || device.averageQualityScore === undefined" 
+                                  class="quality-score-na">N/A</span>
                             <!-- Fallback text for PDF capture -->
-                            <span class="pdf-fallback" style="display: none;">{{ device.averageQualityScore | number:'1.2-2' }}</span>
+                            <span class="pdf-fallback" style="display: none;">
+                                {{ device.averageQualityScore !== null && device.averageQualityScore !== undefined ? 
+                                   (device.averageQualityScore | number:'1.2-2') : 'N/A' }}
+                            </span>
                         </td>
                         <td>{{ device.averageTimeSpent | number:'1.0-0' }}s</td>
                     </tr>
