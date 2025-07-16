@@ -486,6 +486,7 @@
                         <div class="left-side-body">
                             <p-galleria
                                 id="venue-images-gallery"
+                                (click)="trackPageAction('viewedGallery')"
                                 [(value)]="venueDetails.venueImage"
                                 [responsiveOptions]="responsiveOptions"
                                 [containerStyle]="{ 'max-width': '100%;' }"
@@ -716,8 +717,8 @@
                                 </div>
                                 <hr class="mb-2" />
                                 <div class="div">
-                                    <h2>Amenities</h2>
-                                    <div class="row services-section amenities">
+                                    <h2 (click)="trackPageAction('viewedAmenities')">Amenities</h2>
+                                    <div class="row services-section amenities" (click)="trackPageAction('viewedAmenities')">
                                         <div
                                             *ngFor="
                                                 let am of venueDetails.amenities.split(
@@ -759,7 +760,161 @@
                                 </div>
                                 <hr class="mb-2" />
                                 <!---Review Section-->
-                                
+                                <div class="review-section-Bottom">
+                                <div class="ratings-header d-flex justify-content-between align-items-center">
+                                    <h2 (click)="trackPageAction('viewedReviews')">Ratings & Reviews</h2>
+                                    <div class="rating-badge d-flex align-items-center" style="gap: 18px;">
+                                        <!-- EazyVenue Rating -->
+                                        <div class="d-flex align-items-center" style="gap: 4px;">
+                                            <img src="assets/images/logo.png" alt="EazyVenue" style="width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 1px solid #eee;" />
+                                            <ng-container *ngIf="venueDetails.eazyVenueRating > 0; else noEazyVenueReviews">
+                                                <i class="pi pi-star-fill" style="color: #ffc107; vertical-align: middle;"></i>
+                                                <span class="rating-value" style="height: 28px; line-height: 28px; font-size: 1.1rem; display: inline-block; vertical-align: middle;">{{ venueDetails.eazyVenueRating }}/5</span>
+                                            </ng-container>
+                                            <ng-template #noEazyVenueReviews>
+                                                <span class="no-reviews-text" style="color: #fff;">No reviews</span>
+                                            </ng-template>
+                                        </div>
+                                        <!-- Google Rating -->
+                                        <div class="d-flex align-items-center" style="gap: 4px;">
+                                            <img src="assets/img/svg/google.png" alt="Google" style="width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 1px solid #eee;" />
+                                            <ng-container *ngIf="venueDetails.googleRating > 0; else noGoogleReviews">
+                                                <i class="pi pi-star-fill" style="color: #ffc107; vertical-align: middle;"></i>
+                                                <span class="rating-value"style="height: 28px; line-height: 28px; font-size: 1.1rem; display: inline-block; vertical-align: middle;">{{ venueDetails.googleRating }}/5</span>
+                                            </ng-container>
+                                            <ng-template #noGoogleReviews>
+                                                <span class="no-reviews-text" style="color: #fff;">No reviews</span>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="review-toggle-buttons mt-2" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <button 
+                                        [ngClass]="{ active: selectedReviewSource === 'eazyvenue' }" 
+                                        (click)="toggleReviewSource('eazyvenue')" 
+                                        style="display: flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: 4px; border: 1px solid #ddd; font-weight: 500; cursor: pointer; white-space: nowrap; font-size: 14px;">
+                                        <img src="assets/images/logo.png" alt="EazyVenue" style="width: 20px; height: 20px; border: 1px solid #fff; border-radius: 50%; background: #fff;" />
+                                        <span style="white-space: nowrap;">EazyVenue Reviews</span>
+                                    </button>
+                                    <button 
+                                        [ngClass]="{ active: selectedReviewSource === 'google' }" 
+                                        (click)="toggleReviewSource('google')" 
+                                        style="display: flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: 4px; border: 1px solid #ddd; font-weight: 500; cursor: pointer; white-space: nowrap; font-size: 14px;">
+                                        <img src="assets/img/svg/google.png" alt="Google" style="width: 20px; height: 20px; border: 1px solid #fff; border-radius: 50%; background: #fff;" />
+                                        <span style="white-space: nowrap;">Google Reviews</span>
+                                    </button>
+                                </div>
+                                <style>
+                                @media (max-width: 480px) {
+                                    .review-toggle-buttons {
+                                        flex-direction: column !important;
+                                        gap: 8px !important;
+                                        width: 100%;
+                                    }
+                                    .review-toggle-buttons button {
+                                        width: 100%;
+                                        justify-content: center;
+                                        font-size: 13px !important;
+                                        padding: 8px 0 !important;
+                                    }
+                                }
+                                </style>
+
+                                <button class="btn-outline-red mt-3" (click)="toggleReviewForm()" style="height: 32px; line-height: 1.2; padding: 4px 16px; font-size: 15px;">
+                                    <i class="pi pi-pencil" style="margin-right: 6px;"></i> Write a Review
+                                </button>
+
+                                <div *ngIf="showReviewForm" class="review-form-container mt-3 p-4" style="background: #f9f9fb; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); max-width: 500px; margin-left: 0; margin-right: auto;">
+                                    <form #reviewForm="ngForm" (ngSubmit)="submitReview()">
+                                        <div class="form-group mb-3">
+                                            <label for="reviewTitle" style="font-weight: 500; color: #333;">Review Title</label>
+                                            <input type="text" [(ngModel)]="newReview.reviewtitle" name="reviewTitle" id="reviewTitle" placeholder="Enter a short title" class="form-control" required style="border-radius: 6px;"/>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="rating" style="font-weight: 500; color: #333;">Your Rating</label>
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <ng-container *ngFor="let r of [1,2,3,4,5]">
+                                                    <input type="radio" [(ngModel)]="newReview.reviewrating" name="rating" [value]="r" id="star{{r}}" required style="display: none;"/>
+                                                    <label [for]="'star'+r" style="cursor: pointer; font-size: 1.5rem; color: #ffc107; margin-bottom: 0;">
+                                                        <i class="pi" [ngClass]="{'pi-star-fill': newReview.reviewrating >= r, 'pi-star': newReview.reviewrating < r}"></i>
+                                                    </label>
+                                                </ng-container>
+                                                <span *ngIf="newReview.reviewrating" style="margin-left: 8px; color: #666; font-size: 1rem;">{{newReview.reviewrating}}/5</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="reviewDescription" style="font-weight: 500; color: #333;">Your Review</label>
+                                            <textarea [(ngModel)]="newReview.reviewdescription" name="reviewDescription" id="reviewDescription" class="form-control" placeholder="Share your experience..." rows="4" required style="border-radius: 6px;"></textarea>
+                                        </div>
+                                        <div class="d-flex justify-content-end gap-2 mt-3">
+                                            <button type="submit" class="btn btn-success px-4" [disabled]="!reviewForm.valid" style="border-radius: 6px; font-weight: 500; margin-right: 10px;">
+                                                <i class="pi pi-check" style="margin-right: 4px;"></i>Submit
+                                            </button>
+                                            <button type="button" class="btn btn-light px-4" (click)="toggleReviewForm()" style="border-radius: 6px; border: 1px solid #ddd; font-weight: 500;">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <ul class="review-list" *ngIf="getDisplayedReviews()?.length > 0; else noReviewsMsg">
+                                    <li class="review-card" *ngFor="let review of getDisplayedReviews()">
+                                        <div class="review-header">
+                                            <span class="rating-stars">{{ review.reviewrating }}★</span>
+                                            <span class="review-title">{{ review.reviewtitle }}</span>
+                                        </div>
+                                        <p class="review-description">{{ review.reviewdescription }}</p>
+                                        <div class="review-footer">
+                                            <small>{{ review.created_at | date }}</small>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ng-template #noReviewsMsg>
+                                    <div class="no-reviews-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 0; color: #888;">
+                                        <div class="no-reviews-text" style="font-size: 1.1rem; font-weight: 500; margin-bottom: 6px;">
+                                            No reviews yet
+                                        </div>
+                                        <div style="font-size: 0.95rem; color: #aaa; margin-bottom: 10px;">
+                                            Be the first to share your experience!
+                                        </div>
+                                    </div>
+                                </ng-template>
+
+                                  <button class="btn-link" *ngIf="(selectedReviewSource === 'google' ? googleReviews.length : venueDetails.reviews?.length) > 3 && !showAllReviews" (click)="showAllReviews = true">
+                                    Show all reviews
+                                  </button>
+                                </div>
+                                <!---Review Section close -->
+                                <!-- <hr>
+                                <div>
+                                    <h2>Where you'll be</h2>
+                                </div>
+                                <div class="mapouter">
+                                    <div class="gmap_canvas">
+                                        <iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0"
+                                            marginwidth="0"
+                                            src="https://maps.google.com/maps?width=600&height=400&hl=en&q=mumbai&t=&z=14&ie=UTF8&iwloc=B&output=embed"></iframe>
+                                    </div>
+                                    <style>
+                                        .mapouter {
+                                            position: relative;
+                                            text-align: right;
+                                            width: 100%;
+                                            height: 100%;
+                                        }
+                                        .gmap_canvas {
+                                            overflow: hidden;
+                                            background: none !important;
+                                            width: 100%;
+                                            height: 100%;
+                                        }
+                                        .gmap_iframe {
+                                            width: 100% !important;
+                                            height: 500px !important;
+                                        }
+                                    </style>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -2208,7 +2363,7 @@
     <div class="container">
       <div class="row">
         <div class="col-12">
-          <h3 class="section-title">
+          <h3 class="section-title" (click)="trackPageAction('viewedLocation')">
             <i class="fas fa-map-marker-alt"></i> Venue Location
           </h3>
         </div>

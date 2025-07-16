@@ -3,11 +3,11 @@
     "version": "12.0.0",
     "scripts": {
         "ng": "ng",
-        "start": "ng serve",
-        "build": "ng build",
-        "dev:ssr": "ng run freya-ng:serve-ssr",
-        "serve:ssr": "node dist/freya-ng/server/main.js",
-        "build:ssr": "ng build && ng run freya-ng:server"
+        "start": "node --max_old_space_size=8192 --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng serve",
+        "build": "node --max_old_space_size=8192 --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng build",
+        "dev:ssr": "node --max_old_space_size=8192 --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng run freya-ng:serve-ssr",
+        "serve:ssr": "node --max_old_space_size=8192 dist/freya-ng/server/main.js",
+        "build:ssr": "node --max_old_space_size=8192 --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng build && node --max_old_space_size=8192 --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng run freya-ng:server"
     },
     "private": true,
     "dependencies": {

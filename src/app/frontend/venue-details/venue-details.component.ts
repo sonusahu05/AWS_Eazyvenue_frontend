@@ -1,6 +1,7 @@
 import {
     Component,
     OnInit,
+    OnDestroy,
     ViewChild,
     ElementRef,
     Renderer2,
@@ -46,6 +47,7 @@ import { CityService } from 'src/app/manage/city/service/city.service';
 import { SubareaService } from 'src/app/services/subarea.service';
 import { RazorpayService } from 'src/app/services/razorpay.service';
 import { AnalyticsService } from '../../services/analytics.service';
+import { EnhancedAnalyticsService } from '../../shared/services/enhanced-analytics.service';
 import { GeolocationService, UserLocation, VenueWithDistance } from '../../services/geolocation.service';
 import { Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -79,7 +81,7 @@ interface City {
         `,
     ],
 })
-export class VenueDetailsComponent implements OnInit {
+export class VenueDetailsComponent implements OnInit, OnDestroy {
     // Review source & toggling states
 
     [x: string]: any;
@@ -396,6 +398,7 @@ export class VenueDetailsComponent implements OnInit {
         private meta: Meta,
         private razorpayService: RazorpayService,
         private analyticsService: AnalyticsService,
+        private enhancedAnalyticsService: EnhancedAnalyticsService,
         private geolocationService: GeolocationService,
         private fb: FormBuilder,
         @Inject(PLATFORM_ID) private platformId: Object,
@@ -2133,33 +2136,7 @@ navigateToVenue(venueId: number): void {
         txt4.value = '';
         this.otpArray = [];
     }
-    ngOnDestroy() {
-        if (this.enquiryTimer) {
-            clearTimeout(this.enquiryTimer);
-            console.log('🏢 VENUE: Timer cleared on destroy');
-        }
-             
-        // Send final analytics before cleanup
-        this.sendFinalAnalytics();
-        
-        // Clean up analytics tracking
-        if (this.trackingInterval) {
-            clearInterval(this.trackingInterval);
-            console.log('📊 ANALYTICS: Tracking interval cleared');
-        }
-        
-        if (this.scrollThrottleTimer) {
-            clearTimeout(this.scrollThrottleTimer);
-            console.log('📊 ANALYTICS: Scroll throttle timer cleared');
-        }
-        
-        // Remove beforeunload listener if it exists
-        if (this.boundBeforeUnloadHandler) {
-            window.removeEventListener('beforeunload', this.boundBeforeUnloadHandler);
-        }
-        
-        this.renderer.removeClass(document.body, 'body-dark');
-    }
+
     get forgotPassValidation() {
         return this.forgotPassForm.controls;
     }
@@ -2357,6 +2334,11 @@ loadMoreGoogleReviews(): void {
                 console.log(data);
 
                 this.venueDetails = data;
+                
+                // Initialize Enhanced Analytics
+                this.enhancedAnalyticsService.setCurrentVenueId(this.venueDetails.id || this.venueDetails._id);
+                console.log('Enhanced Analytics initialized for venue:', this.venueDetails.id || this.venueDetails._id);
+                
                 setTimeout(() => this.loadGoogleReviews(), 100);
                 this.title.setTitle(
                     this.venueDetails.name + ' - ' + 'Eazyvenue.com'
@@ -2968,6 +2950,18 @@ loadMoreGoogleReviews(): void {
             }
         });
         this.showFoodMenuTypesList = true;
+        
+        // Track food type selection with Enhanced Analytics (now batched locally)
+        this.enhancedAnalyticsService.trackFoodMenuSelection({
+            foodType: {
+                id: foodType.id,
+                name: foodType.name,
+                slug: foodType.slug
+            },
+            selectedFoodTypeId: this.selectedFoodTypeId,
+            selectedFoodTypeName: this.selectedFoodTypeName,
+            selectedFoodTypeSlug: this.selectedFoodTypeSlug
+        });
         //this.getFoodMenuTypes(this.selectedFoodTypeId);
     }
     onFoodMenuTypeClick(foodMenuType, event) {
@@ -3010,6 +3004,25 @@ loadMoreGoogleReviews(): void {
                 element.selected = false;
             }
         });
+        
+        // Track food menu type selection with Enhanced Analytics (now batched locally)
+        this.enhancedAnalyticsService.trackFoodMenuSelection({
+            foodType: {
+                id: this.selectedFoodTypeId,
+                name: this.selectedFoodTypeName,
+                slug: this.selectedFoodTypeSlug
+            },
+            menuType: {
+                slug: foodMenuType.slug,
+                price: foodMenuType.value,
+                description: foodMenuType.description
+            },
+            calculatedAmount: this.totalFoodPrice,
+            totalPrice: this.totalVenuePrice
+        });
+        
+        // Track pricing calculation
+        this.trackPricingCalculation();
     }
     findIndexBySlug(slug, arrayName) {
         let index = -1;
@@ -3060,11 +3073,23 @@ loadMoreGoogleReviews(): void {
                 // this.totalVenuePrice = Number(this.totalVenuePrice) + Number(decor.price);
             }
         } else {
-            this.premiumDecor = true;
-            this.totalVenuePrice =
+            this.premiumDecor = true;                this.totalVenuePrice =
                 Number(this.selectedVenueCapacity) *
                 Number(this.selectedFoodMenuType.value);
         }
+        
+        // Track wedding decor selection with Enhanced Analytics (now batched locally)
+        this.enhancedAnalyticsService.trackWeddingDecorSelection({
+            name: decor.name,
+            price: decor.price,
+            selectedDecorPrice: this.selectedDecorPrice,
+            selectedDecorName: this.selectedDecorName,
+            isPremium: this.premiumDecor,
+            amount: this.selectedDecorPrice
+        });
+        
+        // Track pricing calculation
+        this.trackPricingCalculation();
     }
     onFeatureClick(feature) {
         if (feature.id == '1') {
@@ -3142,6 +3167,9 @@ loadMoreGoogleReviews(): void {
             this.selectedOccasionNames = [
                 { id: occasion.id, name: occasion.name },
             ];
+            
+            // Track occasion selection with Enhanced Analytics (now batched locally)
+            this.enhancedAnalyticsService.trackOccasionSelection(occasion);
         }
         // }
     }
@@ -3249,6 +3277,12 @@ loadMoreGoogleReviews(): void {
             }
 
             this.totalVenuePrice = totalVenuePrice;
+            
+            // Track guest count selection with Enhanced Analytics (now batched locally)
+            this.enhancedAnalyticsService.trackGuestCountSelection(event);
+            
+            // Track pricing calculation
+            this.trackPricingCalculation();
         }
     }
 
@@ -3365,6 +3399,14 @@ loadMoreGoogleReviews(): void {
                     this.errorMessage = err.error.message;
                 }
             );
+        
+        // Track date/time selection with Enhanced Analytics
+        // Track date/time selection with Enhanced Analytics (now batched locally)
+        this.enhancedAnalyticsService.trackDateTimeSelection({
+            startDate: this.selectedStartDate,
+            endDate: this.selectedEndDate,
+            dateRange: `${this.selectedStartDate} - ${this.selectedEndDate}`
+        });
     }
     findIndexById(id, arrayName) {
         let index = -1;
@@ -3925,6 +3967,11 @@ loadMoreGoogleReviews(): void {
         this.orderType = mode;
         this.isBookingSummary = true;
         this.showVenueDetailFilter = false;
+        
+        // Track Send Enquiry click with Enhanced Analytics (for booking summary) - now batched locally
+        if (mode === 'send_enquires') {
+            this.enhancedAnalyticsService.trackSendEnquiryClick();
+        }
     }
     onClickSendfastquery(mode) {
         if (this.isLoggedIn == false) {
@@ -3985,6 +4032,16 @@ loadMoreGoogleReviews(): void {
         this.showVenueDetailFilter = false;
     }
     onClickBooking(mode) {
+        // Track button click with Enhanced Analytics (now batched locally)
+        if (mode === 'book_now') {
+            this.enhancedAnalyticsService.trackBookNowClick(this.paymentAmount, this.customAmountValue);
+            
+            // Track reached booking summary
+            this.enhancedAnalyticsService.trackReachedBookingSummary();
+        } else if (mode === 'send_enquires') {
+            this.enhancedAnalyticsService.trackSendEnquiryClick();
+        }
+        
         // console.log(this.paymentAmount);
         // console.log(this.selectedDecor);
 
@@ -4048,6 +4105,9 @@ loadMoreGoogleReviews(): void {
                     }, 3000);
                 } else {
                     if (this.orderType == 'book_now') {
+                        // Track reached payment with Enhanced Analytics (now batched locally)
+                        this.enhancedAnalyticsService.trackReachedPayment();
+                        
                         const options = {
                             // key: environment.razorPayKeyTest, //test key
                             key: environment.razorPayKeyLive, //Live key
@@ -4058,6 +4118,13 @@ loadMoreGoogleReviews(): void {
                             description: data.description,
                             image: data.image,
                             handler: (response: any) => {
+                                // Track payment initiated with Enhanced Analytics (now batched locally)
+                                this.enhancedAnalyticsService.trackPaymentInitiated({
+                                    method: 'razorpay',
+                                    amount: data.amount,
+                                    orderId: data.order_id
+                                });
+                                
                                 response.venueOrderId = data.venueOrderId;
                                 response.orderType = 'venue';
                                 this.onRazorWindowClosed(response);
@@ -4076,6 +4143,9 @@ loadMoreGoogleReviews(): void {
                         const rzp = new Razorpay(options);
                         rzp.open();
                     } else {
+                        // Track enquiry submitted with Enhanced Analytics (now batched locally)
+                        this.enhancedAnalyticsService.trackEnquirySubmitted();
+                        
                         this.markEnquirySubmitted(); 
                         this.messageService.add({
                             key: 'toastMsg',
@@ -4115,6 +4185,15 @@ loadMoreGoogleReviews(): void {
         this.venueOrderService.handleVenuePayment(response).subscribe(
             (res: any) => {
                 if (res.status === 'Success') {
+                    // Track successful payment completion (now batched locally)
+                    this.enhancedAnalyticsService.trackPaymentCompleted({
+                        paymentMethod: 'razorpay',
+                        amount: this.totalVenuePrice,
+                        orderId: res.orderId || response.razorpay_order_id,
+                        paymentId: response.razorpay_payment_id,
+                        status: 'success'
+                    });
+
                     this.messageService.add({
                         key: 'toastMsg',
                         severity: 'success',
@@ -4127,13 +4206,210 @@ loadMoreGoogleReviews(): void {
                     }, 1000);
                 }
                 if (res.status === 'pending') {
+                    // Track payment pending (now batched locally)
+                    this.enhancedAnalyticsService.trackPaymentCompleted({
+                        paymentMethod: 'razorpay',
+                        amount: this.totalVenuePrice,
+                        orderId: res.orderId || response.razorpay_order_id,
+                        paymentId: response.razorpay_payment_id,
+                        status: 'pending'
+                    });
                     // payment pending show pending popup
                 }
                 if (res.status === 'failed') {
+                    // Track payment failure (now batched locally)
+                    this.enhancedAnalyticsService.trackPaymentCompleted({
+                        paymentMethod: 'razorpay',
+                        amount: this.totalVenuePrice,
+                        orderId: res.orderId || response.razorpay_order_id,
+                        paymentId: response.razorpay_payment_id || null,
+                        status: 'failed',
+                        errorReason: res.errorReason || 'Payment failed'
+                    });
                     // payment failed tell to try again
                 }
             },
-            (err) => {}
+            (err) => {
+                // Track payment error (now batched locally)
+                this.enhancedAnalyticsService.trackPaymentCompleted({
+                    paymentMethod: 'razorpay',
+                    amount: this.totalVenuePrice,
+                    status: 'error',
+                    errorReason: err.message || 'Payment processing error'
+                });
+            }
         );
     }
+
+    /**
+     * Helper method to track pricing calculations with Enhanced Analytics
+     */
+    private trackPricingCalculation(): void {
+        if (this.totalVenuePrice > 0) {
+            this.enhancedAnalyticsService.trackPricingCalculation({
+                venuePrice: this.venueDetails?.price || 0,
+                baseVenuePrice: this.venueDetails?.price || 0,
+                totalFoodPrice: this.totalFoodPrice || 0,
+                selectedDecorPrice: this.selectedDecorPrice || 0,
+                totalVenuePrice: this.totalVenuePrice,
+                foodAmount: this.totalFoodPrice || 0,
+                decorAmount: this.selectedDecorPrice || 0,
+                finalPrice: this.totalVenuePrice
+            }).subscribe({
+                next: (result) => console.log('Pricing calculation tracked:', result),
+                error: (error) => console.error('Error tracking pricing calculation:', error)
+            });
+        }
+    }
+
+    /**
+     * Helper method to track page actions with Enhanced Analytics (now batched locally)
+     */
+    trackPageAction(actionType: string): void {
+        switch (actionType) {
+            case 'viewedGallery':
+                this.enhancedAnalyticsService.trackViewGallery();
+                break;
+            case 'viewedReviews':
+                this.enhancedAnalyticsService.trackViewReviews();
+                break;
+            case 'viewedAmenities':
+                this.enhancedAnalyticsService.trackViewAmenities();
+                break;
+            case 'viewedLocation':
+                this.enhancedAnalyticsService.trackViewLocation();
+                break;
+            case 'scrolledToBooking':
+                this.enhancedAnalyticsService.trackScrollToBooking();
+                break;
+        }
+    }
+
+    /**
+     * Component destroy lifecycle hook
+     * Save all batched analytics data before component is destroyed
+     */
+    ngOnDestroy(): void {
+        console.log('VenueDetailsComponent destroying - saving analytics data');
+        
+        // Save all batched analytics data immediately
+        this.enhancedAnalyticsService.saveDataNow().subscribe({
+            next: (result) => console.log('Analytics data saved on destroy:', result),
+            error: (error) => console.error('Error saving analytics data on destroy:', error)
+        });
+
+        // Call the analytics service destroy method to clean up
+        this.enhancedAnalyticsService.onDestroy();
+
+        // Existing cleanup logic
+        if (this.enquiryTimer) {
+            clearTimeout(this.enquiryTimer);
+            console.log('🏢 VENUE: Timer cleared on destroy');
+        }
+        
+        // Clean up analytics tracking
+        if (this.trackingInterval) {
+            clearInterval(this.trackingInterval);
+            console.log('📊 ANALYTICS: Tracking interval cleared');
+        }
+        
+        if (this.scrollThrottleTimer) {
+            clearTimeout(this.scrollThrottleTimer);
+            console.log('📊 ANALYTICS: Scroll throttle timer cleared');
+        }
+        
+        // Remove beforeunload listener if it exists
+        if (this.boundBeforeUnloadHandler) {
+            window.removeEventListener('beforeunload', this.boundBeforeUnloadHandler);
+        }
+        
+        this.renderer.removeClass(document.body, 'body-dark');
+    }
+
+
+    /**
+     * Helper method to track pricing calculations with Enhanced Analytics
+     */
+    private trackPricingCalculation(): void {
+        if (this.totalVenuePrice > 0) {
+            this.enhancedAnalyticsService.trackPricingCalculation({
+                venuePrice: this.venueDetails?.price || 0,
+                baseVenuePrice: this.venueDetails?.price || 0,
+                totalFoodPrice: this.totalFoodPrice || 0,
+                selectedDecorPrice: this.selectedDecorPrice || 0,
+                totalVenuePrice: this.totalVenuePrice,
+                foodAmount: this.totalFoodPrice || 0,
+                decorAmount: this.selectedDecorPrice || 0,
+                finalPrice: this.totalVenuePrice
+            }).subscribe({
+                next: (result) => console.log('Pricing calculation tracked:', result),
+                error: (error) => console.error('Error tracking pricing calculation:', error)
+            });
+        }
+    }
+
+    /**
+     * Helper method to track page actions with Enhanced Analytics (now batched locally)
+     */
+    trackPageAction(actionType: string): void {
+        switch (actionType) {
+            case 'viewedGallery':
+                this.enhancedAnalyticsService.trackViewGallery();
+                break;
+            case 'viewedReviews':
+                this.enhancedAnalyticsService.trackViewReviews();
+                break;
+            case 'viewedAmenities':
+                this.enhancedAnalyticsService.trackViewAmenities();
+                break;
+            case 'viewedLocation':
+                this.enhancedAnalyticsService.trackViewLocation();
+                break;
+            case 'scrolledToBooking':
+                this.enhancedAnalyticsService.trackScrollToBooking();
+                break;
+        }
+    }
+
+    /**
+     * Component destroy lifecycle hook
+     * Save all batched analytics data before component is destroyed
+     */
+    ngOnDestroy(): void {
+        console.log('VenueDetailsComponent destroying - saving analytics data');
+        
+        // Save all batched analytics data immediately
+        this.enhancedAnalyticsService.saveDataNow().subscribe({
+            next: (result) => console.log('Analytics data saved on destroy:', result),
+            error: (error) => console.error('Error saving analytics data on destroy:', error)
+        });
+
+        // Call the analytics service destroy method to clean up
+        this.enhancedAnalyticsService.onDestroy();
+
+        // Existing cleanup logic
+        if (this.enquiryTimer) {
+            clearTimeout(this.enquiryTimer);
+            console.log('🏢 VENUE: Timer cleared on destroy');
+        }
+        
+        // Clean up analytics tracking
+        if (this.trackingInterval) {
+            clearInterval(this.trackingInterval);
+            console.log('📊 ANALYTICS: Tracking interval cleared');
+        }
+        
+        if (this.scrollThrottleTimer) {
+            clearTimeout(this.scrollThrottleTimer);
+            console.log('📊 ANALYTICS: Scroll throttle timer cleared');
+        }
+        
+        // Remove beforeunload listener if it exists
+        if (this.boundBeforeUnloadHandler) {
+            window.removeEventListener('beforeunload', this.boundBeforeUnloadHandler);
+        }
+        
+        this.renderer.removeClass(document.body, 'body-dark');
+    }
 }
+
