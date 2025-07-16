@@ -185,62 +185,61 @@ $phone: #3b82f6;
       }
     }
   }
+
+  // ENHANCED: Global fix for all PrimeNG overlays in modal context
+  .add-enquiry-modal {
+    .p-multiselect-panel,
+    .p-dropdown-panel,
+    .p-datepicker,
+    .p-calendar-panel,
+    .p-overlay {
+      position: absolute !important;
+      z-index: 10002 !important;
+      max-height: 250px !important;
+      overflow-y: auto !important;
+      
+      // Containment within modal
+      max-width: 100% !important;
+      
+      // Prevent overflow
+      box-sizing: border-box !important;
+      
+      // Better scrolling
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+      }
+      
+      &::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+    }
+  }
 }
 
-//   // ENHANCED: Global fix for all PrimeNG overlays in modal context
-//   .add-enquiry-modal {
-//     .p-multiselect-panel,
-//     .p-dropdown-panel,
-//     .p-datepicker,
-//     .p-calendar-panel,
-//     .p-overlay {
-//       position: absolute !important;
-//       z-index: 10002 !important;
-//       max-height: 250px !important;
-//       overflow-y: auto !important;
-      
-//       // Containment within modal
-//       max-width: 100% !important;
-      
-//       // Prevent overflow
-//       box-sizing: border-box !important;
-      
-//       // Better scrolling
-//       &::-webkit-scrollbar {
-//         width: 6px;
-//       }
-      
-//       &::-webkit-scrollbar-track {
-//         background: #f1f1f1;
-//       }
-      
-//       &::-webkit-scrollbar-thumb {
-//         background: #c1c1c1;
-//         border-radius: 3px;
-//       }
-      
-//       &::-webkit-scrollbar-thumb:hover {
-//         background: #a8a8a8;
-//       }
-//     }
-//   }
-// }
-
-// // BACKUP: Global override as fallback
-// .p-multiselect-panel,
-// .p-dropdown-panel,
-// .p-datepicker,
-// .p-calendar-panel {
-//   &.p-connected-overlay {
-//     position: absolute !important;
-//     z-index: 10002 !important;
+// BACKUP: Global override as fallback
+.p-multiselect-panel,
+.p-dropdown-panel,
+.p-datepicker,
+.p-calendar-panel {
+  &.p-connected-overlay {
+    position: absolute !important;
+    z-index: 10002 !important;
     
-//     // Ensure proper containment
-//     max-width: calc(100vw - 2rem) !important;
-//     max-height: 250px !important;
-//     overflow-y: auto !important;
-//   }
-// }
+    // Ensure proper containment
+    max-width: calc(100vw - 2rem) !important;
+    max-height: 250px !important;
+    overflow-y: auto !important;
+  }
+}
 
 .header-stats {
   display: flex;
@@ -964,6 +963,8 @@ $phone: #3b82f6;
             &:hover:not(:disabled) {
                 background: darken($whatsapp, 5%);
             }
+            
+            // Remove the i:before override - let Font Awesome handle it
         }
 
         &.phone-btn {
@@ -974,6 +975,8 @@ $phone: #3b82f6;
             &:hover:not(:disabled) {
                 background: darken($phone, 5%);
             }
+            
+            // Remove the i:before override - let Font Awesome handle it
         }
     }
 }
