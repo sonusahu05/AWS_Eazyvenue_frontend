@@ -1,0 +1,469 @@
+.booking-analytics-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 15px 20px;
+  border-radius: 8px 8px 0 0;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto; /* Ensure right alignment */
+}
+
+.header-actions .btn {
+  white-space: nowrap;
+  min-width: auto;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #545b62;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #1e7e34;
+}
+
+/* Summary Cards */
+.bg-primary {
+  background-color: #007bff !important;
+}
+
+.bg-success {
+  background-color: #28a745 !important;
+}
+
+.bg-warning {
+  background-color: #ffc107 !important;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.bg-info {
+  background-color: #17a2b8 !important;
+}
+
+.bg-secondary {
+  background-color: #6c757d !important;
+}
+
+/* Form Styles */
+.form-label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.form-control {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.is-invalid {
+  border-color: #dc3545;
+}
+
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  color: #dc3545;
+}
+
+/* Calendar Styles */
+.fc {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.fc-toolbar {
+  margin-bottom: 20px;
+}
+
+.fc-button {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.fc-button:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.fc-button:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.fc-daygrid-event {
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner-container {
+  text-align: center;
+}
+
+/* Badge Styles */
+.badge {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+}
+
+/* Dialog Customization */
+.p-dialog-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.p-dialog-content {
+  padding: 20px;
+}
+
+/* Dropdown Customization */
+.p-dropdown {
+  width: 100%;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+.p-dropdown:not(.p-disabled).p-focus {
+  outline: 0;
+  outline-offset: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  border-color: #007bff;
+}
+
+/* Venue Search Styles */
+.venue-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.venue-item:last-child {
+  border-bottom: none;
+}
+
+.input-group-append .btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* Dropdown Enhancements */
+.p-dropdown .p-dropdown-filter {
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.p-dropdown .p-dropdown-filter:focus {
+  border-color: #007bff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Virtual Scroll Container */
+.p-dropdown-items-wrapper {
+  max-height: 200px;
+}
+
+.p-virtualscroller .p-virtualscroller-content {
+  background: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .booking-analytics-container {
+    padding: 10px;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .btn {
+    justify-content: center;
+  }
+  
+  .row .col-md-6,
+  .row .col-md-3 {
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-header h4 {
+    font-size: 1.2rem;
+  }
+  
+  .fc-toolbar {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .fc-toolbar-chunk {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+/* Booking Details */
+.booking-details {
+  font-size: 14px;
+}
+
+.booking-details .row {
+  margin-bottom: 10px;
+}
+
+.booking-details strong {
+  color: #333;
+}
+
+/* Text Utilities */
+.text-muted {
+  color: #6c757d !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.text-white {
+  color: white !important;
+}
+
+/* Spacing Utilities */
+.mb-0 { margin-bottom: 0 !important; }
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.mb-5 { margin-bottom: 3rem !important; }
+
+.me-2 { margin-right: 0.5rem !important; }
+
+.py-5 { 
+  padding-top: 3rem !important; 
+  padding-bottom: 3rem !important; 
+}
+
+/* Display Utilities */
+.d-flex { display: flex !important; }
+.d-block { display: block !important; }
+
+.justify-content-between { justify-content: space-between !important; }
+.justify-content-end { justify-content: flex-end !important; }
+.justify-content-center { justify-content: center !important; }
+
+.align-items-center { align-items: center !important; }
+
+.w-100 { width: 100% !important; }
+
+/* Three-button confirmation dialog styling */
+::ng-deep .p-confirm-dialog {
+  .p-confirm-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 1rem;
+    
+    .block-dates-btn {
+      margin-right: 0.5rem;
+      
+      &:hover {
+        background-color: #e68900 !important;
+        border-color: #e68900 !important;
+      }
+    }
+    
+    button {
+      min-width: 120px;
+      
+      .p-button-label {
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .p-confirm-dialog-message {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Action Dialog Styling */
+::ng-deep .action-dialog {
+  .p-dialog-header {
+    text-align: center;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    
+    .p-dialog-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #333;
+    }
+  }
+  
+  .p-dialog-content {
+    padding: 2rem;
+    
+    .text-lg {
+      font-size: 1.1rem;
+      color: #555;
+      font-weight: 500;
+    }
+    
+    .btn-lg {
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 8px;
+      min-height: 48px;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      
+      i {
+        font-size: 1.1rem;
+      }
+    }
+    
+    .btn-success {
+      background-color: #28a745;
+      border-color: #28a745;
+      
+      &:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+      }
+    }
+    
+    .btn-warning {
+      background-color: #ffc107;
+      border-color: #ffc107;
+      color: #212529;
+      
+      &:hover {
+        background-color: #e0a800;
+        border-color: #d39e00;
+      }
+    }
+    
+    .btn-secondary {
+      background-color: #6c757d;
+      border-color: #6c757d;
+      
+      &:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+      }
+    }
+  }
+}
