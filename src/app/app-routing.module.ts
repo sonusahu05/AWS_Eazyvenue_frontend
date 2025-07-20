@@ -82,6 +82,7 @@ import { VendorDetailsComponent } from './frontend/vendor-details/vendor-details
 import { VendorCompareComponent } from './frontend/vendor-compare/vendor-compare.component';
 import { CancellationComponent } from './frontend/cancellation/cancellation.component';
 import { SignupComponent } from './pages/venue-signup.component';
+import { BookingAnalyticsComponent } from './manage/analytics/bookings/booking-analytics.component';
 import { HomeDataResolver } from './services/home-data.resolver';
 @NgModule({
     imports: [
@@ -402,6 +403,10 @@ import { HomeDataResolver } from './services/home-data.resolver';
             {
                 path: 'analytics/competition',
                 loadChildren: () => import('./manage/analytics/competition/competition-analysis.module').then((m) => m.CompetitionAnalysisModule),
+            },
+            {
+                path: 'analytics/bookings',
+                component: BookingAnalyticsComponent,
             },
         ],
     },

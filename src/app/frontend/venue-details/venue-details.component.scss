@@ -3530,6 +3530,40 @@ h4.amenities-size {
     display: inline-flex !important;
 }
 
+/* Styling for disabled dates in calendar */
+::ng-deep .p-datepicker .p-datepicker-calendar td.p-disabled {
+    background-color: #ffe6e6 !important;
+    color: #999 !important;
+    position: relative;
+}
+
+::ng-deep .p-datepicker .p-datepicker-calendar td.p-disabled::before {
+    content: '✖';
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 8px;
+    color: #ff4444;
+    font-weight: bold;
+}
+
+::ng-deep .p-datepicker .p-datepicker-calendar td.p-disabled:hover {
+    background-color: #ffcccc !important;
+    cursor: not-allowed;
+}
+
+/* Alternative styling - diagonal lines for disabled dates */
+::ng-deep .p-datepicker .p-datepicker-calendar td.p-disabled::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 45%, #ff4444 48%, #ff4444 52%, transparent 55%);
+    pointer-events: none;
+}
+
 button.p-element.p-ripple.p-button-rounded.p-button-danger.secondary.btn-custom.p-button.p-component.p-button-icon-only {
     position: absolute;
     right: 0px;

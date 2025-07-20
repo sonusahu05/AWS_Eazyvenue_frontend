@@ -48,6 +48,7 @@ import { SubareaService } from 'src/app/services/subarea.service';
 import { RazorpayService } from 'src/app/services/razorpay.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { GeolocationService, UserLocation, VenueWithDistance } from '../../services/geolocation.service';
+import { BookingService, BookingData } from '../../services/booking.service';
 import { Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 declare var google: any;
@@ -191,6 +192,8 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     public es: any;
     customAmountValue: number;
     public invalidDates: Array<Date>;
+    public disabledDates: Array<Date> = [];
+    public bookedDatesList: any[] = [];
     public venueImageNumVisible: number = 8;
     public listingblock;
     public loading: boolean = true;
@@ -305,6 +308,11 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     public selectedEndDate;
     public showAvailabilityMessage: boolean = false;
     public oldDecorPrice: number = 0;
+    
+    // Analytics tracking properties
+    public sendEnquiryClicked: boolean = false;
+    public clickedOnReserved: boolean = false;
+    public clickedOnBookNow: boolean = false;
     public bookingPrice;
     public subareaList: any[] = [];
     public selectedVenueIds: any[] = [];
@@ -398,6 +406,7 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
         private razorpayService: RazorpayService,
         private analyticsService: AnalyticsService,
         private geolocationService: GeolocationService,
+        private bookingService: BookingService,
         private fb: FormBuilder,
         @Inject(PLATFORM_ID) private platformId: Object,
         @Inject(DOCUMENT) private document: Document
@@ -538,14 +547,14 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
             Object.keys(this.loggedInUser).length != 0
         ) {
             this.isLoggedIn = true;
-            this.userId = this.loggedInUser.id;
+            this.userId = this.loggedInUser.userdata?.id || this.loggedInUser.id;
         }
         if (this.isLoggedIn == true) {
             // this.loginRegisterModal = false;
             this.numberPopup = false;
         }
-        if (this.isLoggedIn && this.loggedInUser?.id) {
-            this.getUserDetails(this.loggedInUser.id);
+        if (this.isLoggedIn && this.userId) {
+            this.getUserDetails(this.userId);
         }
         this.mobileForm = this.formBuilder.group({
             mobileNumber: [
@@ -1710,15 +1719,110 @@ getCarouselReviews() {
     }
 
     /**
+     * Send analytics update when payment is completed
+     */
+    private sendPaymentAnalytics(): void {
+        try {
+            console.log('💰 ANALYTICS: Sending payment completion analytics...');
+            
+            // Track payment completion
+            if (this.venueDetails) {
+                // Update engagement data to include payment completion
+                const paymentEngagementData = {
+                    ...this.getEngagementData(),
+                    actions: {
+                        ...this.getEngagementData().actions,
+                        madePayment: true // Override to true since payment was successful
+                    }
+                };
+                
+                // Prepare analytics data
+                const clickData = {
+                    venueId: this.venueDetails._id || this.venueDetails.id,
+                    venueName: this.venueDetails.name || '',
+                    userId: this.userId || undefined,
+                    userName: this.getUserName(),
+                    userEmail: this.getUserEmail(),
+                    userContact: this.getUserContact(),
+                    sessionId: this.analyticsService.getSessionId(),
+                    location: this.getUserLocationData(),
+                    device: this.analyticsService.getDeviceInfo(),
+                    engagement: paymentEngagementData
+                };
+
+                console.log('💰 ANALYTICS: Payment completion data:', clickData);
+
+                // Track the venue click with payment completion
+                this.analyticsService.trackVenueClickWithGeocode(clickData).subscribe({
+                    next: (response) => {
+                        console.log('✅ ANALYTICS: Payment completion tracked successfully:', response);
+                    },
+                    error: (error) => {
+                        console.error('❌ ANALYTICS: Failed to track payment completion:', error);
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('❌ ANALYTICS: Error sending payment analytics:', error);
+        }
+    }
+
+    /**
      * Get current engagement data for analytics
      */
     private getEngagementData(): any {
-        return {
+        const engagementData = {
             timeSpentSeconds: this.getTimeSpentSeconds(),
             scrollDepthPercent: this.maxScrollDepth,
             submittedEnquiry: this.hasCreatedEnquiry,
-            qualityScore: this.calculateQualityScore()
+            qualityScore: this.calculateQualityScore(),
+            actions: {
+                // Date filters
+                startFilterDate: this.rangeDates && this.rangeDates[0] ? this.formatDateForAPI(this.rangeDates[0]) : null,
+                endFilterDate: this.rangeDates && this.rangeDates[1] ? this.formatDateForAPI(this.rangeDates[1]) : null,
+                
+                // Event details
+                eventDuration: this.getEventDurationFromSlot(),
+                occasion: this.sOccasion?.name || (typeof this.selectedOccasion === 'string' ? this.selectedOccasion : null),
+                guestCount: this.selectedVenueCapacity || null,
+                
+                // User interaction tracking
+                sendEnquiryClicked: this.sendEnquiryClicked,
+                clickedOnReserved: this.clickedOnReserved,
+                clickedOnBookNow: this.clickedOnBookNow,
+                madePayment: false, // Will be updated when payment is made
+                
+                // Wedding decor
+                weddingDecorType: this.selectedDecor?.name || this.selectedDecor?.type || null,
+                weddingDecorPrice: this.selectedDecorPrice || null,
+                
+                // Food menu details
+                foodMenuType: this.getFoodMenuTypeNames(),
+                foodMenuPrice: this.totalFoodPrice || null,
+                foodMenuPlate: this.getFoodMenuPlate()
+            }
         };
+        
+        console.log('📊 ANALYTICS: Current engagement data with actions:');
+        console.log('   📊 Basic metrics:', {
+            timeSpentSeconds: engagementData.timeSpentSeconds,
+            scrollDepthPercent: engagementData.scrollDepthPercent,
+            submittedEnquiry: engagementData.submittedEnquiry,
+            qualityScore: engagementData.qualityScore
+        });
+        console.log('   📊 User actions:', engagementData.actions);
+        console.log('   📊 Component state check:');
+        console.log('      rangeDates:', this.rangeDates);
+        console.log('      sOccasion:', this.sOccasion);
+        console.log('      selectedOccasion:', this.selectedOccasion);
+        console.log('      selectedVenueCapacity:', this.selectedVenueCapacity);
+        console.log('      selectedFoodMenuTypes:', this.selectedFoodMenuTypes);
+        console.log('      selectedDecor:', this.selectedDecor);
+        console.log('      sendEnquiryClicked:', this.sendEnquiryClicked);
+        console.log('      clickedOnReserved:', this.clickedOnReserved);
+        console.log('      clickedOnBookNow:', this.clickedOnBookNow);
+        
+        return engagementData;
     }
 
     /**
@@ -1731,15 +1835,38 @@ getCarouselReviews() {
     }
 
     /**
+     * Check if we have meaningful user interaction data to send
+     */
+    private hasUserInteractionData(): boolean {
+        const hasDateSelection = this.rangeDates && this.rangeDates.length > 0;
+        const hasOccasionSelection = this.sOccasion?.name || this.selectedOccasion;
+        const hasGuestCount = this.selectedVenueCapacity;
+        const hasFoodSelection = this.selectedFoodMenuTypes && this.selectedFoodMenuTypes.length > 0;
+        const hasDecorSelection = this.selectedDecor;
+        const hasUserActions = this.sendEnquiryClicked || this.clickedOnReserved || this.clickedOnBookNow;
+        const hasMinimumTime = this.getTimeSpentSeconds() > 10; // At least 10 seconds spent
+        
+        // Return true if user has made meaningful selections or spent significant time
+        return hasDateSelection || hasOccasionSelection || hasGuestCount || 
+               hasFoodSelection || hasDecorSelection || hasUserActions || hasMinimumTime;
+    }
+
+    /**
      * Manually trigger analytics tracking with current data (for testing or manual calls)
      */
     public sendCurrentAnalytics(): void {
-        if (this.venueDetails) {
-            console.log('📊 MANUAL: Sending current analytics data...');
-            this.trackVenueClick(this.venueDetails);
-        } else {
+        if (!this.venueDetails) {
             console.warn('📊 MANUAL: Cannot send analytics - venue details not loaded');
+            return;
         }
+        
+        if (!this.hasUserInteractionData()) {
+            console.log('📊 MANUAL: Skipping analytics - no meaningful user interaction data yet');
+            return;
+        }
+        
+        console.log('📊 MANUAL: Sending current analytics data...');
+        this.trackVenueClick(this.venueDetails);
     }
 
     /**
@@ -1791,6 +1918,52 @@ getCarouselReviews() {
     public sendFinalAnalyticsManually(): void {
         console.log('🧪 MANUAL TRIGGER: Sending final analytics');
         this.sendFinalAnalytics();
+    }
+
+    /**
+     * Test method to send analytics with sample data (for debugging)
+     */
+    public sendTestAnalytics(): void {
+        console.log('🧪 TEST: Sending analytics with sample data...');
+        
+        // Set some test data
+        this.rangeDates = [new Date(), new Date()];
+        this.sOccasion = { name: 'Wedding', id: 'wedding-123' };
+        this.selectedVenueCapacity = '100-200';
+        this.selectedFoodMenuTypes = ['Veg Premium'];
+        this.selectedDecor = { name: 'Premium', type: 'Premium' };
+        this.selectedDecorPrice = 50000;
+        this.totalFoodPrice = 25000;
+        this.sendEnquiryClicked = true;
+        
+        console.log('🧪 TEST: Test data set, now sending analytics...');
+        if (this.venueDetails) {
+            this.trackVenueClick(this.venueDetails);
+        }
+    }
+
+    /**
+     * Test method to simulate payment completion analytics (for debugging)
+     */
+    public sendTestPaymentAnalytics(): void {
+        console.log('🧪 TEST PAYMENT: Simulating payment completion analytics...');
+        
+        // Set payment completion data
+        this.madePayment = true;
+        this.clickedOnBookNow = true;
+        this.rangeDates = [new Date(), new Date()];
+        this.sOccasion = { name: 'Wedding', id: 'wedding-123' };
+        this.selectedVenueCapacity = '100-200';
+        this.selectedFoodMenuTypes = ['Veg Premium'];
+        this.selectedDecor = { name: 'Premium', type: 'Premium' };
+        this.selectedDecorPrice = 50000;
+        this.totalFoodPrice = 25000;
+        
+        console.log('🧪 TEST PAYMENT: Payment data set, madePayment =', this.madePayment);
+        
+        if (this.venueDetails) {
+            this.sendPaymentAnalytics();
+        }
     }
 
     /**
@@ -2325,6 +2498,121 @@ loadMoreGoogleReviews(): void {
     console.log('Load more Google reviews');
 }
 
+    /**
+     * Load all booked dates for the venue to highlight in calendar
+     */
+    loadVenueBookedDates() {
+        if (!this.venueDetails || !this.venueDetails.id) {
+            console.log('[DEBUG] No venue details available for loading booked dates');
+            return;
+        }
+
+        console.log('[DEBUG] Loading all booked dates for venue:', this.venueDetails.id);
+        
+        // Get all bookings for this venue (no date filter for initial load)
+        this.bookingService.getVenueBookings(this.venueDetails.id, {}).subscribe(
+            (res: any) => {
+                console.log('[DEBUG] All venue bookings response:', res);
+                const bookingsArr = res && res.success && res.data && Array.isArray(res.data.bookings) ? res.data.bookings : [];
+                
+                if (bookingsArr.length > 0) {
+                    this.bookedDatesList = bookingsArr;
+                    this.disabledDates = [];
+                    
+                    // Convert all booked date ranges to individual disabled dates
+                    bookingsArr.forEach(booking => {
+                        if (booking.details && booking.details.startFilterDate && booking.details.endFilterDate) {
+                            const startDate = this.parseDate(booking.details.startFilterDate);
+                            const endDate = this.parseDate(booking.details.endFilterDate);
+                            
+                            if (startDate && endDate) {
+                                // Add all dates between start and end to disabled dates
+                                const dates = this.getDateRange(startDate, endDate);
+                                this.disabledDates.push(...dates);
+                            }
+                        }
+                    });
+                    
+                    console.log('[DEBUG] Disabled dates array:', this.disabledDates);
+                    console.log('[DEBUG] Total disabled dates count:', this.disabledDates.length);
+                } else {
+                    console.log('[DEBUG] No bookings found for venue');
+                    this.disabledDates = [];
+                    this.bookedDatesList = [];
+                }
+            },
+            (err) => {
+                console.error('[DEBUG] Error loading venue booked dates:', err);
+                this.disabledDates = [];
+                this.bookedDatesList = [];
+            }
+        );
+    }
+
+    /**
+     * Parse date string in DD/MM/YYYY format to Date object
+     */
+    private parseDate(dateString: string): Date | null {
+        if (!dateString) return null;
+        
+        const parts = dateString.split('/');
+        if (parts.length !== 3) return null;
+        
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+        const year = parseInt(parts[2], 10);
+        
+        return new Date(year, month, day);
+    }
+
+    /**
+     * Get all dates between start and end date (inclusive)
+     */
+    private getDateRange(startDate: Date, endDate: Date): Date[] {
+        const dates: Date[] = [];
+        const currentDate = new Date(startDate);
+        
+        while (currentDate <= endDate) {
+            dates.push(new Date(currentDate));
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        
+        return dates;
+    }
+
+    /**
+     * Get formatted list of booked dates for display in warning
+     */
+    private getBookedDatesInRange(startDate: Date, endDate: Date): string[] {
+        const bookedDatesInRange: string[] = [];
+        
+        this.bookedDatesList.forEach(booking => {
+            if (booking.details && booking.details.startFilterDate && booking.details.endFilterDate) {
+                const bookingStart = this.parseDate(booking.details.startFilterDate);
+                const bookingEnd = this.parseDate(booking.details.endFilterDate);
+                
+                if (bookingStart && bookingEnd) {
+                    // Check if booking overlaps with selected range
+                    if (bookingStart <= endDate && bookingEnd >= startDate) {
+                        const rangeStart = bookingStart > startDate ? bookingStart : startDate;
+                        const rangeEnd = bookingEnd < endDate ? bookingEnd : endDate;
+                        
+                        // Format the overlapping dates
+                        const overlapDates = this.getDateRange(rangeStart, rangeEnd);
+                        overlapDates.forEach(date => {
+                            const formattedDate = moment(date).format('DD/MM/YYYY');
+                            if (!bookedDatesInRange.includes(formattedDate)) {
+                                bookedDatesInRange.push(formattedDate);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+        
+        return bookedDatesInRange.sort();
+    }
+
     getVenueDetails() {
         this.venueService.getVenueDetailsByMeta(this.metaUrl).subscribe(
             // this.venueService.getVenueDetails(this.id).subscribe(
@@ -2658,6 +2946,10 @@ loadMoreGoogleReviews(): void {
                 this.foodMenuTypeArray = this.venueDetails.foodMenuType;
                 this.totalPeopleBooked = this.venueDetails.peopleBooked;
                 this.currentViews = this.venueDetails.views;
+                
+                // Load booked dates for calendar highlighting
+                this.loadVenueBookedDates();
+                
                 this.onClickEventDate(this.selectedStartDate);
                 this.getCategoryDetails();
                 this.getSlots();
@@ -2750,11 +3042,21 @@ loadMoreGoogleReviews(): void {
             venueId: venueId,
             userName: (this.fullUserDetails.firstName || '') + ' ' + (this.fullUserDetails.lastName || ''),
             userContact: this.fullUserDetails.mobileNumber,
-            userEmail: this.fullUserDetails.email || ''
+            userEmail: this.fullUserDetails.email || '',
+            // Analytics tracking fields
+            sendEnquiryClicked: this.sendEnquiryClicked,
+            clickedOnReserved: this.clickedOnReserved,
+            clickedOnBookNow: this.clickedOnBookNow,
+            madePayment: false  // Enquiries don't involve payment
         };
 
         console.log('📝 VENUE: Enquiry data prepared:', enquiryData);
-        console.log('📝 VENUE: About to call API...');
+        console.log('� VENUE: Analytics tracking in enquiry:');
+        console.log('   sendEnquiryClicked:', enquiryData.sendEnquiryClicked);
+        console.log('   clickedOnReserved:', enquiryData.clickedOnReserved);
+        console.log('   clickedOnBookNow:', enquiryData.clickedOnBookNow);
+        console.log('   madePayment:', enquiryData.madePayment);
+        console.log('�📝 VENUE: About to call API...');
 
         // Check if service exists
         if (!this.enquiryService) {
@@ -2986,6 +3288,10 @@ loadMoreGoogleReviews(): void {
                 element.selected = false;
             }
         });
+        
+        // Track analytics for food menu type selection
+        console.log('📊 ANALYTICS: Food menu type selected:', foodMenuType.name || foodMenuType.slug);
+        this.sendCurrentAnalytics();
     }
     findIndexBySlug(slug, arrayName) {
         let index = -1;
@@ -3036,10 +3342,15 @@ loadMoreGoogleReviews(): void {
                 // this.totalVenuePrice = Number(this.totalVenuePrice) + Number(decor.price);
             }
         } else {
-            this.premiumDecor = true;                this.totalVenuePrice =
+            this.premiumDecor = true;
+            this.totalVenuePrice =
                 Number(this.selectedVenueCapacity) *
                 Number(this.selectedFoodMenuType.value);
         }
+        
+        // Track analytics for decor selection
+        console.log('📊 ANALYTICS: Decor selected:', decor.name, 'Price:', decor.price);
+        this.sendCurrentAnalytics();
     }
     onFeatureClick(feature) {
         if (feature.id == '1') {
@@ -3256,39 +3567,77 @@ loadMoreGoogleReviews(): void {
 
         this.totalVenuePrice = totalVenuePrice;
         this.selectedGuestName = guestCount;
+        
+        // Track analytics for guest count selection
+        console.log('📊 ANALYTICS: Guest count selected:', guestCount);
+        this.sendCurrentAnalytics();
       }
   onClickEventDate(event) {
         this.selectedStartDate = this.rangeDates[0];
         this.selectedEndDate = this.rangeDates[1];
-        let startDate = moment(this.selectedStartDate)
-            .subtract(1, 'd')
-            .format('YYYY-MM-DD');
-        //let startDate = moment(this.selectedStartDate).format("YYYY-MM-DD");
+        
+        // Use DD/MM/YYYY format for backend query (same as booking-analytics component)
+        let startDate = moment(this.selectedStartDate).format('DD/MM/YYYY');
         let endDate;
         if (this.selectedEndDate === null) {
-            this.selectedEndDate = moment(this.selectedStartDate).format(
-                'YYYY-MM-DD'
-            );
-            endDate = moment(this.selectedStartDate).format('YYYY-MM-DD');
-            //endDate = moment(this.selectedStartDate).format("YYYY-MM-DD");
+            endDate = moment(this.selectedStartDate).format('DD/MM/YYYY');
         } else {
             this.datePicker.overlayVisible = false;
-            this.selectedEndDate = moment(this.rangeDates[1]).format(
-                'YYYY-MM-DD'
-            );
-            endDate = moment(this.rangeDates[1]).format('YYYY-MM-DD');
-            //endDate = moment(this.rangeDates[1]).format("YYYY-MM-DD");
+            endDate = moment(this.selectedEndDate).format('DD/MM/YYYY');
         }
-        this.selectedStartDate = moment(this.selectedStartDate)
-            .local()
-            .format('DD/MM/YYYY');
-        this.selectedEndDate = moment(this.selectedEndDate)
-            .local()
-            .format('DD/MM/YYYY');
+        
+        // Keep selectedStartDate/selectedEndDate in DD/MM/YYYY for UI consistency
+        this.selectedStartDate = moment(this.selectedStartDate).local().format('DD/MM/YYYY');
+        this.selectedEndDate = moment(this.selectedEndDate).local().format('DD/MM/YYYY');
         this.selectedDate = moment(event).local().format('DD-MM-YYYY');
-        let searchDate = moment(event).subtract(1, 'd').format('MM-DD-YYYY');
-        // startDate = moment(this.rangeDates[0]).subtract(1, "d").format('MM-DD-YYYY');
-        // endDate = moment(this.rangeDates[1]).subtract(1, "d").format('MM-DD-YYYY');
+
+        // Debugging: Check if we reach the booking conflict check
+        console.log('[DEBUG] onClickEventDate called with event:', event);
+        console.log('[DEBUG] venueDetails:', this.venueDetails);
+        console.log('[DEBUG] Calculated startDate (DD/MM/YYYY):', startDate, 'endDate (DD/MM/YYYY):', endDate);
+        if (this.venueDetails && this.venueDetails.id) {
+            console.log('[DEBUG] Checking for existing bookings for venueId:', this.venueDetails.id);
+            this.bookingService.getVenueBookings(this.venueDetails.id, {
+                startDate: startDate,
+                endDate: endDate
+            }).subscribe(
+                (res: any) => {
+                    console.log('[DEBUG] BookingService.getVenueBookings response:', res);
+                    const bookingsArr = res && res.success && res.data && Array.isArray(res.data.bookings) ? res.data.bookings : [];
+                    if (bookingsArr.length > 0) {
+                        // There are bookings in this range - get specific booked dates
+                        const selectedStartDate = moment(this.selectedStartDate, 'DD/MM/YYYY').toDate();
+                        const selectedEndDate = moment(this.selectedEndDate, 'DD/MM/YYYY').toDate();
+                        const bookedDatesInRange = this.getBookedDatesInRange(selectedStartDate, selectedEndDate);
+                        
+                        console.log('[DEBUG] Booked dates found, showing warning to user.');
+                        console.log('[DEBUG] Specific booked dates:', bookedDatesInRange);
+                        
+                        const warningMessage = bookedDatesInRange.length > 0 
+                            ? `The following dates are already booked: ${bookedDatesInRange.join(', ')}. Please choose different dates.`
+                            : 'Some dates in your selection are already booked. Please choose different dates.';
+                        
+                        this.messageService.add({
+                            key: 'toastMsg',
+                            severity: 'warn',
+                            summary: 'Date Unavailable',
+                            detail: warningMessage,
+                            life: 8000
+                        });
+                        // Optionally, you can clear the selected dates or prevent further action here
+                        // this.rangeDates = null;
+                        // this.selectedDate = null;
+                    } else {
+                        console.log('[DEBUG] No bookings found for selected dates.');
+                    }
+                },
+                (err) => {
+                    console.error('[DEBUG] Error in getVenueBookings:', err);
+                }
+            );
+        } else {
+            console.log('[DEBUG] venueDetails or venueDetails.id not set, skipping booking check.');
+        }
 
         let query =
             'filterByDisable=false&filterByStatus=true&filterByVenueId=' +
@@ -3340,6 +3689,10 @@ loadMoreGoogleReviews(): void {
                     this.errorMessage = err.error.message;
                 }
             );
+            
+        // Track analytics for date selection
+        console.log('📊 ANALYTICS: Event dates selected:', this.selectedStartDate, 'to', this.selectedEndDate);
+        this.sendCurrentAnalytics();
     }
     findIndexById(id, arrayName) {
         let index = -1;
@@ -3678,6 +4031,10 @@ loadMoreGoogleReviews(): void {
         this.selectedOccasion = event.id;
         this.sOccasion = event;
         this.selectedOccasionNames = [{ id: event.id, name: event.name }];
+        
+        // Track analytics for occasion selection
+        console.log('📊 ANALYTICS: Occasion selected:', event.name);
+        
         if (event.id !== undefined) {
             let index = this.findIndexById(event.id, this.occasionArray);
             if (index != -1) {
@@ -3698,6 +4055,9 @@ loadMoreGoogleReviews(): void {
                 });
             }
         }
+        
+        // Send analytics update for occasion selection
+        this.sendCurrentAnalytics();
     }
     getCategoryBySlug() {
         let query = '?filterByDisable=false&filterByStatus=true';
@@ -3898,6 +4258,18 @@ loadMoreGoogleReviews(): void {
         // }
         this.offerPaymentValue25_percent = this.totalVenuePrice * 0.25;
         this.orderType = mode;
+        
+        // Track analytics immediately when buttons are clicked
+        if (mode === 'book_now') {
+            // This is "Reserve For ₹5000" button - track as reserve clicked
+            this.clickedOnReserved = true;
+            console.log('📊 ANALYTICS: Reserve For ₹5000 button clicked, clickedOnReserved =', this.clickedOnReserved);
+        } else if (mode === 'send_enquires') {
+            // This is "Send Enquiry" button - track as enquiry clicked
+            this.sendEnquiryClicked = true;
+            console.log('📊 ANALYTICS: Send Enquiry button clicked, sendEnquiryClicked =', this.sendEnquiryClicked);
+        }
+        
         this.isBookingSummary = true;
         this.showVenueDetailFilter = false;
 
@@ -3957,13 +4329,29 @@ loadMoreGoogleReviews(): void {
         //   return;
         // }
         this.orderType = mode;
+        
+        // Track analytics immediately when fast enquiry button is clicked
+        if (mode === 'send_enquires') {
+            this.sendEnquiryClicked = true;
+            console.log('📊 ANALYTICS: Fast enquiry button clicked, sendEnquiryClicked =', this.sendEnquiryClicked);
+        }
+        
         this.isBookingenquerySummary = true;
         this.showVenueDetailFilter = false;
     }
     onClickBooking(mode) {
         
-        // console.log(this.paymentAmount);
-        // console.log(this.selectedDecor);
+        // Track analytics - Book Now clicked
+        this.clickedOnBookNow = true;
+        console.log('📊 ANALYTICS: Book Now clicked, clickedOnBookNow =', this.clickedOnBookNow);
+        
+        console.log('=== BOOKING PROCESS STARTED ===');
+        console.log('Mode:', mode);
+        console.log('Payment Amount:', this.paymentAmount);
+        console.log('Selected Decor:', this.selectedDecor);
+        console.log('Venue Details:', this.venueDetails);
+        console.log('User ID:', this.userId);
+        console.log('Full User Details:', this.fullUserDetails);
 
         let durationData = [
             {
@@ -3972,9 +4360,8 @@ loadMoreGoogleReviews(): void {
                 slotId: this.selectedSlots[0]?.slotId,
             },
         ];
-        // console.log(this.orderType);
+        console.log('Duration Data:', durationData);
 
-        // console.log(this.selectedOccasion);
         let venueOrderData = {
             categoryId: this.sOccasion.id,
             occasionDate: this.selectedDate,
@@ -4001,33 +4388,45 @@ loadMoreGoogleReviews(): void {
             guestCount: this.capacity,
             decorName: this.selectedDecorName,
             paymentType: this.paymentAmount,
+            // Analytics tracking fields
+            sendEnquiryClicked: this.sendEnquiryClicked,
+            clickedOnReserved: this.clickedOnReserved,
+            clickedOnBookNow: this.clickedOnBookNow,
+            madePayment: mode === 'book_now' // Will be true for book_now, false for enquiries
         };
+        console.log('=== VENUE ORDER DATA PREPARED ===');
         console.log(venueOrderData);
+        console.log('📊 VENUE ORDER: Analytics tracking:');
+        console.log('   sendEnquiryClicked:', venueOrderData.sendEnquiryClicked);
+        console.log('   clickedOnReserved:', venueOrderData.clickedOnReserved);
+        console.log('   clickedOnBookNow:', venueOrderData.clickedOnBookNow);
+        console.log('   madePayment:', venueOrderData.madePayment);
 
         //send data to api and
+        console.log('=== SENDING VENUE ORDER TO API ===');
         this.placeAnOrderOrEnquiry(venueOrderData);
     }
-    placeAnOrderOrEnquiry(orderData) {
+    async placeAnOrderOrEnquiry(orderData) {
+        console.log(' FRONTEND: About to send venue order to API');
+        console.log('📤 FRONTEND: Order data being sent:', JSON.stringify(orderData, null, 2));
+        console.log('📤 FRONTEND: API endpoint:', environment.apiUrl + 'venueorder');
+        
         this.venueOrderService.addVenueOrder(orderData).subscribe(
-            (data) => {
+            async (data) => {
+                console.log('✅ FRONTEND: API response received:', data);
                 if (data && data.message === 'no profile') {
                     this.messageService.add({
                         key: 'toastMsg',
                         severity: 'error',
-                        summary: 'Problem',
-                        detail: 'Please complete your profile before inquiry or booking',
-                        life: 5000,
+                        summary: 'Error',
+                        detail: 'Please complete your profile first.',
+                        life: 3000,
                     });
-                    setTimeout(() => {
-                        this.router.navigateByUrl(
-                            '/my-profile?mode=' + data.mode
-                        );
-                    }, 3000);
                 } else {
                     if (this.orderType == 'book_now') {
+                        // PRODUCTION READY - Razorpay payment integration
                         const options = {
-                            // key: environment.razorPayKeyTest, //test key
-                            key: environment.razorPayKeyLive, //Live key
+                            key: environment.razorPayKeyLive, // Live key for production
                             amount: data.amount,
                             currency: data.currency,
                             order_id: data.order_id,
@@ -4042,16 +4441,30 @@ loadMoreGoogleReviews(): void {
                             prefill: data.prefill,
                             theme: {
                                 color: '#eb3438',
-                                // color: '#fff'
                             },
                             modal: {
                                 ondismiss: () => {
-                                    console.log('payment modal closed');
+                                    console.log('Payment modal closed by user');
+                                    // Optional: Track payment abandonment
+                                    console.log('� ANALYTICS: Payment modal dismissed without completion');
                                 },
                             },
                         };
-                        const rzp = new Razorpay(options);
-                        rzp.open();
+                        
+                        console.log('🏦 PRODUCTION: Opening Razorpay payment gateway...');
+                        try {
+                            const rzp = new Razorpay(options);
+                            rzp.open();
+                        } catch (error) {
+                            console.error('💰 PAYMENT ERROR: Failed to open Razorpay:', error);
+                            this.messageService.add({
+                                key: 'toastMsg',
+                                severity: 'error',
+                                summary: 'Payment Gateway Error',
+                                detail: 'Failed to open payment gateway. Please try again or contact support.',
+                                life: 6000,
+                            });
+                        }
                     } else {
                         this.markEnquirySubmitted(); 
                         this.messageService.add({
@@ -4075,13 +4488,16 @@ loadMoreGoogleReviews(): void {
                 }
             },
             (err) => {
-                console.log(err);
-
+                console.error('❌ FRONTEND: API Error occurred:', err);
+                console.error('❌ FRONTEND: Error status:', err.status);
+                console.error('❌ FRONTEND: Error message:', err.message);
+                console.error('❌ FRONTEND: Error details:', err.error);
+    
                 this.messageService.add({
                     key: 'toastMsg',
                     severity: 'error',
-                    summary: err.error.message,
-                    detail: 'Venue order booked failed',
+                    summary: err.error?.message || 'API Error',
+                    detail: 'Venue order booking failed. Check console for details.',
                     life: 6000,
                 });
             }
@@ -4089,31 +4505,591 @@ loadMoreGoogleReviews(): void {
     }
     onRazorWindowClosed(response) {
         this.isBookingSummary = false;
+        
+        console.log('💰 PAYMENT: Razorpay response received:', response);
+        
+        // First verify the payment with backend
         this.venueOrderService.handleVenuePayment(response).subscribe(
             (res: any) => {
+                console.log('💰 PAYMENT: Backend verification response:', res);
+                
                 if (res.status === 'Success') {
-                    this.messageService.add({
-                        key: 'toastMsg',
-                        severity: 'success',
-                        summary: 'Successful',
-                        detail: 'Venue order booked.',
-                        life: 6000,
-                    });
-                    setTimeout(() => {
-                        this.router.navigateByUrl('/my-profile?mode=bookings');
-                    }, 1000);
+                    // Payment successful - update analytics tracking immediately
+                    this.madePayment = true;
+                    console.log('✅ PAYMENT SUCCESS: Updated madePayment =', this.madePayment);
+                    
+                    // Payment verified successfully, now create booking record
+                    this.createBookingRecord(response.venueOrderId)
+                        .then(() => {
+                            console.log('✅ BOOKING: Booking record created successfully');
+                            this.messageService.add({
+                                key: 'toastMsg',
+                                severity: 'success',
+                                summary: 'Payment Successful!',
+                                detail: 'Your venue booking has been completed successfully!',
+                                life: 6000,
+                            });
+                            
+                            // Send updated analytics with payment completion
+                            this.sendPaymentAnalytics();
+                            
+                            // Refresh booked dates to include this new booking
+                            this.refreshBookedDates();
+                            
+                            setTimeout(() => {
+                                this.router.navigateByUrl('/my-profile?mode=bookings');
+                            }, 2000);
+                        })
+                        .catch((error) => {
+                            console.error('❌ BOOKING: Error creating booking record:', error);
+                            this.messageService.add({
+                                key: 'toastMsg',
+                                severity: 'warn',
+                                summary: 'Payment Successful',
+                                detail: 'Payment completed but booking record creation failed. Please contact support with your payment ID.',
+                                life: 8000,
+                            });
+                        });
                 }
                 if (res.status === 'pending') {
                     // payment pending show pending popup
+                    this.messageService.add({
+                        key: 'toastMsg',
+                        severity: 'info',
+                        summary: 'Payment Pending',
+                        detail: 'Your payment is being processed. Please wait.',
+                        life: 6000,
+                    });
                 }
                 if (res.status === 'failed') {
                     // payment failed tell to try again
+                    this.messageService.add({
+                        key: 'toastMsg',
+                        severity: 'error',
+                        summary: 'Payment Failed',
+                        detail: 'Payment failed. Please try again.',
+                        life: 6000,
+                    });
                 }
             },
             (err) => {
-                console.log('Payment error:', err);
+                console.log('Payment verification error:', err);
+                this.messageService.add({
+                    key: 'toastMsg',
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Payment verification failed. Please contact support.',
+                    life: 6000,
+                });
             }
         );
+    }
+
+    /**
+     * Creates a booking record in the database after successful payment
+     * @param venueOrderId - The ID of the venue order that was just created
+     */
+    async createBookingRecord(venueOrderId: string): Promise<void> {
+        try {
+            console.log('Creating booking record for venue order:', venueOrderId);
+            console.log('🔄 Current venue details:', this.venueDetails);
+            console.log('🔄 Current user details:', this.fullUserDetails);
+            console.log('🔄 Selected dates:', this.rangeDates);
+            console.log('🔄 Selected occasion:', this.sOccasion);
+            console.log('🔄 User ID:', this.userId);
+            console.log('🔄 Logged in user:', this.loggedInUser);
+            console.log('🔄 User ID extraction: this.userId =', this.userId, ', loggedInUser.userdata.id =', this.loggedInUser?.userdata?.id, ', loggedInUser.id =', this.loggedInUser?.id);
+            
+            // Validate required user data - check both userId and loggedInUser.userdata.id
+            const actualUserId = this.userId || this.loggedInUser?.userdata?.id || this.loggedInUser?.id;
+            console.log('🔄 Actual user ID resolved to:', actualUserId);
+            if (!actualUserId) {
+                throw new Error('User ID is required but not available');
+            }
+            
+            // If fullUserDetails is not loaded, try to load it synchronously
+            if (!this.fullUserDetails && actualUserId) {
+                console.log('🔄 User details not loaded, attempting to load...');
+                try {
+                    // Get user details synchronously if possible
+                    await new Promise((resolve, reject) => {
+                        this.userService.getUserDetails(actualUserId).subscribe(
+                            (data) => {
+                                this.fullUserDetails = data;
+                                console.log('✅ User details loaded successfully:', this.fullUserDetails);
+                                resolve(data);
+                            },
+                            (err) => {
+                                console.error('❌ Failed to load user details:', err);
+                                reject(err);
+                            }
+                        );
+                    });
+                } catch (error) {
+                    console.warn('⚠️ Could not load user details, proceeding with available data:', error);
+                }
+            }
+            
+            if (!this.fullUserDetails && !this.loggedInUser) {
+                throw new Error('User details are required but not available');
+            }
+            
+            // Prepare frontend booking data in the format expected by createBookingFromFrontend
+            const frontendBookingData = {
+                venueId: this.venueDetails.id,
+                venueName: this.venueDetails.name,
+                userId: actualUserId,
+                userName: this.fullUserDetails?.firstName && this.fullUserDetails?.lastName 
+                    ? `${this.fullUserDetails.firstName} ${this.fullUserDetails.lastName}` 
+                    : this.loggedInUser?.userdata?.firstname && this.loggedInUser?.userdata?.lastname
+                    ? `${this.loggedInUser.userdata.firstname} ${this.loggedInUser.userdata.lastname}`
+                    : this.loggedInUser?.userdata?.fullName || this.loggedInUser?.name || 'Unknown User',
+                userContact: this.fullUserDetails?.mobileNumber || this.fullUserDetails?.mobile || this.fullUserDetails?.phone || this.loggedInUser?.userdata?.mobile || this.loggedInUser?.mobileNumber || '',
+                userEmail: this.fullUserDetails?.email || this.loggedInUser?.userdata?.email || this.loggedInUser?.email || '',
+                occasionDate: this.selectedDate,
+                durationData: [
+                    {
+                        occasionStartDate: this.rangeDates[0],
+                        occasionEndDate: this.rangeDates[1],
+                        slotId: this.selectedSlots[0]?.slotId,
+                    },
+                ],
+                guestCount: this.selectedVenueCapacity?.toString() || this.capacity?.toString() || '0',
+                categoryId: this.sOccasion?.id,
+                selectedSlot: this.selectedSlots,
+                selectedFoodType: [this.selectedFoodTypeSlug],
+                selectedFoodMenuTypes: this.selectedFoodMenuTypes,
+                selectedDecor: this.selectedDecor,
+                decorPrice: this.selectedDecorPrice || 0,
+                foodPrice: this.totalFoodPrice || 0,
+                totalAmount: this.totalVenuePrice || 0,
+                paymentAmount: this.paymentAmount,
+                paymentType: this.paymentAmount,
+                orderType: 'book_now',
+                // Missing fields that are causing nulls in database - using same data sources as venue order
+                eventDuration: this.getEventDurationFromSlot() || this.selectedSlotsName || 'full',
+                foodMenuType: this.getFoodMenuTypeNames() || (this.selectedFoodMenuTypes && this.selectedFoodMenuTypes.length > 0 
+                    ? this.selectedFoodMenuTypes.join(', ') 
+                    : this.selectedFoodTypeSlug || 'standard'),
+                foodMenuPlate: this.getFoodMenuPlate() || (this.selectedFoodMenuTypes && this.selectedFoodMenuTypes.length > 0 
+                    ? this.selectedFoodMenuTypes[0] 
+                    : '2x2'),
+                // Analytics tracking fields - use actual component values
+                sendEnquiryClicked: this.sendEnquiryClicked,
+                clickedOnReserved: this.clickedOnReserved,
+                clickedOnBookNow: this.clickedOnBookNow,
+                madePayment: this.madePayment // Use component's madePayment value
+            };
+
+            // Debug analytics tracking values
+            console.log('📊 ANALYTICS DEBUG:');
+            console.log('   sendEnquiryClicked:', this.sendEnquiryClicked, '-> booking data:', frontendBookingData.sendEnquiryClicked);
+            console.log('   clickedOnReserved:', this.clickedOnReserved, '-> booking data:', frontendBookingData.clickedOnReserved);
+            console.log('   clickedOnBookNow:', this.clickedOnBookNow, '-> booking data:', frontendBookingData.clickedOnBookNow);
+            console.log('   madePayment will be:', frontendBookingData.madePayment);
+
+            // Debug the missing fields
+            console.log('🔍 DEBUG: Checking missing fields...');
+            console.log('🔍 eventDuration:', frontendBookingData.eventDuration);
+            console.log('🔍 selectedSlotsName:', this.selectedSlotsName);
+            console.log('🔍 selectedSlots:', this.selectedSlots);
+            console.log('🔍 foodMenuType:', frontendBookingData.foodMenuType);
+            console.log('🔍 selectedFoodMenuTypes:', this.selectedFoodMenuTypes);
+            console.log('🔍 selectedFoodMenuType:', this.selectedFoodMenuType);
+            console.log('🔍 selectedFoodTypeSlug:', this.selectedFoodTypeSlug);
+            console.log('🔍 foodMenuPlate:', frontendBookingData.foodMenuPlate);
+            console.log('🔍 selectedVenueCapacity:', this.selectedVenueCapacity);
+            
+            // Debug method returns
+            console.log('🔍 METHOD RETURNS:');
+            console.log('   getEventDurationFromSlot():', this.getEventDurationFromSlot());
+            console.log('   getFoodMenuTypeNames():', this.getFoodMenuTypeNames());
+            console.log('   getFoodMenuPlate():', this.getFoodMenuPlate());
+            
+            console.log('🔍 VENUE ORDER COMPARISON:');
+            console.log('   📦 VenueOrder.foodMenuType would be:', this.selectedFoodMenuTypes);
+            console.log('   📦 VenueOrder.foodType would be:', [this.selectedFoodTypeSlug]);
+            console.log('   📦 VenueOrder.durationData would be:', [{
+                occasionStartDate: this.rangeDates[0],
+                occasionEndDate: this.rangeDates[1], 
+                slotId: this.selectedSlots[0]?.slotId
+            }]);
+            
+            // Enhanced debugging - check each method individually
+            console.log('🔍 DETAILED DEBUG:');
+            console.log('   getEventDurationFromSlot() returns:', this.getEventDurationFromSlot());
+            console.log('   getFoodMenuTypeNames() returns:', this.getFoodMenuTypeNames());
+            console.log('   getFoodMenuPlate() returns:', this.getFoodMenuPlate());
+            
+            // If any of these are null, let's set robust fallback values to prevent nulls in database
+            if (!frontendBookingData.eventDuration || frontendBookingData.eventDuration === null) {
+                // Try multiple fallback sources
+                frontendBookingData.eventDuration = this.selectedSlotsName || 
+                                                  (this.selectedSlots && this.selectedSlots[0] && this.selectedSlots[0].slotName) ||
+                                                  'full';
+                console.log('🔧 Setting robust fallback eventDuration to:', frontendBookingData.eventDuration);
+            }
+            
+            if (!frontendBookingData.foodMenuType || frontendBookingData.foodMenuType === null) {
+                // Use multiple fallback sources
+                frontendBookingData.foodMenuType = this.selectedFoodTypeSlug || 
+                                                  (this.selectedFoodMenuTypes && this.selectedFoodMenuTypes.length > 0 
+                                                    ? this.selectedFoodMenuTypes.join(', ')
+                                                    : null) ||
+                                                  'standard';
+                console.log('🔧 Setting robust fallback foodMenuType to:', frontendBookingData.foodMenuType);
+            }
+            
+            if (!frontendBookingData.foodMenuPlate || frontendBookingData.foodMenuPlate === null) {
+                // Use guest count for a sensible default
+                const guestCount = parseInt(this.selectedVenueCapacity?.toString() || '0');
+                frontendBookingData.foodMenuPlate = guestCount <= 50 ? '1x1' : 
+                                                   guestCount <= 150 ? '2x2' : '3x3';
+                console.log('🔧 Setting robust fallback foodMenuPlate to:', frontendBookingData.foodMenuPlate, 'based on guestCount:', guestCount);
+            }
+
+            console.log('Booking data prepared:', JSON.stringify(frontendBookingData, null, 2));
+
+            // Final validation to ensure critical fields are never null
+            console.log('🔍 FINAL VALIDATION:');
+            if (frontendBookingData.eventDuration === null || frontendBookingData.eventDuration === undefined) {
+                frontendBookingData.eventDuration = 'full';
+                console.log('🚨 FORCED eventDuration to:', frontendBookingData.eventDuration);
+            }
+            if (frontendBookingData.foodMenuType === null || frontendBookingData.foodMenuType === undefined) {
+                frontendBookingData.foodMenuType = 'standard';
+                console.log('🚨 FORCED foodMenuType to:', frontendBookingData.foodMenuType);
+            }
+            if (frontendBookingData.foodMenuPlate === null || frontendBookingData.foodMenuPlate === undefined) {
+                frontendBookingData.foodMenuPlate = '2x2';
+                console.log('🚨 FORCED foodMenuPlate to:', frontendBookingData.foodMenuPlate);
+            }
+            
+            console.log('🔍 FINAL VALUES:');
+            console.log('   eventDuration:', frontendBookingData.eventDuration);
+            console.log('   foodMenuType:', frontendBookingData.foodMenuType);
+            console.log('   foodMenuPlate:', frontendBookingData.foodMenuPlate);
+
+            // Validate required fields before sending to API
+            const requiredFields = ['venueId', 'userId', 'userName', 'userContact', 'userEmail'];
+            const missingFields = requiredFields.filter(field => {
+                const value = frontendBookingData[field];
+                if (field === 'userName') {
+                    return !value || value === '' || value === 'Unknown User' || value === 'undefined undefined';
+                }
+                return !value || value === '';
+            });
+            
+            if (missingFields.length > 0) {
+                console.error('❌ Missing required fields:', missingFields);
+                console.error('❌ Current booking data:', frontendBookingData);
+                console.error('❌ Available user sources:');
+                console.error('   - fullUserDetails:', this.fullUserDetails);
+                console.error('   - loggedInUser:', this.loggedInUser);
+                console.error('   - userId:', this.userId);
+                
+                // Try to fix missing data if possible
+                if (missingFields.includes('userId') && this.loggedInUser?.id) {
+                    frontendBookingData.userId = this.loggedInUser.id;
+                    console.log('🔧 Fixed userId from loggedInUser:', frontendBookingData.userId);
+                }
+                
+                if (missingFields.includes('userContact')) {
+                    const contact = this.loggedInUser?.mobileNumber || this.loggedInUser?.mobile || this.loggedInUser?.phone;
+                    if (contact) {
+                        frontendBookingData.userContact = contact;
+                        console.log('🔧 Fixed userContact from loggedInUser:', frontendBookingData.userContact);
+                    }
+                }
+                
+                if (missingFields.includes('userEmail') && this.loggedInUser?.email) {
+                    frontendBookingData.userEmail = this.loggedInUser.email;
+                    console.log('🔧 Fixed userEmail from loggedInUser:', frontendBookingData.userEmail);
+                }
+                
+                if (missingFields.includes('userName')) {
+                    const name = this.loggedInUser?.name || this.loggedInUser?.firstName + ' ' + this.loggedInUser?.lastName || 'Guest User';
+                    if (name && name !== 'undefined undefined') {
+                        frontendBookingData.userName = name;
+                        console.log('🔧 Fixed userName from loggedInUser:', frontendBookingData.userName);
+                    }
+                }
+                
+                // Recheck after fixes
+                const stillMissingFields = requiredFields.filter(field => {
+                    const value = frontendBookingData[field];
+                    if (field === 'userName') {
+                        return !value || value === '' || value === 'Unknown User' || value === 'undefined undefined';
+                    }
+                    return !value || value === '';
+                });
+                
+                if (stillMissingFields.length > 0) {
+                    throw new Error(`Still missing required fields after fix attempts: ${stillMissingFields.join(', ')}`);
+                } else {
+                    console.log('✅ Fixed all missing fields, proceeding with booking');
+                }
+            }
+
+            // Create the booking using the booking service
+            console.log('📡 Calling booking service createBookingFromFrontend API...');
+            console.log('📡 FRONTEND -> BACKEND: Sending these exact values:');
+            console.log('   📡 eventDuration:', frontendBookingData.eventDuration);
+            console.log('   📡 foodMenuType:', frontendBookingData.foodMenuType);
+            console.log('   📡 foodMenuPlate:', frontendBookingData.foodMenuPlate);
+            console.log('📡 Full data being sent to backend:', JSON.stringify(frontendBookingData, null, 2));
+            
+            const response = await this.bookingService.createBookingFromFrontend(frontendBookingData).toPromise();
+            
+            console.log('📡 Booking service response:', response);
+            
+            if (response && response.success) {
+                console.log('✅ Booking created successfully:', response.data);
+                
+                // Refresh booked dates to update calendar
+                this.refreshBookedDates();
+                
+                // Optional: Track booking creation in analytics
+                this.trackBookingAnalytics(response.data);
+            } else {
+                const errorMessage = response?.message || 'Failed to create booking';
+                console.error('❌ Booking creation failed:', errorMessage);
+                throw new Error(errorMessage);
+            }
+
+        } catch (error) {
+            console.error('❌ Error in createBookingRecord:', error);
+            console.error('❌ Error details:', error.message);
+            throw error; // Re-throw to be caught by the calling method
+        }
+    }
+
+    /**
+     * Format date for booking (DD/MM/YYYY format)
+     */
+    /**
+     * Get event duration from selected slot
+     */
+    private getEventDurationFromSlot(): string {
+        console.log('🔍 getEventDurationFromSlot() called');
+        console.log('   selectedSlots:', this.selectedSlots);
+        console.log('   selectedSlotsName:', this.selectedSlotsName);
+        
+        // First check if we have any slots selected
+        if (!this.selectedSlots || this.selectedSlots.length === 0) {
+            console.log('   No selectedSlots found, checking selectedSlotsName...');
+            
+            // Check selectedSlotsName as fallback
+            if (this.selectedSlotsName) {
+                const lowerSlotName = this.selectedSlotsName.toString().toLowerCase();
+                console.log('   Using selectedSlotsName:', lowerSlotName);
+                
+                if (lowerSlotName.includes('morning')) return 'morning';
+                if (lowerSlotName.includes('evening')) return 'evening';
+                if (lowerSlotName.includes('night')) return 'night';
+                if (lowerSlotName.includes('full')) return 'full';
+                if (lowerSlotName.includes('afternoon')) return 'afternoon';
+                if (lowerSlotName.includes('noon')) return 'afternoon';
+                
+                return lowerSlotName; // Return the slot name itself
+            }
+            
+            return 'full'; // Default fallback - match backend enum
+        }
+        
+        // Try to get slot name from selectedSlotsName first, then from selectedSlots object
+        let slotName = this.selectedSlotsName;
+        
+        if (!slotName && this.selectedSlots[0]) {
+            // Try different possible property names for slot name
+            slotName = this.selectedSlots[0].slotName || 
+                      this.selectedSlots[0].slot || 
+                      this.selectedSlots[0].name ||
+                      this.selectedSlots[0].slotId;
+        }
+        
+        console.log('   Raw slot name found:', slotName);
+        
+        if (!slotName) {
+            console.log('   No slot name found, returning default');
+            return 'full'; // Default - match backend enum
+        }
+        
+        const lowerSlotName = slotName.toString().toLowerCase();
+        console.log('   Processed slot name (lowercase):', lowerSlotName);
+        
+        if (lowerSlotName.includes('morning')) return 'morning';
+        if (lowerSlotName.includes('evening')) return 'evening';
+        if (lowerSlotName.includes('night')) return 'night';
+        if (lowerSlotName.includes('full')) return 'full'; // Match backend enum
+        if (lowerSlotName.includes('afternoon')) return 'afternoon';
+        if (lowerSlotName.includes('noon')) return 'afternoon';
+        
+        // Return the slot name itself if no pattern matches
+        const result = lowerSlotName;
+        console.log('   Final result:', result);
+        return result;
+    }
+
+    /**
+     * Get food menu type names as comma-separated string
+     */
+    private getFoodMenuTypeNames(): string {
+        if (!this.selectedFoodMenuTypes || this.selectedFoodMenuTypes.length === 0) {
+            console.log('🔍 getFoodMenuTypeNames: No selectedFoodMenuTypes, returning null');
+            return null;
+        }
+        
+        // If selectedFoodMenuTypes contains objects with name property
+        if (typeof this.selectedFoodMenuTypes[0] === 'object') {
+            const result = this.selectedFoodMenuTypes.map(item => item.name || item.slug).join(', ');
+            console.log('🔍 getFoodMenuTypeNames: Object array result:', result);
+            return result;
+        }
+        
+        // If it's just an array of strings
+        const result = this.selectedFoodMenuTypes.join(', ');
+        console.log('🔍 getFoodMenuTypeNames: String array result:', result);
+        return result;
+    }
+
+    /**
+     * Get food menu plate type (1x1, 2x2, 3x3)
+     */
+    private getFoodMenuPlate(): string {
+        console.log('🔍 getFoodMenuPlate: Starting with selectedFoodMenuType:', this.selectedFoodMenuType);
+        console.log('🔍 getFoodMenuPlate: selectedFoodType:', this.selectedFoodType);
+        console.log('🔍 getFoodMenuPlate: selectedFoodMenuTypes:', this.selectedFoodMenuTypes);
+        
+        // Check if selectedFoodMenuType has plate information
+        if (this.selectedFoodMenuType && this.selectedFoodMenuType.plate) {
+            console.log('🔍 getFoodMenuPlate: Found plate in selectedFoodMenuType:', this.selectedFoodMenuType.plate);
+            return this.selectedFoodMenuType.plate;
+        }
+        
+        // Check if selectedFoodType has plate information
+        if (this.selectedFoodType && this.selectedFoodType.plate) {
+            console.log('🔍 getFoodMenuPlate: Found plate in selectedFoodType:', this.selectedFoodType.plate);
+            return this.selectedFoodType.plate;
+        }
+        
+        // Try to extract from selected food menu types array
+        if (this.selectedFoodMenuTypes && this.selectedFoodMenuTypes.length > 0) {
+            const firstMenuType = this.selectedFoodMenuTypes[0];
+            if (typeof firstMenuType === 'object' && firstMenuType.plate) {
+                console.log('🔍 getFoodMenuPlate: Found plate in first selectedFoodMenuTypes object:', firstMenuType.plate);
+                return firstMenuType.plate;
+            }
+            
+            // Check if it's a string that contains plate info
+            if (typeof firstMenuType === 'string') {
+                if (firstMenuType.includes('1x1')) {
+                    console.log('🔍 getFoodMenuPlate: Found 1x1 in string:', firstMenuType);
+                    return '1x1';
+                }
+                if (firstMenuType.includes('2x2')) {
+                    console.log('🔍 getFoodMenuPlate: Found 2x2 in string:', firstMenuType);
+                    return '2x2';
+                }
+                if (firstMenuType.includes('3x3')) {
+                    console.log('🔍 getFoodMenuPlate: Found 3x3 in string:', firstMenuType);
+                    return '3x3';
+                }
+            }
+        }
+        
+        // Default fallback based on guest count
+        const guestCount = parseInt(this.selectedVenueCapacity?.toString() || '0');
+        let result;
+        if (guestCount <= 50) result = '1x1';
+        else if (guestCount <= 150) result = '2x2';
+        else result = '3x3';
+        
+        console.log('🔍 getFoodMenuPlate: Using fallback based on guestCount', guestCount, '-> result:', result);
+        return result;
+    }
+
+    /**
+     * Track booking creation in analytics (optional)
+     */
+    private trackBookingAnalytics(bookingData: any): void {
+        try {
+            // You can enhance this based on your analytics requirements
+            console.log('Tracking booking analytics:', {
+                venueId: this.venueDetails.id,
+                bookingId: bookingData._id || bookingData.id,
+                amount: this.totalVenuePrice,
+                paymentType: this.paymentAmount
+            });
+            
+            // Add any additional analytics tracking here if needed
+        } catch (error) {
+            console.error('Error tracking booking analytics:', error);
+            // Don't throw here as this is optional functionality
+        }
+    }
+
+    /**
+     * Helper method to update booking analytics tracking fields
+     * This can be used in the future to track different user actions
+     * @param bookingId - ID of the booking to update
+     * @param analyticsData - Object containing analytics fields to update
+     */
+    async updateBookingAnalytics(bookingId: string, analyticsData: {
+        sendEnquiryClicked?: boolean;
+        clickedOnReserved?: boolean;
+        clickedOnBookNow?: boolean;
+        madePayment?: boolean;
+    }): Promise<void> {
+        try {
+            console.log('Updating booking analytics for booking:', bookingId, analyticsData);
+            
+            // Use the booking service to update tracking fields
+            const response = await this.bookingService.updateBooking(bookingId, {
+                details: analyticsData
+            }).toPromise();
+            
+            if (response.success) {
+                console.log('Booking analytics updated successfully');
+            } else {
+                console.error('Failed to update booking analytics:', response.message);
+            }
+        } catch (error) {
+            console.error('Error updating booking analytics:', error);
+        }
+    }
+
+    /**
+     * Method to be called when user clicks "Send Enquiry"
+     */
+    trackEnquiryClick(): void {
+        this.sendEnquiryClicked = true;
+        console.log('📊 ANALYTICS: User clicked Send Enquiry, sendEnquiryClicked =', this.sendEnquiryClicked);
+        
+        // Send updated analytics immediately
+        this.sendCurrentAnalytics();
+    }
+
+    /**
+     * Method to be called when user clicks "Reserve"
+     */
+    trackReserveClick(): void {
+        this.clickedOnReserved = true;
+        console.log('📊 ANALYTICS: User clicked Reserve, clickedOnReserved =', this.clickedOnReserved);
+        
+        // Send updated analytics immediately
+        this.sendCurrentAnalytics();
+    }
+
+    /**
+     * Method to be called when user clicks "Book Now"
+     */
+    trackBookNowClick(): void {
+        this.clickedOnBookNow = true;
+        console.log('📊 ANALYTICS: User clicked Book Now, clickedOnBookNow =', this.clickedOnBookNow);
+        
+        // Send updated analytics immediately
+        this.sendCurrentAnalytics();
     }
 
 
@@ -4146,6 +5122,31 @@ loadMoreGoogleReviews(): void {
         }
         
         this.renderer.removeClass(document.body, 'body-dark');
+    }
+
+    /**
+     * Refresh booked dates (can be called after a new booking is made)
+     */
+    refreshBookedDates() {
+        console.log('[DEBUG] Refreshing booked dates...');
+        this.loadVenueBookedDates();
+    }
+
+    /**
+     * Helper method to format date for API calls (DD/MM/YYYY format)
+     * Same format used in booking-analytics component
+     */
+    private formatDateForAPI(dateInput: Date | string): string {
+        let date: Date;
+        if (typeof dateInput === 'string') {
+            date = new Date(dateInput);
+        } else {
+            date = dateInput;
+        }
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
     }
 
 }

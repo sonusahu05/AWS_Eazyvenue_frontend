@@ -1,0 +1,467 @@
+<div class="booking-analytics-container">
+  <!-- Header Section -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">
+          <i class="pi pi-calendar"></i>
+          Booking Inventory Management
+        </h4>
+        <div class="header-actions">
+          <button 
+            *ngIf="selectedVenueId" 
+            class="btn btn-primary me-2"
+            (click)="showCreateBookingDialog = true">
+            <i class="pi pi-plus"></i>
+            Create Booking
+          </button>
+          <button 
+            *ngIf="selectedVenueId" 
+            class="btn btn-warning"
+            (click)="showBlockDatesDialog = true">
+            <i class="pi pi-ban"></i>
+            Block Dates
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Venue Selection (Admin Only) -->
+  <div *ngIf="isAdmin" class="card mb-4">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <label for="venueSelect" class="form-label">Select Venue</label>
+          <p-dropdown 
+            id="venueSelect"
+            [options]="venueOptions" 
+            [(ngModel)]="selectedVenueId"
+            (onChange)="onVenueSelect()"
+            optionLabel="name" 
+            optionValue="_id"
+            placeholder="Choose a venue"
+            class="w-100"
+            [showClear]="true">
+            <ng-template pTemplate="selectedItem">
+              <div *ngIf="selectedVenue">
+                <strong>{{selectedVenue.name}}</strong>
+                <small class="text-muted d-block">{{selectedVenue.city}}, {{selectedVenue.state}}</small>
+              </div>
+            </ng-template>
+            <ng-template let-venue pTemplate="item">
+              <div>
+                <strong>{{venue.name}}</strong>
+                <small class="text-muted d-block">{{venue.city}}, {{venue.state}}</small>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Venue Owner Info -->
+  <div *ngIf="isVenueOwner && selectedVenue" class="card mb-4">
+    <div class="card-body">
+      <h5>Managing: {{selectedVenue.name}}</h5>
+      <p class="text-muted">{{selectedVenue.city}}, {{selectedVenue.state}}</p>
+    </div>
+  </div>
+
+  <!-- Booking Summary -->
+  <div *ngIf="selectedVenueId" class="row mb-4">
+    <div class="col-md-3">
+      <div class="card text-center bg-primary text-white">
+        <div class="card-body">
+          <h3>{{bookingSummary.totalBookings}}</h3>
+          <p class="mb-0">Total Bookings</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center bg-success text-white">
+        <div class="card-body">
+          <h3>{{bookingSummary.confirmedBookings}}</h3>
+          <p class="mb-0">Confirmed</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center bg-warning text-white">
+        <div class="card-body">
+          <h3>{{bookingSummary.pendingBookings}}</h3>
+          <p class="mb-0">Pending</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center bg-danger text-white">
+        <div class="card-body">
+          <h3>{{bookingSummary.blockedDates}}</h3>
+          <p class="mb-0">Blocked Dates</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar -->
+  <div *ngIf="selectedVenueId" class="card">
+    <div class="card-body">
+      <full-calendar [options]="calendarOptions"></full-calendar>
+    </div>
+  </div>
+
+  <!-- No Venue Selected Message -->
+  <div *ngIf="!selectedVenueId" class="card">
+    <div class="card-body text-center py-5">
+      <i class="pi pi-calendar-plus" style="font-size: 3rem; color: #6c757d;"></i>
+      <h4 class="mt-3 text-muted">No Venue Selected</h4>
+      <p class="text-muted">
+        <span *ngIf="isAdmin">Please select a venue from the dropdown above to view its booking calendar.</span>
+        <span *ngIf="isVenueOwner">Loading your venue information...</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner-container">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  </div>
+</div>
+
+<!-- Create Booking Dialog -->
+<p-dialog 
+  header="Create New Booking" 
+  [(visible)]="showCreateBookingDialog" 
+  [style]="{width: '600px'}"
+  [modal]="true"
+  [closable]="true"
+  (onHide)="closeDialog('create')">
+  
+  <form [formGroup]="createBookingForm" (ngSubmit)="createBooking()">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="userName" class="form-label">Customer Name *</label>
+        <input 
+          type="text" 
+          id="userName"
+          formControlName="userName"
+          class="form-control"
+          [class.is-invalid]="createBookingForm.get('userName')?.invalid && createBookingForm.get('userName')?.touched">
+        <div class="invalid-feedback">Customer name is required</div>
+      </div>
+      
+      <div class="col-md-6 mb-3">
+        <label for="userContact" class="form-label">Contact Number *</label>
+        <input 
+          type="tel" 
+          id="userContact"
+          formControlName="userContact"
+          class="form-control"
+          [class.is-invalid]="createBookingForm.get('userContact')?.invalid && createBookingForm.get('userContact')?.touched">
+        <div class="invalid-feedback">Valid contact number is required</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 mb-3">
+        <label for="userEmail" class="form-label">Email *</label>
+        <input 
+          type="email" 
+          id="userEmail"
+          formControlName="userEmail"
+          class="form-control"
+          [class.is-invalid]="createBookingForm.get('userEmail')?.invalid && createBookingForm.get('userEmail')?.touched">
+        <div class="invalid-feedback">Valid email is required</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="startDate" class="form-label">Start Date *</label>
+        <input 
+          type="date" 
+          id="startDate"
+          formControlName="startDate"
+          class="form-control"
+          [class.is-invalid]="createBookingForm.get('startDate')?.invalid && createBookingForm.get('startDate')?.touched">
+        <div class="invalid-feedback">Start date is required</div>
+      </div>
+      
+      <div class="col-md-6 mb-3">
+        <label for="endDate" class="form-label">End Date *</label>
+        <input 
+          type="date" 
+          id="endDate"
+          formControlName="endDate"
+          class="form-control"
+          [class.is-invalid]="createBookingForm.get('endDate')?.invalid && createBookingForm.get('endDate')?.touched">
+        <div class="invalid-feedback">End date is required</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="occasion" class="form-label">Occasion *</label>
+        <p-dropdown 
+          id="occasion"
+          formControlName="occasion"
+          [options]="occasionOptions"
+          placeholder="Select occasion"
+          class="w-100"></p-dropdown>
+      </div>
+      
+      <div class="col-md-6 mb-3">
+        <label for="guestCount" class="form-label">Guest Count *</label>
+        <input 
+          type="text" 
+          id="guestCount"
+          formControlName="guestCount"
+          class="form-control"
+          placeholder="e.g., 100, 200, 100-200"
+          [class.is-invalid]="createBookingForm.get('guestCount')?.invalid && createBookingForm.get('guestCount')?.touched">
+        <div class="invalid-feedback">Guest count is required</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="eventDuration" class="form-label">Event Duration</label>
+        <p-dropdown 
+          id="eventDuration"
+          formControlName="eventDuration"
+          [options]="eventDurationOptions"
+          placeholder="Select duration"
+          class="w-100"></p-dropdown>
+      </div>
+      
+      <div class="col-md-6 mb-3">
+        <label for="decorType" class="form-label">Decoration Type</label>
+        <p-dropdown 
+          id="decorType"
+          formControlName="decorType"
+          [options]="decorTypeOptions"
+          placeholder="Select decoration"
+          class="w-100"></p-dropdown>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="decorPrice" class="form-label">Decoration Price</label>
+        <input 
+          type="number" 
+          id="decorPrice"
+          formControlName="decorPrice"
+          class="form-control"
+          placeholder="0">
+      </div>
+      
+      <div class="col-md-6 mb-3">
+        <label for="foodMenuType" class="form-label">Food Menu Type</label>
+        <p-dropdown 
+          id="foodMenuType"
+          formControlName="foodMenuType"
+          [options]="foodMenuOptions"
+          placeholder="Select food menu"
+          class="w-100"></p-dropdown>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="foodMenuPrice" class="form-label">Food Menu Price</label>
+        <input 
+          type="number" 
+          id="foodMenuPrice"
+          formControlName="foodMenuPrice"
+          class="form-control"
+          placeholder="0">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 mb-3">
+        <label for="notes" class="form-label">Notes</label>
+        <textarea 
+          id="notes"
+          formControlName="notes"
+          class="form-control"
+          rows="3"
+          placeholder="Additional notes..."></textarea>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button type="button" class="btn btn-secondary me-2" (click)="closeDialog('create')">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+        Create Booking
+      </button>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Block Dates Dialog -->
+<p-dialog 
+  header="Block Dates" 
+  [(visible)]="showBlockDatesDialog" 
+  [style]="{width: '500px'}"
+  [modal]="true"
+  [closable]="true"
+  (onHide)="closeDialog('block')">
+  
+  <form [formGroup]="blockDatesForm" (ngSubmit)="blockDates()">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="blockStartDate" class="form-label">Start Date *</label>
+        <input 
+          type="date" 
+          id="blockStartDate"
+          formControlName="startDate"
+          class="form-control"
+          [class.is-invalid]="blockDatesForm.get('startDate')?.invalid && blockDatesForm.get('startDate')?.touched">
+        <div class="invalid-feedback">Start date is required</div>
+      </div>
+      
+      <div class="col-md-6 mb-3">
+        <label for="blockEndDate" class="form-label">End Date *</label>
+        <input 
+          type="date" 
+          id="blockEndDate"
+          formControlName="endDate"
+          class="form-control"
+          [class.is-invalid]="blockDatesForm.get('endDate')?.invalid && blockDatesForm.get('endDate')?.touched">
+        <div class="invalid-feedback">End date is required</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 mb-3">
+        <label for="reason" class="form-label">Reason *</label>
+        <input 
+          type="text" 
+          id="reason"
+          formControlName="reason"
+          class="form-control"
+          placeholder="e.g., Maintenance, Private Event"
+          [class.is-invalid]="blockDatesForm.get('reason')?.invalid && blockDatesForm.get('reason')?.touched">
+        <div class="invalid-feedback">Reason is required</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 mb-3">
+        <label for="blockNotes" class="form-label">Notes</label>
+        <textarea 
+          id="blockNotes"
+          formControlName="notes"
+          class="form-control"
+          rows="3"
+          placeholder="Additional notes..."></textarea>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button type="button" class="btn btn-secondary me-2" (click)="closeDialog('block')">Cancel</button>
+      <button type="submit" class="btn btn-warning" [disabled]="loading">
+        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+        Block Dates
+      </button>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Booking Details Dialog -->
+<p-dialog 
+  header="Booking Details" 
+  [(visible)]="showBookingDetailsDialog" 
+  [style]="{width: '600px'}"
+  [modal]="true"
+  [closable]="true"
+  (onHide)="closeDialog('details')">
+  
+  <div *ngIf="selectedBooking" class="booking-details">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <strong>Customer:</strong> {{selectedBooking.userName}}
+      </div>
+      <div class="col-md-6">
+        <strong>Contact:</strong> {{selectedBooking.userContact}}
+      </div>
+    </div>
+    
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <strong>Email:</strong> {{selectedBooking.userEmail}}
+      </div>
+    </div>
+    
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <strong>Occasion:</strong> {{selectedBooking.occasion}}
+      </div>
+      <div class="col-md-6">
+        <strong>Guest Count:</strong> {{selectedBooking.guestCount}}
+      </div>
+    </div>
+    
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <strong>Duration:</strong> {{selectedBooking.eventDuration || 'Not specified'}}
+      </div>
+      <div class="col-md-6">
+        <strong>Status:</strong> 
+        <span class="badge" 
+              [class]="'bg-' + (selectedBooking.bookingStatus === 'confirmed' ? 'success' : 
+                               selectedBooking.bookingStatus === 'pending' ? 'warning' : 'secondary')">
+          {{selectedBooking.bookingStatus | titlecase}}
+        </span>
+      </div>
+    </div>
+    
+    <div *ngIf="selectedBooking.weddingDecorType" class="row mb-3">
+      <div class="col-md-6">
+        <strong>Decoration:</strong> {{selectedBooking.weddingDecorType}}
+      </div>
+      <div class="col-md-6">
+        <strong>Food Menu:</strong> {{selectedBooking.foodMenuType || 'Not specified'}}
+      </div>
+    </div>
+    
+    <div *ngIf="selectedBooking.totalAmount" class="row mb-3">
+      <div class="col-md-12">
+        <strong>Total Amount:</strong> ₹{{selectedBooking.totalAmount | number}}
+      </div>
+    </div>
+    
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <strong>Booking Type:</strong> 
+        <span class="badge bg-info">{{selectedBooking.bookingType | titlecase}}</span>
+      </div>
+      <div class="col-md-6">
+        <strong>Admin Booking:</strong> 
+        <span class="badge" [class]="selectedBooking.isBookedByAdmin ? 'bg-primary' : 'bg-secondary'">
+          {{selectedBooking.isBookedByAdmin ? 'Yes' : 'No'}}
+        </span>
+      </div>
+    </div>
+    
+    <div class="d-flex justify-content-end">
+      <button type="button" class="btn btn-danger" (click)="deleteBooking(selectedBooking.bookingId)">
+        <i class="pi pi-trash"></i>
+        Cancel Booking
+      </button>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- Toast Messages -->
+<p-toast key="toastMsg"></p-toast>
+
+<!-- Confirmation Dialog -->
+<p-confirmDialog></p-confirmDialog>

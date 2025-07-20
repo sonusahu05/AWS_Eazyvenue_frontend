@@ -158,6 +158,7 @@
                     #searchCalendar
                     dateFormat="dd/mm/yy"
                     [minDate]="minDateValue"
+                    [disabledDates]="disabledDates"
                     [(ngModel)]="rangeDates"
                     appendTo="body"
                     placeholder="Date"
@@ -1487,7 +1488,7 @@
         <div class="reviews-header-content">
             <h2 style="color: #333; font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
                 <i class="pi pi-star-fill" style="color: #ffc107;"></i>
-              Reviews of {{venueDetails.name}}
+              Reviews of {{venueDetails?.name}}
             </h2>
             
             <!-- Overall Rating Display -->
@@ -1531,7 +1532,7 @@
                     [style.box-shadow]="selectedReviewSource === 'eazyvenue' ? '0 2px 8px rgba(0,123,255,0.3)' : 'none'"
                     style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 14px; transition: all 0.3s ease;">
                     <img src="assets/images/logo.png" alt="EazyVenue" style="width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 1px solid #eee;" />
-                    <span>EazyVenue Reviews ({{(venueDetails.reviews?.length || 0)}})</span>
+                    <span>EazyVenue Reviews ({{(venueDetails?.reviews?.length || 0)}})</span>
                 </button>
                 
                 <button 
@@ -3892,6 +3893,7 @@
                     #searchCalendar
                     dateFormat="dd/mm/yy"
                     [minDate]="minDateValue"
+                    [disabledDates]="disabledDates"
                     [(ngModel)]="rangeDates"
                     appendTo="body"
                     placeholder="Date"

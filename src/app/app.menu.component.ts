@@ -31,7 +31,7 @@ export class AppMenuComponent implements OnInit {
     ngOnInit() {
         this.userData = this.tokenStorage.getUser();
         this.userRole = this.userData['userdata'].rolename;
-        
+
         // Initialize with Dashboard only
         this.model = [
             { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/manage/dashboard'] },
@@ -224,9 +224,6 @@ export class AppMenuComponent implements OnInit {
                 this.model.push(obj);
             }
         });
-        
-        // Add custom venue menu items if user has venue permissions
-        this.addCustomVenueMenuItems();
     }
 
     buildMenuFromModules(modules, userPermissions) {
@@ -283,33 +280,7 @@ export class AppMenuComponent implements OnInit {
             } 
         });
         
-        // Add custom venue menu items (if user has venue permissions)
-        this.addCustomVenueMenuItems();
-    }
 
-    /**
-     * Add custom venue-specific menu items for venue owners
-     */
-    addCustomVenueMenuItems() {
-        // Check if user is a venue owner or has venue-related permissions
-        if (this.userRole === 'Venue' || this.userRole === 'VenueOwner') {
-            const venueAnalyticsItem = {
-                label: 'Analytics',
-                icon: 'pi pi-chart-line',
-                items: [
-                    { label: 'Venue Analytics', icon: 'pi pi-chart-bar', routerLink: ['/manage/venue-analytics'] },
-                    { label: 'Click Analytics', icon: 'pi pi-eye', routerLink: ['/manage/click-analytics'] },
-                    { label: 'Revenue Analytics', icon: 'pi pi-dollar', routerLink: ['/manage/revenue-analytics'] },
-                    { label: 'Competition Analysis', icon: 'pi pi-users', routerLink: ['/manage/analytics/competition'] }
-                ]
-            };
-            
-            // Add venue analytics if not already present
-            const existingAnalytics = this.model.find(item => item.label === 'Analytics');
-            if (!existingAnalytics) {
-                this.model.push(venueAnalyticsItem);
-            }
-        }
     }
 
     /**

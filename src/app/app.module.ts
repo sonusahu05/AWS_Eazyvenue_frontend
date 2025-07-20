@@ -59,6 +59,7 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { PasswordModule } from 'primeng/password';
 import { PickListModule } from 'primeng/picklist';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { RatingModule } from 'primeng/rating';
 import { RippleModule } from 'primeng/ripple';
@@ -212,6 +213,7 @@ import { CancellationComponent } from './frontend/cancellation/cancellation.comp
 import { FaqComponent } from './frontend/faq/faq.component';
 import { HotMuhuratsComponent } from './frontend/hot-muhrats/muhrats.component';
 import { SignupComponent } from './pages/venue-signup.component';
+import { BookingAnalyticsComponent } from './manage/analytics/bookings/booking-analytics.component';
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
     timeGridPlugin,
@@ -283,6 +285,7 @@ FullCalendarModule.registerPlugins([
         PasswordModule,
         PickListModule,
         ProgressBarModule,
+        ProgressSpinnerModule,
         RadioButtonModule,
         RatingModule,
         RippleModule,
@@ -420,6 +423,7 @@ FullCalendarModule.registerPlugins([
         VendorDetailsComponent,
         VendorCompareComponent,
         CancellationComponent,
+        BookingAnalyticsComponent,
     ],
     providers: [
         { provide: LocationStrategy, useClass: PathLocationStrategy },
