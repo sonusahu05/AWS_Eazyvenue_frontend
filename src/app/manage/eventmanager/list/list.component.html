@@ -7,7 +7,7 @@
                 Venue Enquiry Dashboard
             </h2>
             <div class="header-stats">
-       <button 
+       <button
     class="action-btn add-enquiry-btn"
     (click)="openAddEnquiryModal()"
     *ngIf="!isVenueOwner"
@@ -15,6 +15,7 @@
     <i class="fas fa-plus"></i>
     Add Enquiries
 </button>
+<button pButton type="button" (click)="exportEnquiriesToCSV()" label="Export CSV" icon="pi pi-download" class="p-button-success"></button>
 <!-- Update only the filter section in your HTML -->
 <div class="filter-dropdown">
     <button
@@ -83,25 +84,6 @@
             <strong>{{enquiry.venueName}}</strong>
         </div>
 
-        <!-- Show dropdown only when no venue filter is active -->
-        <div *ngIf="enquiry.leadCount > 1 && !selectedVenueFilter" class="leads-dropdown">
-            <p-dropdown
-                [options]="getLeadOptions(enquiry)"
-                [(ngModel)]="enquiry.selectedLead"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="View all {{enquiry.leadCount}} leads"
-                (onChange)="onLeadChange(enquiry, $event)"
-                styleClass="custom-dropdown">
-                <ng-template pTemplate="selectedItem" let-option>
-                    <div class="dropdown-item-content">
-                        <i class="fas fa-users"></i>
-                        <span>{{option.label}}</span>
-                    </div>
-                </ng-template>
-            </p-dropdown>
-        </div>
-
         <!-- Show lead info when venue filter is active -->
         <div *ngIf="selectedVenueFilter" class="lead-indicator">
             <span class="lead-number">Lead {{enquiry.leadIndex}}</span>
@@ -124,9 +106,22 @@
 
                     <td class="leads-cell">
     <div class="leads-count">
-        <!-- Show total count when no filter, show "1 of X" when filtered -->
-        <span class="leads-badge" *ngIf="!selectedVenueFilter">{{enquiry.leadCount}}</span>
+        <!-- Show clickable total count when no filter and multiple leads -->
+        <span class="leads-badge clickable-leads"
+              *ngIf="!selectedVenueFilter && enquiry.leadCount > 1"
+              (click)="toggleLeadsExpansion(enquiry)"
+              [class.expanded]="isLeadsExpanded(enquiry)"
+              title="Click to view all leads">
+            {{enquiry.leadCount}}
+            <i class="fas fa-chevron-down expand-icon" [class.rotated]="isLeadsExpanded(enquiry)"></i>
+        </span>
+
+        <!-- Show non-clickable count for single lead -->
+        <span class="leads-badge" *ngIf="!selectedVenueFilter && enquiry.leadCount <= 1">{{enquiry.leadCount}}</span>
+
+        <!-- Show "1 of X" when filtered -->
         <span class="leads-badge" *ngIf="selectedVenueFilter">1</span>
+
         <small *ngIf="!selectedVenueFilter">leads</small>
         <small *ngIf="selectedVenueFilter">of {{enquiry.originalLeadCount}}</small>
     </div>
@@ -174,67 +169,74 @@
                     </td>
                 </tr>
 
-                <!-- Expanded Lead Details Row -->
-               <tr *ngIf="enquiry.showLeadDetails && enquiry.selectedLeadData && enquiry.showDropdown" class="expanded-row">
+                <!-- Expanded Leads List Row -->
+                <tr *ngIf="isLeadsExpanded(enquiry) && !selectedVenueFilter" class="expanded-row">
                     <td colspan="6" class="expanded-content">
-                        <div class="lead-details-card">
-                            <div class="lead-header">
-                                <h6><i class="fas fa-info-circle"></i> Selected Lead Details</h6>
+                        <div class="leads-list-container">
+                            <div class="leads-list-header">
+                                <h6><i class="fas fa-users"></i> All Leads for {{enquiry.venueName}} ({{enquiry.leadCount}} total)</h6>
+                                <button class="collapse-btn" (click)="toggleLeadsExpansion(enquiry)" title="Collapse">
+                                    <i class="fas fa-chevron-up"></i>
+                                </button>
                             </div>
 
-                            <div class="lead-info-grid">
-                                <div class="info-item">
-                                    <label>User</label>
-                                    <span>{{enquiry.selectedLeadData.userName}}</span>
-                                </div>
-                                <div class="info-item">
-                                    <label>Contact</label>
-                                    <span>{{enquiry.selectedLeadData.userContact}}</span>
-                                </div>
-                                <div class="info-item">
-                                    <label>Email</label>
-                                    <span>{{enquiry.selectedLeadData.userEmail || 'N/A'}}</span>
-                                </div>
-                                <div class="info-item">
-                                    <label>Date</label>
-                                    <span>{{enquiry.selectedLeadData.created_at | date:'dd/MM/yyyy HH:mm'}}</span>
-                                </div>
-                            </div>
+                            <div class="leads-list">
+                                <div class="lead-item" *ngFor="let lead of getAllLeadsForVenue(enquiry); let i = index">
+                                    <div class="lead-number-badge">
+                                        <span>{{i + 1}}</span>
+                                    </div>
 
-                            <div class="lead-actions">
-                                <div class="status-section">
-                                    <label>Status:</label>
-                                    <span class="status-indicator"
-                                          [ngClass]="{
-                                            'status-whatsapp': enquiry.selectedLeadData.status === 'WhatsApp Contacted',
-                                            'status-phone': enquiry.selectedLeadData.status === 'Phone Contacted',
-                                            'status-new': enquiry.selectedLeadData.status === 'New',
-                                            'status-closed': enquiry.selectedLeadData.status === 'Closed'
-                                          }">
-                                        <i class="fas fa-circle"></i>
-                                        {{enquiry.selectedLeadData.status}}
-                                    </span>
-                                </div>
+                                    <div class="lead-info">
+                                        <div class="lead-contact">
+                                            <div class="contact-name">
+                                                <i class="fas fa-user"></i>
+                                                <strong>{{lead.userName}}</strong>
+                                            </div>
+                                            <div class="contact-phone">
+                                                <i class="fas fa-phone-alt"></i>
+                                                {{lead.userContact}}
+                                            </div>
+                                            <div class="contact-email" *ngIf="lead.userEmail">
+                                                <i class="fas fa-envelope"></i>
+                                                {{lead.userEmail}}
+                                            </div>
+                                        </div>
 
-                                <div class="actions-section">
-                                    <label>Actions:</label>
-                                    <div class="action-buttons">
+                                        <div class="lead-meta">
+                                            <div class="lead-date">
+                                                <i class="fas fa-calendar-alt"></i>
+                                                {{lead.created_at | date:'dd/MM/yyyy HH:mm'}}
+                                            </div>
+                                            <div class="lead-status">
+                                                <span class="status-indicator"
+                                                      [ngClass]="{
+                                                        'status-whatsapp': lead.status === 'WhatsApp Contacted',
+                                                        'status-phone': lead.status === 'Phone Contacted',
+                                                        'status-new': lead.status === 'New',
+                                                        'status-closed': lead.status === 'Closed'
+                                                      }">
+                                                    <i class="fas fa-circle"></i>
+                                                    {{lead.status}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="lead-actions">
                                         <button
                                             class="action-btn whatsapp-btn"
-                                            (click)="contactViaWhatsAppForLead(enquiry.selectedLeadData, enquiry)"
+                                            (click)="contactViaWhatsAppForLead(lead, enquiry)"
                                             title="Contact via WhatsApp"
-                                            [disabled]="enquiry.selectedLeadData.status === 'WhatsApp Contacted'">
+                                            [disabled]="lead.status === 'WhatsApp Contacted'">
                                             <i class="fab fa-whatsapp"></i>
-                                            <span>WhatsApp</span>
                                         </button>
 
                                         <button
                                             class="action-btn phone-btn"
-                                            (click)="contactViaPhoneForLead(enquiry.selectedLeadData, enquiry)"
+                                            (click)="contactViaPhoneForLead(lead, enquiry)"
                                             title="Contact via Phone"
-                                            [disabled]="enquiry.selectedLeadData.status === 'Phone Contacted'">
+                                            [disabled]="lead.status === 'Phone Contacted'">
                                             <i class="fas fa-phone"></i>
-                                            <span>Call</span>
                                         </button>
                                     </div>
                                 </div>
@@ -265,7 +267,7 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        
+
         <div class="enquiry-form-container">
             <!-- Venue Selection Section -->
             <div class="venue-selection-section">
@@ -296,14 +298,14 @@
                 <div class="section-header">
                     <h4><i class="fas fa-users"></i> Customer Details</h4>
                     <div class="bulk-actions">
-                        <button type="button" 
+                        <button type="button"
                                 class="btn btn-outline-primary btn-sm"
                                 (click)="addNewLead()"
                                 [disabled]="leadEntries.length >= 10">
                             <i class="fas fa-plus"></i>
                             Add Lead
                         </button>
-                        <button type="button" 
+                        <button type="button"
                                 class="btn btn-outline-secondary btn-sm"
                                 (click)="clearAllLeads()"
                                 *ngIf="leadEntries.length > 1">
@@ -312,13 +314,13 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="leads-container">
-                    <div class="lead-entry" 
+                    <div class="lead-entry"
                          *ngFor="let lead of leadEntries; let i = index; trackBy: trackByLeadId">
                         <div class="lead-header">
                             <span class="lead-number">Lead #{{ i + 1 }}</span>
-                            <button type="button" 
+                            <button type="button"
                                     class="remove-lead-btn"
                                     (click)="removeLead(i)"
                                     *ngIf="leadEntries.length > 1"
@@ -326,39 +328,39 @@
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
-                        
+
                         <div class="lead-form">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Customer Name *</label>
-                                    <input type="text" 
-                                           [(ngModel)]="lead.userName" 
+                                    <input type="text"
+                                           [(ngModel)]="lead.userName"
                                            placeholder="Enter customer name"
                                            class="form-control"
                                            [class.error]="!lead.userName && showValidationErrors">
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label>Contact Number *</label>
-                                    <input type="tel" 
-                                           [(ngModel)]="lead.userContact" 
+                                    <input type="tel"
+                                           [(ngModel)]="lead.userContact"
                                            placeholder="Enter contact number"
                                            class="form-control"
                                            [class.error]="!lead.userContact && showValidationErrors"
                                            (input)="validateContactNumber(lead)">
                                 </div>
                             </div>
-                            
+
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="email" 
-                                           [(ngModel)]="lead.userEmail" 
+                                    <input type="email"
+                                           [(ngModel)]="lead.userEmail"
                                            placeholder="Enter email address"
                                            class="form-control"
                                            [class.error]="lead.userEmail && !isValidEmail(lead.userEmail) && showValidationErrors">
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label>Status</label>
                                     <p-dropdown
@@ -372,11 +374,11 @@
                                     </p-dropdown>
                                 </div>
                             </div>
-                            
+
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Enquiry Date *</label>
-                                    <p-calendar 
+                                    <p-calendar
                                         [(ngModel)]="lead.enquiryDate"
                                         [showTime]="true"
                                         [hourFormat]="24"
@@ -386,10 +388,10 @@
                                         >
                                     </p-calendar>
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label>Notes</label>
-                                    <textarea 
+                                    <textarea
                                         [(ngModel)]="lead.notes"
                                         placeholder="Add notes for this lead..."
                                         class="form-control textarea-control"
@@ -400,9 +402,9 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="add-more-section" *ngIf="leadEntries.length < 10">
-                    <button type="button" 
+                    <button type="button"
                             class="btn btn-dashed"
                             (click)="addNewLead()">
                         <i class="fas fa-plus"></i>
@@ -410,16 +412,16 @@
                     </button>
                 </div>
             </div>
-            
+
             <!-- Action Buttons -->
             <div class="form-actions">
-                <button type="button" 
-                        class="btn btn-secondary" 
+                <button type="button"
+                        class="btn btn-secondary"
                         (click)="closeAddEnquiryModal()">
                     Cancel
                 </button>
-                <button type="button" 
-                        class="btn btn-primary" 
+                <button type="button"
+                        class="btn btn-primary"
                         (click)="submitBulkEnquiries()"
                         [disabled]="!isFormValid() || submittingEnquiry">
                     <i class="fas fa-save" *ngIf="!submittingEnquiry"></i>
@@ -427,13 +429,13 @@
                     {{ submittingEnquiry ? 'Saving...' : 'Save All Enquiries' }}
                 </button>
             </div>
-            
+
             <!-- Summary Section -->
             <div class="summary-section" *ngIf="selectedVenues.length > 0 && leadEntries.length > 0">
                 <div class="summary-info">
                     <i class="fas fa-info-circle"></i>
                     <span>
-                        Total entries to be created: 
+                        Total entries to be created:
                         <strong>{{ selectedVenues.length }} venue(s) × {{ getValidLeadsCount() }} lead(s) = {{ selectedVenues.length * getValidLeadsCount() }} enquiries</strong>
                     </span>
                 </div>
