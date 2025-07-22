@@ -5,6 +5,7 @@ import { MessageService } from 'primeng/api';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { VenueService } from 'src/app/manage/venue/service/venue.service';
 import { isPlatformBrowser } from '@angular/common';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-enquiry-list',
@@ -37,6 +38,7 @@ uniqueVenues: any[] = [];
 filteredEnquiryList: any[] = [];
   userEmail: string = '';
   userVenueIds: string[] = []; // Store venue IDs owned by this user
+  expandedLeads: { [key: string]: boolean } = {}; // Track which venue's leads are expanded
 
   constructor(
     private enquiryService: EnquiryService,
@@ -45,7 +47,7 @@ filteredEnquiryList: any[] = [];
     private venueService: VenueService,
     private fb: FormBuilder,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) { 
+  ) {
     this.initializeLeadEntries();
   }
 
@@ -80,6 +82,89 @@ createNewLead() {
     status: 'New',
     notes: ''
   };
+}
+
+exportEnquiriesToCSV() {
+  const enquiriesToExport = this.getDisplayEnquiries();
+
+  if (enquiriesToExport.length === 0) {
+    this.messageService.add({
+      key: 'toastmsg',
+      severity: 'warn',
+      summary: 'No Data',
+      detail: 'No enquiries to export'
+    });
+    return;
+  }
+
+  const exportData = [];
+
+  enquiriesToExport.forEach(enquiry => {
+    if (enquiry.individualLead) {
+      exportData.push({
+        'Venue Name': enquiry.venueName,
+        'Customer Name': enquiry.userName,
+        'Contact Number': enquiry.userContact,
+        'Email': enquiry.userEmail || 'N/A',
+        'Status': enquiry.status,
+        'Enquiry Date': new Date(enquiry.created_at).toLocaleString(),
+        'Lead Number': `${enquiry.leadIndex} of ${enquiry.originalLeadCount}`
+      });
+    } else {
+      if (enquiry.allEnquiries && enquiry.allEnquiries.length > 1) {
+        enquiry.allEnquiries.forEach((lead: any, index: number) => {
+          exportData.push({
+            'Venue Name': enquiry.venueName,
+            'Customer Name': lead.userName,
+            'Contact Number': lead.userContact,
+            'Email': lead.userEmail || 'N/A',
+            'Status': lead.status,
+            'Enquiry Date': new Date(lead.created_at).toLocaleString(),
+            'Lead Number': `${index + 1} of ${enquiry.leadCount}`
+          });
+        });
+      } else {
+        exportData.push({
+          'Venue Name': enquiry.venueName,
+          'Customer Name': enquiry.userName,
+          'Contact Number': enquiry.userContact,
+          'Email': enquiry.userEmail || 'N/A',
+          'Status': enquiry.status,
+          'Enquiry Date': new Date(enquiry.created_at).toLocaleString(),
+          'Lead Number': '1 of 1'
+        });
+      }
+    }
+  });
+
+  // Convert to worksheet and then CSV
+  const ws = XLSX.utils.json_to_sheet(exportData);
+  const csv = XLSX.utils.sheet_to_csv(ws);
+
+  // Generate filename
+  const venueName = this.selectedVenueFilter
+    ? this.uniqueVenues.find(v => v.id === this.selectedVenueFilter)?.name
+    : 'All_Venues';
+  const timestamp = new Date().toISOString().slice(0, 10);
+  const filename = `${venueName}_Enquiries_${timestamp}.csv`;
+
+  // Trigger download
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  this.messageService.add({
+    key: 'toastmsg',
+    severity: 'success',
+    summary: 'Export Successful',
+    detail: `${exportData.length} enquiries exported as CSV`
+  });
 }
 
 loadVenueOptions() {
@@ -168,13 +253,13 @@ isFormValid(): boolean {
   if (this.selectedVenues.length === 0) {
     return false;
   }
-  
-  const validLeads = this.leadEntries.filter(lead => 
-    lead.userName && lead.userName.trim() && 
-    lead.userContact && lead.userContact.trim() && 
+
+  const validLeads = this.leadEntries.filter(lead =>
+    lead.userName && lead.userName.trim() &&
+    lead.userContact && lead.userContact.trim() &&
     this.isValidContactNumber(lead.userContact)
   );
-  
+
   return validLeads.length > 0;
 }
 
@@ -183,9 +268,9 @@ isValidContactNumber(contact: string): boolean {
 }
 
 getValidLeadsCount(): number {
-  return this.leadEntries.filter(lead => 
-    lead.userName && lead.userName.trim() && 
-    lead.userContact && lead.userContact.trim() && 
+  return this.leadEntries.filter(lead =>
+    lead.userName && lead.userName.trim() &&
+    lead.userContact && lead.userContact.trim() &&
     this.isValidContactNumber(lead.userContact)
   ).length;
 }
@@ -203,20 +288,20 @@ submitBulkEnquiries() {
   }
 
   this.submittingEnquiry = true;
-  
+
   // Filter valid leads
-  const validLeads = this.leadEntries.filter(lead => 
-    lead.userName && lead.userName.trim() && 
-    lead.userContact && lead.userContact.trim() && 
+  const validLeads = this.leadEntries.filter(lead =>
+    lead.userName && lead.userName.trim() &&
+    lead.userContact && lead.userContact.trim() &&
     this.isValidContactNumber(lead.userContact)
   );
 
   // Create enquiries for each venue-lead combination
   const enquiriesToCreate = [];
-  
+
   this.selectedVenues.forEach(venueId => {
     const selectedVenue = this.venueOptions.find(v => v.value === venueId);
-    
+
     validLeads.forEach(lead => {
       const enquiryData = {
         venueId: venueId,
@@ -229,13 +314,13 @@ submitBulkEnquiries() {
         created_at: lead.enquiryDate,
         isManualEntry: true
       };
-      
+
       enquiriesToCreate.push(enquiryData);
     });
   });
 
   console.log('📝 BULK ENQUIRY: Creating', enquiriesToCreate.length, 'enquiries');
-  
+
   // Submit all enquiries
   this.createEnquiriesSequentially(enquiriesToCreate, 0);
 }
@@ -245,30 +330,30 @@ createEnquiriesSequentially(enquiries: any[], currentIndex: number) {
     // All enquiries created successfully
     this.submittingEnquiry = false;
     this.closeAddEnquiryModal();
-    
+
     this.messageService.add({
       key: 'toastmsg',
       severity: 'success',
       summary: 'Success',
       detail: `Successfully created ${enquiries.length} enquiries!`
     });
-    
+
     this.loadEnquiries();
     return;
   }
 
   const currentEnquiry = enquiries[currentIndex];
-  
+
   this.enquiryService.createEnquiry(currentEnquiry).subscribe(
     (response) => {
       console.log(`📝 BULK ENQUIRY: Created enquiry ${currentIndex + 1}/${enquiries.length}`);
-      
+
       // Create next enquiry
       this.createEnquiriesSequentially(enquiries, currentIndex + 1);
     },
     (error) => {
       console.error(`📝 BULK ENQUIRY: Error creating enquiry ${currentIndex + 1}:`, error);
-      
+
       // Continue with next enquiry even if one fails
       this.createEnquiriesSequentially(enquiries, currentIndex + 1);
     }
@@ -502,6 +587,9 @@ getDisplayEnquiries() {
           this.totalRecords = enquiries.length;
           console.log('📊 DASHBOARD: Enquiry list populated:', this.enquiryList);
 
+          // Generate unique venues for filter dropdown
+          this.generateUniqueVenues();
+
           // Show message if venue owner has no enquiries after filtering
           if (this.isVenueOwner && enquiries.length === 0) {
             this.messageService.add({
@@ -568,30 +656,31 @@ getDisplayEnquiries() {
     return filteredEnquiries;
   }
 
-  // Get dropdown options for leads using allEnquiries from backend
-  getLeadOptions(enquiry: any): any[] {
+  // Toggle leads expansion for a venue
+  toggleLeadsExpansion(enquiry: any) {
+    const venueId = enquiry.venueId || enquiry.venue_id || enquiry.id;
+    this.expandedLeads[venueId] = !this.expandedLeads[venueId];
+
+    // Reset any previous dropdown selections when toggling
+    enquiry.selectedLeadData = null;
+    enquiry.showLeadDetails = false;
+
+    console.log('📊 Toggled leads expansion for venue:', venueId, 'Expanded:', this.expandedLeads[venueId]);
+  }
+
+  // Check if leads are expanded for a venue
+  isLeadsExpanded(enquiry: any): boolean {
+    const venueId = enquiry.venueId || enquiry.venue_id || enquiry.id;
+    return !!this.expandedLeads[venueId];
+  }
+
+  // Get all leads for a venue (for the expanded view)
+  getAllLeadsForVenue(enquiry: any): any[] {
     if (!enquiry.allEnquiries || enquiry.allEnquiries.length <= 1) {
-      return [];
+      return [enquiry]; // Return the single enquiry as an array
     }
-
-    return enquiry.allEnquiries.map((lead: any, index: number) => ({
-      label: `${lead.userName} - ${lead.userContact} (${new Date(lead.created_at).toLocaleDateString()})`,
-      value: index
-    }));
+    return enquiry.allEnquiries;
   }
-
-  // Handle dropdown change
-  onLeadChange(enquiry: any, event: any) {
-    const selectedIndex = event.value;
-    if (enquiry.allEnquiries && enquiry.allEnquiries[selectedIndex]) {
-      enquiry.selectedLeadData = enquiry.allEnquiries[selectedIndex];
-      enquiry.showLeadDetails = true;
-      enquiry.currentLeadIndex = selectedIndex;
-
-      console.log('📊 Selected lead:', enquiry.selectedLeadData);
-    }
-  }
-
   // Get current user data (latest or selected)
 getCurrentUser(enquiry: any): any {
     // If this is an individual lead from filtering, return the lead data

@@ -51,35 +51,48 @@ export class AppLoginComponent {
   }
 
   onSubmit(): void {
-    const username = this.loginform.value.email;
-    const password = this.loginform.value.password;
-    this.loading = true;
-    this.authService.login(username, password, this.type).subscribe(
-      data => {
-        this.userData = data;
-        this.tokenStorage.saveToken(this.userData.data.access_token);
-        this.tokenStorage.saveUser(this.userData.data);
-        this.tokenStorage.getAuthStatus(this.userData.data);
-        this.isLoginFailed = false;
-        this.isLoggedIn = true;
-        this.roles = this.tokenStorage.getClient();
-        this.getRoleList();
-        this.getRoleDetails();
-        this.getParentCategory();
-        setTimeout(() => {
-          //this.router.navigateByUrl("/manage/dashboard");
-          let currentUrl = '/manage/dashboard';
-          this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-          this.router.onSameUrlNavigation = 'reload';
-          this.router.navigate([currentUrl]);
-        }, 500);
-      },
-      err => {
-        this.errorMessage = err.error.data.message;
-        this.isLoginFailed = true;
+  const username = this.loginform.value.email;
+  const password = this.loginform.value.password;
+  this.loading = true;
+  this.isLoginFailed = false; // Reset error state
+  this.errorMessage = ''; // Clear previous error message
+
+  this.authService.login(username, password, this.type).subscribe({
+    next: (data) => {
+      this.userData = data;
+      this.tokenStorage.saveToken(this.userData.data.access_token);
+      this.tokenStorage.saveUser(this.userData.data);
+      this.tokenStorage.getAuthStatus(this.userData.data);
+      this.isLoginFailed = false;
+      this.isLoggedIn = true;
+      this.roles = this.tokenStorage.getClient();
+      this.getRoleList();
+      this.getRoleDetails();
+      this.getParentCategory();
+
+      setTimeout(() => {
+        let currentUrl = '/manage/dashboard';
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.router.onSameUrlNavigation = 'reload';
+        this.router.navigate([currentUrl]);
+      }, 500);
+    },
+    error: (err) => {
+      this.loading = false; // Stop loading immediately on error
+      this.errorMessage = err.error?.data?.message || 'Invalid credentials. Please try again.';
+      this.isLoginFailed = true;
+
+      // Reset form state for retry
+      this.loginform.enable();
+    },
+    complete: () => {
+      // This will run after success or error
+      if (!this.isLoginFailed) {
+        this.loading = false;
       }
-    );
-  }
+    }
+  });
+}
 
   getParentCategory() {
     var query = "?filterByDisable=false&filterByStatus=true&getOnlyParent=true";

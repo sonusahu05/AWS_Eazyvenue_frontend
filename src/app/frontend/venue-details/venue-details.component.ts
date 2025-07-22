@@ -770,6 +770,8 @@ getCarouselReviews() {
     }
   }
 
+  
+
   // Go to specific slide
   goToSlide(slideIndex: number) {
     this.currentSlide = slideIndex;

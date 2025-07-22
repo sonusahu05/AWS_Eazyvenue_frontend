@@ -37,7 +37,7 @@ $phone: #3b82f6;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   position: relative;
   z-index: 10001;
-  
+
   .enquiry-form-container {
     flex: 1;
     overflow-y: auto;
@@ -51,22 +51,22 @@ $phone: #3b82f6;
 :host ::ng-deep {
   .venue-multi-select {
     width: 100%;
-    
+
     .p-multiselect {
       width: 100%;
       max-width: 100%;
-      
+
       .p-multiselect-label {
         max-width: calc(100% - 2rem);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      
+
       &:hover {
         border-color: $primary;
       }
-      
+
       &.p-focus {
         border-color: $primary;
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -79,16 +79,16 @@ $phone: #3b82f6;
       z-index: 10002 !important;
       max-height: 200px !important;
       overflow-y: auto !important;
-      
+
       // Ensure it doesn't overflow modal
       max-width: calc(100vw - 4rem) !important;
-      
+
       // Better positioning
       transform: translateY(0) !important;
       top: 100% !important;
       left: 0 !important;
       right: auto !important;
-      
+
       // Responsive positioning
       @media (max-width: 768px) {
         max-width: calc(100vw - 2rem) !important;
@@ -97,19 +97,19 @@ $phone: #3b82f6;
       }
     }
   }
-  
+
   .status-dropdown {
     width: 100%;
-    
+
     .p-dropdown {
       width: 100%;
       border: 1px solid $border;
       border-radius: 6px;
-      
+
       &:hover {
         border-color: $primary;
       }
-      
+
       &.p-focus {
         border-color: $primary;
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -122,16 +122,16 @@ $phone: #3b82f6;
       z-index: 10002 !important;
       max-height: 200px !important;
       overflow-y: auto !important;
-      
+
       // Ensure it doesn't overflow modal
       max-width: calc(100vw - 4rem) !important;
-      
+
       // Better positioning
       transform: translateY(0) !important;
       top: 100% !important;
       left: 0 !important;
       right: auto !important;
-      
+
       // Responsive positioning
       @media (max-width: 768px) {
         max-width: calc(100vw - 2rem) !important;
@@ -140,19 +140,19 @@ $phone: #3b82f6;
       }
     }
   }
-  
+
   .calendar-control {
     width: 100%;
-    
+
     .p-calendar {
       width: 100%;
-      
+
       .p-inputtext {
         width: 100%;
         padding: 0.75rem;
         border: 1px solid $border;
         border-radius: 6px;
-        
+
         &:focus {
           border-color: $primary;
           box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -167,16 +167,16 @@ $phone: #3b82f6;
       z-index: 10002 !important;
       max-height: 300px !important;
       overflow-y: auto !important;
-      
+
       // Ensure it doesn't overflow modal
       max-width: calc(100vw - 4rem) !important;
-      
+
       // Better positioning
       transform: translateY(0) !important;
       top: 100% !important;
       left: 0 !important;
       right: auto !important;
-      
+
       // Responsive positioning
       @media (max-width: 768px) {
         max-width: calc(100vw - 2rem) !important;
@@ -185,68 +185,67 @@ $phone: #3b82f6;
       }
     }
   }
+
+  // ENHANCED: Global fix for all PrimeNG overlays in modal context
+  .add-enquiry-modal {
+    .p-multiselect-panel,
+    .p-dropdown-panel,
+    .p-datepicker,
+    .p-calendar-panel,
+    .p-overlay {
+      position: absolute !important;
+      z-index: 10002 !important;
+      max-height: 250px !important;
+      overflow-y: auto !important;
+
+      // Containment within modal
+      max-width: 100% !important;
+
+      // Prevent overflow
+      box-sizing: border-box !important;
+
+      // Better scrolling
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+    }
+  }
 }
 
-//   // ENHANCED: Global fix for all PrimeNG overlays in modal context
-//   .add-enquiry-modal {
-//     .p-multiselect-panel,
-//     .p-dropdown-panel,
-//     .p-datepicker,
-//     .p-calendar-panel,
-//     .p-overlay {
-//       position: absolute !important;
-//       z-index: 10002 !important;
-//       max-height: 250px !important;
-//       overflow-y: auto !important;
-      
-//       // Containment within modal
-//       max-width: 100% !important;
-      
-//       // Prevent overflow
-//       box-sizing: border-box !important;
-      
-//       // Better scrolling
-//       &::-webkit-scrollbar {
-//         width: 6px;
-//       }
-      
-//       &::-webkit-scrollbar-track {
-//         background: #f1f1f1;
-//       }
-      
-//       &::-webkit-scrollbar-thumb {
-//         background: #c1c1c1;
-//         border-radius: 3px;
-//       }
-      
-//       &::-webkit-scrollbar-thumb:hover {
-//         background: #a8a8a8;
-//       }
-//     }
-//   }
-// }
+// BACKUP: Global override as fallback
+.p-multiselect-panel,
+.p-dropdown-panel,
+.p-datepicker,
+.p-calendar-panel {
+  &.p-connected-overlay {
+    position: absolute !important;
+    z-index: 10002 !important;
 
-// // BACKUP: Global override as fallback
-// .p-multiselect-panel,
-// .p-dropdown-panel,
-// .p-datepicker,
-// .p-calendar-panel {
-//   &.p-connected-overlay {
-//     position: absolute !important;
-//     z-index: 10002 !important;
-    
-//     // Ensure proper containment
-//     max-width: calc(100vw - 2rem) !important;
-//     max-height: 250px !important;
-//     overflow-y: auto !important;
-//   }
-// }
+    // Ensure proper containment
+    max-width: calc(100vw - 2rem) !important;
+    max-height: 250px !important;
+    overflow-y: auto !important;
+  }
+}
 
 .header-stats {
   display: flex;
   gap: 1rem;
   align-items: center;
-  
+
   .add-enquiry-btn {
     background: $success;
     border: 1px solid $success;
@@ -260,7 +259,7 @@ $phone: #3b82f6;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    
+
     &:hover {
       background: darken($success, 5%);
       transform: translateY(-1px);
@@ -296,7 +295,7 @@ $phone: #3b82f6;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   position: relative;
   z-index: 10001;
-  
+
   .modal-header {
     display: flex;
     justify-content: space-between;
@@ -304,7 +303,7 @@ $phone: #3b82f6;
     padding: 1.5rem;
     border-bottom: 1px solid $border;
     flex-shrink: 0;
-    
+
     h3 {
       margin: 0;
       color: $dark;
@@ -313,12 +312,12 @@ $phone: #3b82f6;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      
+
       i {
         color: $success;
       }
     }
-    
+
     .close-btn {
       background: none;
       border: none;
@@ -326,19 +325,19 @@ $phone: #3b82f6;
       cursor: pointer;
       padding: 0.5rem;
       border-radius: 4px;
-      
+
       &:hover {
         background: rgba(239, 68, 68, 0.1);
         color: $danger;
       }
     }
   }
-  
+
   .enquiry-form-container {
     flex: 1;
     overflow-y: auto;
     padding: 1.5rem;
-    
+
     // Venue Selection Section
     .venue-selection-section {
       margin-bottom: 2rem;
@@ -346,7 +345,7 @@ $phone: #3b82f6;
       background: #f8fafc;
       border-radius: 8px;
       border: 1px solid $border;
-      
+
       .help-text {
         display: flex;
         align-items: center;
@@ -354,13 +353,13 @@ $phone: #3b82f6;
         color: $text-muted;
         font-size: 0.875rem;
         margin-top: 0.5rem;
-        
+
         i {
           color: $primary;
         }
       }
     }
-    
+
     // Bulk Leads Section
     .bulk-leads-section {
       .section-header {
@@ -368,7 +367,7 @@ $phone: #3b82f6;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1.5rem;
-        
+
         h4 {
           margin: 0;
           color: $dark;
@@ -377,18 +376,18 @@ $phone: #3b82f6;
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          
+
           i {
             color: $primary;
           }
         }
-        
+
         .bulk-actions {
           display: flex;
           gap: 0.5rem;
         }
       }
-      
+
       .leads-container {
         .lead-entry {
           background: white;
@@ -397,11 +396,11 @@ $phone: #3b82f6;
           margin-bottom: 1rem;
           overflow: hidden;
           transition: all 0.2s ease;
-          
+
           &:hover {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
           }
-          
+
           .lead-header {
             display: flex;
             justify-content: space-between;
@@ -409,13 +408,13 @@ $phone: #3b82f6;
             padding: 1rem 1.5rem;
             background: #f8fafc;
             border-bottom: 1px solid $border;
-            
+
             .lead-number {
               font-weight: 600;
               color: $dark;
               font-size: 0.875rem;
             }
-            
+
             .remove-lead-btn {
               background: none;
               border: none;
@@ -423,24 +422,24 @@ $phone: #3b82f6;
               cursor: pointer;
               padding: 0.25rem;
               border-radius: 4px;
-              
+
               &:hover {
                 background: rgba(239, 68, 68, 0.1);
                 color: $danger;
               }
             }
           }
-          
+
           .lead-form {
             padding: 1.5rem;
           }
         }
       }
-      
+
       .add-more-section {
         text-align: center;
         margin-top: 1rem;
-        
+
         .btn-dashed {
           background: none;
           border: 2px dashed $border;
@@ -452,7 +451,7 @@ $phone: #3b82f6;
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          
+
           &:hover {
             border-color: $primary;
             color: $primary;
@@ -461,19 +460,19 @@ $phone: #3b82f6;
         }
       }
     }
-    
+
     // Form Elements
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
       margin-bottom: 1rem;
-      
+
       @media (max-width: 768px) {
         grid-template-columns: 1fr;
       }
     }
-    
+
     .form-group {
       label {
         display: block;
@@ -482,7 +481,7 @@ $phone: #3b82f6;
         color: $dark;
         font-size: 0.875rem;
       }
-      
+
       .form-control {
         width: 100%;
         padding: 0.75rem;
@@ -490,28 +489,28 @@ $phone: #3b82f6;
         border-radius: 6px;
         font-size: 0.875rem;
         transition: border-color 0.2s ease;
-        
+
         &:focus {
           outline: none;
           border-color: $primary;
           box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
-        
+
         &.error {
           border-color: $danger;
-          
+
           &:focus {
             box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
           }
         }
-        
+
         &.textarea-control {
           resize: vertical;
           min-height: 60px;
         }
       }
     }
-    
+
     // Summary Section
     .summary-section {
       margin-top: 2rem;
@@ -519,20 +518,20 @@ $phone: #3b82f6;
       background: #f0f9ff;
       border-radius: 8px;
       border: 1px solid #bfdbfe;
-      
+
       .summary-info {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         color: #1e40af;
         font-size: 0.875rem;
-        
+
         i {
           color: #3b82f6;
         }
       }
     }
-    
+
     // Action Buttons
     .form-actions {
       display: flex;
@@ -542,7 +541,7 @@ $phone: #3b82f6;
       padding-top: 1rem;
       border-top: 1px solid $border;
       flex-shrink: 0;
-      
+
       .btn {
         padding: 0.75rem 1.5rem;
         border: 1px solid;
@@ -554,55 +553,55 @@ $phone: #3b82f6;
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        
+
         &:disabled {
           opacity: 0.6;
           cursor: not-allowed;
         }
-        
+
         &.btn-sm {
           padding: 0.5rem 1rem;
           font-size: 0.8125rem;
         }
-        
+
         &.btn-secondary {
           background: white;
           border-color: $border;
           color: $text-muted;
-          
+
           &:hover:not(:disabled) {
             background: $light;
             border-color: $secondary;
           }
         }
-        
+
         &.btn-primary {
           background: $primary;
           border-color: $primary;
           color: white;
-          
+
           &:hover:not(:disabled) {
             background: darken($primary, 5%);
             transform: translateY(-1px);
           }
         }
-        
+
         &.btn-outline-primary {
           background: none;
           border-color: $primary;
           color: $primary;
-          
+
           &:hover:not(:disabled) {
             background: $primary;
             color: white;
           }
         }
-        
+
         &.btn-outline-secondary {
           background: none;
           border-color: $secondary;
           color: $secondary;
-          
+
           &:hover:not(:disabled) {
             background: $secondary;
             color: white;
@@ -849,7 +848,10 @@ $phone: #3b82f6;
     text-align: center;
 
     .leads-badge {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
         background: $primary;
         color: white;
         padding: 0.5rem;
@@ -859,6 +861,34 @@ $phone: #3b82f6;
         min-width: 40px;
         height: 40px;
         line-height: 1.5;
+        transition: all 0.2s ease;
+
+        &.clickable-leads {
+            cursor: pointer;
+            border-radius: 20px;
+            padding: 0.5rem 0.75rem;
+            min-width: 60px;
+
+            &:hover {
+                background: darken($primary, 10%);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            }
+
+            &.expanded {
+                background: darken($primary, 5%);
+                box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+            }
+
+            .expand-icon {
+                font-size: 0.75rem;
+                transition: transform 0.2s ease;
+
+                &.rotated {
+                    transform: rotate(180deg);
+                }
+            }
+        }
     }
 
     small {
@@ -964,6 +994,8 @@ $phone: #3b82f6;
             &:hover:not(:disabled) {
                 background: darken($whatsapp, 5%);
             }
+
+            // Remove the i:before override - let Font Awesome handle it
         }
 
         &.phone-btn {
@@ -973,6 +1005,185 @@ $phone: #3b82f6;
 
             &:hover:not(:disabled) {
                 background: darken($phone, 5%);
+            }
+
+            // Remove the i:before override - let Font Awesome handle it
+        }
+    }
+}
+
+.export-btn {
+  background: #28a745;
+  &:hover {
+    background: #218838;
+  }
+  &:disabled {
+    background: #6c757d;
+  }
+}
+
+// Expanded Leads List Styles
+.leads-list-container {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 0.5rem 0;
+
+    .leads-list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid $border;
+
+        h6 {
+            margin: 0;
+            color: $dark;
+            font-size: 1.125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            i {
+                color: $primary;
+            }
+        }
+
+        .collapse-btn {
+            background: none;
+            border: 1px solid $border;
+            color: $text-muted;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: $light;
+                border-color: $primary;
+                color: $primary;
+            }
+        }
+    }
+
+    .leads-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        .lead-item {
+            background: white;
+            border: 1px solid $border;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s ease;
+
+            &:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                border-color: rgba(37, 99, 235, 0.3);
+            }
+
+            .lead-number-badge {
+                flex-shrink: 0;
+                width: 32px;
+                height: 32px;
+                background: $primary;
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                font-size: 0.875rem;
+            }
+
+            .lead-info {
+                flex: 1;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                align-items: center;
+
+                .lead-contact {
+                    .contact-name, .contact-phone, .contact-email {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        margin-bottom: 0.5rem;
+                        color: $dark;
+                        font-size: 0.875rem;
+
+                        &:last-child {
+                            margin-bottom: 0;
+                        }
+
+                        i {
+                            color: $text-muted;
+                            width: 14px;
+                            font-size: 0.75rem;
+                        }
+
+                        strong {
+                            font-weight: 600;
+                        }
+                    }
+
+                    .contact-email {
+                        color: $text-muted;
+                        font-size: 0.8125rem;
+                    }
+                }
+
+                .lead-meta {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+
+                    .lead-date {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        color: $text-muted;
+                        font-size: 0.8125rem;
+
+                        i {
+                            color: $text-muted;
+                            font-size: 0.75rem;
+                        }
+                    }
+
+                    .lead-status {
+                        .status-indicator {
+                            font-size: 0.75rem;
+                            padding: 0.25rem 0.5rem;
+                        }
+                    }
+                }
+            }
+
+            .lead-actions {
+                flex-shrink: 0;
+                display: flex;
+                gap: 0.5rem;
+
+                .action-btn {
+                    padding: 0.5rem;
+                    min-width: 40px;
+                    height: 40px;
+                    border-radius: 6px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    i {
+                        font-size: 1rem;
+                    }
+                }
             }
         }
     }
@@ -1056,16 +1267,16 @@ $phone: #3b82f6;
             }
         }
     }
-    
+
 
     // Modal-specific PrimeNG overrides with higher z-index
     .venue-multi-select {
     width: 100%;
-    
+
     .p-multiselect {
         width: 100%;
         max-width: 100%;
-        
+
         .p-multiselect-label {
             max-width: calc(100% - 2rem);
             white-space: nowrap;
@@ -1073,49 +1284,49 @@ $phone: #3b82f6;
             text-overflow: ellipsis;
         }
 
-            
+
             &:hover {
                 border-color: $primary;
             }
-            
+
             &.p-focus {
                 border-color: $primary;
                 box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
             }
         }
     }
-    
+
     .status-dropdown {
         width: 100%;
-        
+
         .p-dropdown {
             width: 100%;
             border: 1px solid $border;
             border-radius: 6px;
-            
+
             &:hover {
                 border-color: $primary;
             }
-            
+
             &.p-focus {
                 border-color: $primary;
                 box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
             }
         }
     }
-    
+
     .calendar-control {
         width: 100%;
-        
+
         .p-calendar {
             width: 100%;
-            
+
             .p-inputtext {
                 width: 100%;
                 padding: 0.75rem;
                 border: 1px solid $border;
                 border-radius: 6px;
-                
+
                 &:focus {
                     border-color: $primary;
                     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -1181,21 +1392,21 @@ $phone: #3b82f6;
     .add-enquiry-modal {
         margin: 0.5rem;
         max-width: none;
-        
+
         .modal-header {
             padding: 1rem;
-            
+
             h3 {
                 font-size: 1.125rem;
             }
         }
-        
+
         .enquiry-form-container {
             padding: 1rem;
-            
+
             .form-actions {
                 flex-direction: column;
-                
+
                 .btn {
                     width: 100%;
                     justify-content: center;
@@ -1251,6 +1462,75 @@ $phone: #3b82f6;
         .action-btn {
             width: 100%;
             justify-content: center;
+        }
+    }
+
+    // Mobile styles for expanded leads list
+    .leads-list-container {
+        padding: 1rem;
+
+        .leads-list-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+
+            h6 {
+                font-size: 1rem;
+            }
+        }
+
+        .leads-list {
+            .lead-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+                padding: 1rem;
+
+                .lead-number-badge {
+                    align-self: center;
+                }
+
+                .lead-info {
+                    grid-template-columns: 1fr;
+                    gap: 1rem;
+                    text-align: left;
+
+                    .lead-contact {
+                        .contact-name, .contact-phone, .contact-email {
+                            font-size: 0.875rem;
+                        }
+                    }
+
+                    .lead-meta {
+                        .lead-date {
+                            font-size: 0.8125rem;
+                        }
+                    }
+                }
+
+                .lead-actions {
+                    justify-content: center;
+                    gap: 1rem;
+
+                    .action-btn {
+                        flex: 1;
+                        max-width: 120px;
+                    }
+                }
+            }
+        }
+    }
+
+    // Mobile clickable leads badge
+    .leads-count {
+        .leads-badge.clickable-leads {
+            min-width: 50px;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.875rem;
+
+            .expand-icon {
+                font-size: 0.7rem;
+            }
         }
     }
 }
