@@ -5,6 +5,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule, BrowserTransferStateModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PathLocationStrategy, LocationStrategy } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 import { CustomFormsModule } from 'ng2-validation';
 import { AccordionModule } from 'primeng/accordion';
@@ -229,6 +230,7 @@ FullCalendarModule.registerPlugins([
         //NgxAudioPlayerModule,
         FormsModule,
         ReactiveFormsModule,
+        RouterModule,
         AppRoutingModule,
         HttpClientModule,
         BrowserAnimationsModule,

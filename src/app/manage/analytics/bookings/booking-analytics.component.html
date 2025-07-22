@@ -1,13 +1,13 @@
 <div class="booking-analytics-container">
-  <!-- Header Section -->
+  <!-- Header Section with Action Buttons at End -->
   <div class="card mb-4">
     <div class="card-header">
-      <div class="d-flex justify-content-between align-items-center">
+      <div class="d-flex justify-content-between align-items-center w-100">
         <h4 class="mb-0">
           <i class="pi pi-calendar"></i>
           Booking Inventory Management
         </h4>
-        <div class="header-actions d-flex gap-2">
+        <div class="header-actions d-flex gap-2 ms-auto">
           <button 
             *ngIf="selectedVenueId" 
             class="btn btn-primary"
@@ -27,7 +27,7 @@
     </div>
   </div>
 
-  <!-- Venue Selection (Admin Only) -->
+  <!-- Venue Selection Section -->
   <div *ngIf="isAdmin" class="card mb-4">
     <div class="card-body">
       <div class="row">
@@ -85,8 +85,20 @@
     </div>
   </div>
 
-  <!-- Booking Summary -->
-  <div *ngIf="selectedVenueId" class="row mb-4">
+  <!-- Booking Inventory Management Section - Specific Venue Only -->
+  <div *ngIf="selectedVenueId" class="inventory-management-section mb-4">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="pi pi-calendar-check"></i>
+          Inventory Management - {{selectedVenue?.name}}
+        </h5>
+        <p class="text-muted mb-0">Manage bookings, view calendar, and track availability for this specific venue</p>
+      </div>
+    </div>
+
+    <!-- Booking Summary -->
+    <div class="row mb-4">
     <div class="col-md-3">
       <div class="card text-center bg-primary text-white">
         <div class="card-body">
@@ -119,12 +131,391 @@
         </div>
       </div>
     </div>
+    </div>
+
+    <!-- Calendar -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="pi pi-calendar"></i>
+          Booking Calendar - {{selectedVenue?.name}}
+        </h6>
+        <p class="text-muted small mb-0">Interactive calendar showing bookings and availability</p>
+      </div>
+      <div class="card-body">
+        <full-calendar [options]="calendarOptions"></full-calendar>
+      </div>
+    </div>
   </div>
 
-  <!-- Calendar -->
-  <div *ngIf="selectedVenueId" class="card">
-    <div class="card-body">
-      <full-calendar [options]="calendarOptions"></full-calendar>
+  <!-- Comprehensive Analytics Section - Always Visible -->
+  <div class="analytics-section mb-4">
+    
+    <!-- Overview Stats Cards -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="pi pi-chart-line"></i>
+          Venue Performance Analytics
+        </h5>
+        <p class="text-muted mb-0">
+          <span *ngIf="selectedVenueId">Real-time insights for {{selectedVenue?.name || 'selected venue'}}</span>
+          <span *ngIf="!selectedVenueId">Overall analytics across all venues</span>
+        </p>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="analytics-card bg-primary text-white">
+              <div class="analytics-card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h4 class="mb-1">{{totalStats.totalViews || 0}}</h4>
+                    <p class="mb-0">Total Views</p>
+                  </div>
+                  <div class="analytics-icon">
+                    <i class="pi pi-eye"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="analytics-card bg-success text-white">
+              <div class="analytics-card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h4 class="mb-1">{{engagementFunnelData.enquirySent || 0}}</h4>
+                    <p class="mb-0">Enquiries Sent</p>
+                  </div>
+                  <div class="analytics-icon">
+                    <i class="pi pi-send"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="analytics-card bg-warning text-white">
+              <div class="analytics-card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h4 class="mb-1">{{engagementFunnelData.clickedReserve || 0}}</h4>
+                    <p class="mb-0">Reserve Clicks</p>
+                  </div>
+                  <div class="analytics-icon">
+                    <i class="pi pi-bookmark"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-3 col-sm-6 mb-3">
+            <div class="analytics-card bg-danger text-white">
+              <div class="analytics-card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h4 class="mb-1">{{engagementFunnelData.madePayment || 0}}</h4>
+                    <p class="mb-0">Payments</p>
+                  </div>
+                  <div class="analytics-icon">
+                    <i class="pi pi-credit-card"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- First Row: Quick Stats -->
+    <div class="row mb-4">
+      <!-- Quick Stats -->
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header bg-gradient-primary text-white">
+            <h6 class="mb-0">
+              <i class="pi pi-chart-bar"></i>
+              Quick Stats
+            </h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="stat-item p-3 bg-light rounded text-center">
+                  <div class="stat-info">
+                    <span class="stat-label text-muted d-block">
+                      <i class="pi pi-calendar text-primary"></i>
+                      Today's Views
+                    </span>
+                    <h4 class="stat-value text-primary fw-bold mb-0">
+                      {{totalStats.todayViews || 0}}
+                    </h4>
+                    <small class="badge bg-success">+{{getTodayViewsPercentage()}}%</small>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-3">
+                <div class="stat-item p-3 bg-light rounded text-center">
+                  <div class="stat-info">
+                    <span class="stat-label text-muted d-block">
+                      <i class="pi pi-send text-success"></i>
+                      Today's Enquiries
+                    </span>
+                    <h4 class="stat-value text-success fw-bold mb-0">
+                      {{totalStats.todayEnquiries || 0}}
+                    </h4>
+                    <small class="badge bg-info">+{{getTodayEnquiriesPercentage()}}%</small>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-3">
+                <div class="stat-item p-3 bg-light rounded text-center">
+                  <div class="stat-info">
+                    <span class="stat-label text-muted d-block">
+                      <i class="pi pi-trophy text-warning"></i>
+                      This Week
+                    </span>
+                    <h4 class="stat-value text-warning fw-bold mb-0">
+                      {{totalStats.weekViews || 0}}
+                    </h4>
+                    <small class="badge bg-warning">+{{getWeekViewsPercentage()}}%</small>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-3">
+                <div class="stat-item p-3 bg-light rounded text-center">
+                  <div class="stat-info">
+                    <span class="stat-label text-muted d-block">
+                      <i class="pi pi-star text-info"></i>
+                      Quality Score
+                    </span>
+                    <h4 class="stat-value text-info fw-bold mb-0">
+                      {{getFormattedQualityScore()}}
+                    </h4>
+                    <small class="badge" [class]="getQualityScoreBadgeClass()">{{getQualityScoreStatus()}}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Row: Enhanced User Engagement Funnel Chart -->
+    <div class="row mb-4">
+      <!-- Engagement Funnel Chart - Full Width for Better Visibility -->
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-gradient-info text-white">
+            <h6 class="mb-0">
+              <i class="pi pi-filter"></i>
+              User Engagement Funnel
+            </h6>
+            <p class="text-white-50 small mb-0">User journey conversion rates and engagement metrics</p>
+          </div>
+          <div class="card-body p-0">
+            <div class="funnel-chart-container w-100 position-relative" style="height: 500px; min-height: 500px;">
+              <p-chart 
+                *ngIf="funnelChartData && funnelChartData.labels" 
+                type="bar" 
+                [data]="funnelChartData" 
+                [options]="funnelChartOptions"
+                height="500"
+                width="100%"
+                styleClass="w-100 h-100"
+                [style]="{'width': '100%', 'height': '100%', 'display': 'block'}">
+              </p-chart>
+              <div *ngIf="!funnelChartData || !funnelChartData.labels" class="text-center text-muted py-5">
+                <i class="pi pi-chart-bar" style="font-size: 3rem;"></i>
+                <p class="mt-3">Loading funnel data...</p>
+              </div>
+            </div>
+            
+            <!-- Enhanced Conversion Rates -->
+            <div class="conversion-metrics mt-0 p-3 bg-light border-top">
+              <div class="row g-2">
+                <div class="col-md-3 col-sm-6">
+                  <div class="metric-item text-center p-3 bg-white rounded shadow-sm h-100">
+                    <span class="metric-label d-block text-muted small">View → Enquiry</span>
+                    <span class="metric-value fw-bold h4" 
+                          [style.color]="getConversionColor(engagementFunnelData.viewToEnquiryRate)">
+                      {{engagementFunnelData.viewToEnquiryRate || 0 | number:'1.1-1'}}%
+                    </span>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                  <div class="metric-item text-center p-3 bg-white rounded shadow-sm h-100">
+                    <span class="metric-label d-block text-muted small">Enquiry → Payment</span>
+                    <span class="metric-value fw-bold h4" 
+                          [style.color]="getConversionColor(engagementFunnelData.enquiryToPaymentRate)">
+                      {{engagementFunnelData.enquiryToPaymentRate || 0 | number:'1.1-1'}}%
+                    </span>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                  <div class="metric-item text-center p-3 bg-white rounded shadow-sm h-100">
+                    <span class="metric-label d-block text-muted small">Overall Conversion</span>
+                    <span class="metric-value fw-bold h4 text-primary">
+                      {{engagementFunnelData.overallConversionRate || 0 | number:'1.1-1'}}%
+                    </span>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                  <div class="metric-item text-center p-3 bg-white rounded shadow-sm h-100">
+                    <span class="metric-label d-block text-muted small">Total Users</span>
+                    <span class="metric-value fw-bold h4 text-dark">
+                      {{engagementFunnelData.totalViews || 0 | number}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Third Row: Hot Dates and Recent Leads -->
+    <div class="row mb-4">
+      <!-- Hot Booking Dates -->
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header bg-gradient-warning text-white">
+            <h6 class="mb-0">
+              <i class="pi pi-calendar-times"></i>
+              Hot Booking Dates (Future)
+            </h6>
+            <p class="text-white-50 small mb-0">Upcoming popular booking dates and peak periods</p>
+          </div>
+          <div class="card-body" style="height: 500px; overflow-y: auto;">
+            <p-table 
+              [value]="getFutureHotDates()" 
+              [responsive]="true"
+              styleClass="p-datatable-sm modern-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="text-center">Date</th>
+                  <th class="text-center">Demand</th>
+                  <th class="text-center">Views</th>
+                  <th class="text-center">Enquiries</th>
+                  <th class="text-center">Top Occasion</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-hotDate let-i="rowIndex">
+                <tr [class]="i < 3 ? 'top-hot-date' : ''">
+                  <td class="text-center">
+                    <div class="date-display">
+                      <strong class="text-primary">{{hotDate.date | date:'dd'}}</strong>
+                      <small class="text-muted d-block">{{hotDate.date | date:'MMM yyyy'}}</small>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <div class="heat-indicator">
+                      <div class="circular-progress" [attr.data-percentage]="hotDate.heatLevel">
+                        <div class="circle">
+                          <div class="progress-circle" 
+                               [style.background]="'conic-gradient(#28a745 ' + hotDate.heatLevel + '%, #e9ecef 0)'">
+                            <span class="percentage">{{hotDate.heatLevel}}%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-info rounded-pill">{{hotDate.totalViews}}</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-success rounded-pill">{{hotDate.enquiries}}</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-warning rounded-pill" 
+                          [title]="'Demand Count: ' + (hotDate.occasionDemandCount || 0)">
+                      {{hotDate.highestDemandOccasion || 'N/A'}}
+                    </span>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="5" class="text-center text-muted py-4">
+                    <i class="pi pi-calendar-plus" style="font-size: 1.5rem;"></i>
+                    <p class="mt-2">No upcoming hot dates available</p>
+                    <small class="text-muted">Hot dates are calculated based on future user activity and demand</small>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Leads and User Activity -->
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-header bg-gradient-success text-white">
+            <h6 class="mb-0">
+              <i class="pi pi-users"></i>
+              Recent Leads & Activities
+            </h6>
+            <p class="text-white-50 small mb-0">Latest user interactions and enquiries for selected venue</p>
+          </div>
+          <div class="card-body" style="height: 500px; overflow-y: auto; padding: 1rem;">
+            <div class="leads-container" style="height: 100%;">
+              <div *ngFor="let lead of leadsData.slice(0, 10); let i = index" 
+                   class="lead-item mb-2 p-2 border rounded hover-shadow">
+                <div class="row align-items-center g-1">
+                  <div class="col-12 col-sm-4 mb-2 mb-sm-0">
+                    <div class="user-info d-flex align-items-center">
+                      <div class="user-avatar me-2 flex-shrink-0">
+                        <i class="pi pi-user text-white rounded-circle p-1" style="font-size: 0.8rem;"></i>
+                      </div>
+                      <div class="user-details flex-grow-1 min-w-0">
+                        <strong class="d-block text-truncate" style="font-size: 0.85rem;">{{lead.userName || 'Anonymous'}}</strong>
+                        <small class="text-muted text-truncate d-block" style="font-size: 0.75rem;">{{lead.userContact || 'No contact'}}</small>
+                        <small *ngIf="!selectedVenue && lead.venueName" class="d-block text-info text-truncate" style="font-size: 0.7rem;">
+                          <i class="pi pi-building"></i> {{lead.venueName}}
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-4 mb-2 mb-sm-0">
+                    <span class="activity-badge badge rounded-pill w-100 text-truncate" 
+                          [class]="'bg-' + getActivityColor(lead.activityType)"
+                          style="font-size: 0.7rem;">
+                      <i class="pi" [class]="lead.activityIcon"></i>
+                      {{lead.activityDescription}}
+                    </span>
+                  </div>
+                  <div class="col-12 col-sm-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+                      <small class="text-muted mb-1 mb-sm-0" style="font-size: 0.7rem;">{{lead.activityDate | date:'dd MMM, HH:mm'}}</small>
+                      <span class="badge rounded-pill" [class]="'bg-' + lead.statusColor" style="font-size: 0.65rem;">
+                        {{lead.status}}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div *ngIf="leadsData.length === 0" class="text-center text-muted py-4 d-flex align-items-center justify-content-center h-100">
+                <div>
+                  <i class="pi pi-info-circle" style="font-size: 2rem;"></i>
+                  <p class="mt-2">No recent leads available</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -134,7 +525,7 @@
       <i class="pi pi-calendar-plus" style="font-size: 3rem; color: #6c757d;"></i>
       <h4 class="mt-3 text-muted">No Venue Selected</h4>
       <p class="text-muted">
-        <span *ngIf="isAdmin">Please select a venue from the dropdown above to view its booking calendar.</span>
+        <span *ngIf="isAdmin">Please select a venue from the dropdown above to view its booking calendar and analytics.</span>
         <span *ngIf="isVenueOwner">Loading your venue information...</span>
         <span *ngIf="!isAdmin && !isVenueOwner">Please log in with proper permissions to access booking management.</span>
       </p>

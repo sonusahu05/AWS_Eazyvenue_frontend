@@ -10,6 +10,14 @@
         <div class="header-actions">
           <button 
             *ngIf="selectedVenueId" 
+            class="btn btn-success me-2"
+            routerLink="/manage/analytics/venue-insights"
+            [queryParams]="{venueId: selectedVenueId}">
+            <i class="pi pi-chart-line"></i>
+            Advanced Analytics
+          </button>
+          <button 
+            *ngIf="selectedVenueId" 
             class="btn btn-primary me-2"
             (click)="showCreateBookingDialog = true">
             <i class="pi pi-plus"></i>
