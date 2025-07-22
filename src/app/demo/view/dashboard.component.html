@@ -107,8 +107,8 @@
         </div>
     </div>
 
-    <!-- Other dashboard content can go here -->
-    <div class="p-grid">
+    <!-- Dashboard Statistics - Only for Admins -->
+    <div class="p-grid" *ngIf="isAdmin">
         <div class="p-col-12 p-md-6 p-lg-3">
             <div class="overview-box sales">
                 <div class="overview-box-icon">
@@ -116,43 +116,28 @@
                 </div>
                 <div class="overview-box-content">
                     <div class="overview-box-title">Total Venues</div>
-                    <div class="overview-box-value">1</div>
+                    <div class="overview-box-value" *ngIf="!dashboardLoading">{{ totalVenues }}</div>
+                    <div class="overview-box-value" *ngIf="dashboardLoading">
+                        <i class="pi pi-spin pi-spinner"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="p-col-12 p-md-6 p-lg-3">
-            <div class="overview-box orders">
+            <div class="overview-box enquiries clickable" (click)="showEnquiriesDetails()">
                 <div class="overview-box-icon">
-                    <i class="pi pi-calendar"></i>
+                    <i class="pi pi-send"></i>
                 </div>
                 <div class="overview-box-content">
-                    <div class="overview-box-title">Bookings</div>
-                    <div class="overview-box-value">0</div>
+                    <div class="overview-box-title">Send Enquiries</div>
+                    <div class="overview-box-value" *ngIf="!dashboardLoading">{{ sendEnquiries }}</div>
+                    <div class="overview-box-value" *ngIf="dashboardLoading">
+                        <i class="pi pi-spin pi-spinner"></i>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="p-col-12 p-md-6 p-lg-3">
-            <div class="overview-box users">
-                <div class="overview-box-icon">
-                    <i class="pi pi-users"></i>
-                </div>
-                <div class="overview-box-content">
-                    <div class="overview-box-title">Venue Owners</div>
-                    <div class="overview-box-value">1</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="p-col-12 p-md-6 p-lg-3">
-            <div class="overview-box revenue">
-                <div class="overview-box-icon">
-                    <i class="pi pi-dollar"></i>
-                </div>
-                <div class="overview-box-content">
-                    <div class="overview-box-title">Revenue</div>
-                    <div class="overview-box-value">₹0L</div>
+                <div class="click-hint" *ngIf="sendEnquiries > 0">
+                    <small>Click to view details</small>
                 </div>
             </div>
         </div>
@@ -168,6 +153,59 @@
     header="Confirmation"
     icon="pi pi-exclamation-triangle">
 </p-confirmDialog>
+
+<!-- Send Enquiries Modal -->
+<p-dialog
+    header="Send Enquiries Details"
+    [(visible)]="showEnquiriesModal"
+    [modal]="true"
+    [style]="{width: '80vw', maxWidth: '1000px'}"
+    [closable]="true"
+    (onHide)="closeEnquiriesModal()">
+
+    <div *ngIf="sendEnquiriesList.length === 0" class="p-text-center p-p-4">
+        <i class="pi pi-info-circle" style="font-size: 3rem; color: #2196F3;"></i>
+        <h6>No send enquiries found</h6>
+        <p class="p-text-secondary">There are no send enquiries at the moment.</p>
+    </div>
+
+    <div *ngIf="sendEnquiriesList.length > 0">
+        <p-dataView
+            [value]="sendEnquiriesList"
+            layout="list"
+            [paginator]="true"
+            [rows]="10">
+
+            <ng-template let-enquiry pTemplate="listItem">
+                <div class="enquiry-item p-p-3 p-mb-3 p-shadow-1 p-border-round">
+                    <div class="p-d-flex p-jc-between p-ai-start">
+                        <div class="enquiry-details">
+                            <h6 class="p-m-0 p-mb-2">Enquiry ID: {{ enquiry._id || enquiry.id }}</h6>
+                            <div class="p-mb-1">
+                                <strong>Customer ID:</strong> {{ enquiry.customerId }}
+                            </div>
+                            <div class="p-mb-1">
+                                <strong>Guest Count:</strong> {{ enquiry.guestcnt }}
+                            </div>
+                            <div class="p-mb-1">
+                                <strong>Price:</strong> ₹{{ enquiry.price | number }}
+                            </div>
+                            <div class="p-mb-1">
+                                <strong>Created:</strong> {{ enquiry.created_at | date:'medium' }}
+                            </div>
+                        </div>
+                        <div class="enquiry-status">
+                            <span class="p-tag p-tag-info">{{ enquiry.orderType }}</span>
+                            <span class="p-tag p-tag-success p-ml-2" *ngIf="enquiry.status">Active</span>
+                            <span class="p-tag p-tag-danger p-ml-2" *ngIf="!enquiry.status">Inactive</span>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </p-dataView>
+    </div>
+</p-dialog>
+
 
 <style>
 .venue-approval-card {
@@ -249,5 +287,45 @@
 .notification h6 {
     margin: 0;
     font-size: 1rem;
+}
+
+.enquiries .overview-box-icon {
+    background: #e8f5e8;
+    color: #388e3c;
+}
+
+.booknow .overview-box-icon {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.clickable {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.clickable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.click-hint {
+    text-align: center;
+    margin-top: 0.5rem;
+    color: #666;
+}
+
+.enquiry-item {
+    background: white;
+    border: 1px solid #e0e0e0;
+}
+
+.enquiry-details h6 {
+    color: #333;
+    font-weight: 600;
+}
+
+.enquiry-status {
+    text-align: right;
 }
 </style>
