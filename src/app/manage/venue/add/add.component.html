@@ -181,19 +181,19 @@
                             </div>
                         </div>
 
-                        <div class="p-field p-col-12">
+                        <!-- <div class="p-field p-col-12">
     <label for="menuimg">Menu Images</label>
-    <p-fileUpload 
-        name="menufiles[]" 
-        multiple="multiple" 
+    <p-fileUpload
+        name="menufiles[]"
+        multiple="multiple"
         chooseLabel="Upload Menu Images"
-        uploadLabel="Show data" 
-        cancelLabel="Cancel" 
+        uploadLabel="Show data"
+        cancelLabel="Cancel"
         accept="image/*"
-        maxFileSize="{{imageSize}}" 
-        auto="auto" 
+        maxFileSize="{{imageSize}}"
+        auto="auto"
         customUpload="true"
-        (uploadHandler)="menuUploader($event)" 
+        (uploadHandler)="menuUploader($event)"
         style="padding-top:20px;display: block;">
         <ng-template pTemplate="content">
             <div class="menu-images">
@@ -207,7 +207,7 @@
             </div>
         </ng-template>
     </p-fileUpload>
-</div>
+</div> -->
                         <div class="p-field p-col-4">
                             <label for="minRevenue">Minimum Revenue<span class="mandatory-fields">*</span></label>
                             <p-inputNumber inputId="minRevenue" formControlName="minRevenue"
@@ -455,19 +455,19 @@
                                 <div *ngIf="f.amenities.errors.required">Please enter amenities details</div>
                             </div>
                         </div>
-                        <div class="p-field p-col-12">
+                        <!-- <div class="p-field p-col-12">
     <label for="amenities">Amenities</label>
     <div class="amenities-selection">
         <div *ngFor="let amenity of amenitiesList; let i = index" class="amenity-item">
-            <p-checkbox 
-                [value]="amenity.name" 
-                [(ngModel)]="selectedAmenities" 
+            <p-checkbox
+                [value]="amenity.name"
+                [(ngModel)]="selectedAmenities"
                 [label]="amenity.name"
                 [inputId]="'amenity-' + i">
             </p-checkbox>
         </div>
     </div>
-</div>
+</div> -->
                             <div class="p-field p-col-2">
                                 <label for="venuePrice">Venue Price<span class="mandatory-fields">*</span></label>
                                 <p-inputNumber inputId="venuePrice" formControlName="venuePrice"
