@@ -34,14 +34,6 @@ export class AddComponent implements OnInit {
     isGoogleMapsLoaded = false;
     selectedVenueCoordinates: { lat: number, lng: number } = null;
     notprofile: boolean;
-    amenitiesList = [
-    { name: 'WiFi', icon: 'wifi-icon.png' },
-    { name: 'AC', icon: 'ac-icon.png' },
-    { name: 'Swimming Pool', icon: 'pool-icon.png' },
-    { name: 'Sound System', icon: 'sound-icon.png' },
-    { name: 'Green Rooms', icon: 'green-room-icon.png' },
-    { name: 'Parking', icon: 'parking-icon.png' }
-];
 selectedAmenities: string[] = [];
 menuImages: any[] = [];
 menuImagesArray: any[] = [];
@@ -224,8 +216,6 @@ public metaDescription: string;
             kitchendetails: [''],
             decorationdetails: [''],
             amenities: [''],
-            amenitiesArray: [[]],
-            menuImages: [[]],
             // Conditionally add validators based on user role
             views: [this.isVenueOwner ? 1 : '', this.isVenueOwner ? [] : [Validators.required]],
             disable: [false],
@@ -252,34 +242,12 @@ public metaDescription: string;
         return this.venueForm.controls;
     }
 
-    menuUploader(event) {
-    if (isPlatformBrowser(this.platformId)) {
-        for (let file of event.files) {
-            let reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                if (reader.result != null) {
-                    this.menuImages.push({
-                        'menu_image_src': reader.result,
-                        'alt': file.name,
-                        'file': file
-                    });
-                }
-            }
-        }
-    }
-}
-
-removeMenuImage(index: number) {
-        this.menuImages.splice(index, 1);
-        this.uploadedFiles.splice(index, 1);
-    }
 
     loadGoogleMaps() {
         if (!isPlatformBrowser(this.platformId)) {
             return;
         }
-        
+
         if (typeof google !== 'undefined' && google.maps) {
             this.isGoogleMapsLoaded = true;
             this.initAutocomplete();
@@ -302,7 +270,7 @@ removeMenuImage(index: number) {
         if (!isPlatformBrowser(this.platformId)) {
             return;
         }
-        
+
         const input = document.getElementById('venue-name-input') as HTMLInputElement;
         if (!input) return;
 
@@ -728,25 +696,6 @@ removeMenuImage(index: number) {
 
                 });
             }
-            this.menuImagesArray = [];
-            if (this.menuImages != undefined && this.menuImages.length > 0) {
-                this.menuImages.forEach((element, index) => {
-                    this.menuImagesArray.push({ 
-                        'file': element.file, 
-                        'alt': element.alt || 'Menu image', 
-                        'default': false 
-                    });
-                });
-            }
-            venueData['menuImages'] = this.menuImagesArray;
-
-            // *** ADD THIS: Process amenities ***
-            const amenitiesArray = this.amenitiesList.map(amenity => ({
-                name: amenity.name,
-                icon: amenity.icon,
-                enabled: this.selectedAmenities.includes(amenity.name)
-            }));
-            venueData['amenitiesArray'] = amenitiesArray;
             venueData['metaUrl'] = this.venueForm.get('metaUrl').value;
         venueData['metaKeywords'] = this.venueForm.get('metaKeywords').value;
         venueData['metaDescription'] = this.venueForm.get('metaDescription').value;
