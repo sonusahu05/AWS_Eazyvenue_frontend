@@ -49,6 +49,40 @@ export class VenueService {
     }
 
     /**
+     * Upload menu PDF for a venue
+     * @param venueId The ID of the venue
+     * @param file The PDF file to upload
+     */
+    uploadMenuPDF(venueId: string, file: File): Observable<any> {
+        const formData = new FormData();
+        formData.append('menuPDF', file);
+
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${this.authtoken}`
+        });
+
+        return this.http.post(`${API_URL}/uploadMenuPDF/${venueId}`, formData, {
+            headers
+        });
+    }
+
+    /**
+     * Get menu PDF URL for a venue
+     * @param venueId The ID of the venue
+     */
+    getMenuPDFUrl(venueId: string): Observable<any> {
+        return this.http.get(`${API_URL}/${venueId}`, this.httpOptions)
+            .pipe(
+                switchMap((venue: any) => {
+                    if (venue.menuPDF && venue.menuPDF.path) {
+                        return of(`${environment.apiUrl}${venue.menuPDF.path}`);
+                    }
+                    return of(null);
+                })
+            );
+    }
+
+    /**
      * Send notification to venue owner about status change
      */
     sendVenueStatusNotification(notificationData: any): Observable<any> {

@@ -45,7 +45,93 @@
     font-size: 15px;
     font-weight: 500;
     transition: all 0.2s;
+}
 
+// Amenities Section
+.amenities_1 {
+    margin-bottom: 1.5rem;
+
+    .media {
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.2s;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .media-left {
+            margin-right: 15px;
+
+            .icon {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                img {
+                    max-width: 100%;
+                    height: auto;
+                }
+            }
+        }
+
+        .media-body {
+            display: flex;
+            align-items: center;
+
+            h4.amenities-size {
+                margin: 0;
+                font-size: 14px;
+                font-weight: 500;
+                color: #333;
+            }
+        }
+    }
+}
+
+// Menu PDF Section
+.menu-pdf-section {
+    margin-top: 1rem;
+
+    .pdf-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: all 0.2s;
+
+        &:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h4 {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .text-muted {
+            font-size: 12px;
+        }
+
+        .pi-file-pdf {
+            margin-right: 10px;
+        }
+
+        button {
+            transition: all 0.2s;
+
+            &:hover {
+                transform: translateY(-1px);
+            }
+        }
+    }
+}
+
+.venue-action-button {
     &:hover,
     &:focus {
         background: #eb3438;

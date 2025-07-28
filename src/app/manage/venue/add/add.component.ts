@@ -34,9 +34,21 @@ export class AddComponent implements OnInit {
     isGoogleMapsLoaded = false;
     selectedVenueCoordinates: { lat: number, lng: number } = null;
     notprofile: boolean;
-selectedAmenities: string[] = [];
-menuImages: any[] = [];
-menuImagesArray: any[] = [];
+    selectedAmenities: string[] = [];
+    amenitiesList: any[] = [
+        { name: 'Parking', value: 'parking' },
+        { name: 'WiFi', value: 'wifi' },
+        { name: 'Air Conditioning', value: 'ac' },
+        { name: 'Power Backup', value: 'power_backup' },
+        { name: 'Security', value: 'security' },
+        { name: 'Wheelchair Access', value: 'wheelchair' },
+        { name: 'Smoking Area', value: 'smoking_area' },
+        { name: 'Bar', value: 'bar' }
+    ];
+    menuPDFFile: File | null = null;
+    menuPDFUrl: string = '';
+    menuImages: any[] = [];
+    menuImagesArray: any[] = [];
     decor2Image: any;
     decor3Image: any;
     public decor1Image: any;
@@ -142,6 +154,54 @@ public metaDescription: string;
     public eazyVenueRating = environment.eazyVenueRating;
     public selectedGoogleRating;
     public selectedEazyVenueRating;
+
+    onMenuPDFUpload(event: any) {
+        const file = event.files[0];
+        if (file) {
+            this.menuPDFFile = file;
+            // Create a URL for preview if needed
+            this.menuPDFUrl = URL.createObjectURL(file);
+
+            // If we're editing a venue and have an id, upload immediately
+            if (this.id) {
+                this.uploadMenuPDF(this.id);
+            }
+        }
+    }
+
+    private uploadMenuPDF(venueId: string) {
+        if (this.menuPDFFile) {
+            this.VenueService.uploadMenuPDF(venueId, this.menuPDFFile).subscribe({
+                next: (response) => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Menu PDF uploaded successfully'
+                    });
+                },
+                error: (error) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: 'Failed to upload menu PDF'
+                    });
+                    console.error('Error uploading menu PDF:', error);
+                }
+            });
+        }
+    }
+
+    onAmenityChange(event: any) {
+        this.selectedAmenities = event.value;
+        this.venueForm.patchValue({
+            amenities: this.selectedAmenities
+        });
+    }
+
+    removeMenuPDF() {
+        this.menuPDFFile = null;
+        this.menuPDFUrl = '';
+    }
     constructor(
         private VenueService: VenueService,
         private tokenStorageService: TokenStorageService,
@@ -183,6 +243,7 @@ public metaDescription: string;
             name: ['', [Validators.required]],
             category: ['', [Validators.required]],
             propertyType: ['', [Validators.required]],
+            amenities: [[]],
             foodType: ['', [Validators.required]],
             email: ['', [Validators.required, Validators.email, CustomValidators.email]],
             shortdescription: [''],
@@ -215,7 +276,6 @@ public metaDescription: string;
             parkingdetails: [''],
             kitchendetails: [''],
             decorationdetails: [''],
-            amenities: [''],
             // Conditionally add validators based on user role
             views: [this.isVenueOwner ? 1 : '', this.isVenueOwner ? [] : [Validators.required]],
             disable: [false],
