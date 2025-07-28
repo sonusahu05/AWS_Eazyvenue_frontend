@@ -1,0 +1,267 @@
+<!-- Career Header Section -->
+<div class="career-header py-5 text-center">
+    <div class="container">
+        <div class="header-content">
+            <h1 class="display-4">Join Our Team</h1>
+            <p class="lead">Build Your Career with Eazy Venue</p>
+            <p class="mt-4">We're looking for passionate individuals who want to make a difference in the event venue industry.</p>
+        </div>
+    </div>
+</div>
+
+<!-- What We Do Section -->
+<section class="what-we-do-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2 class="section-title">What We Do</h2>
+                <p class="lead">Eazy Venue is revolutionizing the event planning industry by connecting event organizers with the perfect venues.</p>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h5>Venue Discovery</h5>
+                            <p>Helping customers find the perfect venues for their special events across multiple cities.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <h5>Vendor Network</h5>
+                            <p>Building strong partnerships with venue owners and event service providers.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div>
+                            <h5>Technology Innovation</h5>
+                            <p>Creating seamless digital experiences through cutting-edge web and mobile platforms.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>1000+</h3>
+                        <p>Venues Listed</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>5000+</h3>
+                        <p>Events Hosted</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>50+</h3>
+                        <p>Cities Covered</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>10000+</h3>
+                        <p>Happy Customers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- What We Look For Section -->
+<section class="what-we-look-section py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center section-title">What We Look For</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="quality-card">
+                    <i class="fas fa-lightbulb"></i>
+                    <h4>Innovation</h4>
+                    <p>We seek creative problem-solvers who think outside the box and bring fresh ideas to the table.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="quality-card">
+                    <i class="fas fa-handshake"></i>
+                    <h4>Collaboration</h4>
+                    <p>Team players who can work effectively with diverse groups and contribute to a positive work environment.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="quality-card">
+                    <i class="fas fa-rocket"></i>
+                    <h4>Growth Mindset</h4>
+                    <p>Individuals passionate about learning, growing, and adapting in our fast-paced industry.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="quality-card">
+                    <i class="fas fa-heart"></i>
+                    <h4>Customer Focus</h4>
+                    <p>People who genuinely care about creating exceptional experiences for our customers.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="quality-card">
+                    <i class="fas fa-cogs"></i>
+                    <h4>Technical Excellence</h4>
+                    <p>Skilled professionals who strive for quality and excellence in their craft.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="quality-card">
+                    <i class="fas fa-globe"></i>
+                    <h4>Impact Driven</h4>
+                    <p>Motivated individuals who want to make a meaningful impact in the events industry.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Experience Level Selection -->
+<section class="experience-selection py-5">
+    <div class="container">
+        <h2 class="text-center section-title">Find Your Path</h2>
+        <p class="text-center lead mb-5">Whether you're just starting your career or you're an experienced professional, we have opportunities for you.</p>
+        <div class="row justify-content-center">
+            <div class="col-md-5 mb-4">
+                <div class="path-card" (click)="setExperienceFilter('fresher')">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>I'm a Fresher</h3>
+                    <p>New to the industry? Start your journey with us through our internship and entry-level programs.</p>
+                    <ul>
+                        <li>Comprehensive training programs</li>
+                        <li>Mentorship opportunities</li>
+                        <li>Hands-on project experience</li>
+                        <li>Career development support</li>
+                    </ul>
+                    <button class="btn btn-outline-primary">View Entry-Level Roles</button>
+                </div>
+            </div>
+            <div class="col-md-5 mb-4">
+                <div class="path-card" (click)="setExperienceFilter('professional')">
+                    <i class="fas fa-briefcase"></i>
+                    <h3>I'm a Professional</h3>
+                    <p>Experienced in your field? Join our team of experts and help us scale to new heights.</p>
+                    <ul>
+                        <li>Senior and leadership positions</li>
+                        <li>Competitive compensation packages</li>
+                        <li>Flexible work arrangements</li>
+                        <li>Innovation and autonomy</li>
+                    </ul>
+                    <button class="btn btn-outline-primary">View Professional Roles</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Internship Section -->
+<section class="internship-section py-5 bg-light" *ngIf="experienceFilter === 'fresher'">
+    <div class="container">
+        <h2 class="text-center section-title">Internship Opportunities</h2>
+        <p class="text-center lead mb-5">Gain real-world experience and kickstart your career with our comprehensive internship programs.</p>
+        <div class="row">
+            <div class="col-md-6 mb-4" *ngFor="let internship of internships">
+                <div class="card h-100 internship-card">
+                    <div class="card-body">
+                        <h4 class="card-title">{{internship.title}}</h4>
+                        <div class="internship-meta mb-3">
+                            <span class="badge badge-success">{{internship.duration}}</span>
+                            <span class="badge badge-info">{{internship.type}}</span>
+                            <span class="badge badge-warning">{{internship.stipend}}</span>
+                        </div>
+                        <p class="card-text">{{internship.description}}</p>
+                        <div class="skills-required">
+                            <h6>Skills Required:</h6>
+                            <div class="skill-tags">
+                                <span class="skill-tag" *ngFor="let skill of internship.skills">{{skill}}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary mt-3" (click)="selectRole(internship.title)">Apply Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Open Positions Section -->
+<section class="positions-section py-5" [ngClass]="{'bg-light': experienceFilter !== 'fresher'}" *ngIf="experienceFilter !== ''">
+    <div class="container">
+        <h2 class="text-center section-title">
+            <span *ngIf="experienceFilter === 'professional'">Professional Positions</span>
+            <span *ngIf="experienceFilter === 'fresher'">Entry-Level Positions</span>
+        </h2>
+        <div class="row">
+            <div class="col-md-6 mb-4" *ngFor="let role of getFilteredRoles()">
+                <div class="card h-100 position-card">
+                    <div class="card-body">
+                        <h3 class="card-title">{{role.title}}</h3>
+                        <div class="job-meta mb-3">
+                            <span class="badge badge-primary">{{role.type}}</span>
+                            <span class="badge badge-info">{{role.experience}}</span>
+                            <span class="badge badge-secondary">{{role.location}}</span>
+                            <span class="badge" [ngClass]="role.level === 'Senior' ? 'badge-warning' : 'badge-success'">{{role.level}}</span>
+                        </div>
+                        <p class="card-text">{{role.description}}</p>
+                        <div class="requirements">
+                            <h6>Key Requirements:</h6>
+                            <ul>
+                                <li *ngFor="let req of role.requirements">{{req}}</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-primary" (click)="selectRole(role.title)">Apply Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Show All Button -->
+        <div class="text-center mt-4">
+            <button class="btn btn-outline-secondary" (click)="clearExperienceFilter()">
+                <i class="fas fa-arrow-left"></i> Back to Choose Your Path
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Application Form Section -->
+<section class="application-form-section py-5 bg-light" id="applicationForm" *ngIf="selectedRole">
+    <div class="container">
+        <h2 class="text-center mb-5">Apply for {{selectedRole}}</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">{{selectedRole}} - Application</h4>
+                    </div>
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-file-alt fa-3x text-primary mb-4"></i>
+                        <h5>Ready to Apply?</h5>
+                        <p class="lead">Click the button below to open our application form in a new window.</p>
+                        <p class="text-muted">You'll be able to upload your resume and fill out all required information.</p>
+                        
+                        <a 
+                            href="https://docs.google.com/forms/d/e/1FAIpQLSc2d3GizCxCQ7CzdybF5dlSlooZWwyWORZTosky9y8sPZdR1g/viewform" 
+                            target="_blank" 
+                            class="btn btn-primary btn-lg">
+                            <i class="fas fa-external-link-alt"></i> Open Application Form
+                        </a>
+                        
+                        <div class="mt-4">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                The form will open in a new tab. After submitting, you can close that tab and return here.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button type="button" class="btn btn-secondary" (click)="clearSelection()">
+                            <i class="fas fa-arrow-left"></i> Back to All Jobs
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+

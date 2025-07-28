@@ -1,0 +1,1103 @@
+// ================================
+// PROFESSIONAL CAREERS PAGE STYLING
+// ================================
+
+// Career Header Section
+.career-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 0 40px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 60px; // Space for fixed header
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="white" opacity="0.1"><polygon points="1000,100 1000,0 0,100"/></svg>');
+        background-size: cover;
+    }
+    
+    .container {
+        position: relative;
+    }
+    
+    .header-content {
+        padding: 20px 0;
+    }
+    
+    h1 {
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        animation: fadeInUp 1s ease-out;
+        font-size: 2.5rem;
+        
+        @media (max-width: 768px) {
+            font-size: 2rem;
+        }
+        
+        @media (max-width: 480px) {
+            font-size: 1.75rem;
+        }
+    }
+    
+    .lead {
+        font-size: 1.3rem;
+        font-weight: 300;
+        margin-bottom: 15px;
+        animation: fadeInUp 1s ease-out 0.2s both;
+        
+        @media (max-width: 768px) {
+            font-size: 1.1rem;
+        }
+        
+        @media (max-width: 480px) {
+            font-size: 1rem;
+        }
+    }
+    
+    p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        animation: fadeInUp 1s ease-out 0.4s both;
+        
+        @media (max-width: 768px) {
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 480px) {
+            font-size: 0.9rem;
+        }
+    }
+}
+
+// Section Title
+.section-title {
+    font-weight: 600;
+    color: #2d3748;
+    position: relative;
+    margin-bottom: 50px;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+    }
+    
+    &.text-left::after {
+        left: 0;
+        transform: none;
+    }
+}
+
+// What We Do Section
+.what-we-do-section {
+    padding: 60px 0;
+    background: white;
+    
+    .section-title {
+        text-align: left;
+        margin-bottom: 30px;
+        
+        @media (max-width: 768px) {
+            text-align: center;
+            font-size: 1.75rem;
+        }
+    }
+    
+    .feature-list {
+        margin-top: 40px;
+        
+        @media (max-width: 768px) {
+            margin-top: 30px;
+        }
+    }
+    
+    .feature-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 30px;
+        
+        @media (max-width: 768px) {
+            margin-bottom: 25px;
+        }
+        
+        @media (max-width: 480px) {
+            flex-direction: column;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        i {
+            font-size: 2rem;
+            color: #667eea;
+            margin-right: 20px;
+            margin-top: 5px;
+            flex-shrink: 0;
+            
+            @media (max-width: 768px) {
+                font-size: 1.5rem;
+                margin-right: 15px;
+            }
+            
+            @media (max-width: 480px) {
+                margin-right: 0;
+                margin-bottom: 15px;
+                font-size: 2rem;
+            }
+        }
+        
+        h5 {
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 10px;
+            
+            @media (max-width: 768px) {
+                font-size: 1.1rem;
+            }
+        }
+        
+        p {
+            color: #4a5568;
+            line-height: 1.6;
+            margin: 0;
+            
+            @media (max-width: 768px) {
+                font-size: 0.9rem;
+            }
+        }
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        
+        @media (max-width: 768px) {
+            gap: 15px;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 480px) {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            
+            @media (max-width: 768px) {
+                padding: 25px 15px;
+            }
+            
+            @media (max-width: 480px) {
+                padding: 25px 20px;
+            }
+            
+            h3 {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 10px;
+                
+                @media (max-width: 768px) {
+                    font-size: 2rem;
+                }
+                
+                @media (max-width: 480px) {
+                    font-size: 1.8rem;
+                }
+            }
+            
+            p {
+                margin: 0;
+                opacity: 0.9;
+                
+                @media (max-width: 768px) {
+                    font-size: 0.9rem;
+                }
+            }
+        }
+    }
+}
+
+// What We Look For Section
+.what-we-look-section {
+    padding: 60px 0;
+    
+    .section-title {
+        @media (max-width: 768px) {
+            font-size: 1.75rem;
+        }
+    }
+    
+    .quality-card {
+        text-align: center;
+        padding: 40px 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        margin-bottom: 30px;
+        
+        @media (max-width: 768px) {
+            padding: 30px 20px;
+        }
+        
+        @media (max-width: 480px) {
+            padding: 25px 15px;
+        }
+        
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        i {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            
+            @media (max-width: 768px) {
+                font-size: 2.5rem;
+            }
+            
+            @media (max-width: 480px) {
+                font-size: 2rem;
+            }
+        }
+        
+        h4 {
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 15px;
+            
+            @media (max-width: 768px) {
+                font-size: 1.1rem;
+            }
+        }
+        
+        p {
+            color: #4a5568;
+            line-height: 1.6;
+            margin: 0;
+            
+            @media (max-width: 768px) {
+                font-size: 0.9rem;
+            }
+        }
+    }
+}
+
+// Experience Selection Section
+.experience-selection {
+    padding: 60px 0;
+    background: white;
+    
+    .section-title {
+        @media (max-width: 768px) {
+            font-size: 1.75rem;
+        }
+    }
+    
+    .lead {
+        @media (max-width: 768px) {
+            font-size: 1rem;
+        }
+    }
+    
+    .path-card {
+        background: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 40px 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        height: 100%;
+        margin-bottom: 30px;
+        
+        @media (max-width: 768px) {
+            padding: 30px 20px;
+        }
+        
+        @media (max-width: 480px) {
+            padding: 25px 15px;
+        }
+        
+        &:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+            background: rgba(102, 126, 234, 0.05);
+            
+            .btn-outline-primary {
+                background: #667eea;
+                border-color: #667eea;
+                color: white;
+            }
+        }
+        
+        i {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            
+            @media (max-width: 768px) {
+                font-size: 2.5rem;
+                margin-bottom: 20px;
+            }
+            
+            @media (max-width: 480px) {
+                font-size: 2rem;
+            }
+        }
+        
+        h3 {
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 20px;
+            
+            @media (max-width: 768px) {
+                font-size: 1.3rem;
+            }
+            
+            @media (max-width: 480px) {
+                font-size: 1.2rem;
+            }
+        }
+        
+        p {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            
+            @media (max-width: 768px) {
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+            }
+        }
+        
+        ul {
+            text-align: left;
+            margin-bottom: 30px;
+            
+            @media (max-width: 768px) {
+                margin-bottom: 25px;
+            }
+            
+            @media (max-width: 480px) {
+                padding-left: 15px;
+            }
+            
+            li {
+                color: #4a5568;
+                margin-bottom: 8px;
+                padding-left: 10px;
+                position: relative;
+                
+                @media (max-width: 768px) {
+                    font-size: 0.9rem;
+                    margin-bottom: 6px;
+                }
+                
+                &::before {
+                    content: '✓';
+                    color: #667eea;
+                    font-weight: bold;
+                    position: absolute;
+                    left: -15px;
+                    
+                    @media (max-width: 480px) {
+                        left: -12px;
+                    }
+                }
+            }
+        }
+        
+        .btn-outline-primary {
+            border-color: #667eea;
+            color: #667eea;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            
+            @media (max-width: 768px) {
+                padding: 10px 25px;
+                font-size: 0.9rem;
+            }
+            
+            @media (max-width: 480px) {
+                padding: 8px 20px;
+                font-size: 0.85rem;
+            }
+            
+            &:hover {
+                background: #667eea;
+                border-color: #667eea;
+            }
+        }
+    }
+}
+
+// Internship Section
+.internship-section {
+    padding: 80px 0;
+    
+    .internship-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: white;
+        overflow: hidden;
+        position: relative;
+        
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        &:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            
+            .card-title {
+                color: #667eea;
+            }
+            
+            .btn-primary {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                transform: translateY(-2px);
+            }
+        }
+        
+        .card-body {
+            padding: 30px;
+        }
+        
+        .card-title {
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            transition: color 0.3s ease;
+        }
+        
+        .internship-meta {
+            margin-bottom: 20px;
+            
+            .badge {
+                padding: 8px 16px;
+                border-radius: 25px;
+                font-weight: 500;
+                font-size: 0.85rem;
+                margin-right: 10px;
+                margin-bottom: 8px;
+                
+                &.badge-success {
+                    background: linear-gradient(135deg, #48bb78, #38a169);
+                    border: none;
+                }
+                
+                &.badge-info {
+                    background: linear-gradient(135deg, #4facfe, #00f2fe);
+                    border: none;
+                }
+                
+                &.badge-warning {
+                    background: linear-gradient(135deg, #ffd89b, #19547b);
+                    border: none;
+                }
+            }
+        }
+        
+        .card-text {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .skills-required {
+            margin-bottom: 25px;
+            
+            h6 {
+                color: #2d3748;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+            
+            .skill-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                
+                .skill-tag {
+                    background: #e2e8f0;
+                    color: #4a5568;
+                    padding: 5px 12px;
+                    border-radius: 15px;
+                    font-size: 0.8rem;
+                    font-weight: 500;
+                }
+            }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+            
+            &:hover {
+                background: linear-gradient(135deg, #5a6fd8, #6a4190);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            }
+            
+            &:focus {
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+            }
+        }
+    }
+}
+
+// Open Positions Section
+.positions-section {
+    padding: 80px 0;
+    
+    h2 {
+        font-weight: 600;
+        color: #2d3748;
+        position: relative;
+        margin-bottom: 60px;
+        
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+    }
+}
+
+// Position Cards
+.position-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: white;
+    overflow: hidden;
+    position: relative;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+    
+    &:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        
+        .card-title {
+            color: #667eea;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transform: translateY(-2px);
+        }
+    }
+    
+    .card-body {
+        padding: 30px;
+    }
+    
+    .card-title {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+        transition: color 0.3s ease;
+    }
+    
+    .job-meta {
+        margin-bottom: 20px;
+        
+        .badge {
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin-right: 10px;
+            margin-bottom: 8px;
+            
+            &.badge-primary {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                border: none;
+            }
+            
+            &.badge-info {
+                background: linear-gradient(135deg, #4facfe, #00f2fe);
+                border: none;
+            }
+            
+            &.badge-secondary {
+                background: linear-gradient(135deg, #a8edea, #fed6e3);
+                color: #2d3748;
+                border: none;
+            }
+            
+            &.badge-warning {
+                background: linear-gradient(135deg, #ffd89b, #19547b);
+                border: none;
+            }
+            
+            &.badge-success {
+                background: linear-gradient(135deg, #48bb78, #38a169);
+                border: none;
+            }
+        }
+    }
+    
+    .card-text {
+        color: #4a5568;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+    
+    .requirements {
+        margin-bottom: 25px;
+        
+        h6 {
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        ul {
+            margin: 0;
+            padding-left: 20px;
+            
+            li {
+                color: #4a5568;
+                margin-bottom: 5px;
+                line-height: 1.5;
+            }
+        }
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.9rem;
+        
+        &:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6a4190);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        &:focus {
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+        }
+    }
+}
+
+// Application Form Section
+.application-form-section {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    padding: 60px 0;
+    position: relative;
+    margin-bottom: 40px;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.95);
+    }
+    
+    .container {
+        position: relative;
+    }
+    
+    h2 {
+        color: #2d3748;
+        font-weight: 600;
+        margin-bottom: 50px;
+        position: relative;
+        
+        @media (max-width: 768px) {
+            font-size: 1.75rem;
+            margin-bottom: 40px;
+        }
+        
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+    }
+    
+    .card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            padding: 25px 30px;
+            
+            @media (max-width: 768px) {
+                padding: 20px 25px;
+            }
+            
+            @media (max-width: 480px) {
+                padding: 15px 20px;
+            }
+            
+            h4 {
+                margin: 0;
+                font-weight: 600;
+                font-size: 1.3rem;
+                
+                @media (max-width: 768px) {
+                    font-size: 1.1rem;
+                }
+                
+                @media (max-width: 480px) {
+                    font-size: 1rem;
+                }
+            }
+        }
+        
+        .card-body {
+            padding: 50px 30px;
+            
+            @media (max-width: 768px) {
+                padding: 40px 25px;
+            }
+            
+            @media (max-width: 480px) {
+                padding: 30px 20px;
+            }
+            
+            .fas {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 30px;
+                
+                @media (max-width: 768px) {
+                    font-size: 2.5rem;
+                    margin-bottom: 25px;
+                }
+            }
+            
+            h5 {
+                color: #2d3748;
+                font-weight: 600;
+                margin-bottom: 20px;
+                
+                @media (max-width: 768px) {
+                    font-size: 1.1rem;
+                }
+            }
+            
+            .lead {
+                color: #4a5568;
+                margin-bottom: 15px;
+                
+                @media (max-width: 768px) {
+                    font-size: 1rem;
+                }
+            }
+            
+            .text-muted {
+                color: #718096 !important;
+                margin-bottom: 30px;
+                
+                @media (max-width: 768px) {
+                    font-size: 0.9rem;
+                    margin-bottom: 25px;
+                }
+            }
+            
+            .btn-primary {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                border: none;
+                padding: 15px 40px;
+                border-radius: 30px;
+                font-weight: 600;
+                font-size: 1.1rem;
+                transition: all 0.3s ease;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                
+                @media (max-width: 768px) {
+                    padding: 12px 30px;
+                    font-size: 1rem;
+                }
+                
+                @media (max-width: 480px) {
+                    padding: 10px 25px;
+                    font-size: 0.9rem;
+                    letter-spacing: 0.5px;
+                }
+                
+                &:hover {
+                    background: linear-gradient(135deg, #5a6fd8, #6a4190);
+                    transform: translateY(-3px);
+                    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+                }
+            }
+            
+            small {
+                display: block;
+                background: #e2e8f0;
+                padding: 15px 20px;
+                border-radius: 10px;
+                border-left: 4px solid #667eea;
+                
+                @media (max-width: 768px) {
+                    padding: 12px 15px;
+                    font-size: 0.85rem;
+                }
+                
+                .fas {
+                    color: #667eea;
+                    margin-right: 8px;
+                }
+            }
+        }
+        
+        .card-footer {
+            background: #f7fafc;
+            border: none;
+            padding: 25px 30px;
+            
+            @media (max-width: 768px) {
+                padding: 20px 25px;
+            }
+            
+            @media (max-width: 480px) {
+                padding: 15px 20px;
+            }
+            
+            .btn-secondary {
+                background: #e2e8f0;
+                border: none;
+                color: #4a5568;
+                padding: 12px 25px;
+                border-radius: 25px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                
+                @media (max-width: 768px) {
+                    padding: 10px 20px;
+                    font-size: 0.9rem;
+                }
+                
+                &:hover {
+                    background: #cbd5e0;
+                    transform: translateY(-2px);
+                }
+            }
+        }
+    }
+}
+
+// Animations
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+// Responsive Design
+@media (max-width: 992px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px !important;
+        
+        .stat-card {
+            padding: 25px 15px !important;
+            
+            h3 {
+                font-size: 2rem !important;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .career-header {
+        padding: 60px 0 40px;
+        
+        h1 {
+            font-size: 2.5rem;
+        }
+        
+        .lead {
+            font-size: 1.2rem;
+        }
+    }
+    
+    .what-we-do-section,
+    .what-we-look-section,
+    .experience-selection,
+    .internship-section,
+    .positions-section {
+        padding: 60px 0;
+    }
+    
+    .application-form-section {
+        padding: 60px 0;
+        
+        .card .card-body {
+            padding: 40px 20px;
+        }
+    }
+    
+    .position-card {
+        margin-bottom: 30px;
+        
+        .card-body {
+            padding: 25px;
+        }
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    .feature-item {
+        margin-bottom: 25px;
+        
+        i {
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+    }
+    
+    .path-card {
+        margin-bottom: 30px;
+        padding: 30px 20px;
+        
+        i {
+            font-size: 2.5rem;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .career-header {
+        padding: 50px 0 30px;
+        
+        h1 {
+            font-size: 2rem;
+        }
+    }
+    
+    .position-card .card-body,
+    .internship-card .card-body {
+        padding: 20px;
+    }
+    
+    .job-meta .badge,
+    .internship-meta .badge {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        margin-right: 8px;
+    }
+    
+    .path-card {
+        padding: 25px 15px;
+        
+        i {
+            font-size: 2rem;
+        }
+    }
+    
+    .quality-card {
+        padding: 30px 20px;
+        
+        i {
+            font-size: 2.5rem;
+        }
+    }
+}
