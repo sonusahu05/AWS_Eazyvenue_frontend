@@ -140,6 +140,7 @@
                             <label for="amenities">Amenities</label>
                             <p-multiSelect inputId="amenities" [options]="amenitiesList"
                                 formControlName="amenities" placeholder="Select Amenities" optionLabel="name"
+                                display="chip" [showToggleAll]="false"
                                 (onChange)="onAmenityChange($event)"></p-multiSelect>
                         </div>
 

@@ -34,7 +34,7 @@ export class AddComponent implements OnInit {
     isGoogleMapsLoaded = false;
     selectedVenueCoordinates: { lat: number, lng: number } = null;
     notprofile: boolean;
-    selectedAmenities: string[] = [];
+    selectedAmenities: any[] = [];
     amenitiesList: any[] = [
         { name: 'Parking', value: 'parking' },
         { name: 'WiFi', value: 'wifi' },
@@ -193,9 +193,16 @@ public metaDescription: string;
 
     onAmenityChange(event: any) {
         this.selectedAmenities = event.value;
+        console.log('Selected amenities (raw):', this.selectedAmenities);
+        console.log('Event value:', event.value);
+        console.log('Amenities are objects?', this.selectedAmenities.length > 0 && typeof this.selectedAmenities[0] === 'object');
+
+        // Update the form control directly with the selected amenities
         this.venueForm.patchValue({
             amenities: this.selectedAmenities
         });
+
+        console.log('Form control value after update:', this.venueForm.get('amenities')?.value);
     }
 
     removeMenuPDF() {
@@ -773,17 +780,108 @@ public metaDescription: string;
             venueData['role'] = this.venueownerRoleid;
             venueData['eazyVenueRating'] = this.selectedEazyVenueRating;
             venueData['googleRating'] = this.selectedGoogleRating;
-            venueData = JSON.stringify(venueData, null, 4);
-            // console.log('venueData', venueData);
-            this.VenueService.addVenue(this.venueForm.value).subscribe(
-                data => {
+
+            // Make sure amenities are properly formatted
+            if (this.selectedAmenities && this.selectedAmenities.length > 0) {
+                // Send amenities as objects with name and value for backend compatibility
+                venueData['amenities'] = this.selectedAmenities.map((amenity: any) => {
+                    if (typeof amenity === 'string') {
+                        // If it's a string, find the corresponding object from amenitiesList
+                        const amenityObj = this.amenitiesList.find(a => a.name === amenity || a.value === amenity);
+                        return amenityObj || { name: amenity, value: amenity.toLowerCase().replace(/\s+/g, '_') };
+                    } else if (amenity && amenity.name && amenity.value) {
+                        // If it's already an object with name and value, use it as is
+                        return amenity;
+                    } else {
+                        // Convert to proper format
+                        return { name: amenity.name || amenity, value: amenity.value || (amenity.name || amenity).toLowerCase().replace(/\s+/g, '_') };
+                    }
+                });
+                
+                // Extract values for boolean flag mapping
+                const amenityValues = this.selectedAmenities.map((amenity: any) => amenity.value || amenity);
+                console.log('Amenity values for boolean mapping:', amenityValues);
+                
+                // Map amenities to boolean flags that the backend expects
+                venueData['isParking'] = amenityValues.includes('parking');
+                venueData['isAC'] = amenityValues.includes('ac');
+                venueData['isPowerBackup'] = amenityValues.includes('power_backup');
+                venueData['isWaiterService'] = amenityValues.includes('security');
+                venueData['isVIPSection'] = amenityValues.includes('wheelchair');
+                venueData['isDJ'] = amenityValues.includes('smoking_area');
+                venueData['isEntertainmentLicense'] = amenityValues.includes('bar');
+            } else {
+                venueData['amenities'] = [];
+                // Set all boolean flags to false when no amenities selected
+                venueData['isParking'] = false;
+                venueData['isAC'] = false;
+                venueData['isPowerBackup'] = false;
+                venueData['isWaiterService'] = false;
+                venueData['isVIPSection'] = false;
+                venueData['isDJ'] = false;
+                venueData['isEntertainmentLicense'] = false;
+            }
+
+            // Include menu PDF file for upload after venue creation
+            if (this.menuPDFFile) {
+                venueData['hasPendingMenuPDF'] = true;
+            }
+
+            // Don't stringify - Angular HttpClient will handle this automatically
+            console.log('venueData before sending:', venueData);
+            this.VenueService.addVenue(venueData).subscribe(
+                (data: any) => {
+                    console.log('Add venue response:', data);
+                    console.log('Response type:', typeof data);
+                    console.log('Response keys:', Object.keys(data || {}));
+
+                    // Extract venue ID from response - try multiple possible locations
+                    let venueId = null;
+                    if (data) {
+                        // Try common response structures
+                        if (data.data) {
+                            venueId = data.data.id || data.data._id || data.data.venueId;
+                            console.log('Venue ID from data.data:', venueId);
+                        }
+                        if (!venueId) {
+                            venueId = data.id || data._id || data.venueId;
+                            console.log('Venue ID from data:', venueId);
+                        }
+                        // For MongoDB responses, the venue object might be the entire response
+                        if (!venueId && data.name && data.email) {
+                            venueId = data._id || data.id;
+                            console.log('Venue ID from venue object:', venueId);
+                        }
+                        // Try to get from nested venue object
+                        if (!venueId && data.venue) {
+                            venueId = data.venue._id || data.venue.id;
+                            console.log('Venue ID from data.venue:', venueId);
+                        }
+                        // Try to get from success response format
+                        if (!venueId && data.success && data.venue) {
+                            venueId = data.venue._id || data.venue.id;
+                            console.log('Venue ID from success response:', venueId);
+                        }
+                    }
+
+                    console.log('Final extracted venue ID:', venueId);
+
+                    // If there's a menu PDF file, upload it after venue creation
+                    if (this.menuPDFFile && venueId) {
+                        console.log('Uploading menu PDF for venue:', venueId);
+                        this.uploadMenuPDF(venueId);
+                    } else if (this.menuPDFFile && !venueId) {
+                        console.warn('Menu PDF file exists but no venue ID found for upload');
+                    }
+
                     this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Venue Added', life: 6000 });
                     setTimeout(() => {
                         this.router.navigate(['/manage/venue']);
                     }, 2000);
                 },
                 ((err) => {
-                    this.messageService.add({ key: 'toastmsg', severity: 'error', summary: err.error.error, detail: 'Add Venue failed.', life: 6000 });
+                    console.error('Add venue error:', err);
+                    this.messageService.add({ key: 'toastmsg', severity: 'error', summary: err.error?.error || 'Error', detail: 'Add Venue failed.', life: 6000 });
                 })
             );
         }
