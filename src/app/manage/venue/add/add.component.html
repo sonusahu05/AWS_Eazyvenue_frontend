@@ -143,20 +143,6 @@
                                 display="chip" [showToggleAll]="false"
                                 (onChange)="onAmenityChange($event)"></p-multiSelect>
                         </div>
-
-                        <div class="p-field p-col-4">
-                            <label for="menuPDF">Menu PDF</label>
-                            <p-fileUpload #menuPdfUpload mode="basic" chooseLabel="Choose Menu PDF"
-                                [auto]="true" accept="application/pdf" [maxFileSize]="10000000"
-                                (uploadHandler)="onMenuPDFUpload($event)" [customUpload]="true">
-                            </p-fileUpload>
-                            <div *ngIf="menuPDFUrl" class="p-mt-2">
-                                <a [href]="menuPDFUrl" target="_blank">View Menu PDF</a>
-                                <button pButton pRipple type="button" icon="pi pi-times"
-                                    class="p-button-danger p-button-rounded p-button-text p-ml-2"
-                                    (click)="removeMenuPDF()"></button>
-                            </div>
-                        </div>
                         <div class="p-field p-col-4">
                             <label for="foodType">Food Type <span class="mandatory-fields">*</span></label>
                             <p-multiSelect inputId="foodType" [options]="foodList" formControlName="foodType"
