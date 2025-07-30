@@ -107,33 +107,21 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     
     setDefaultDateRange() {
         try {
-            // Check if we want to show ALL data or apply default filtering
-            console.log('🗓️ Setting up date range...');
+            console.log('🗓️ Setting up default date range: 01/06/2025 - 01/07/2025');
             
-            // For calendar display, we need valid dates even if we don't want filtering
-            // Option 1: Set to null/undefined for no filtering but keep calendar functional
-            const showAllData = true; // Set to false to apply last 30 days filter
-            
-            if (showAllData) {
-                console.log('📊 NO DATE FILTERING - Will show all data from database');
-                // Set to null instead of empty array to allow calendar to work
-                this.dateRange = null as any; // This will allow calendar to show but won't filter data
-                return;
-            }
-            
-            // Option 2: Default last 30 days filtering
-            const today = new Date();
-            const lastMonth = new Date();
-            lastMonth.setMonth(today.getMonth() - 1);
+            // Set specific default date range: 01/06/2025 - 01/07/2025
+            const startDate = new Date('2025-06-01'); // June 1, 2025
+            const endDate = new Date('2025-07-01');   // July 1, 2025
             
             // Ensure we have valid Date objects
-            if (isNaN(today.getTime()) || isNaN(lastMonth.getTime())) {
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
                 console.error('Invalid dates created, using fallback');
-                const fallbackToday = new Date(Date.now());
-                const fallbackLastMonth = new Date(Date.now() - (30 * 24 * 60 * 60 * 1000)); // 30 days ago
-                this.dateRange = [fallbackLastMonth, fallbackToday];
+                // Fallback to specific dates if parsing fails
+                const fallbackStartDate = new Date(2025, 5, 1); // Month is 0-indexed, so 5 = June
+                const fallbackEndDate = new Date(2025, 6, 1);   // 6 = July
+                this.dateRange = [fallbackStartDate, fallbackEndDate];
             } else {
-                this.dateRange = [lastMonth, today];
+                this.dateRange = [startDate, endDate];
             }
             
             console.log('Default date range set:', this.dateRange);
@@ -143,15 +131,18 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
                 !this.dateRange[0] || !this.dateRange[1] ||
                 isNaN(this.dateRange[0].getTime()) || isNaN(this.dateRange[1].getTime())) {
                 console.error('Date range validation failed, creating safe fallback');
-                const now = new Date();
-                const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
-                this.dateRange = [thirtyDaysAgo, now];
+                // Final fallback to the specific dates
+                const safeStartDate = new Date(2025, 5, 1); // June 1, 2025
+                const safeEndDate = new Date(2025, 6, 1);   // July 1, 2025
+                this.dateRange = [safeStartDate, safeEndDate];
             }
             
         } catch (error) {
             console.error('Error setting default date range:', error);
-            // Ultimate fallback - set to null for calendar functionality
-            this.dateRange = null as any;
+            // Ultimate fallback to specific dates
+            const fallbackStartDate = new Date(2025, 5, 1); // June 1, 2025
+            const fallbackEndDate = new Date(2025, 6, 1);   // July 1, 2025
+            this.dateRange = [fallbackStartDate, fallbackEndDate];
         }
     }
     
