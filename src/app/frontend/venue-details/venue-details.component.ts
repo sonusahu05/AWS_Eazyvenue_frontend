@@ -153,11 +153,6 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     'bar': 'bar-icon.svg'
   };
 
-  getAmenityIcon(amenityName: string): string {
-    const iconName = this.amenityIcons[amenityName.toLowerCase()] || 'default-amenity.png';
-    return `assets/images/amenities/${iconName}`;
-  }
-
   downloadMenuPDF() {
     if (this.venueDetails?.menuPDF?.path) {
       const apiUrl = environment.apiUrl;
@@ -5183,6 +5178,27 @@ loadMoreGoogleReviews(): void {
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
+    }
+
+    getAmenityIcon(amenityValue: string): string {
+        const iconMap: { [key: string]: string } = {
+            'wifi': 'assets/images/amenities/wifi-icon.png',
+            'ac': 'assets/images/amenities/ac-icon.png',
+            'parking': 'assets/images/amenities/parking-icon.png',
+            'power_backup': 'assets/images/amenities/power-backup-icon.svg',
+            'security': 'assets/images/amenities/security-icon.svg',
+            'swimming_pool': 'assets/images/amenities/pool-icon.png',
+            'green_rooms': 'assets/images/amenities/green-room-icon.png',
+            'dj': 'assets/images/amenities/sound-icon.png',
+            'entertainment_license': 'assets/images/amenities/sound-icon.png',
+            'private_parties': 'assets/images/amenities/sound-icon.png',
+            'waiter_service': 'assets/images/amenities/waiter-service-icon.svg',
+            'vip_section': 'assets/images/amenities/vip-section-icon.svg',
+            'rooms': 'assets/images/amenities/green-room-icon.png',
+            'pillar_free': 'assets/images/amenities/pillar-free-icon.svg'
+        };
+
+        return iconMap[amenityValue] || 'assets/images/amenities/ac-icon.png';
     }
 
 }
