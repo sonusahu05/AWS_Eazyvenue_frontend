@@ -52,43 +52,143 @@
     margin-bottom: 1.5rem;
 
     .media {
-        background: #fff;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        transition: transform 0.2s;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        padding: 12px 8px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #ff0018 0%, #ff4757 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
         &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(255, 0, 24, 0.15);
+            border-color: #ff0018;
+
+            &::before {
+                opacity: 1;
+            }
         }
 
         .media-left {
-            margin-right: 15px;
+            margin-right: 18px;
 
             .icon {
-                width: 40px;
-                height: 40px;
+                width: 48px;
+                height: 48px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                background: linear-gradient(135deg, #ff0018 0%, #ff4757 100%);
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(255, 0, 24, 0.25);
+                transition: all 0.3s ease;
 
                 img {
-                    max-width: 100%;
+                    max-width: 26px;
                     height: auto;
+                    filter: brightness(0) invert(1);
                 }
             }
         }
 
         .media-body {
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            justify-content: center;
 
             h4.amenities-size {
+                margin: 0 0 4px 0;
+                font-size: 15px;
+                font-weight: 600;
+                color: #2c3e50;
+                line-height: 1.2;
+            }
+
+            h5 {
                 margin: 0;
-                font-size: 14px;
+                font-size: 13px;
                 font-weight: 500;
-                color: #333;
+                color: #7f8c8d;
+                line-height: 1.3;
+            }
+        }
+    }
+}
+
+// Services Section Responsive Design
+@media (max-width: 768px) {
+    .amenities_1 {
+        margin-bottom: 1rem;
+
+        .media {
+            padding: 16px 14px;
+
+            .media-left {
+                margin-right: 14px;
+
+                .icon {
+                    width: 42px;
+                    height: 42px;
+
+                    img {
+                        max-width: 22px;
+                    }
+                }
+            }
+
+            .media-body {
+                h4.amenities-size {
+                    font-size: 14px;
+                }
+
+                h5 {
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .amenities_1 {
+        .media {
+            padding: 14px 12px;
+
+            .media-left {
+                margin-right: 12px;
+
+                .icon {
+                    width: 38px;
+                    height: 38px;
+
+                    img {
+                        max-width: 20px;
+                    }
+                }
+            }
+
+            .media-body {
+                h4.amenities-size {
+                    font-size: 13px;
+                }
+
+                h5 {
+                    font-size: 11px;
+                }
             }
         }
     }
@@ -4466,23 +4566,22 @@ h5.resend-head {
 // Amenities Section Styles
 .amenities-section {
     margin: 20px 0;
-    
+
     .amenities-title {
         font-size: 1.8rem;
         font-weight: 600;
         color: #333;
         margin-bottom: 20px;
-        border-bottom: 2px solid #f0f0f0;
         padding-bottom: 10px;
     }
-    
+
     .amenities-list {
         margin: 0;
         padding: 0;
-        
+
         .amenity-item {
             margin-bottom: 15px;
-            
+
             .amenity-card {
                 background: #f8f9fa;
                 border: 1px solid #e9ecef;
@@ -4490,18 +4589,18 @@ h5.resend-head {
                 padding: 12px 15px;
                 transition: all 0.3s ease;
                 height: 100%;
-                
+
                 &:hover {
                     background: #ffffff;
                     border-color: #ff0018;
                     box-shadow: 0 2px 8px rgba(255, 0, 24, 0.15);
                     transform: translateY(-2px);
                 }
-                
+
                 .amenity-icon {
                     margin-right: 12px;
                     flex-shrink: 0;
-                    
+
                     .amenity-img {
                         width: 24px;
                         height: 24px;
@@ -4509,10 +4608,10 @@ h5.resend-head {
                         filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
                     }
                 }
-                
+
                 .amenity-text {
                     flex: 1;
-                    
+
                     .amenity-name {
                         font-size: 14px;
                         font-weight: 500;
@@ -4532,23 +4631,23 @@ h5.resend-head {
             font-size: 1.5rem;
             margin-bottom: 15px;
         }
-        
+
         .amenities-list {
             .amenity-item {
                 margin-bottom: 10px;
-                
+
                 .amenity-card {
                     padding: 10px 12px;
-                    
+
                     .amenity-icon {
                         margin-right: 10px;
-                        
+
                         .amenity-img {
                             width: 20px;
                             height: 20px;
                         }
                     }
-                    
+
                     .amenity-text {
                         .amenity-name {
                             font-size: 13px;
