@@ -15,13 +15,15 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from "./../../../../environments/environment";
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 
+declare var google: any;
+
 @Component({
     selector: 'app-edit',
     templateUrl: './edit.component.html',
     styleUrls: ['./edit.component.scss'],
     providers: [ConfirmationService, MessageService]
 })
-export class EditComponent implements OnInit {
+export class EditComponent implements OnInit{
     shorthtmlContent = '';
     htmlContent = '';
     //featured = '';
@@ -29,6 +31,11 @@ export class EditComponent implements OnInit {
     vendorImage: any[] = [];
     venueImage: any;
     notprofile: boolean;
+    // ADDED: Google Maps related properties
+    autocomplete: any;
+    isGoogleMapsLoaded = false;
+    selectedVenueCoordinates: { lat: number, lng: number } = null;
+    
     decor2Image: any;
     decor3Image: any;
     public decor1Image: any;
@@ -181,8 +188,8 @@ export class EditComponent implements OnInit {
             views: [''],
             minRevenue: ['', [Validators.required]],
             metaUrl: ['', [Validators.required]],
-  metaKeywords: ['', [Validators.required]],
-  metaDescription: ['', [Validators.required]],
+            metaKeywords: ['', [Validators.required]],
+            metaDescription: ['', [Validators.required]],
             mobileNumber: ['', [Validators.required, Validators.pattern("^[0-9]*$")]],
             capacity: ['', [Validators.required]],
             area: ['', [Validators.required]],
@@ -228,6 +235,10 @@ export class EditComponent implements OnInit {
         this.isAddMode = !this.id;
         this.getStates();
         this.getCategory();
+        
+        // ADD: Load Google Maps
+        this.loadGoogleMaps();
+        
         if (!this.isAddMode) {
             this.pagetitle = 'Edit Venue';
             this.VenueService.getvenue(this.id).subscribe(res => {
@@ -235,6 +246,15 @@ export class EditComponent implements OnInit {
 
                 this.item = res;
                 this.userid = res['venueownerId'];
+                
+                // ADD: Store existing coordinates if available
+                if (res['lat'] && res['lng']) {
+                    this.selectedVenueCoordinates = {
+                        lat: res['lat'],
+                        lng: res['lng']
+                    };
+                }
+                
                 this.venueForm.controls.name.setValue(res['name']);
                 this.venueForm.controls.email.setValue(res['email']);
                 this.venueForm.controls.area.setValue(res['area']);
@@ -257,8 +277,8 @@ export class EditComponent implements OnInit {
                 this.venueForm.controls.peopleBooked.setValue(res['peopleBooked']);
                 this.venueForm.controls.minRevenue.setValue(res['minRevenue']);
                 this.venueForm.controls.metaUrl.setValue(res['metaUrl']);
-this.venueForm.controls.metaKeywords.setValue(res['metaKeywords']);
-this.venueForm.controls.metaDescription.setValue(res['metaDescription']);
+                this.venueForm.controls.metaKeywords.setValue(res['metaKeywords']);
+                this.venueForm.controls.metaDescription.setValue(res['metaDescription']);
                 this.venueForm.controls.views.setValue(res['views']);
                 this.venueForm.controls.amenities.setValue(res['amenities']);
                 this.venueForm.controls.eazyVenueRating.setValue({ name: res['eazyVenueRating'], value: res['eazyVenueRating'] });
@@ -348,6 +368,137 @@ this.venueForm.controls.metaDescription.setValue(res['metaDescription']);
             });
         }
     }
+    
+    // ADDED: Google Maps Loading Method
+    loadGoogleMaps() {
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
+
+        if (typeof google !== 'undefined' && google.maps) {
+            this.isGoogleMapsLoaded = true;
+            this.initAutocomplete();
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+            this.isGoogleMapsLoaded = true;
+            this.initAutocomplete();
+        };
+        document.head.appendChild(script);
+    }
+
+    // ADD: Initialize Autocomplete Method
+    initAutocomplete() {
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
+
+        const input = document.getElementById('venue-name-input') as HTMLInputElement;
+        if (!input) return;
+
+        this.autocomplete = new google.maps.places.Autocomplete(input, {
+            types: ['establishment'],
+            componentRestrictions: { country: 'IN' } // Restrict to India
+        });
+
+        this.autocomplete.addListener('place_changed', () => {
+            const place = this.autocomplete.getPlace();
+
+            if (!place.geometry) {
+                console.log("No details available for input: '" + place.name + "'");
+                return;
+            }
+
+            // Update form with place details
+            this.updateVenueFromPlace(place);
+        });
+    }
+
+    // ADDED: Update Venue from Place Method
+    updateVenueFromPlace(place: any) {
+        console.log('Selected place:', place);
+
+        // Extract address components
+        let streetNumber = '';
+        let route = '';
+        let locality = '';
+        let sublocality = '';
+        let administrativeAreaLevel1 = '';
+        let administrativeAreaLevel2 = '';
+        let postalCode = '';
+        let country = '';
+
+        place.address_components.forEach((component: any) => {
+            const types = component.types;
+
+            if (types.includes('street_number')) {
+                streetNumber = component.long_name;
+            }
+            if (types.includes('route')) {
+                route = component.long_name;
+            }
+            if (types.includes('locality')) {
+                locality = component.long_name;
+            }
+            if (types.includes('sublocality') || types.includes('sublocality_level_1')) {
+                sublocality = component.long_name;
+            }
+            if (types.includes('administrative_area_level_1')) {
+                administrativeAreaLevel1 = component.long_name;
+            }
+            if (types.includes('administrative_area_level_2')) {
+                administrativeAreaLevel2 = component.long_name;
+            }
+            if (types.includes('postal_code')) {
+                postalCode = component.postal_code;
+            }
+            if (types.includes('country')) {
+                country = component.long_name;
+            }
+        });
+
+        // Build full address
+        const fullAddress = `${streetNumber} ${route}, ${locality}`.trim();
+
+        // Get coordinates
+        const lat = place.geometry.location.lat();
+        const lng = place.geometry.location.lng();
+
+        // Update form fields
+        this.venueForm.patchValue({
+            name: place.name,
+            address: fullAddress,
+            zipcode: postalCode
+        });
+
+        // Store coordinates for later use
+        this.selectedVenueCoordinates = {
+            lat: lat,
+            lng: lng
+        };
+
+        // Update location data
+        this.countryname = country;
+        this.statename = administrativeAreaLevel1;
+        this.cityname = locality || administrativeAreaLevel2;
+
+        // Find and set state
+        if (this.statelist && this.statelist.length > 0) {
+            const matchingState = this.statelist.find(state =>
+                state.name.toLowerCase().includes(administrativeAreaLevel1.toLowerCase())
+            );
+            if (matchingState) {
+                this.venueForm.get('state').setValue(matchingState);
+                this.statecode = matchingState.code;
+                this.getCities(false, matchingState.code);
+            }
+        }
+    } 
     get f() {
         return this.venueForm.controls;
     }
