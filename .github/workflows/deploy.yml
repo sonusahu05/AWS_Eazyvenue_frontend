@@ -22,6 +22,19 @@ jobs:
         script: |
           set -e
           
+          # Function for error handling
+          handle_error() {
+            echo "❌ Error occurred in deployment. Checking logs..."
+            if [ -f "/home/ubuntu/aws/eazyvenue-frontend/logs/frontend-error.log" ]; then
+              echo "📜 Recent error logs:"
+              tail -20 /home/ubuntu/aws/eazyvenue-frontend/logs/frontend-error.log
+            fi
+            exit 1
+          }
+          
+          # Set error trap
+          trap 'handle_error' ERR
+          
           echo "🚀 Starting Eazyvenue Frontend Deployment..."
           
           # Set deployment directory
@@ -48,14 +61,35 @@ jobs:
             echo "📦 Installing Node.js 18..."
             curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
             sudo apt-get install -y nodejs
+            
+            # Downgrade npm to version 7 for Angular 12 compatibility
+            echo "📦 Downgrading npm to version 7 for Angular 12 compatibility..."
+            sudo npm install -g npm@7
           fi
+          
+          # Verify versions
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
           
           # Install dependencies
           echo "📦 Installing dependencies..."
-          npm ci --legacy-peer-deps
+          
+          # Clear npm cache to avoid issues
+          npm cache clean --force
+          
+          # Install with legacy peer deps and additional flags for compatibility
+          npm ci --legacy-peer-deps --no-audit --no-fund --prefer-offline || {
+            echo "❌ npm ci failed, trying npm install instead..."
+            rm -rf node_modules package-lock.json
+            npm install --legacy-peer-deps --no-audit --no-fund --prefer-offline
+          }
           
           # Build the application for production with SSR
           echo "🏗️ Building application..."
+          
+          # Set Node options for Angular 12 compatibility
+          export NODE_OPTIONS="--max-old-space-size=8192 --openssl-legacy-provider"
+          
           npm run build:ssr
           
           # Install PM2 globally if not already installed
@@ -201,8 +235,29 @@ jobs:
           echo "🚀 Starting application with PM2..."
           pm2 delete eazyvenue-frontend-ssr 2>/dev/null || true
           
+          # Verify the built server file exists
+          if [ ! -f "dist/freya-ng/server/main.js" ]; then
+            echo "❌ Error: Server build file not found at dist/freya-ng/server/main.js"
+            echo "📁 Checking dist directory structure..."
+            find dist -type f -name "*.js" | head -10
+            exit 1
+          fi
+          
           # Start the application with PM2
           pm2 start ecosystem.config.js
+          
+          # Wait a bit for PM2 to start
+          sleep 5
+          
+          # Check if PM2 started successfully
+          if pm2 list | grep -q "eazyvenue-frontend-ssr.*online"; then
+            echo "✅ PM2 started successfully"
+          else
+            echo "❌ PM2 failed to start. Checking logs..."
+            pm2 logs eazyvenue-frontend-ssr --lines 50
+            exit 1
+          fi
+          
           pm2 save
           
           # Set up PM2 to start on boot
