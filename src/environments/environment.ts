@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    apiUrl: 'https://api.eazyvenue.com/api/',
+    apiUrl: 'https://api.eazyvenue.in/api/',
     // apiUrl: 'http://localhost:3006/api/',
     googleMapsApiKey: 'AIzaSyDdMU6wNTU1kPRIMyuKtfLKRSpIgr5JL_s',
     ageDiff: 18,
@@ -9,15 +9,15 @@ export const environment = {
     yearRange: "2022:2060",
     yearDiff: 1,
     pagination: [10, 20, 50, 100, 1000, { showAll: 'All' }],
-    productUploadUrl: 'https://api.eazyvenue.com/uploads/',
+    productUploadUrl: 'https://api.eazyvenue.in/uploads/',
     uploadUrl: 'src/public/uploads/cmsPic/',
     imageSize: 2000000,
     videoSize: 20000000,
     defaultDays: 5,
     frontEnd: {
-        domain: 'https://eazyvenue.com',
+        domain: 'https://eazyvenue.in',
         // domain: 'http://localhost:4200',
-        picPath: 'https://api.eazyvenue.com'
+        picPath: 'https://api.eazyvenue.in'
     },
     picture: {
         profilePicFolder: 'src/public/uploads/profilepic/',
