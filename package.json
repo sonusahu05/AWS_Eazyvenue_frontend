@@ -7,8 +7,7 @@
         "build": "node --max-old-space-size=8192 --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng build",
         "dev:ssr": "node --max-old-space-size=4096 --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng run freya-ng:serve-ssr",
         "serve:ssr": "node --max-old-space-size=4096 dist/freya-ng/server/main.js",
-        "build:ssr": "node --max-old-space-size=8192 --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng build && node --max-old-space-size=4096 --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng run freya-ng:server",
-        "install": "npm install --legacy-peer-deps"
+        "build:ssr": "node --max-old-space-size=8192 --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng build && node --max-old-space-size=4096 --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng run freya-ng:server"
     },
     "private": true,
     "dependencies": {
