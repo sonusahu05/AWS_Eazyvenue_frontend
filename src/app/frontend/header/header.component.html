@@ -2,6 +2,129 @@
 <ng-container *ngIf="!appLoading; else skeletonHeader">
 <header class="sticky sigma_header style-4 can-sticky sticky-top"
     [ngClass]="isNavbarFixed?'hide-search-menu':'notfixed'" (scroll)="onScroll()">
+    
+    <style>
+        /* Dropdown Styles */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1000;
+            display: none;
+            min-width: 280px;
+            padding: 1rem;
+            margin: 0;
+            background-color: #fff;
+            border: 1px solid rgba(0,0,0,.15);
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            animation: fadeInDown 0.3s ease;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-category {
+            margin-bottom: 1.5rem;
+        }
+
+        .dropdown-category h6 {
+            color: #e91e63;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dropdown-category ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dropdown-category li {
+            margin-bottom: 0.5rem;
+        }
+
+        .dropdown-category a {
+            color: #555;
+            text-decoration: none;
+            font-size: 13px;
+            display: block;
+            padding: 0.25rem 0;
+            transition: color 0.2s ease;
+        }
+
+        .dropdown-category a:hover {
+            color: #e91e63;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-item:hover .dropdown-menu {
+            display: block;
+        }
+
+        .nav-link {
+            position: relative;
+            padding: 1rem !important;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .dropdown-menu {
+                position: static;
+                display: block !important;
+                width: 100%;
+                box-shadow: none;
+                border: none;
+                background-color: #f8f9fa;
+                margin-top: 0.5rem;
+            }
+        }
+
+        /* Header styling */
+        .sigma_header {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            color: #333;
+            border-right: 1px solid #eee;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: #e91e63;
+        }
+
+        .login-button, .vendor-button {
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .vendor-button {
+            color: #e91e63 !important;
+        }
+    </style>
+
     <div class="sigma_header-middle">
         <div class="container-fluid">
             <div class="navbar sticky-top">
