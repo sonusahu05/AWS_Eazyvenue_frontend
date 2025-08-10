@@ -1,10 +1,13 @@
 .privacy-policy-main-section {
     background-color: #f8f9fa;
-    padding: 40px 0;
-    margin-bottom: 40px;
-
+    padding: 60px 0 60px 0;
+    min-height: 100vh;
+    margin-top: 50px; /* Add space below navbar */
+    margin-bottom: 50px; /* Add space above footer */
+    
     .section-title-wrap {
         margin-bottom: 30px;
+        margin-top: 30px;
 
         .title {
             font-size: 2.5rem;
@@ -28,6 +31,10 @@
         h1 {
             font-size: 2rem;
             margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #222;
         }
 
         h2 {
@@ -56,6 +63,38 @@
             border: 0;
             border-top: 1px solid #dee2e6;
             margin: 40px 0;
+        }
+    }
+
+    // Responsive styles for mobile devices
+    @media (max-width: 600px) {
+        padding: 40px 0 10px 0;
+        margin-top: 100px; /* Reduce top margin for mobile */
+        margin-bottom: 30px;
+        min-height: 80vh; /* Reduce min-height for mobile for better fit */
+        
+        .privacy-content {
+            padding: 12px 6px;
+            
+            h1 {
+                font-size: 1.3rem;
+                margin-bottom: 16px;
+                text-align: center;
+                font-weight: 700;
+                color: #222;
+                display: block;
+            }
+            
+            h2 {
+                font-size: 1.05rem;
+                margin-top: 14px;
+                margin-bottom: 10px;
+            }
+            
+            p {
+                font-size: 0.97rem;
+                line-height: 1.5;
+            }
         }
     }
 }
