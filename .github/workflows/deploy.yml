@@ -77,9 +77,9 @@ jobs:
           # Install dependencies
           echo "📦 Installing dependencies..."
           
-          # Clean npm cache and remove lock files to avoid conflicts
+          # Clean npm cache and remove yarn lock to avoid conflicts (keep package-lock.json for npm ci)
           npm cache clean --force
-          rm -f package-lock.json yarn.lock
+          rm -f yarn.lock
           
           # Install with legacy peer deps and additional flags for compatibility
           npm ci --legacy-peer-deps --no-audit --no-fund --prefer-offline || {
