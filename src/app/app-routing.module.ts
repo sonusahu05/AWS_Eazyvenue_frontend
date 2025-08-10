@@ -101,11 +101,18 @@ import { HomeDataResolver } from './services/home-data.resolver';
                 path: 'cancellation',
                 component: CancellationComponent,
             },
+            {
+  path: 'venue-details/:name',
+  component: VenueDetailsComponent
+},
             { path: 'contact-us', component: ContactUsComponent },
             {
                 path: 'privacy-policy',
                 component: PrivacypolicyComponent,
             },
+            {path: 'venue-details/:name',component: VenueDetailsComponent},
+            { path: 'venue-details/:name', component: VenueDetailsComponent },
+
             {
                 path: 'subscribe',
                 component: SubscriptionComponent,
@@ -119,10 +126,6 @@ import { HomeDataResolver } from './services/home-data.resolver';
             { path: 'services', component: ServicesComponent },
             { path: 'blog', component: BlogComponent },
             { path: 'sign-in', component: SignInComponent },
-            { 
-                path: 'careers',
-                loadChildren: () => import('./frontend/careers/careers.module').then(m => m.CareersModule)
-            },
             // { path: 'venue/:id', component: VenueDetailsComponent },
             // Venue Details
             {
@@ -421,7 +424,7 @@ import { HomeDataResolver } from './services/home-data.resolver';
     { path: 'signup', component: SignupComponent },
     // { path: '**', redirectTo: '/notfound' },
     { path: '**', redirectTo: '/' },
-], { scrollPositionRestoration: 'enabled', initialNavigation: 'enabled' }),
+], { scrollPositionRestoration: 'enabled', initialNavigation: 'enabledBlocking' }),
     ],
     exports: [RouterModule],
 })

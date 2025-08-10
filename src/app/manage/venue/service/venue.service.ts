@@ -5,12 +5,20 @@ import { environment } from 'src/environments/environment';
 import { TokenStorageService } from '../../../services/token-storage.service';
 import { switchMap } from 'rxjs/operators';
 import { isPlatformBrowser } from '@angular/common';
+import { Venue } from 'src/app/shared/models/venue.model';
+
 declare var google: any;
 const API_URL = environment.apiUrl + 'venue';
 @Injectable({
     providedIn: 'root',
 })
 export class VenueService {
+    private baseUrl = 'http://localhost:3006/api';// adjust if needed
+getVenueByName(name: string): Observable<any> {
+  return this.http.get(`${this.baseUrl}/api/aisearch/name/${encodeURIComponent(name)}`);
+}
+
+
     authtoken: string;
     private httpOptions;
     private httpWithoutAuthOptions;

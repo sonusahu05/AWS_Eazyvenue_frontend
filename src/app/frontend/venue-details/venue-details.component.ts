@@ -9,6 +9,7 @@ import {
     PLATFORM_ID,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { isPlatformBrowser, DOCUMENT } from '@angular/common';
 // import data from '../../../assets/demo/data/navigation.json';
 import { EnquiryService } from '../../manage/eventmanager/service/eventmanager.service';
@@ -29,6 +30,7 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { VenueOrderService } from 'src/app/services/venueOrder.service';
 import { HttpClient } from '@angular/common/http';
+
 import {
     FormBuilder,
     FormGroup,
@@ -49,13 +51,21 @@ import { RazorpayService } from 'src/app/services/razorpay.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { GeolocationService, UserLocation, VenueWithDistance } from '../../services/geolocation.service';
 import { BookingService, BookingData } from '../../services/booking.service';
-import { LoaderService } from '../../services/loader.service';
 import { Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
+const apiUrl = 'http://localhost:5000/api'; // ✅ Replace with your actual backend URL if different
+
 declare var google: any;
 
 declare var Razorpay;
-
+interface Venue {
+  name: string;
+  location: string;
+  capacity: number;
+  description: string;
+  mobileNumber: string;
+  venueImage: string[];
+}
 interface City {
     name: string;
     code: string;
@@ -83,7 +93,30 @@ interface City {
     ],
 })
 export class VenueDetailsComponent implements OnInit, OnDestroy {
+// venueDetails: any;
+  venueNameFromRoute: string = '';
     // Review source & toggling states
+    venue: Venue;
+loadVenueDetails(venueName: string): void {
+    this.venueService.getVenueByName(venueName).subscribe(
+    (response: any) => {
+      this.venueDetails = response;
+      console.log('✅ Venue details loaded:', this.venueDetails);
+
+      // Now call getUserDetails only if venueDetails.createdBy exists
+      const userId = this.venueDetails?.createdBy;
+      if (userId) {
+        this.getUserDetails(userId);
+      } else {
+        console.warn('Venue does not have a valid createdBy userId');
+      }
+    },
+    (error) => {
+      console.error('❌ Error loading venue details:', error);
+    }
+  );
+}
+
 
     [x: string]: any;
     venueDetailSearch: boolean = false;
@@ -141,36 +174,6 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     { name: "DJ", slug: "dj" },
     { name: "Makeup Artist", slug: "makeup-artist" }
   ];
-
-  // Amenity icons mapping
-  amenityIcons = {
-    'parking': 'parking-icon.svg',
-    'wifi': 'wifi-icon.svg',
-    'ac': 'ac-icon.svg',
-    'power_backup': 'power_backup.svg',
-    'security': 'security-icon.svg',
-    'wheelchair': 'wheelchair-icon.svg',
-    'smoking_area': 'smoking-icon.svg',
-    'bar': 'bar-icon.svg'
-  };
-
-  downloadMenuPDF() {
-    if (this.venueDetails?.menuPDF?.path) {
-      const apiUrl = environment.apiUrl;
-      const fullPath = `${apiUrl}${this.venueDetails.menuPDF.path}`;
-
-      // Create a temporary link element
-      const link = document.createElement('a');
-      link.href = fullPath;
-      link.target = '_blank';
-      link.download = this.venueDetails.menuPDF.filename || 'menu.pdf';
-
-      // Append to body, click and remove
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  }
   selectedVendorCategory: string = "";
   vendorPageNumber: number = 1;
   vendorRows: number = 10;
@@ -228,7 +231,6 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     public venueImageNumVisible: number = 8;
     public listingblock;
     public loading: boolean = true;
-    public contentReady: boolean = false; // New flag to track when content is fully ready
     public bannerList: any[] = [];
     public bannerImageList: any[] = [];
     public venueList: any[] = [];
@@ -237,7 +239,7 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     public pagination = environment.pagination;
     downloadFlg: boolean = false;
     public id;
-    public venueDetails: any = null; // Initialize as null to prevent template errors
+    public venueDetails;
     private lazyLoadEvent: LazyLoadEvent;
     public facilitiesArray: any[] = [];
     public cityName;
@@ -340,8 +342,7 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     public selectedEndDate;
     public showAvailabilityMessage: boolean = false;
     public oldDecorPrice: number = 0;
-    public premiumDecor: boolean = false;
-
+    
     // Analytics tracking properties
     public sendEnquiryClicked: boolean = false;
     public clickedOnReserved: boolean = false;
@@ -396,7 +397,7 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     private enquiryTimer: any;
     private hasCreatedEnquiry = false;
     userLocation: UserLocation | null = null;
-
+    
     // Analytics tracking properties
     private pageLoadTime: number = 0;
     private maxScrollDepth: number = 0;
@@ -405,7 +406,7 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     private trackingInterval: any;
     private scrollThrottleTimer: any;
     private boundBeforeUnloadHandler: any;
-
+    
 @ViewChild('similarVenuesContainer') similarVenuesContainer!: ElementRef;
     @ViewChild('paginator', { static: true }) paginator: Paginator;
     @ViewChild('searchCalendar', { static: true }) datePicker;
@@ -425,6 +426,7 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
         private venueOrderService: VenueOrderService,
         private vendorService: VendorService,
         private router: Router,
+        private route: ActivatedRoute,
         private formBuilder: FormBuilder,
         private roleService: RoleService,
         private authService: AuthService,
@@ -440,7 +442,6 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
         private analyticsService: AnalyticsService,
         private geolocationService: GeolocationService,
         private bookingService: BookingService,
-        private loaderService: LoaderService,
         private fb: FormBuilder,
         @Inject(PLATFORM_ID) private platformId: Object,
         @Inject(DOCUMENT) private document: Document
@@ -452,11 +453,12 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.initReviewForm();
-
-        // Disable the global loader for venue details page
-        this.loaderService.isLoading.next(false);
-
+        this.route.paramMap.subscribe(params => {
+    const venueName = params.get('name');
+    if (venueName) {
+      this.fetchVenueByName(venueName);
+    }
+  });
         // Browser-only code - wrapped in platform check
         if (isPlatformBrowser(this.platformId)) {
             const canonicalLink = this.renderer.createElement('link');
@@ -470,10 +472,10 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
             });
 
             this.renderer.addClass(this.document.body, 'body-dark');
-
+                      
             // Initialize user location for analytics
             this.initializeUserLocation();
-
+            
             // Initialize analytics tracking
             this.initializeAnalyticsTracking();
         }
@@ -773,10 +775,22 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     get h() {
         return this.mobileForm.controls;
     }
+// getCarouselReviews() {
+//     const reviews = this.selectedReviewSource === 'google' ? this.googleReviews : (this.venueDetails.reviews || []);
+//     return reviews;
+//   }
 getCarouselReviews() {
-    const reviews = this.selectedReviewSource === 'google' ? this.googleReviews : (this.venueDetails.reviews || []);
-    return reviews;
+  if (this.selectedReviewSource === 'google') {
+    return this.googleReviews;
+  } else {
+    // Check venueDetails is defined before accessing reviews
+    if (!this.venueDetails || !this.venueDetails.reviews) {
+      return [];
+    }
+    return this.venueDetails.reviews;
   }
+}
+
 
   // Get total number of slides
   getTotalSlides(): number {
@@ -807,7 +821,7 @@ getCarouselReviews() {
     }
   }
 
-
+  
 
   // Go to specific slide
   goToSlide(slideIndex: number) {
@@ -923,43 +937,61 @@ getCarouselReviews() {
   }
 
   // Enhanced getCurrentRating with fallback logic
-  getCurrentRating(): number {
-    if (this.selectedReviewSource === 'google') {
-      return this.venueDetails.googleRating || 0;
-    } else {
-      // If no EazyVenue reviews, show Google rating as fallback
-      const eazyRating = this.venueDetails.eazyVenueRating || 0;
-      const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
+//   getCurrentRating(): number {
+//     if (this.selectedReviewSource === 'google') {
+//       return this.venueDetails.googleRating || 0;
+//     } else {
+//       // If no EazyVenue reviews, show Google rating as fallback
+//       const eazyRating = this.venueDetails.eazyVenueRating || 0;
+//       const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
 
-      if (eazyReviewsCount === 0 && this.venueDetails.googleRating) {
-        return this.venueDetails.googleRating;
-      }
+//       if (eazyReviewsCount === 0 && this.venueDetails.googleRating) {
+//         return this.venueDetails.googleRating;
+//       }
 
-      return eazyRating;
-    }
+//       return eazyRating;
+//     }
+//   }
+
+getCurrentRating(): number {
+  if (!this.venueDetails) {
+    return 0; // or some default rating
   }
+
+  if (this.selectedReviewSource === 'google') {
+    return this.venueDetails.googleRating || 0;
+  } else {
+    const eazyRating = this.venueDetails.eazyVenueRating || 0;
+    const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
+
+    if (eazyReviewsCount === 0 && this.venueDetails.googleRating) {
+      return this.venueDetails.googleRating;
+    }
+
+    return eazyRating;
+  }
+}
+
 
   // Enhanced setInitialReviewSource with better logic
   setInitialReviewSource() {
-    const eazyReviewsCount = this.venueDetails?.reviews?.length || 0;
+    const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
     const googleReviewsCount = this.googleReviews?.length || 0;
 
-    // Always start with EazyVenue reviews for immediate display
-    // Google reviews will be switched to automatically when they load (if needed)
-    if (eazyReviewsCount > 0) {
+    if (eazyReviewsCount <= 2 && googleReviewsCount > 0) {
+      this.selectedReviewSource = 'google';
+    } else if (eazyReviewsCount > 0) {
       this.selectedReviewSource = 'eazyvenue';
+    } else if (googleReviewsCount > 0) {
+      this.selectedReviewSource = 'google';
     } else {
-      // If no EazyVenue reviews, default to eazyvenue for review form
-      // Google reviews will be switched to when they load
-      this.selectedReviewSource = 'eazyvenue';
+      this.selectedReviewSource = 'eazyvenue'; // Default to EazyVenue for writing reviews
     }
-
-    console.log(`Reviews initialized: EazyVenue (${eazyReviewsCount}), Google (${googleReviewsCount}), Selected: ${this.selectedReviewSource}`);
   }
 
   // Enhanced loadGoogleReviews with better error handling
   loadGoogleReviews() {
-    if (!this.venueDetails?.name || !this.venueDetails?.cityname) {
+    if (!this.venueDetails.name || !this.venueDetails.cityname) {
       console.log('Venue name or city not available for Google reviews');
       return;
     }
@@ -971,7 +1003,7 @@ getCarouselReviews() {
         next: (response) => {
           console.log('Google reviews response:', response);
 
-          if (response?.result?.reviews) {
+          if (response.result && response.result.reviews) {
             this.googleReviews = response.result.reviews.map(review => ({
               ...review,
               reviewtitle: this.generateReviewTitle(review.rating),
@@ -986,25 +1018,18 @@ getCarouselReviews() {
             if (response.result.rating) {
               this.venueDetails.googleRating = response.result.rating;
             }
-
-            // Only switch to Google reviews if EazyVenue has very few reviews
-            const eazyReviewsCount = this.venueDetails?.reviews?.length || 0;
-            const googleReviewsCount = this.googleReviews?.length || 0;
-
-            if (eazyReviewsCount <= 2 && googleReviewsCount > 0) {
-              this.selectedReviewSource = 'google';
-              console.log(`Switched to Google reviews: EazyVenue (${eazyReviewsCount}) vs Google (${googleReviewsCount})`);
-            }
           } else {
             this.googleReviews = [];
           }
 
           this.isLoadingGoogleReviews = false;
+          this.setInitialReviewSource();
         },
         error: (error) => {
           console.error('Error loading Google reviews:', error);
           this.googleReviews = [];
           this.isLoadingGoogleReviews = false;
+          this.setInitialReviewSource();
         }
       });
   }
@@ -1247,13 +1272,25 @@ getCarouselReviews() {
 //   }
 
   // Get total reviews count for selected source
-  getTotalReviewsCount(): number {
-    if (this.selectedReviewSource === 'google') {
-      return this.googleReviews.length;
-    } else {
-      return this.venueDetails.reviews?.length || 0;
+//   getTotalReviewsCount(): number {
+//     if (this.selectedReviewSource === 'google') {
+//       return this.googleReviews.length;
+//     } else {
+//       return this.venueDetails.reviews?.length || 0;
+//     }
+//   }
+
+getTotalReviewsCount(): number {
+  if (this.selectedReviewSource === 'google') {
+    return this.googleReviews.length;
+  } else {
+    if (!this.venueDetails || !this.venueDetails.reviews) {
+      return 0;
     }
+    return this.venueDetails.reviews.length;
   }
+}
+
 
   // Get rating for selected source
 //   getCurrentRating(): number {
@@ -1338,6 +1375,18 @@ getCarouselReviews() {
         this.router.navigate(['/vendor/detail', vendorId]);
       }
 
+      // Method to handle venue details navigation
+//       goToVenueDetails(venue: any) {
+//   this.router.navigate(['/venues', venue.name]);
+// }
+goToVenueDetails(venue: any) {
+  const slug = this.generateSlug(venue.name); // convert venue name to slug
+  this.router.navigate(['/venue', slug]);
+}
+
+generateSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+}
       createSlug(input):string {
         return input.toLowerCase().replace(/ /g, '_');
       }
@@ -1394,7 +1443,7 @@ getCarouselReviews() {
         try {
             // Get current engagement data
             const engagementData = this.getEngagementData();
-
+            
             // Prepare analytics data matching backend schema
             const clickData = {
                 venueId: venue._id || venue.id,
@@ -1431,7 +1480,7 @@ getCarouselReviews() {
     private getUserName(): string {
         console.log('Getting user name - fullUserDetails:', this.fullUserDetails);
         console.log('Getting user name - loggedInUser:', this.loggedInUser);
-
+        
         // Use fullUserDetails first, then fallback to loggedInUser
         if (this.fullUserDetails) {
             const fullName = `${this.fullUserDetails.firstName || ''} ${this.fullUserDetails.lastName || ''}`.trim();
@@ -1443,7 +1492,7 @@ getCarouselReviews() {
             console.log('User name from fullUserDetails (name/username):', name);
             return name;
         }
-
+        
         // Check loggedInUser structure - it might have the data directly or in userdata
         if (this.loggedInUser) {
             // First check if user data is directly on loggedInUser
@@ -1454,7 +1503,7 @@ getCarouselReviews() {
                     return fullName;
                 }
             }
-
+            
             // Check userdata property
             if (this.loggedInUser.userdata) {
                 const userData = this.loggedInUser.userdata;
@@ -1468,7 +1517,7 @@ getCarouselReviews() {
                 return name;
             }
         }
-
+        
         console.log('User name not found, returning empty string');
         return '';
     }
@@ -1479,13 +1528,13 @@ getCarouselReviews() {
     private getUserEmail(): string {
         console.log('Getting user email - fullUserDetails:', this.fullUserDetails);
         console.log('Getting user email - loggedInUser:', this.loggedInUser);
-
+        
         // Use fullUserDetails first, then fallback to loggedInUser
         if (this.fullUserDetails && this.fullUserDetails.email) {
             console.log('User email from fullUserDetails:', this.fullUserDetails.email);
             return this.fullUserDetails.email;
         }
-
+        
         // Check loggedInUser structure
         if (this.loggedInUser) {
             // First check if email is directly on loggedInUser
@@ -1493,7 +1542,7 @@ getCarouselReviews() {
                 console.log('User email from loggedInUser (direct):', this.loggedInUser.email);
                 return this.loggedInUser.email;
             }
-
+            
             // Check userdata property
             if (this.loggedInUser.userdata && this.loggedInUser.userdata.email) {
                 const email = this.loggedInUser.userdata.email;
@@ -1501,7 +1550,7 @@ getCarouselReviews() {
                 return email;
             }
         }
-
+        
         console.log('User email not found, returning empty string');
         return '';
     }
@@ -1512,24 +1561,24 @@ getCarouselReviews() {
     private getUserContact(): string {
         console.log('Getting user contact - fullUserDetails:', this.fullUserDetails);
         console.log('Getting user contact - loggedInUser:', this.loggedInUser);
-
+        
         // Use fullUserDetails first, then fallback to loggedInUser
         if (this.fullUserDetails) {
-            const contact = this.fullUserDetails.mobile ||
-                           this.fullUserDetails.phone ||
-                           this.fullUserDetails.contact ||
-                           this.fullUserDetails.mobileNumber ||
+            const contact = this.fullUserDetails.mobile || 
+                           this.fullUserDetails.phone || 
+                           this.fullUserDetails.contact || 
+                           this.fullUserDetails.mobileNumber || 
                            '';
             console.log('User contact from fullUserDetails:', contact);
             if (contact) return contact;
         }
-
+        
         // Check loggedInUser structure
         if (this.loggedInUser) {
             // First check if contact fields are directly on loggedInUser
-            const directContact = this.loggedInUser.mobile ||
-                                 this.loggedInUser.phone ||
-                                 this.loggedInUser.contact ||
+            const directContact = this.loggedInUser.mobile || 
+                                 this.loggedInUser.phone || 
+                                 this.loggedInUser.contact || 
                                  this.loggedInUser.mobileNumber ||
                                  this.loggedInUser.mobilenumber ||
                                  '';
@@ -1537,11 +1586,11 @@ getCarouselReviews() {
                 console.log('User contact from loggedInUser (direct):', directContact);
                 return directContact;
             }
-
+            
             // Check userdata property
             if (this.loggedInUser.userdata) {
-                const contact = this.loggedInUser.userdata.mobile ||
-                               this.loggedInUser.userdata.phone ||
+                const contact = this.loggedInUser.userdata.mobile || 
+                               this.loggedInUser.userdata.phone || 
                                this.loggedInUser.userdata.contact ||
                                this.loggedInUser.userdata.mobileNumber ||
                                this.loggedInUser.userdata.mobilenumber ||
@@ -1550,7 +1599,7 @@ getCarouselReviews() {
                 return contact;
             }
         }
-
+        
         console.log('User contact not found, returning empty string');
         return '';
     }
@@ -1583,7 +1632,7 @@ getCarouselReviews() {
         try {
             // Check permission status first
             const permissionStatus = await this.geolocationService.checkLocationPermission();
-
+            
             if (permissionStatus === 'granted') {
                 // Permission already granted, get location with address
                 const location = await this.geolocationService.getUserLocationWithAddress(false, false);
@@ -1631,7 +1680,7 @@ getCarouselReviews() {
             console.log('Returning location data:', locationData);
             return locationData;
         }
-
+        
         // If venue details are available, use venue location as fallback
         if (this.venueDetails) {
             const venueLocationData = {
@@ -1644,7 +1693,7 @@ getCarouselReviews() {
             console.log('Returning venue location data:', venueLocationData);
             return venueLocationData;
         }
-
+        
         // Return basic India location if no specific location available
         const defaultLocation = {
             country: 'India'
@@ -1659,15 +1708,15 @@ getCarouselReviews() {
     private initializeAnalyticsTracking(): void {
         // Record page load time
         this.pageLoadTime = Date.now();
-
+        
         // Set up scroll tracking
         this.setupScrollTracking();
-
+        
         // Set up periodic quality score updates (every 5 seconds)
         this.trackingInterval = setInterval(() => {
             this.updateQualityScore();
         }, 5000);
-
+        
         // Set up beforeunload handler to send final analytics
         if (isPlatformBrowser(this.platformId)) {
             this.boundBeforeUnloadHandler = (event: BeforeUnloadEvent) => {
@@ -1675,7 +1724,7 @@ getCarouselReviews() {
             };
             window.addEventListener('beforeunload', this.boundBeforeUnloadHandler);
         }
-
+        
         console.log('Analytics tracking initialized');
     }
 
@@ -1688,14 +1737,14 @@ getCarouselReviews() {
                 if (this.scrollThrottleTimer) {
                     clearTimeout(this.scrollThrottleTimer);
                 }
-
+                
                 this.scrollThrottleTimer = setTimeout(() => {
                     this.calculateScrollDepth();
                 }, 100); // Throttle scroll events
             };
 
             window.addEventListener('scroll', trackScroll, { passive: true });
-
+            
             // Also track on resize
             window.addEventListener('resize', trackScroll, { passive: true });
         }
@@ -1710,13 +1759,13 @@ getCarouselReviews() {
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.scrollHeight;
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
+        
         // Calculate scroll percentage
         const scrollPercent = Math.round(((scrollTop + windowHeight) / documentHeight) * 100);
-
+        
         // Update current scroll depth
         this.currentScrollDepth = Math.min(scrollPercent, 100);
-
+        
         // Update max scroll depth (only increases, never decreases)
         if (this.currentScrollDepth > this.maxScrollDepth) {
             this.maxScrollDepth = this.currentScrollDepth;
@@ -1744,10 +1793,10 @@ getCarouselReviews() {
         const timeScore = Math.min(timeSpentSeconds / 60, 1); // Max score at 1 minute
         const scrollScore = scrollDepthPercent / 100;
         const enquiryScore = submittedEnquiry ? 1 : 0;
-
+        
         // Weighted quality score calculation
         const qualityScore = ((timeScore * 0.4) + (scrollScore * 0.3) + (enquiryScore * 0.3));
-
+        
         return Math.round(qualityScore * 100) / 100; // Round to 2 decimal places
     }
 
@@ -1756,7 +1805,7 @@ getCarouselReviews() {
      */
     private updateQualityScore(): void {
         this.qualityScore = this.calculateQualityScore();
-
+        
         console.log('Analytics Update:', {
             timeSpent: this.getTimeSpentSeconds() + 's',
             maxScrollDepth: this.maxScrollDepth + '%',
@@ -1772,7 +1821,7 @@ getCarouselReviews() {
     private sendPaymentAnalytics(): void {
         try {
             console.log('💰 ANALYTICS: Sending payment completion analytics...');
-
+            
             // Track payment completion
             if (this.venueDetails) {
                 // Update engagement data to include payment completion
@@ -1783,7 +1832,7 @@ getCarouselReviews() {
                         madePayment: true // Override to true since payment was successful
                     }
                 };
-
+                
                 // Prepare analytics data
                 const clickData = {
                     venueId: this.venueDetails._id || this.venueDetails.id,
@@ -1828,29 +1877,29 @@ getCarouselReviews() {
                 // Date filters
                 startFilterDate: this.rangeDates && this.rangeDates[0] ? this.formatDateForAPI(this.rangeDates[0]) : null,
                 endFilterDate: this.rangeDates && this.rangeDates[1] ? this.formatDateForAPI(this.rangeDates[1]) : null,
-
+                
                 // Event details
                 eventDuration: this.getEventDurationFromSlot(),
                 occasion: this.sOccasion?.name || (typeof this.selectedOccasion === 'string' ? this.selectedOccasion : null),
                 guestCount: this.selectedVenueCapacity || null,
-
+                
                 // User interaction tracking
                 sendEnquiryClicked: this.sendEnquiryClicked,
                 clickedOnReserved: this.clickedOnReserved,
                 clickedOnBookNow: this.clickedOnBookNow,
                 madePayment: false, // Will be updated when payment is made
-
+                
                 // Wedding decor
                 weddingDecorType: this.selectedDecor?.name || this.selectedDecor?.type || null,
                 weddingDecorPrice: this.selectedDecorPrice || null,
-
+                
                 // Food menu details
                 foodMenuType: this.getFoodMenuTypeNames(),
                 foodMenuPrice: this.totalFoodPrice || null,
                 foodMenuPlate: this.getFoodMenuPlate()
             }
         };
-
+        
         console.log('📊 ANALYTICS: Current engagement data with actions:');
         console.log('   📊 Basic metrics:', {
             timeSpentSeconds: engagementData.timeSpentSeconds,
@@ -1869,7 +1918,7 @@ getCarouselReviews() {
         console.log('      sendEnquiryClicked:', this.sendEnquiryClicked);
         console.log('      clickedOnReserved:', this.clickedOnReserved);
         console.log('      clickedOnBookNow:', this.clickedOnBookNow);
-
+        
         return engagementData;
     }
 
@@ -1893,9 +1942,9 @@ getCarouselReviews() {
         const hasDecorSelection = this.selectedDecor;
         const hasUserActions = this.sendEnquiryClicked || this.clickedOnReserved || this.clickedOnBookNow;
         const hasMinimumTime = this.getTimeSpentSeconds() > 10; // At least 10 seconds spent
-
+        
         // Return true if user has made meaningful selections or spent significant time
-        return hasDateSelection || hasOccasionSelection || hasGuestCount ||
+        return hasDateSelection || hasOccasionSelection || hasGuestCount || 
                hasFoodSelection || hasDecorSelection || hasUserActions || hasMinimumTime;
     }
 
@@ -1907,12 +1956,12 @@ getCarouselReviews() {
             console.warn('📊 MANUAL: Cannot send analytics - venue details not loaded');
             return;
         }
-
+        
         if (!this.hasUserInteractionData()) {
             console.log('📊 MANUAL: Skipping analytics - no meaningful user interaction data yet');
             return;
         }
-
+        
         console.log('📊 MANUAL: Sending current analytics data...');
         this.trackVenueClick(this.venueDetails);
     }
@@ -1939,7 +1988,7 @@ getCarouselReviews() {
             // Calculate final metrics
             const finalTimeSpent = this.getTimeSpentSeconds();
             const finalQualityScore = this.calculateQualityScore();
-
+            
             console.log('📊 SENDING FINAL ANALYTICS:', {
                 totalTimeSpent: finalTimeSpent + 's',
                 maxScrollDepth: this.maxScrollDepth + '%',
@@ -1973,7 +2022,7 @@ getCarouselReviews() {
      */
     public sendTestAnalytics(): void {
         console.log('🧪 TEST: Sending analytics with sample data...');
-
+        
         // Set some test data
         this.rangeDates = [new Date(), new Date()];
         this.sOccasion = { name: 'Wedding', id: 'wedding-123' };
@@ -1983,7 +2032,7 @@ getCarouselReviews() {
         this.selectedDecorPrice = 50000;
         this.totalFoodPrice = 25000;
         this.sendEnquiryClicked = true;
-
+        
         console.log('🧪 TEST: Test data set, now sending analytics...');
         if (this.venueDetails) {
             this.trackVenueClick(this.venueDetails);
@@ -1995,7 +2044,7 @@ getCarouselReviews() {
      */
     public sendTestPaymentAnalytics(): void {
         console.log('🧪 TEST PAYMENT: Simulating payment completion analytics...');
-
+        
         // Set payment completion data
         this.madePayment = true;
         this.clickedOnBookNow = true;
@@ -2006,9 +2055,9 @@ getCarouselReviews() {
         this.selectedDecor = { name: 'Premium', type: 'Premium' };
         this.selectedDecorPrice = 50000;
         this.totalFoodPrice = 25000;
-
+        
         console.log('🧪 TEST PAYMENT: Payment data set, madePayment =', this.madePayment);
-
+        
         if (this.venueDetails) {
             this.sendPaymentAnalytics();
         }
@@ -2556,23 +2605,23 @@ loadMoreGoogleReviews(): void {
         }
 
         console.log('[DEBUG] Loading all booked dates for venue:', this.venueDetails.id);
-
+        
         // Get all bookings for this venue (no date filter for initial load)
         this.bookingService.getVenueBookings(this.venueDetails.id, {}).subscribe(
             (res: any) => {
                 console.log('[DEBUG] All venue bookings response:', res);
                 const bookingsArr = res && res.success && res.data && Array.isArray(res.data.bookings) ? res.data.bookings : [];
-
+                
                 if (bookingsArr.length > 0) {
                     this.bookedDatesList = bookingsArr;
                     this.disabledDates = [];
-
+                    
                     // Convert all booked date ranges to individual disabled dates
                     bookingsArr.forEach(booking => {
                         if (booking.details && booking.details.startFilterDate && booking.details.endFilterDate) {
                             const startDate = this.parseDate(booking.details.startFilterDate);
                             const endDate = this.parseDate(booking.details.endFilterDate);
-
+                            
                             if (startDate && endDate) {
                                 // Add all dates between start and end to disabled dates
                                 const dates = this.getDateRange(startDate, endDate);
@@ -2580,7 +2629,7 @@ loadMoreGoogleReviews(): void {
                             }
                         }
                     });
-
+                    
                     console.log('[DEBUG] Disabled dates array:', this.disabledDates);
                     console.log('[DEBUG] Total disabled dates count:', this.disabledDates.length);
                 } else {
@@ -2602,14 +2651,14 @@ loadMoreGoogleReviews(): void {
      */
     private parseDate(dateString: string): Date | null {
         if (!dateString) return null;
-
+        
         const parts = dateString.split('/');
         if (parts.length !== 3) return null;
-
+        
         const day = parseInt(parts[0], 10);
         const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
         const year = parseInt(parts[2], 10);
-
+        
         return new Date(year, month, day);
     }
 
@@ -2619,12 +2668,12 @@ loadMoreGoogleReviews(): void {
     private getDateRange(startDate: Date, endDate: Date): Date[] {
         const dates: Date[] = [];
         const currentDate = new Date(startDate);
-
+        
         while (currentDate <= endDate) {
             dates.push(new Date(currentDate));
             currentDate.setDate(currentDate.getDate() + 1);
         }
-
+        
         return dates;
     }
 
@@ -2633,18 +2682,18 @@ loadMoreGoogleReviews(): void {
      */
     private getBookedDatesInRange(startDate: Date, endDate: Date): string[] {
         const bookedDatesInRange: string[] = [];
-
+        
         this.bookedDatesList.forEach(booking => {
             if (booking.details && booking.details.startFilterDate && booking.details.endFilterDate) {
                 const bookingStart = this.parseDate(booking.details.startFilterDate);
                 const bookingEnd = this.parseDate(booking.details.endFilterDate);
-
+                
                 if (bookingStart && bookingEnd) {
                     // Check if booking overlaps with selected range
                     if (bookingStart <= endDate && bookingEnd >= startDate) {
                         const rangeStart = bookingStart > startDate ? bookingStart : startDate;
                         const rangeEnd = bookingEnd < endDate ? bookingEnd : endDate;
-
+                        
                         // Format the overlapping dates
                         const overlapDates = this.getDateRange(rangeStart, rangeEnd);
                         overlapDates.forEach(date => {
@@ -2657,297 +2706,404 @@ loadMoreGoogleReviews(): void {
                 }
             }
         });
+        
         return bookedDatesInRange.sort();
     }
 
-    // Performance optimization helper methods
-    private createSchemaScripts(): void {
-        const localBusinessSchema = {
-            '@context': 'http://schema.org/',
-            '@type': 'LocalBusiness',
-            '@id': location.href,
-            name: this.venueDetails.name + ' - ' + 'Eazyvenue.com',
-            description: this.venueDetails.metaDescription,
-            image: [this.venueDetails.venueImage[0]?.venue_image_src],
-            address: {
-                '@type': 'PostalAddress',
-                streetAddress: `Near ${this.venueDetails.subarea}, ${this.venueDetails.cityname}, ${this.venueDetails.statename}`,
-                addressLocality: `Near ${this.venueDetails.subarea}, ${this.venueDetails.cityname}, ${this.venueDetails.statename}`,
-                addressRegion: this.venueDetails.cityname,
-                postalCode: this.venueDetails.zipcode,
-                addressCountry: 'India',
-            },
-            aggregateRating: {
-                '@type': 'AggregateRating',
-                ratingValue: this.venueDetails.googleRating,
-                reviewCount: '1206',
-                bestRating: '5',
-                worstRating: '1.2',
-            },
-            priceRange: `Menu starts from Rs.${this.venueDetails.foodMenuType.veg_food[0].value} to Rs.${this.venueDetails.foodMenuType.veg_food[this.venueDetails.foodMenuType.veg_food.length - 1].value}`,
-            telephone: '+91 93720 91300',
-        };
-
-        const itemListSchema = {
-            itemListElement: [
-                { item: 'https://eazyvenue.com/', '@type': 'ListItem', name: 'Home', position: '1' },
-                { item: 'https://eazyvenue.com/banquet-halls/', '@type': 'ListItem', name: 'Venues', position: '2' },
-                { item: location.href, '@type': 'ListItem', name: this.venueDetails.name, position: '3' },
-            ],
-            '@type': 'BreadcrumbList',
-            '@context': 'http://schema.org',
-        };
-
-        // Create and append scripts
-        const localBusinessScript = document.createElement('script');
-        localBusinessScript.type = 'application/ld+json';
-        localBusinessScript.text = JSON.stringify(localBusinessSchema);
-        document.body.appendChild(localBusinessScript);
-
-        const itemListScript = document.createElement('script');
-        itemListScript.type = 'application/ld+json';
-        itemListScript.text = JSON.stringify(itemListSchema);
-        document.body.appendChild(itemListScript);
-    }
-
-    private processVenueDataFast(): void {
-        // Process venue images
-        this.tmpVenueList.forEach((element) => {
-            if (element.venueVideo !== '') {
-                element.venueImage.push({ video: element.venueVideo });
-            }
-        });
-        this.finalVenueList = [...this.venueList, ...this.tmpVenueList];
-
-        // Quick facilities setup
-        this.facilitiesArray = [];
-        const facilities = [
-            { condition: this.venueDetails.isSwimmingPool, title: 'Swimming Pool', details: this.venueDetails.swimmingdetails, icon: 'assets/images/category-icons/pool_party.svg' },
-            { condition: this.venueDetails.isParking, title: 'Parking', details: this.venueDetails.parkingdetails, icon: 'assets/images/category-icons/parking-icon.svg' },
-            { condition: this.venueDetails.isAC, title: 'A/C', details: this.venueDetails.acdetails, icon: 'assets/images/category-icons/ac-icon.svg' },
-            { condition: this.venueDetails.isGreenRooms, title: 'Rooms', details: this.venueDetails.capacityDescription, icon: 'assets/images/category-icons/rooms-icons.svg' },
-            { condition: this.venueDetails.isPowerBackup, title: 'Power Backup', details: this.venueDetails.powerbackupdetails, icon: 'assets/images/category-icons/power_backup.svg' },
-            { condition: this.venueDetails.isDJ, title: 'DJ', details: this.venueDetails.djdetails, icon: 'assets/images/category-icons/dj-music.svg' },
-            { condition: this.venueDetails.isEntertainmentLicense, title: 'Entertainment License', details: this.venueDetails.entertainmentlicensedetails, icon: 'assets/images/category-icons/entertainment.svg' }
-        ];
-
-        facilities.forEach(facility => {
-            if (facility.condition) {
-                this.facilitiesArray.push({ title: facility.title, details: facility.details, icon: facility.icon });
-            }
-        });
-
-        // Quick decor setup
-        this.decorArray = [];
-        const decorOptions = [
-            { price: this.venueDetails.decor1Price, images: this.venueDetails.decor1Image, name: 'Basic', image: '/assets/images/icons/Basic.jpg' },
-            { price: this.venueDetails.decor2Price, images: this.venueDetails.decor2Image, name: 'Standard', image: '/assets/images/icons/Standard.jpg' },
-            { price: this.venueDetails.decor3Price, images: this.venueDetails.decor3Image, name: 'Premium', image: '/assets/images/icons/Premium.jpg' }
-        ];
-
-        decorOptions.forEach(decor => {
-            if (decor.price && decor.images?.length > 0) {
-                this.decorArray.push({
-                    name: decor.name,
-                    price: decor.price,
-                    image: decor.image,
-                    selected: false,
-                    decorImages: decor.images,
-                });
-            }
-        });
-
-        // Quick food menu processing
-        this.allFoodMenuPriceArray = [];
-        if (this.venueDetails.foodMenuType) {
-            ['jainFood', 'mixFood', 'non_veg', 'veg_food'].forEach(menuType => {
-                if (this.venueDetails.foodMenuType[menuType]?.length > 0) {
-                    this.venueDetails.foodMenuType[menuType].forEach(item => {
-                        if (item.value > 0) {
-                            this.allFoodMenuPriceArray.push(item.value);
-                        }
-                    });
-                }
-            });
-
-            if (this.allFoodMenuPriceArray.length > 0) {
-                this.venueDetails['minVenuePrice'] = Math.min(...this.allFoodMenuPriceArray);
-            }
-        }
-
-        // Quick venue data assignment
-        this.venueCapacity = this.venueDetails.capacity;
-        this.venuePrice = this.venueDetails.venuePrice;
-        this.bookingPrice = this.venueDetails.bookingPrice;
-        this.foodMenuTypeArray = this.venueDetails.foodMenuType;
-        this.totalPeopleBooked = this.venueDetails.peopleBooked;
-        this.currentViews = this.venueDetails.views;
-
-        // Quick image visibility setup
-        this.venueImageNumVisible = Math.min(Number(this.venueDetails.venueImage.length), 8);
-        if (this.venueImageNumVisible > 8) {
-            this.venueImageNumVisible = 2;
-        }
-    }
-
-    private async loadEssentialDataBackground(): Promise<void> {
-        try {
-            // Load essential data with minimal blocking
-            this.onClickEventDate(this.selectedStartDate);
-            
-            // Load these in parallel for better performance
-            const promises = [
-                this.getCategoryDetailsAsync(),
-                this.getSlotsAsync(),
-                this.getCategoryBySlugAsync(),
-                this.getSubareasAsync(),
-                this.getCitiesAsync()
-            ];
-
-            await Promise.all(promises);
-
-            // Initialize map after essential data is loaded
-            this.initializeMapAsync();
-
-            // Load background data with longer delays
-            setTimeout(() => {
-                this.getSimilarVenues();
-                this.checkAndStartEnquiryTimer();
-            }, 100);
-
-            // Load secondary data in background
-            setTimeout(() => {
-                this.loadVenueBookedDates();
-                this.loadGoogleReviews();
-            }, 200);
-
-            // Show login popup for non-logged users
-            if (!this.isLoggedIn) {
-                setTimeout(() => {
-                    this.numberPopup = true;
-                    this.otpPopup = false;
-                    this.otpthankyouPopup = false;
-                }, 4000);
-            }
-        } catch (error) {
-            console.error('Error loading background data:', error);
-        }
-    }
-
-    private getCategoryDetailsAsync(): Promise<void> {
-        return new Promise((resolve) => {
-            this.getCategoryDetails();
-            resolve();
-        });
-    }
-
-    private getSlotsAsync(): Promise<void> {
-        return new Promise((resolve) => {
-            this.getSlots();
-            resolve();
-        });
-    }
-
-    private getCategoryBySlugAsync(): Promise<void> {
-        return new Promise((resolve) => {
-            this.getCategoryBySlug();
-            resolve();
-        });
-    }
-
-    private getSubareasAsync(): Promise<void> {
-        return new Promise((resolve) => {
-            this.getSubareas().then(() => resolve()).catch(() => resolve());
-        });
-    }
-
-    private getCitiesAsync(): Promise<void> {
-        return new Promise((resolve) => {
-            this.getCities().then(() => resolve()).catch(() => resolve());
-        });
-    }
-
-    private initializeMapAsync(): void {
-        setTimeout(() => {
-            this.initializeMap().catch(error => {
-                console.error('Map initialization error:', error);
-            });
-        }, 300);
-    }
-
     getVenueDetails() {
-        // Ensure global loader is disabled
-        this.loaderService.isLoading.next(false);
-        
-        this.loading = true;
-        this.contentReady = false;
-        this.errorMessage = '';
-        
-        // Show custom loading screen for at least 800ms for better UX
-        const minimumLoadingTime = 800;
-        const loadingStartTime = Date.now();
-        
         this.venueService.getVenueDetailsByMeta(this.metaUrl).subscribe(
+            // this.venueService.getVenueDetails(this.id).subscribe(
             async (data) => {
                 console.log(data);
 
                 this.venueDetails = data;
-                this.setInitialReviewSource();
                 
-                // Fast meta tags update
-                this.title.setTitle(this.venueDetails.name + ' - Eazyvenue.com');
-                this.meta.addTag({ name: 'title', content: this.venueDetails.name + ' - Eazyvenue.com' });
-                this.meta.addTag({ name: 'description', content: this.venueDetails.metaDescription });
-                this.meta.addTag({ name: 'keywords', content: this.venueDetails.metaKeywords });
+                setTimeout(() => this.loadGoogleReviews(), 100);
+                this.title.setTitle(
+                    this.venueDetails.name + ' - ' + 'Eazyvenue.com'
+                );
+                this.meta.addTag({
+                    name: 'title',
+                    content: this.venueDetails.name + ' - ' + 'Eazyvenue.com',
+                });
+                this.meta.addTag({
+                    name: 'description',
+                    content: this.venueDetails.metaDescription,
+                });
+                this.meta.addTag({
+                    name: 'keywords',
+                    content: this.venueDetails.metaKeywords,
+                });
                 this.meta.addTag({ name: 'robots', content: 'index, follow' });
 
-                // Quick essential data processing
+                const localBusinessSchema = {
+                    '@context': 'http://schema.org/',
+                    '@type': 'LocalBusiness',
+                    '@id': location.href,
+                    name: this.venueDetails.name + ' - ' + 'Eazyvenue.com',
+                    description: this.venueDetails.metaDescription,
+                    image: [this.venueDetails.venueImage[0]?.venue_image_src],
+                    address: {
+                        '@type': 'PostalAddress',
+                        // "streetAddress": "Near thane,Mumbai, Maharashtra",
+                        streetAddress:
+                            'Near ' +
+                            this.venueDetails.subarea +
+                            ', ' +
+                            this.venueDetails.cityname +
+                            ',' +
+                            this.venueDetails.statename +
+                            '',
+                        // "addressLocality": "Near thane, Mumbai, Maharashtra",
+                        addressLocality:
+                            'Near ' +
+                            this.venueDetails.subarea +
+                            ', ' +
+                            this.venueDetails.cityname +
+                            ',' +
+                            this.venueDetails.statename +
+                            '',
+                        // "addressRegion": "Mumbai",
+                        addressRegion: this.venueDetails.cityname,
+                        // "postalCode": "400601",
+                        postalCode: this.venueDetails.zipcode,
+                        addressCountry: 'India',
+                    },
+                    aggregateRating: {
+                        '@type': 'AggregateRating',
+                        ratingValue: this.venueDetails.googleRating,
+                        reviewCount: '1206',
+                        bestRating: '5',
+                        worstRating: '1.2',
+                    },
+                    priceRange:
+                        'Menu starts from Rs.' +
+                        this.venueDetails.foodMenuType.veg_food[0].value +
+                        ' to Rs.' +
+                        this.venueDetails.foodMenuType.veg_food[
+                            this.venueDetails.foodMenuType.veg_food.length - 1
+                        ].value,
+                    telephone: '+91 93720 91300',
+                };
+                const localBusinessScript = document.createElement('script');
+                localBusinessScript.type = 'application/ld+json';
+                localBusinessScript.text = JSON.stringify(localBusinessSchema);
+                document.body.appendChild(localBusinessScript);
+
+                const itemListSchema = {
+                    itemListElement: [
+                        {
+                            item: 'https://eazyvenue.com/',
+                            '@type': 'ListItem',
+                            name: 'Home',
+                            position: '1',
+                        },
+                        {
+                            item: 'https://eazyvenue.com/banquet-halls/',
+                            '@type': 'ListItem',
+                            name: 'Venues',
+                            position: '2',
+                        },
+                        {
+                            item: location.href,
+                            '@type': 'ListItem',
+                            name: this.venueDetails.name,
+                            position: '3',
+                        },
+                    ],
+                    '@type': 'BreadcrumbList',
+                    '@context': 'http://schema.org',
+                };
+
+                const itemListScript = document.createElement('script');
+                itemListScript.type = 'application/ld+json';
+                itemListScript.text = JSON.stringify(itemListSchema);
+                document.body.appendChild(itemListScript);
+
                 this.selectedVenueList = [data];
                 this.cityName = this.venueDetails.cityname.toLowerCase();
+                var googleMapSource =
+                    'https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=' +
+                    this.cityName +
+                    '&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed';
+                // window.location.replace(this.googleMapSource);
+                //this.googleMapSource.toString();
+                this.tmpVenueList.forEach((element) => {
+                    if (element.venueVideo !== '') {
+                        element.venueImage.push({ video: element.venueVideo });
+                    }
+                });
+                this.finalVenueList = [...this.venueList, ...this.tmpVenueList];
+                this.googleMapSource =
+                    this.sanitizer.bypassSecurityTrustResourceUrl(
+                        googleMapSource
+                    );
+                this.googleMapSource =
+                    this.googleMapSource.changingThisBreaksApplicationSecurity;
+                // this.url = this.googleMapSource.changingThisBreaksApplicationSecurity;
+                let swimmingObj = {
+                    title: 'Swimming Pool',
+                    details: this.venueDetails.swimmingdetails,
+                    icon: 'assets/images/category-icons/pool_party.svg',
+                };
+                let parkingObj = {
+                    title: 'Parking',
+                    details: this.venueDetails.parkingdetails,
+                    icon: 'assets/images/category-icons/parking-icon.svg',
+                };
+                let acObj = {
+                    title: 'A/C',
+                    details: this.venueDetails.acdetails,
+                    icon: 'assets/images/category-icons/ac-icon.svg',
+                };
+                let roomsObj = {
+                    title: 'Rooms',
+                    details: this.venueDetails.capacityDescription,
+                    icon: 'assets/images/category-icons/rooms-icons.svg',
+                };
+                let powerBackupObj = {
+                    title: 'Power Backup',
+                    details: this.venueDetails.powerbackupdetails,
+                    icon: 'assets/images/category-icons/power_backup.svg',
+                };
+                let djObj = {
+                    title: 'DJ',
+                    details: this.venueDetails.djdetails,
+                    icon: 'assets/images/category-icons/dj-music.svg',
+                };
+                let entertainmentLicenseObj = {
+                    title: 'Entertainment License',
+                    details: this.venueDetails.entertainmentlicensedetails,
+                    icon: 'assets/images/category-icons/entertainment.svg',
+                };
+                this.venueImageNumVisible = Number(
+                    this.venueDetails.venueImage.length
+                );
+                if (this.venueImageNumVisible < 8) {
+                    let hideThumbnailClass =
+                        this.el.nativeElement.querySelector(
+                            '.section-venuelisting-details'
+                        );
+                    //showp2Table.classList.remove('hide-columns');
+                }
+                if (this.venueImageNumVisible > 8) {
+                    this.venueImageNumVisible = Number(2);
+                }
+                if (this.venueDetails.isSwimmingPool == true) {
+                    this.facilitiesArray.push(swimmingObj);
+                }
+                if (this.venueDetails.isParking == true) {
+                    this.facilitiesArray.push(parkingObj);
+                }
+                if (this.venueDetails.isAC == true) {
+                    this.facilitiesArray.push(acObj);
+                }
+                if (this.venueDetails.isGreenRooms == true) {
+                    this.facilitiesArray.push(roomsObj);
+                }
+                if (this.venueDetails.isPowerBackup == true) {
+                    this.facilitiesArray.push(powerBackupObj);
+                }
+                if (this.venueDetails.isDJ == true) {
+                    this.facilitiesArray.push(djObj);
+                }
+                if (this.venueDetails.isEntertainmentLicense == true) {
+                    this.facilitiesArray.push(entertainmentLicenseObj);
+                }
+                if (
+                    this.venueDetails.decor1Price != undefined ||
+                    this.venueDetails.decor1Price != ''
+                ) {
+                    let decor1img = '';
+                    if (this.venueDetails.decor1Image.length > 0) {
+                        // if (this.venueDetails.decor1Image[0].venue_image_src) {
+                        decor1img =
+                            this.venueDetails.decor1Image[0].venue_image_src;
+                        this.decorArray.push({
+                            name: 'Basic',
+                            price: this.venueDetails.decor1Price,
+                            image: '/assets/images/icons/Basic.jpg',
+                            selected: false,
+                            decorImages: this.venueDetails.decor1Image,
+                        });
+                        // }
+                    }
+                }
+                if (
+                    this.venueDetails.decor2Price != undefined ||
+                    this.venueDetails.decor2Price != ''
+                ) {
+                    let decor2img = '';
+                    // console.log(this.venueDetails.decor2Image[0].venue_image_src)
+                    if (this.venueDetails.decor2Image.length > 0) {
+                        // if (this.venueDetails.decor2Image[0].venue_image_src) {
+                        decor2img =
+                            this.venueDetails.decor2Image[0].venue_image_src;
+                        this.decorArray.push({
+                            name: 'Standard',
+                            price: this.venueDetails.decor2Price,
+                            image: '/assets/images/icons/Standard.jpg',
+                            selected: false,
+                            decorImages: this.venueDetails.decor2Image,
+                        });
+                        // }
+                    }
+                }
+                if (
+                    this.venueDetails.decor3Price != undefined ||
+                    this.venueDetails.decor3Price != ''
+                ) {
+                    let decor3img = '';
+                    if (this.venueDetails.decor3Image.length > 0) {
+                        // if (this.venueDetails.decor3Image[0].venue_image_src) {
+                        decor3img =
+                            this.venueDetails.decor3Image[0].venue_image_src;
+                        this.decorArray.push({
+                            name: 'Premium',
+                            price: this.venueDetails.decor3Price,
+                            image: '/assets/images/icons/Premium.jpg',
+                            selected: false,
+                            decorImages: this.venueDetails.decor3Image,
+                        });
+                        // }
+                    }
+                }
+                this.allFoodMenuPriceArray = [];
+                if (this.venueDetails.foodMenuType) {
+                    //this.venueDetails.foodMenuType.forEach(fElement => {
+                    if (this.venueDetails.foodMenuType.jainFood !== undefined) {
+                        if (
+                            this.venueDetails.foodMenuType.jainFood.length > 0
+                        ) {
+                            this.venueDetails.foodMenuType.jainFood.forEach(
+                                (jfElement) => {
+                                    if (jfElement.value > 0) {
+                                        this.allFoodMenuPriceArray.push(
+                                            jfElement.value
+                                        );
+                                    }
+                                }
+                            );
+                        }
+                    }
+                    if (this.venueDetails.foodMenuType.mixFood !== undefined) {
+                        if (this.venueDetails.foodMenuType.mixFood.length > 0) {
+                            this.venueDetails.foodMenuType.mixFood.forEach(
+                                (mfElement) => {
+                                    if (mfElement.value > 0) {
+                                        this.allFoodMenuPriceArray.push(
+                                            mfElement.value
+                                        );
+                                    }
+                                }
+                            );
+                        }
+                    }
+                    if (this.venueDetails.foodMenuType.non_veg !== undefined) {
+                        if (this.venueDetails.foodMenuType.non_veg.length > 0) {
+                            this.venueDetails.foodMenuType.non_veg.forEach(
+                                (nvElement) => {
+                                    if (nvElement.value > 0) {
+                                        this.allFoodMenuPriceArray.push(
+                                            nvElement.value
+                                        );
+                                    }
+                                }
+                            );
+                        }
+                    }
+                    if (this.venueDetails.foodMenuType.veg_food !== undefined) {
+                        if (
+                            this.venueDetails.foodMenuType.veg_food.length > 0
+                        ) {
+                            this.venueDetails.foodMenuType.veg_food.forEach(
+                                (vElement) => {
+                                    if (vElement.value > 0) {
+                                        this.allFoodMenuPriceArray.push(
+                                            vElement.value
+                                        );
+                                    }
+                                }
+                            );
+                        }
+                    }
+                    let minPrice = 0;
+                    if (this.allFoodMenuPriceArray.length > 0) {
+                        minPrice = Math.min(...this.allFoodMenuPriceArray);
+                    }
+                    // if (this.capacity > 0) {
+                    this.venueDetails['minVenuePrice'] = minPrice;
+                    // }
+
+                    // });
+                }
+                this.venueCapacity = this.venueDetails.capacity;
+                this.venuePrice = this.venueDetails.venuePrice;
+                this.bookingPrice = this.venueDetails.bookingPrice;
+                this.foodMenuTypeArray = this.venueDetails.foodMenuType;
+                this.totalPeopleBooked = this.venueDetails.peopleBooked;
+                this.currentViews = this.venueDetails.views;
                 
-                const googleMapSource = `https://maps.google.com/maps?width=600&height=400&hl=en&q=${this.cityName}&t=&z=14&ie=UTF8&iwloc=B&output=embed`;
-                this.googleMapSource = this.sanitizer.bypassSecurityTrustResourceUrl(googleMapSource);
-                this.googleMapSource = this.googleMapSource.changingThisBreaksApplicationSecurity;
+                // Load booked dates for calendar highlighting
+                this.loadVenueBookedDates();
                 
-                // Fast venue data processing
-                this.processVenueDataFast();
-
-                // Calculate remaining time to show loading screen
-                const elapsedTime = Date.now() - loadingStartTime;
-                const remainingTime = Math.max(0, minimumLoadingTime - elapsedTime);
-
-                // Hide loading after minimum time has passed
-                setTimeout(() => {
-                    this.contentReady = true;
-                    this.loading = false;
-                }, remainingTime);
-
-                // Defer all heavy operations
-                setTimeout(() => this.createSchemaScripts(), minimumLoadingTime + 10);
-                setTimeout(() => this.loadEssentialDataBackground(), minimumLoadingTime + 20);
+                this.onClickEventDate(this.selectedStartDate);
+                this.getCategoryDetails();
+                this.getSlots();
+                this.getCategoryBySlug();
+                await this.getSubareas();
+                await this.getCities();
+                await this.initializeMap();
+                if (!this.isLoggedIn) {
+                    setTimeout(() => {
+                        this.numberPopup = true;
+                        this.otpPopup = false;
+                        this.otpthankyouPopup = false;
+                    }, 4000);
+                }
+                setTimeout(() => this.getSimilarVenues(), 100);
+                this.checkAndStartEnquiryTimer();
             },
             (err) => {
                 this.errorMessage = err.error.message;
-                this.loading = false;
-                this.contentReady = false;
             }
         );
     }
 
+    // getUserDetails(id: string) {
+    //     this.userService.getUserDetails(id).subscribe(
+    //         data => {
+    //             this.fullUserDetails = data;
+    //             console.log('👤 VENUE: Full user details loaded:', this.fullUserDetails);
+
+    //             // Check and start enquiry timer after user details are loaded
+    //             this.checkAndStartEnquiryTimer();
+    //         },
+    //         err => {
+    //             console.error('❌ VENUE: Failed to load user details:', err);
+    //         }
+    //     );
+    // }
     getUserDetails(id: string) {
-        this.userService.getUserDetails(id).subscribe(
-            data => {
-                this.fullUserDetails = data;
-                console.log('👤 VENUE: Full user details loaded:', this.fullUserDetails);
+  if (!id) {
+    console.error('User ID is undefined. Cannot load user details.');
+    return;
+  }
 
-                // Check and start enquiry timer after user details are loaded
-                this.checkAndStartEnquiryTimer();
-            },
-            err => {
-                console.error('❌ VENUE: Failed to load user details:', err);
-            }
-        );
+  this.userService.getUserDetails(id).subscribe(
+    data => {
+      this.fullUserDetails = data;
+      console.log('👤 VENUE: Full user details loaded:', this.fullUserDetails);
+
+      this.checkAndStartEnquiryTimer();
+    },
+    err => {
+      console.error('❌ VENUE: Failed to load user details:', err);
     }
+  );
+}
+
+
 
     // 6. Update your createAutoEnquiry method to use fullUserDetails
     // Fixed createAutoEnquiry method with proper error handling
@@ -3249,7 +3405,7 @@ loadMoreGoogleReviews(): void {
                 element.selected = false;
             }
         });
-
+        
         // Track analytics for food menu type selection
         console.log('📊 ANALYTICS: Food menu type selected:', foodMenuType.name || foodMenuType.slug);
         this.sendCurrentAnalytics();
@@ -3278,7 +3434,7 @@ loadMoreGoogleReviews(): void {
         this.showDecorImages = true;
         this.decorImages = decor.decorImages;
     }
-
+    premiumDecor: boolean = false;
     onClickDecor(decor) {
         this.decorArray.forEach((element) => {
             if (element.name == decor.name) {
@@ -3308,7 +3464,7 @@ loadMoreGoogleReviews(): void {
                 Number(this.selectedVenueCapacity) *
                 Number(this.selectedFoodMenuType.value);
         }
-
+        
         // Track analytics for decor selection
         console.log('📊 ANALYTICS: Decor selected:', decor.name, 'Price:', decor.price);
         this.sendCurrentAnalytics();
@@ -3528,7 +3684,7 @@ loadMoreGoogleReviews(): void {
 
         this.totalVenuePrice = totalVenuePrice;
         this.selectedGuestName = guestCount;
-
+        
         // Track analytics for guest count selection
         console.log('📊 ANALYTICS: Guest count selected:', guestCount);
         this.sendCurrentAnalytics();
@@ -3536,7 +3692,7 @@ loadMoreGoogleReviews(): void {
   onClickEventDate(event) {
         this.selectedStartDate = this.rangeDates[0];
         this.selectedEndDate = this.rangeDates[1];
-
+        
         // Use DD/MM/YYYY format for backend query (same as booking-analytics component)
         let startDate = moment(this.selectedStartDate).format('DD/MM/YYYY');
         let endDate;
@@ -3546,7 +3702,7 @@ loadMoreGoogleReviews(): void {
             this.datePicker.overlayVisible = false;
             endDate = moment(this.selectedEndDate).format('DD/MM/YYYY');
         }
-
+        
         // Keep selectedStartDate/selectedEndDate in DD/MM/YYYY for UI consistency
         this.selectedStartDate = moment(this.selectedStartDate).local().format('DD/MM/YYYY');
         this.selectedEndDate = moment(this.selectedEndDate).local().format('DD/MM/YYYY');
@@ -3570,14 +3726,14 @@ loadMoreGoogleReviews(): void {
                         const selectedStartDate = moment(this.selectedStartDate, 'DD/MM/YYYY').toDate();
                         const selectedEndDate = moment(this.selectedEndDate, 'DD/MM/YYYY').toDate();
                         const bookedDatesInRange = this.getBookedDatesInRange(selectedStartDate, selectedEndDate);
-
+                        
                         console.log('[DEBUG] Booked dates found, showing warning to user.');
                         console.log('[DEBUG] Specific booked dates:', bookedDatesInRange);
-
-                        const warningMessage = bookedDatesInRange.length > 0
+                        
+                        const warningMessage = bookedDatesInRange.length > 0 
                             ? `The following dates are already booked: ${bookedDatesInRange.join(', ')}. Please choose different dates.`
                             : 'Some dates in your selection are already booked. Please choose different dates.';
-
+                        
                         this.messageService.add({
                             key: 'toastMsg',
                             severity: 'warn',
@@ -3650,7 +3806,7 @@ loadMoreGoogleReviews(): void {
                     this.errorMessage = err.error.message;
                 }
             );
-
+            
         // Track analytics for date selection
         console.log('📊 ANALYTICS: Event dates selected:', this.selectedStartDate, 'to', this.selectedEndDate);
         this.sendCurrentAnalytics();
@@ -3992,10 +4148,10 @@ loadMoreGoogleReviews(): void {
         this.selectedOccasion = event.id;
         this.sOccasion = event;
         this.selectedOccasionNames = [{ id: event.id, name: event.name }];
-
+        
         // Track analytics for occasion selection
         console.log('📊 ANALYTICS: Occasion selected:', event.name);
-
+        
         if (event.id !== undefined) {
             let index = this.findIndexById(event.id, this.occasionArray);
             if (index != -1) {
@@ -4016,7 +4172,7 @@ loadMoreGoogleReviews(): void {
                 });
             }
         }
-
+        
         // Send analytics update for occasion selection
         this.sendCurrentAnalytics();
     }
@@ -4219,7 +4375,7 @@ loadMoreGoogleReviews(): void {
         // }
         this.offerPaymentValue25_percent = this.totalVenuePrice * 0.25;
         this.orderType = mode;
-
+        
         // Track analytics immediately when buttons are clicked
         if (mode === 'book_now') {
             // This is "Reserve For ₹5000" button - track as reserve clicked
@@ -4230,7 +4386,7 @@ loadMoreGoogleReviews(): void {
             this.sendEnquiryClicked = true;
             console.log('📊 ANALYTICS: Send Enquiry button clicked, sendEnquiryClicked =', this.sendEnquiryClicked);
         }
-
+        
         this.isBookingSummary = true;
         this.showVenueDetailFilter = false;
 
@@ -4290,22 +4446,22 @@ loadMoreGoogleReviews(): void {
         //   return;
         // }
         this.orderType = mode;
-
+        
         // Track analytics immediately when fast enquiry button is clicked
         if (mode === 'send_enquires') {
             this.sendEnquiryClicked = true;
             console.log('📊 ANALYTICS: Fast enquiry button clicked, sendEnquiryClicked =', this.sendEnquiryClicked);
         }
-
+        
         this.isBookingenquerySummary = true;
         this.showVenueDetailFilter = false;
     }
     onClickBooking(mode) {
-
+        
         // Track analytics - Book Now clicked
         this.clickedOnBookNow = true;
         console.log('📊 ANALYTICS: Book Now clicked, clickedOnBookNow =', this.clickedOnBookNow);
-
+        
         console.log('=== BOOKING PROCESS STARTED ===');
         console.log('Mode:', mode);
         console.log('Payment Amount:', this.paymentAmount);
@@ -4371,7 +4527,7 @@ loadMoreGoogleReviews(): void {
         console.log(' FRONTEND: About to send venue order to API');
         console.log('📤 FRONTEND: Order data being sent:', JSON.stringify(orderData, null, 2));
         console.log('📤 FRONTEND: API endpoint:', environment.apiUrl + 'venueorder');
-
+        
         this.venueOrderService.addVenueOrder(orderData).subscribe(
             async (data) => {
                 console.log('✅ FRONTEND: API response received:', data);
@@ -4411,7 +4567,7 @@ loadMoreGoogleReviews(): void {
                                 },
                             },
                         };
-
+                        
                         console.log('🏦 PRODUCTION: Opening Razorpay payment gateway...');
                         try {
                             const rzp = new Razorpay(options);
@@ -4427,7 +4583,7 @@ loadMoreGoogleReviews(): void {
                             });
                         }
                     } else {
-                        this.markEnquirySubmitted();
+                        this.markEnquirySubmitted(); 
                         this.messageService.add({
                             key: 'toastMsg',
                             severity: 'success',
@@ -4453,7 +4609,7 @@ loadMoreGoogleReviews(): void {
                 console.error('❌ FRONTEND: Error status:', err.status);
                 console.error('❌ FRONTEND: Error message:', err.message);
                 console.error('❌ FRONTEND: Error details:', err.error);
-
+    
                 this.messageService.add({
                     key: 'toastMsg',
                     severity: 'error',
@@ -4466,19 +4622,19 @@ loadMoreGoogleReviews(): void {
     }
     onRazorWindowClosed(response) {
         this.isBookingSummary = false;
-
+        
         console.log('💰 PAYMENT: Razorpay response received:', response);
-
+        
         // First verify the payment with backend
         this.venueOrderService.handleVenuePayment(response).subscribe(
             (res: any) => {
                 console.log('💰 PAYMENT: Backend verification response:', res);
-
+                
                 if (res.status === 'Success') {
                     // Payment successful - update analytics tracking immediately
                     this.madePayment = true;
                     console.log('✅ PAYMENT SUCCESS: Updated madePayment =', this.madePayment);
-
+                    
                     // Payment verified successfully, now create booking record
                     this.createBookingRecord(response.venueOrderId)
                         .then(() => {
@@ -4490,13 +4646,13 @@ loadMoreGoogleReviews(): void {
                                 detail: 'Your venue booking has been completed successfully!',
                                 life: 6000,
                             });
-
+                            
                             // Send updated analytics with payment completion
                             this.sendPaymentAnalytics();
-
+                            
                             // Refresh booked dates to include this new booking
                             this.refreshBookedDates();
-
+                            
                             setTimeout(() => {
                                 this.router.navigateByUrl('/my-profile?mode=bookings');
                             }, 2000);
@@ -4560,14 +4716,14 @@ loadMoreGoogleReviews(): void {
             console.log('🔄 User ID:', this.userId);
             console.log('🔄 Logged in user:', this.loggedInUser);
             console.log('🔄 User ID extraction: this.userId =', this.userId, ', loggedInUser.userdata.id =', this.loggedInUser?.userdata?.id, ', loggedInUser.id =', this.loggedInUser?.id);
-
+            
             // Validate required user data - check both userId and loggedInUser.userdata.id
             const actualUserId = this.userId || this.loggedInUser?.userdata?.id || this.loggedInUser?.id;
             console.log('🔄 Actual user ID resolved to:', actualUserId);
             if (!actualUserId) {
                 throw new Error('User ID is required but not available');
             }
-
+            
             // If fullUserDetails is not loaded, try to load it synchronously
             if (!this.fullUserDetails && actualUserId) {
                 console.log('🔄 User details not loaded, attempting to load...');
@@ -4590,18 +4746,18 @@ loadMoreGoogleReviews(): void {
                     console.warn('⚠️ Could not load user details, proceeding with available data:', error);
                 }
             }
-
+            
             if (!this.fullUserDetails && !this.loggedInUser) {
                 throw new Error('User details are required but not available');
             }
-
+            
             // Prepare frontend booking data in the format expected by createBookingFromFrontend
             const frontendBookingData = {
                 venueId: this.venueDetails.id,
                 venueName: this.venueDetails.name,
                 userId: actualUserId,
-                userName: this.fullUserDetails?.firstName && this.fullUserDetails?.lastName
-                    ? `${this.fullUserDetails.firstName} ${this.fullUserDetails.lastName}`
+                userName: this.fullUserDetails?.firstName && this.fullUserDetails?.lastName 
+                    ? `${this.fullUserDetails.firstName} ${this.fullUserDetails.lastName}` 
                     : this.loggedInUser?.userdata?.firstname && this.loggedInUser?.userdata?.lastname
                     ? `${this.loggedInUser.userdata.firstname} ${this.loggedInUser.userdata.lastname}`
                     : this.loggedInUser?.userdata?.fullName || this.loggedInUser?.name || 'Unknown User',
@@ -4629,11 +4785,11 @@ loadMoreGoogleReviews(): void {
                 orderType: 'book_now',
                 // Missing fields that are causing nulls in database - using same data sources as venue order
                 eventDuration: this.getEventDurationFromSlot() || this.selectedSlotsName || 'full',
-                foodMenuType: this.getFoodMenuTypeNames() || (this.selectedFoodMenuTypes && this.selectedFoodMenuTypes.length > 0
-                    ? this.selectedFoodMenuTypes.join(', ')
+                foodMenuType: this.getFoodMenuTypeNames() || (this.selectedFoodMenuTypes && this.selectedFoodMenuTypes.length > 0 
+                    ? this.selectedFoodMenuTypes.join(', ') 
                     : this.selectedFoodTypeSlug || 'standard'),
-                foodMenuPlate: this.getFoodMenuPlate() || (this.selectedFoodMenuTypes && this.selectedFoodMenuTypes.length > 0
-                    ? this.selectedFoodMenuTypes[0]
+                foodMenuPlate: this.getFoodMenuPlate() || (this.selectedFoodMenuTypes && this.selectedFoodMenuTypes.length > 0 
+                    ? this.selectedFoodMenuTypes[0] 
                     : '2x2'),
                 // Analytics tracking fields - use actual component values
                 sendEnquiryClicked: this.sendEnquiryClicked,
@@ -4660,51 +4816,51 @@ loadMoreGoogleReviews(): void {
             console.log('🔍 selectedFoodTypeSlug:', this.selectedFoodTypeSlug);
             console.log('🔍 foodMenuPlate:', frontendBookingData.foodMenuPlate);
             console.log('🔍 selectedVenueCapacity:', this.selectedVenueCapacity);
-
+            
             // Debug method returns
             console.log('🔍 METHOD RETURNS:');
             console.log('   getEventDurationFromSlot():', this.getEventDurationFromSlot());
             console.log('   getFoodMenuTypeNames():', this.getFoodMenuTypeNames());
             console.log('   getFoodMenuPlate():', this.getFoodMenuPlate());
-
+            
             console.log('🔍 VENUE ORDER COMPARISON:');
             console.log('   📦 VenueOrder.foodMenuType would be:', this.selectedFoodMenuTypes);
             console.log('   📦 VenueOrder.foodType would be:', [this.selectedFoodTypeSlug]);
             console.log('   📦 VenueOrder.durationData would be:', [{
                 occasionStartDate: this.rangeDates[0],
-                occasionEndDate: this.rangeDates[1],
+                occasionEndDate: this.rangeDates[1], 
                 slotId: this.selectedSlots[0]?.slotId
             }]);
-
+            
             // Enhanced debugging - check each method individually
             console.log('🔍 DETAILED DEBUG:');
             console.log('   getEventDurationFromSlot() returns:', this.getEventDurationFromSlot());
             console.log('   getFoodMenuTypeNames() returns:', this.getFoodMenuTypeNames());
             console.log('   getFoodMenuPlate() returns:', this.getFoodMenuPlate());
-
+            
             // If any of these are null, let's set robust fallback values to prevent nulls in database
             if (!frontendBookingData.eventDuration || frontendBookingData.eventDuration === null) {
                 // Try multiple fallback sources
-                frontendBookingData.eventDuration = this.selectedSlotsName ||
+                frontendBookingData.eventDuration = this.selectedSlotsName || 
                                                   (this.selectedSlots && this.selectedSlots[0] && this.selectedSlots[0].slotName) ||
                                                   'full';
                 console.log('🔧 Setting robust fallback eventDuration to:', frontendBookingData.eventDuration);
             }
-
+            
             if (!frontendBookingData.foodMenuType || frontendBookingData.foodMenuType === null) {
                 // Use multiple fallback sources
-                frontendBookingData.foodMenuType = this.selectedFoodTypeSlug ||
-                                                  (this.selectedFoodMenuTypes && this.selectedFoodMenuTypes.length > 0
+                frontendBookingData.foodMenuType = this.selectedFoodTypeSlug || 
+                                                  (this.selectedFoodMenuTypes && this.selectedFoodMenuTypes.length > 0 
                                                     ? this.selectedFoodMenuTypes.join(', ')
                                                     : null) ||
                                                   'standard';
                 console.log('🔧 Setting robust fallback foodMenuType to:', frontendBookingData.foodMenuType);
             }
-
+            
             if (!frontendBookingData.foodMenuPlate || frontendBookingData.foodMenuPlate === null) {
                 // Use guest count for a sensible default
                 const guestCount = parseInt(this.selectedVenueCapacity?.toString() || '0');
-                frontendBookingData.foodMenuPlate = guestCount <= 50 ? '1x1' :
+                frontendBookingData.foodMenuPlate = guestCount <= 50 ? '1x1' : 
                                                    guestCount <= 150 ? '2x2' : '3x3';
                 console.log('🔧 Setting robust fallback foodMenuPlate to:', frontendBookingData.foodMenuPlate, 'based on guestCount:', guestCount);
             }
@@ -4725,7 +4881,7 @@ loadMoreGoogleReviews(): void {
                 frontendBookingData.foodMenuPlate = '2x2';
                 console.log('🚨 FORCED foodMenuPlate to:', frontendBookingData.foodMenuPlate);
             }
-
+            
             console.log('🔍 FINAL VALUES:');
             console.log('   eventDuration:', frontendBookingData.eventDuration);
             console.log('   foodMenuType:', frontendBookingData.foodMenuType);
@@ -4740,7 +4896,7 @@ loadMoreGoogleReviews(): void {
                 }
                 return !value || value === '';
             });
-
+            
             if (missingFields.length > 0) {
                 console.error('❌ Missing required fields:', missingFields);
                 console.error('❌ Current booking data:', frontendBookingData);
@@ -4748,13 +4904,13 @@ loadMoreGoogleReviews(): void {
                 console.error('   - fullUserDetails:', this.fullUserDetails);
                 console.error('   - loggedInUser:', this.loggedInUser);
                 console.error('   - userId:', this.userId);
-
+                
                 // Try to fix missing data if possible
                 if (missingFields.includes('userId') && this.loggedInUser?.id) {
                     frontendBookingData.userId = this.loggedInUser.id;
                     console.log('🔧 Fixed userId from loggedInUser:', frontendBookingData.userId);
                 }
-
+                
                 if (missingFields.includes('userContact')) {
                     const contact = this.loggedInUser?.mobileNumber || this.loggedInUser?.mobile || this.loggedInUser?.phone;
                     if (contact) {
@@ -4762,12 +4918,12 @@ loadMoreGoogleReviews(): void {
                         console.log('🔧 Fixed userContact from loggedInUser:', frontendBookingData.userContact);
                     }
                 }
-
+                
                 if (missingFields.includes('userEmail') && this.loggedInUser?.email) {
                     frontendBookingData.userEmail = this.loggedInUser.email;
                     console.log('🔧 Fixed userEmail from loggedInUser:', frontendBookingData.userEmail);
                 }
-
+                
                 if (missingFields.includes('userName')) {
                     const name = this.loggedInUser?.name || this.loggedInUser?.firstName + ' ' + this.loggedInUser?.lastName || 'Guest User';
                     if (name && name !== 'undefined undefined') {
@@ -4775,7 +4931,7 @@ loadMoreGoogleReviews(): void {
                         console.log('🔧 Fixed userName from loggedInUser:', frontendBookingData.userName);
                     }
                 }
-
+                
                 // Recheck after fixes
                 const stillMissingFields = requiredFields.filter(field => {
                     const value = frontendBookingData[field];
@@ -4784,7 +4940,7 @@ loadMoreGoogleReviews(): void {
                     }
                     return !value || value === '';
                 });
-
+                
                 if (stillMissingFields.length > 0) {
                     throw new Error(`Still missing required fields after fix attempts: ${stillMissingFields.join(', ')}`);
                 } else {
@@ -4799,17 +4955,17 @@ loadMoreGoogleReviews(): void {
             console.log('   📡 foodMenuType:', frontendBookingData.foodMenuType);
             console.log('   📡 foodMenuPlate:', frontendBookingData.foodMenuPlate);
             console.log('📡 Full data being sent to backend:', JSON.stringify(frontendBookingData, null, 2));
-
+            
             const response = await this.bookingService.createBookingFromFrontend(frontendBookingData).toPromise();
-
+            
             console.log('📡 Booking service response:', response);
-
+            
             if (response && response.success) {
                 console.log('✅ Booking created successfully:', response.data);
-
+                
                 // Refresh booked dates to update calendar
                 this.refreshBookedDates();
-
+                
                 // Optional: Track booking creation in analytics
                 this.trackBookingAnalytics(response.data);
             } else {
@@ -4835,57 +4991,57 @@ loadMoreGoogleReviews(): void {
         console.log('🔍 getEventDurationFromSlot() called');
         console.log('   selectedSlots:', this.selectedSlots);
         console.log('   selectedSlotsName:', this.selectedSlotsName);
-
+        
         // First check if we have any slots selected
         if (!this.selectedSlots || this.selectedSlots.length === 0) {
             console.log('   No selectedSlots found, checking selectedSlotsName...');
-
+            
             // Check selectedSlotsName as fallback
             if (this.selectedSlotsName) {
                 const lowerSlotName = this.selectedSlotsName.toString().toLowerCase();
                 console.log('   Using selectedSlotsName:', lowerSlotName);
-
+                
                 if (lowerSlotName.includes('morning')) return 'morning';
                 if (lowerSlotName.includes('evening')) return 'evening';
                 if (lowerSlotName.includes('night')) return 'night';
                 if (lowerSlotName.includes('full')) return 'full';
                 if (lowerSlotName.includes('afternoon')) return 'afternoon';
                 if (lowerSlotName.includes('noon')) return 'afternoon';
-
+                
                 return lowerSlotName; // Return the slot name itself
             }
-
+            
             return 'full'; // Default fallback - match backend enum
         }
-
+        
         // Try to get slot name from selectedSlotsName first, then from selectedSlots object
         let slotName = this.selectedSlotsName;
-
+        
         if (!slotName && this.selectedSlots[0]) {
             // Try different possible property names for slot name
-            slotName = this.selectedSlots[0].slotName ||
-                      this.selectedSlots[0].slot ||
+            slotName = this.selectedSlots[0].slotName || 
+                      this.selectedSlots[0].slot || 
                       this.selectedSlots[0].name ||
                       this.selectedSlots[0].slotId;
         }
-
+        
         console.log('   Raw slot name found:', slotName);
-
+        
         if (!slotName) {
             console.log('   No slot name found, returning default');
             return 'full'; // Default - match backend enum
         }
-
+        
         const lowerSlotName = slotName.toString().toLowerCase();
         console.log('   Processed slot name (lowercase):', lowerSlotName);
-
+        
         if (lowerSlotName.includes('morning')) return 'morning';
         if (lowerSlotName.includes('evening')) return 'evening';
         if (lowerSlotName.includes('night')) return 'night';
         if (lowerSlotName.includes('full')) return 'full'; // Match backend enum
         if (lowerSlotName.includes('afternoon')) return 'afternoon';
         if (lowerSlotName.includes('noon')) return 'afternoon';
-
+        
         // Return the slot name itself if no pattern matches
         const result = lowerSlotName;
         console.log('   Final result:', result);
@@ -4900,14 +5056,14 @@ loadMoreGoogleReviews(): void {
             console.log('🔍 getFoodMenuTypeNames: No selectedFoodMenuTypes, returning null');
             return null;
         }
-
+        
         // If selectedFoodMenuTypes contains objects with name property
         if (typeof this.selectedFoodMenuTypes[0] === 'object') {
             const result = this.selectedFoodMenuTypes.map(item => item.name || item.slug).join(', ');
             console.log('🔍 getFoodMenuTypeNames: Object array result:', result);
             return result;
         }
-
+        
         // If it's just an array of strings
         const result = this.selectedFoodMenuTypes.join(', ');
         console.log('🔍 getFoodMenuTypeNames: String array result:', result);
@@ -4921,19 +5077,19 @@ loadMoreGoogleReviews(): void {
         console.log('🔍 getFoodMenuPlate: Starting with selectedFoodMenuType:', this.selectedFoodMenuType);
         console.log('🔍 getFoodMenuPlate: selectedFoodType:', this.selectedFoodType);
         console.log('🔍 getFoodMenuPlate: selectedFoodMenuTypes:', this.selectedFoodMenuTypes);
-
+        
         // Check if selectedFoodMenuType has plate information
         if (this.selectedFoodMenuType && this.selectedFoodMenuType.plate) {
             console.log('🔍 getFoodMenuPlate: Found plate in selectedFoodMenuType:', this.selectedFoodMenuType.plate);
             return this.selectedFoodMenuType.plate;
         }
-
+        
         // Check if selectedFoodType has plate information
         if (this.selectedFoodType && this.selectedFoodType.plate) {
             console.log('🔍 getFoodMenuPlate: Found plate in selectedFoodType:', this.selectedFoodType.plate);
             return this.selectedFoodType.plate;
         }
-
+        
         // Try to extract from selected food menu types array
         if (this.selectedFoodMenuTypes && this.selectedFoodMenuTypes.length > 0) {
             const firstMenuType = this.selectedFoodMenuTypes[0];
@@ -4941,7 +5097,7 @@ loadMoreGoogleReviews(): void {
                 console.log('🔍 getFoodMenuPlate: Found plate in first selectedFoodMenuTypes object:', firstMenuType.plate);
                 return firstMenuType.plate;
             }
-
+            
             // Check if it's a string that contains plate info
             if (typeof firstMenuType === 'string') {
                 if (firstMenuType.includes('1x1')) {
@@ -4958,14 +5114,14 @@ loadMoreGoogleReviews(): void {
                 }
             }
         }
-
+        
         // Default fallback based on guest count
         const guestCount = parseInt(this.selectedVenueCapacity?.toString() || '0');
         let result;
         if (guestCount <= 50) result = '1x1';
         else if (guestCount <= 150) result = '2x2';
         else result = '3x3';
-
+        
         console.log('🔍 getFoodMenuPlate: Using fallback based on guestCount', guestCount, '-> result:', result);
         return result;
     }
@@ -4982,7 +5138,7 @@ loadMoreGoogleReviews(): void {
                 amount: this.totalVenuePrice,
                 paymentType: this.paymentAmount
             });
-
+            
             // Add any additional analytics tracking here if needed
         } catch (error) {
             console.error('Error tracking booking analytics:', error);
@@ -5004,12 +5160,12 @@ loadMoreGoogleReviews(): void {
     }): Promise<void> {
         try {
             console.log('Updating booking analytics for booking:', bookingId, analyticsData);
-
+            
             // Use the booking service to update tracking fields
             const response = await this.bookingService.updateBooking(bookingId, {
                 details: analyticsData
             }).toPromise();
-
+            
             if (response.success) {
                 console.log('Booking analytics updated successfully');
             } else {
@@ -5026,7 +5182,7 @@ loadMoreGoogleReviews(): void {
     trackEnquiryClick(): void {
         this.sendEnquiryClicked = true;
         console.log('📊 ANALYTICS: User clicked Send Enquiry, sendEnquiryClicked =', this.sendEnquiryClicked);
-
+        
         // Send updated analytics immediately
         this.sendCurrentAnalytics();
     }
@@ -5037,7 +5193,7 @@ loadMoreGoogleReviews(): void {
     trackReserveClick(): void {
         this.clickedOnReserved = true;
         console.log('📊 ANALYTICS: User clicked Reserve, clickedOnReserved =', this.clickedOnReserved);
-
+        
         // Send updated analytics immediately
         this.sendCurrentAnalytics();
     }
@@ -5048,7 +5204,7 @@ loadMoreGoogleReviews(): void {
     trackBookNowClick(): void {
         this.clickedOnBookNow = true;
         console.log('📊 ANALYTICS: User clicked Book Now, clickedOnBookNow =', this.clickedOnBookNow);
-
+        
         // Send updated analytics immediately
         this.sendCurrentAnalytics();
     }
@@ -5056,7 +5212,7 @@ loadMoreGoogleReviews(): void {
 
     ngOnDestroy(): void {
         console.log('VenueDetailsComponent destroying - saving analytics data');
-
+        
         // Send final analytics data before destroying the component
         this.sendFinalAnalytics();
 
@@ -5065,23 +5221,23 @@ loadMoreGoogleReviews(): void {
             clearTimeout(this.enquiryTimer);
             console.log('🏢 VENUE: Timer cleared on destroy');
         }
-
+        
         // Clean up analytics tracking
         if (this.trackingInterval) {
             clearInterval(this.trackingInterval);
             console.log('📊 ANALYTICS: Tracking interval cleared');
         }
-
+        
         if (this.scrollThrottleTimer) {
             clearTimeout(this.scrollThrottleTimer);
             console.log('📊 ANALYTICS: Scroll throttle timer cleared');
         }
-
+        
         // Remove beforeunload listener if it exists
         if (this.boundBeforeUnloadHandler) {
             window.removeEventListener('beforeunload', this.boundBeforeUnloadHandler);
         }
-
+        
         this.renderer.removeClass(document.body, 'body-dark');
     }
 
@@ -5108,27 +5264,6 @@ loadMoreGoogleReviews(): void {
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
-    }
-
-    getAmenityIcon(amenityValue: string): string {
-        const iconMap: { [key: string]: string } = {
-            'wifi': 'assets/images/amenities/wifi-icon.png',
-            'ac': 'assets/images/amenities/ac-icon.png',
-            'parking': 'assets/images/amenities/parking-icon.png',
-            'power_backup': 'assets/images/amenities/power-backup-icon.svg',
-            'security': 'assets/images/amenities/security-icon.svg',
-            'swimming_pool': 'assets/images/amenities/pool-icon.png',
-            'green_rooms': 'assets/images/amenities/green-room-icon.png',
-            'dj': 'assets/images/amenities/sound-icon.png',
-            'entertainment_license': 'assets/images/amenities/sound-icon.png',
-            'private_parties': 'assets/images/amenities/sound-icon.png',
-            'waiter_service': 'assets/images/amenities/waiter-service-icon.svg',
-            'vip_section': 'assets/images/amenities/vip-section-icon.svg',
-            'rooms': 'assets/images/amenities/green-room-icon.png',
-            'pillar_free': 'assets/images/amenities/pillar-free-icon.svg'
-        };
-
-        return iconMap[amenityValue] || 'assets/images/amenities/ac-icon.png';
     }
 
 }

@@ -34,17 +34,17 @@ export class AddComponent implements OnInit {
     isGoogleMapsLoaded = false;
     selectedVenueCoordinates: { lat: number, lng: number } = null;
     notprofile: boolean;
-    selectedAmenities: any[] = [];
-    amenitiesList: any[] = [
-        { name: 'Parking', value: 'parking' },
-        { name: 'WiFi', value: 'wifi' },
-        { name: 'Air Conditioning', value: 'ac' },
-        { name: 'Power Backup', value: 'power_backup' },
-        { name: 'Security', value: 'security' },
-        { name: 'Wheelchair Access', value: 'wheelchair' },
-        { name: 'Smoking Area', value: 'smoking_area' },
-        { name: 'Bar', value: 'bar' }
-    ];
+    amenitiesList = [
+    { name: 'WiFi', icon: 'wifi-icon.png' },
+    { name: 'AC', icon: 'ac-icon.png' },
+    { name: 'Swimming Pool', icon: 'pool-icon.png' },
+    { name: 'Sound System', icon: 'sound-icon.png' },
+    { name: 'Green Rooms', icon: 'green-room-icon.png' },
+    { name: 'Parking', icon: 'parking-icon.png' }
+];
+selectedAmenities: string[] = [];
+menuImages: any[] = [];
+menuImagesArray: any[] = [];
     decor2Image: any;
     decor3Image: any;
     public decor1Image: any;
@@ -150,21 +150,6 @@ public metaDescription: string;
     public eazyVenueRating = environment.eazyVenueRating;
     public selectedGoogleRating;
     public selectedEazyVenueRating;
-
-    onAmenityChange(event: any) {
-        this.selectedAmenities = event.value;
-        console.log('Selected amenities (raw):', this.selectedAmenities);
-        console.log('Event value:', event.value);
-        console.log('Amenities are objects?', this.selectedAmenities.length > 0 && typeof this.selectedAmenities[0] === 'object');
-
-        // Update the form control directly with the selected amenities
-        this.venueForm.patchValue({
-            amenities: this.selectedAmenities
-        });
-
-        console.log('Form control value after update:', this.venueForm.get('amenities')?.value);
-    }
-
     constructor(
         private VenueService: VenueService,
         private tokenStorageService: TokenStorageService,
@@ -206,7 +191,6 @@ public metaDescription: string;
             name: ['', [Validators.required]],
             category: ['', [Validators.required]],
             propertyType: ['', [Validators.required]],
-            amenities: [[]],
             foodType: ['', [Validators.required]],
             email: ['', [Validators.required, Validators.email, CustomValidators.email]],
             shortdescription: [''],
@@ -239,6 +223,9 @@ public metaDescription: string;
             parkingdetails: [''],
             kitchendetails: [''],
             decorationdetails: [''],
+            amenities: [''],
+            amenitiesArray: [[]],
+            menuImages: [[]],
             // Conditionally add validators based on user role
             views: [this.isVenueOwner ? 1 : '', this.isVenueOwner ? [] : [Validators.required]],
             disable: [false],
@@ -265,12 +252,34 @@ public metaDescription: string;
         return this.venueForm.controls;
     }
 
+    menuUploader(event) {
+    if (isPlatformBrowser(this.platformId)) {
+        for (let file of event.files) {
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                if (reader.result != null) {
+                    this.menuImages.push({
+                        'menu_image_src': reader.result,
+                        'alt': file.name,
+                        'file': file
+                    });
+                }
+            }
+        }
+    }
+}
+
+removeMenuImage(index: number) {
+        this.menuImages.splice(index, 1);
+        this.uploadedFiles.splice(index, 1);
+    }
 
     loadGoogleMaps() {
         if (!isPlatformBrowser(this.platformId)) {
             return;
         }
-
+        
         if (typeof google !== 'undefined' && google.maps) {
             this.isGoogleMapsLoaded = true;
             this.initAutocomplete();
@@ -293,7 +302,7 @@ public metaDescription: string;
         if (!isPlatformBrowser(this.platformId)) {
             return;
         }
-
+        
         const input = document.getElementById('venue-name-input') as HTMLInputElement;
         if (!input) return;
 
@@ -719,6 +728,25 @@ public metaDescription: string;
 
                 });
             }
+            this.menuImagesArray = [];
+            if (this.menuImages != undefined && this.menuImages.length > 0) {
+                this.menuImages.forEach((element, index) => {
+                    this.menuImagesArray.push({ 
+                        'file': element.file, 
+                        'alt': element.alt || 'Menu image', 
+                        'default': false 
+                    });
+                });
+            }
+            venueData['menuImages'] = this.menuImagesArray;
+
+            // *** ADD THIS: Process amenities ***
+            const amenitiesArray = this.amenitiesList.map(amenity => ({
+                name: amenity.name,
+                icon: amenity.icon,
+                enabled: this.selectedAmenities.includes(amenity.name)
+            }));
+            venueData['amenitiesArray'] = amenitiesArray;
             venueData['metaUrl'] = this.venueForm.get('metaUrl').value;
         venueData['metaKeywords'] = this.venueForm.get('metaKeywords').value;
         venueData['metaDescription'] = this.venueForm.get('metaDescription').value;
@@ -736,95 +764,17 @@ public metaDescription: string;
             venueData['role'] = this.venueownerRoleid;
             venueData['eazyVenueRating'] = this.selectedEazyVenueRating;
             venueData['googleRating'] = this.selectedGoogleRating;
-
-            // Make sure amenities are properly formatted
-            if (this.selectedAmenities && this.selectedAmenities.length > 0) {
-                // Send amenities as objects with name and value for backend compatibility
-                venueData['amenities'] = this.selectedAmenities.map((amenity: any) => {
-                    if (typeof amenity === 'string') {
-                        // If it's a string, find the corresponding object from amenitiesList
-                        const amenityObj = this.amenitiesList.find(a => a.name === amenity || a.value === amenity);
-                        return amenityObj || { name: amenity, value: amenity.toLowerCase().replace(/\s+/g, '_') };
-                    } else if (amenity && amenity.name && amenity.value) {
-                        // If it's already an object with name and value, use it as is
-                        return amenity;
-                    } else {
-                        // Convert to proper format
-                        return { name: amenity.name || amenity, value: amenity.value || (amenity.name || amenity).toLowerCase().replace(/\s+/g, '_') };
-                    }
-                });
-                
-                // Extract values for boolean flag mapping
-                const amenityValues = this.selectedAmenities.map((amenity: any) => amenity.value || amenity);
-                console.log('Amenity values for boolean mapping:', amenityValues);
-                
-                // Map amenities to boolean flags that the backend expects
-                venueData['isParking'] = amenityValues.includes('parking');
-                venueData['isAC'] = amenityValues.includes('ac');
-                venueData['isPowerBackup'] = amenityValues.includes('power_backup');
-                venueData['isWaiterService'] = amenityValues.includes('security');
-                venueData['isVIPSection'] = amenityValues.includes('wheelchair');
-                venueData['isDJ'] = amenityValues.includes('smoking_area');
-                venueData['isEntertainmentLicense'] = amenityValues.includes('bar');
-            } else {
-                venueData['amenities'] = [];
-                // Set all boolean flags to false when no amenities selected
-                venueData['isParking'] = false;
-                venueData['isAC'] = false;
-                venueData['isPowerBackup'] = false;
-                venueData['isWaiterService'] = false;
-                venueData['isVIPSection'] = false;
-                venueData['isDJ'] = false;
-                venueData['isEntertainmentLicense'] = false;
-            }
-
-            // Don't stringify - Angular HttpClient will handle this automatically
-            console.log('venueData before sending:', venueData);
-            this.VenueService.addVenue(venueData).subscribe(
-                (data: any) => {
-                    console.log('Add venue response:', data);
-                    console.log('Response type:', typeof data);
-                    console.log('Response keys:', Object.keys(data || {}));
-
-                    // Extract venue ID from response - try multiple possible locations
-                    let venueId = null;
-                    if (data) {
-                        // Try common response structures
-                        if (data.data) {
-                            venueId = data.data.id || data.data._id || data.data.venueId;
-                            console.log('Venue ID from data.data:', venueId);
-                        }
-                        if (!venueId) {
-                            venueId = data.id || data._id || data.venueId;
-                            console.log('Venue ID from data:', venueId);
-                        }
-                        // For MongoDB responses, the venue object might be the entire response
-                        if (!venueId && data.name && data.email) {
-                            venueId = data._id || data.id;
-                            console.log('Venue ID from venue object:', venueId);
-                        }
-                        // Try to get from nested venue object
-                        if (!venueId && data.venue) {
-                            venueId = data.venue._id || data.venue.id;
-                            console.log('Venue ID from data.venue:', venueId);
-                        }
-                        // Try to get from success response format
-                        if (!venueId && data.success && data.venue) {
-                            venueId = data.venue._id || data.venue.id;
-                            console.log('Venue ID from success response:', venueId);
-                        }
-                    }
-
-                    console.log('Final extracted venue ID:', venueId);
-
+            venueData = JSON.stringify(venueData, null, 4);
+            // console.log('venueData', venueData);
+            this.VenueService.addVenue(this.venueForm.value).subscribe(
+                data => {
                     this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Venue Added', life: 6000 });
                     setTimeout(() => {
                         this.router.navigate(['/manage/venue']);
                     }, 2000);
                 },
                 ((err) => {
-                    console.error('Add venue error:', err);
-                    this.messageService.add({ key: 'toastmsg', severity: 'error', summary: err.error?.error || 'Error', detail: 'Add Venue failed.', life: 6000 });
+                    this.messageService.add({ key: 'toastmsg', severity: 'error', summary: err.error.error, detail: 'Add Venue failed.', life: 6000 });
                 })
             );
         }

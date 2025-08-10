@@ -3,6 +3,7 @@
     font-family: Arial, sans-serif;
     padding: 20px;
     background-color: #f4f4f4;
+    margin-bottom: 50px;
 }
 
 .container {
@@ -26,6 +27,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 20px;
+    // margin-bottom: 80px;
 }
 
 .team-member {

@@ -863,3 +863,232 @@
   font-size: 0.7rem;
   font-weight: 500;
 }
+
+/* Analytics Dashboard Styles */
+.analytics-dashboard {
+  padding: 10px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Adjust Overview Cards for Mobile */
+.overview-card {
+  margin-bottom: 15px;
+  height: auto;
+  flex-direction: column;
+  padding: 15px;
+  text-align: center;
+}
+
+.overview-card .icon {
+  margin: 10px 0;
+  font-size: 2rem;
+}
+
+.overview-card .stats {
+  text-align: center;
+}
+
+.overview-card .stats h3 {
+  font-size: 1.5rem;
+}
+
+.overview-card .stats p {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+}
+
+/* Charts Section */
+.charts-section {
+  margin-bottom: 30px;
+}
+
+.chart-card {
+  margin-bottom: 15px;
+  height: auto;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.chart-header h3 {
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.chart-content {
+  position: relative;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Table Styling */
+.p-datatable .p-datatable-thead > tr > th,
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 8px 12px;
+  font-size: 0.75rem;
+}
+
+.p-datatable {
+  overflow-x: auto;
+  display: block;
+  max-width: 100%;
+}
+
+.venues-table-section .card {
+  width: 100%;
+}
+
+.venues-table-section .p-datatable-tbody > tr {
+  &:hover {
+    background: #f8f9fa;
+  }
+}
+
+.venue-name-container {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.venue-name {
+  word-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
+}
+
+/* Adjusting the sidebar for mobile */
+.venue-details-sidebar {
+  .p-sidebar {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+}
+
+.device-stat {
+  flex-direction: column;
+  text-align: center;
+  gap: 15px;
+}
+
+.device-stat i {
+  font-size: 2rem;
+}
+
+.device-info {
+  text-align: center;
+}
+
+.city-info {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* Ensure cards stack vertically */
+@media (max-width: 768px) {
+  .analytics-dashboard {
+    padding: 10px;
+  }
+
+  .overview-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+  }
+
+  .overview-card {
+    flex: 1 1 100%;
+    margin-bottom: 15px;
+    height: auto;
+  }
+
+  .chart-card {
+    flex: 1 1 100%;
+    margin-bottom: 15px;
+  }
+
+  .venues-table-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .venues-table-section .card {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .empty-state {
+    padding: 25px;
+  }
+  
+  .empty-state h4 {
+    font-size: 1.3rem;
+  }
+
+  .empty-state p {
+    font-size: 0.9rem;
+  }
+
+  .device-info {
+    text-align: center;
+  }
+
+  .city-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* Adjust tables to allow horizontal scrolling */
+  .p-datatable-wrapper {
+    overflow-x: auto;
+    width: 100%;
+  }
+}
+
+/* Mobile Specific Styles */
+@media (max-width: 576px) {
+  .overview-card .icon {
+    font-size: 1.8rem;
+  }
+
+  .overview-card .stats h3 {
+    font-size: 1.3rem;
+  }
+
+  .overview-card .stats p {
+    font-size: 0.75rem;
+  }
+
+  .venue-name {
+    font-size: 1rem;
+  }
+
+  .venue-name-container {
+    text-align: center;
+  }
+
+  .city-name,
+  .city-clicks {
+    font-size: 0.8rem;
+  }
+
+  .device-stat i {
+    font-size: 1.5rem;
+  }
+
+  .device-info h5 {
+    font-size: 1rem;
+  }
+
+  .device-info p {
+    font-size: 0.75rem;
+  }
+
+  .p-datatable-wrapper {
+    overflow-x: auto;
+    width: 100%;
+  }
+}
+
