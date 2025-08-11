@@ -3,7 +3,10 @@ import { isPlatformBrowser } from '@angular/common';
 import { AnalyticsService } from '../../../services/analytics.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Subscription } from 'rxjs';
-import Chart from 'chart.js/auto';
+import { Chart, registerables } from 'chart.js';
+
+// Register Chart.js components for compatibility
+Chart.register(...registerables);
 
 // Dynamic imports for SSR compatibility
 let jsPDF: any;
