@@ -1516,52 +1516,53 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="pageformat">
-                            <div
-                                class="flex items-center justify-center space-x-4"
-                            >
-                                <!-- Previous arrow -->
-                                <span
-                                (click)="getNextVenues()"
-                                [ngStyle]="{
-                                    color:
-                                        currentPage * pageSize <
-                                        totalRecords
-                                            ? '#ef4444'
-                                            : '#9ca3af',
-                                    cursor:
-                                        currentPage * pageSize <
-                                        totalRecords
-                                            ? 'pointer'
-                                            : 'not-allowed'
-                                }"
-                                class="text-lg"
+                            <div class="pageformat">
+                                <div
+                                    class="flex items-center justify-center space-x-4"
                                 >
-                                    ◀
-                                </span>
-
-                                <!-- Current page display -->
-                                <span>Page {{ 11-currentPage }}</span>
-
-                                <!-- Next arrow -->
+                                    <!-- Previous arrow -->
                                     <span
-                                    (click)="getPreviousVenues()"
+                                    (click)="getNextVenues()"
                                     [ngStyle]="{
                                         color:
-                                            currentPage > 1
+                                            currentPage * pageSize <
+                                            totalRecords
                                                 ? '#ef4444'
                                                 : '#9ca3af',
                                         cursor:
-                                            currentPage > 1
+                                            currentPage * pageSize <
+                                            totalRecords
                                                 ? 'pointer'
                                                 : 'not-allowed'
                                     }"
                                     class="text-lg"
-                                >
-                                    ▶
-                                </span>
-                            </div>
-                    </div>
+                                    >
+                                        
+                                    </span>
+
+                                    <!-- Current page display -->
+                                    <span></span>
+
+                                    <!-- Next arrow -->
+                                        <span
+                                        (click)="getPreviousVenues()"
+                                        [ngStyle]="{
+                                            color:
+                                                currentPage > 1
+                                                    ? '#ef4444'
+                                                    : '#9ca3af',
+                                            cursor:
+                                                currentPage > 1
+                                                    ? 'pointer'
+                                                    : 'not-allowed'
+                                        }"
+                                        class="text-lg"
+                                    >
+                                    <!-- Updated code -->
+                                        <p style="color: white; font-size: 16px; background-color: #EC3539;border-radius: 6px; padding: 8px 10px 8px;">Load More</p>
+                                    </span>
+                                </div>
+                        </div>
                     <div *ngIf="noVenueFlag">
                         <h3 class="text-center">
                             No venues matching your query found.

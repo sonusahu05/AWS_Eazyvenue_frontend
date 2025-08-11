@@ -103,7 +103,7 @@
                     (onSelect)="onSelectSearch($event)"
                     (onUnselect)="onClearResetAllData($event)"
                     field="name"
-                    placeholder="Search for Banquet-Halls/Occasion/Vendors"
+                    placeholder="Search by City for Halls, Occasions, Vendors"
                     [multiple]="true"
                     class="mostly-customized-scrollbar"
                 >
@@ -262,6 +262,47 @@
             ></button>
         </div>
     </div>
+    <!-- ✅ AI Search Button -->
+    <div class="ai-search-btn-container">
+  <button class="ai-search-btn" (click)="triggerAISearch()">
+    Search using AI
+  </button>
+  <!-- AI Search Form -->
+<div *ngIf="aiPromptVisible" class="ai-search-form">
+  <input
+    type="text"
+    [(ngModel)]="aiQuery"
+    placeholder="Ask AI to find venues..."
+  />
+  <button (click)="submitAIQuery()" [disabled]="loadingAI">
+    {{ loadingAI ? 'Searching...' : 'Submit' }}
+  </button>
+</div>
+
+<!-- AI Result as Venue Cards -->
+<!-- Blur overlay when AI results are visible -->
+<div *ngIf="filteredVenues.length > 0" class="blur-overlay" (click)="clearAIResults()"></div>
+
+<!-- Venue cards container -->
+<div *ngIf="filteredVenues.length > 0" class="ai-results-grid focused-results" #aiResultRef>
+  <div class="venue-card" *ngFor="let venue of filteredVenues" (click)="goToVenueDetails(venue); $event.stopPropagation()" style="cursor: pointer;">
+    <img [src]="venue.venueImage[0]" alt="Venue Image" class="venue-image" />
+    <div class="venue-info">
+      <h4 class="venue-title"><b>{{ venue.name }}</b></h4>
+      <p class="venue-location"><b style="color: black;">Location:</b> {{ venue.location }}</p>
+      <p class="venue-capacity"><b style="color: black;">Capacity:</b> {{ venue.capacity }}</p>
+      <p class="venue-description"><b style="color: black;">Description:</b> {{ venue.description }}</p>
+      <p class="venue-contact">📞 {{ venue.mobileNumber }}</p>
+    </div>
+  </div>
+</div>
+
+
+
+<p *ngIf="loadingAI" style="color: white;">Searching venues...</p>
+
+</div>
+
 </div>
 <div
     class="section section-padding sigma_header listings"
@@ -547,6 +588,7 @@
                                                 [innerHTML]="
                                                     item.shortdescription
                                                 "
+
                                             ></p>
                                         </a>
                                     </div>
@@ -760,7 +802,7 @@ aria-describedby="mobile-banner-description"
                         height: 1px;
                         overflow: hidden;
                         color: transparent;
-                        speak: normal;
+                        /* speak: normal; */
                     }
 
                     .p-galleria-thumbnail-next::after {
@@ -771,7 +813,7 @@ aria-describedby="mobile-banner-description"
                         height: 1px;
                         overflow: hidden;
                         color: transparent;
-                        speak: normal;
+                        /* speak: normal; */
                     }
 
                     .p-galleria-item-prev::after {
@@ -782,7 +824,7 @@ aria-describedby="mobile-banner-description"
                         height: 1px;
                         overflow: hidden;
                         color: transparent;
-                        speak: normal;
+                        /* speak: normal; */
                     }
 
                     .p-galleria-item-next::after {
@@ -793,7 +835,7 @@ aria-describedby="mobile-banner-description"
                         height: 1px;
                         overflow: hidden;
                         color: transparent;
-                        speak: normal;
+                        /* speak: normal;  Commented out to avoid redundancy */
                     }
 
                     .show-more-container {
@@ -817,6 +859,7 @@ aria-describedby="mobile-banner-description"
                         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
                         transition: all 0.3s ease;
                         min-width: 200px;
+                        margin-bottom: 70px;
                     }
 
                     .alternative-show-more-btn {
@@ -1180,9 +1223,13 @@ aria-describedby="mobile-banner-description"
     [(visible)]="homeSearch"
     [modal]="true"
     [style]="{ width: '90%', height: '345px', overflow: 'visible' }"
-    [responsive]="true"
+
+    
+ 
     class="home_search_popup"
 >
+<!-- the line below goes to the space given above -->
+<!-- removed this line [responsive]="true" -->
     <div class="home-search-fields">
         <div
             class="row justify-content-center search-bar search_bar_listing_page search-bar-popup"

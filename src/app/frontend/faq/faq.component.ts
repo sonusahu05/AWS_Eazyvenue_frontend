@@ -60,11 +60,17 @@ export class FaqComponent implements OnInit, OnChanges {
         });
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['selectedVenueList']) {
-            this.updateContent();
-        }
-    }
+    // ngOnChanges(changes: SimpleChanges): void {
+    //     if (changes['selectedVenueList']) {
+    //         this.updateContent();
+    //     }
+    // }
+    ngOnChanges(): void {
+  if (this.selectedVenueList?.length) {
+    this.updateSearches();
+  }
+}
+
 
     parseParam(param: string | undefined): any {
         if (!param) return [];
@@ -379,21 +385,46 @@ You can expect flexible services and neat rooms that are sanitized and well main
         }
     }
 
+    // updateSearches(): void {
+
+    //     this.frequentSearches = [
+    //         // `Affordable Banquet Halls in ${this.selectedVenueList[0].cityname}`,
+    //         `Affordable Banquet Halls in ${this.selectedVenueList[0]?.cityname || ''}`,
+    //         `Banquet Halls in ${this.selectedVenueList[0].cityname}`,
+    //         `AC Banquet Halls in ${this.selectedVenueList[0].cityname}`,
+    //         `Top Banquet Halls in ${this.selectedVenueList[0].cityname}`,
+    //         `Best Banquet Halls with price in ${this.selectedVenueList[0].cityname}`,
+    //         `Affordable Banquet Halls in ${this.selectedVenueList[0].cityname}`,
+    //         `Banquet Halls in ${this.selectedVenueList[0].cityname}`,
+    //         `AC Banquet Halls in ${this.selectedVenueList[0].cityname}`,
+    //         `Top Banquet Halls in ${this.selectedVenueList[0].cityname}`,
+    //         `Best Banquet Halls with price in ${this.selectedVenueList[0].cityname}`,
+    //         // Add more dynamic frequent searches
+    //     ];
+    // }
+
     updateSearches(): void {
-        this.frequentSearches = [
-            `Affordable Banquet Halls in ${this.selectedVenueList[0].cityname}`,
-            `Banquet Halls in ${this.selectedVenueList[0].cityname}`,
-            `AC Banquet Halls in ${this.selectedVenueList[0].cityname}`,
-            `Top Banquet Halls in ${this.selectedVenueList[0].cityname}`,
-            `Best Banquet Halls with price in ${this.selectedVenueList[0].cityname}`,
-            `Affordable Banquet Halls in ${this.selectedVenueList[0].cityname}`,
-            `Banquet Halls in ${this.selectedVenueList[0].cityname}`,
-            `AC Banquet Halls in ${this.selectedVenueList[0].cityname}`,
-            `Top Banquet Halls in ${this.selectedVenueList[0].cityname}`,
-            `Best Banquet Halls with price in ${this.selectedVenueList[0].cityname}`,
-            // Add more dynamic frequent searches
-        ];
-    }
+  const city = this.selectedVenueList?.[0]?.cityname;
+
+  if (!city) {
+    this.frequentSearches = []; // Or show default items
+    return;
+  }
+
+  this.frequentSearches = [
+    `Affordable Banquet Halls in ${city}`,
+    `Banquet Halls in ${city}`,
+    `AC Banquet Halls in ${city}`,
+    `Top Banquet Halls in ${city}`,
+    `Best Banquet Halls with price in ${city}`,
+    `Affordable Banquet Halls in ${city}`,
+    `Banquet Halls in ${city}`,
+    `AC Banquet Halls in ${city}`,
+    `Top Banquet Halls in ${city}`,
+    `Best Banquet Halls with price in ${city}`,
+  ];
+}
+
 
     onSearchClick(): void {
         const selectedSubarea =

@@ -46,26 +46,52 @@ export class AppMenuComponent implements OnInit {
      * which uses the new permission_access array from the role document.
      * This method is kept for backward compatibility only.
      */
-    loadUserPermissions() {
-        // Get user ID from stored user data
-        const userId = this.userData['userdata']._id;
-        const userRoleId = this.userData['userdata'].role;
+    // loadUserPermissions() {
+    //     // Get user ID from stored user data
+    //     const userId = this.userData['userdata']._id;
+    //     const userRoleId = this.userData['userdata'].role;
 
-        // Fetch user's role and permissions from backend
-        this.roleService.getRoleDetails(userRoleId).subscribe({
-            next: (roleData) => {
-                if (roleData && roleData.permissions) {
-                    this.loggedInUserPermissions = roleData.permissions;
-                    this.buildMenuFromPermissions();
-                } else {
-                    this.showErrorMenu('No permissions found for user role');
-                }
-            },
-            error: (error) => {
-                this.showErrorMenu('Backend connection failed - unable to load menu');
-            }
-        });
+    //     // Fetch user's role and permissions from backend
+    //     this.roleService.getRoleDetails(userRoleId).subscribe({
+    //         next: (roleData) => {
+    //             if (roleData && roleData.permissions) {
+    //                 this.loggedInUserPermissions = roleData.permissions;
+    //                 this.buildMenuFromPermissions();
+    //             } else {
+    //                 this.showErrorMenu('No permissions found for user role');
+    //             }
+    //         },
+    //         error: (error) => {
+    //             this.showErrorMenu('Backend connection failed - unable to load menu');
+    //         }
+    //     });
+    // }
+
+    loadUserPermissions() {
+  if (!this.userData || !this.userData['userdata']) {
+    console.error('User data not available.');
+    this.showErrorMenu('User data not loaded');
+    return;  // stop execution to avoid error
+  }
+
+  const userId = this.userData['userdata']._id;
+  const userRoleId = this.userData['userdata'].role;
+
+  this.roleService.getRoleDetails(userRoleId).subscribe({
+    next: (roleData) => {
+      if (roleData && roleData.permissions) {
+        this.loggedInUserPermissions = roleData.permissions;
+        this.buildMenuFromPermissions();
+      } else {
+        this.showErrorMenu('No permissions found for user role');
+      }
+    },
+    error: () => {
+      this.showErrorMenu('Backend connection failed - unable to load menu');
     }
+  });
+}
+
 
     buildMenuFromPermissions() {
         // Reset model to dashboard only
@@ -113,9 +139,21 @@ export class AppMenuComponent implements OnInit {
     }
 
     // Alternative method: Fetch modules from backend and filter by user permissions
+    // loadMenuFromModulesAPI() {
+    //     const userId = this.userData['userdata']._id;
+    //     const userRoleId = this.userData['userdata'].role;
     loadMenuFromModulesAPI() {
-        const userId = this.userData['userdata']._id;
-        const userRoleId = this.userData['userdata'].role;
+  if (!this.userData || !this.userData['userdata']) {
+    console.error('User data not loaded yet.');
+    // Optionally, set default menu or return early to avoid errors
+    this.model = [
+      { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/manage/dashboard'] }
+    ];
+    return;
+  }
+
+  const userId = this.userData['userdata']._id;
+  const userRoleId = this.userData['userdata'].role;
 
         // Fetch both modules and user role in parallel
         Promise.all([

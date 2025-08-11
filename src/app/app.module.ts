@@ -88,7 +88,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { TreeModule } from 'primeng/tree';
 import { TreeTableModule } from 'primeng/treetable';
 import { VirtualScrollerModule } from 'primeng/virtualscroller';
-import { AngMusicPlayerModule } from 'ang-music-player';
+// import { AngMusicPlayerModule } from 'ang-music-player';
 import { VimeModule } from '@vime/angular';
 //import { NgxAudioPlayerModule } from 'ngx-audio-player';
 import { AppCodeModule } from './app.code.component';
@@ -203,7 +203,6 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgOtpInputModule } from 'ng-otp-input';
 import { FilterPipe } from './filter.pipe';
 import { TermsComponent } from './frontend/terms/terms.component';
-import { NgxOtpInputModule } from 'ngx-otp-input';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { AvailabilityComponent } from './frontend/my-account/availability/availability.component';
 import { VendorFilterListComponent } from './frontend/vendor-filter-list/vendor-filter-list.component';
@@ -215,6 +214,7 @@ import { FaqComponent } from './frontend/faq/faq.component';
 import { HotMuhuratsComponent } from './frontend/hot-muhrats/muhrats.component';
 import { SignupComponent } from './pages/venue-signup.component';
 import { BookingAnalyticsComponent } from './manage/analytics/bookings/booking-analytics.component';
+import { ConfirmationService, MessageService } from 'primeng/api';
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
     timeGridPlugin,
@@ -225,7 +225,16 @@ FullCalendarModule.registerPlugins([
     imports: [
         BrowserModule.withServerTransition({ appId: 'serverApp' }),
         BrowserTransferStateModule,
-        AngMusicPlayerModule,
+        // AngMusicPlayerModule,
+        DialogModule,
+        NgOtpInputModule,
+        AccordionModule,
+        GalleriaModule,
+        DropdownModule,
+        TimelineModule,
+        PanelModule,
+        TabViewModule,
+    ButtonModule,
         // VimeModule,
         //NgxAudioPlayerModule,
         FormsModule,
@@ -316,10 +325,8 @@ FullCalendarModule.registerPlugins([
         TreeTableModule,
         VirtualScrollerModule,
         AppCodeModule,
-        VimeModule,
+        // VimeModule,
         InfiniteScrollModule,
-        NgOtpInputModule,
-        NgxOtpInputModule,
         NgxSliderModule,
     ],
     declarations: [
@@ -430,6 +437,8 @@ FullCalendarModule.registerPlugins([
     providers: [
         { provide: LocationStrategy, useClass: PathLocationStrategy },
         CountryService,
+        MessageService,
+        ConfirmationService,
         CustomerService,
         EventService,
         IconService,
