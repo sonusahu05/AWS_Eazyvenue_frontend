@@ -1,22 +1,49 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <div class="dashboard-container">
+    <!-- 🚀 REVOLUTIONARY LIVE ALERTS BAR -->
+    <div class="live-alerts-bar" *ngIf="realTimeAlerts.length > 0">
+        <div class="alert-ticker">
+            <i class="fas fa-broadcast-tower pulse-icon"></i>
+            <span class="alert-label">LIVE INSIGHTS:</span>
+            <div class="scrolling-alerts">
+                <div class="alert-item"
+                     *ngFor="let alert of realTimeAlerts.slice(0, 3)"
+                     [class]="'alert-' + alert.severity"
+                     (click)="openBehaviorPanel(alert.enquiry)">
+                    <span class="alert-text">{{alert.message}}</span>
+                    <span class="alert-time">{{formatTimeAgo(alert.timestamp.toISOString())}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="dashboard-header">
         <div class="header-content">
             <h2 class="dashboard-title">
                 <i class="fas fa-building"></i>
                 Venue Enquiry Dashboard
+                <span class="live-indicator">
+                    <i class="fas fa-circle pulse-dot"></i>
+                    LIVE TRACKING ACTIVE
+                </span>
             </h2>
             <div class="header-stats">
-       <button
-    class="action-btn add-enquiry-btn"
-    (click)="openAddEnquiryModal()"
-    *ngIf="!isVenueOwner"
-    title="Add Manual Enquiries">
-    <i class="fas fa-plus"></i>
-    Add Enquiries
-</button>
-<button pButton type="button" (click)="exportEnquiriesToCSV()" label="Export CSV" icon="pi pi-download" class="p-button-success"></button>
-<!-- Update only the filter section in your HTML -->
+                <button
+                    class="action-btn add-enquiry-btn"
+                    (click)="openAddEnquiryModal()"
+                    *ngIf="!isVenueOwner"
+                    title="Add Manual Enquiries">
+                    <i class="fas fa-plus"></i>
+                    Add Enquiries
+                </button>
+                <button
+                    class="action-btn export-btn"
+                    (click)="exportEnquiriesToCSV()"
+                    title="Export to CSV">
+                    <i class="pi pi-download"></i>
+                    Export CSV
+                </button>
+                <!-- Update only the filter section in your HTML -->
 <div class="filter-dropdown">
     <button
         class="stat-badge filter-button"
@@ -71,6 +98,8 @@
                     <th class="leads-col">Leads</th>
                     <th class="date-col">Latest Activity</th>
                     <th class="status-col">Status</th>
+                    <th class="live-col">🔮 Live Insights</th>
+                    <th class="ai-col">🧠 AI Score</th>
                     <th class="actions-col">Actions</th>
                 </tr>
             </ng-template>
@@ -136,16 +165,104 @@
                     </td>
 
                     <td class="status-cell">
-                        <span class="status-indicator"
-                              [ngClass]="{
-                                'status-whatsapp': getCurrentUser(enquiry).status === 'WhatsApp Contacted',
-                                'status-phone': getCurrentUser(enquiry).status === 'Phone Contacted',
-                                'status-new': getCurrentUser(enquiry).status === 'New',
-                                'status-closed': getCurrentUser(enquiry).status === 'Closed'
-                              }">
-                            <i class="fas fa-circle"></i>
-                            {{getCurrentUser(enquiry).status}}
-                        </span>
+                        <div class="status-display">
+                            <span class="status-indicator"
+                                  [ngClass]="{
+                                    'status-whatsapp': getCurrentUser(enquiry).whatsappClickCount > 0,
+                                    'status-phone': getCurrentUser(enquiry).phoneClickCount > 0,
+                                    'status-both': getCurrentUser(enquiry).whatsappClickCount > 0 && getCurrentUser(enquiry).phoneClickCount > 0,
+                                    'status-new': (!getCurrentUser(enquiry).whatsappClickCount && !getCurrentUser(enquiry).phoneClickCount) || getCurrentUser(enquiry).status === 'New',
+                                    'status-closed': getCurrentUser(enquiry).status === 'Closed'
+                                  }">
+                                <i class="fas fa-circle"></i>
+                                <span class="status-text">
+                                    <span *ngIf="getCurrentUser(enquiry).whatsappClickCount > 0" class="click-count">
+                                        <i class="fab fa-whatsapp"></i> {{getCurrentUser(enquiry).whatsappClickCount}}x
+                                    </span>
+                                    <span *ngIf="getCurrentUser(enquiry).phoneClickCount > 0" class="click-count">
+                                        <i class="fas fa-phone"></i> {{getCurrentUser(enquiry).phoneClickCount}}x
+                                    </span>
+                                    <span *ngIf="!getCurrentUser(enquiry).whatsappClickCount && !getCurrentUser(enquiry).phoneClickCount">
+                                        {{getCurrentUser(enquiry).status || 'New'}}
+                                    </span>
+                                </span>
+                            </span>
+                        </div>
+                    </td>
+
+                    <!-- 🔮 REVOLUTIONARY LIVE INSIGHTS COLUMN -->
+                    <td class="live-tracking-cell">
+                        <div class="live-insights" *ngIf="getLiveTrackingData(enquiry)">
+                            <!-- Live Status Indicator -->
+                            <div class="live-status"
+                                 [class.online]="getLiveTrackingData(enquiry).websiteActivity.currentlyOnSite">
+                                <i class="fas fa-circle"
+                                   [class.pulse-dot]="getLiveTrackingData(enquiry).websiteActivity.currentlyOnSite"></i>
+                                <span>{{getLiveTrackingData(enquiry).websiteActivity.currentlyOnSite ? 'LIVE' : 'Offline'}}</span>
+                            </div>
+
+                            <!-- Website Activity Summary -->
+                            <div class="activity-summary">
+                                <div class="activity-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>{{getLiveTrackingData(enquiry).websiteActivity.totalVisits}} visits</span>
+                                </div>
+                                <div class="activity-item"
+                                     *ngIf="getLiveTrackingData(enquiry).competitorAnalysis.priceComparisons">
+                                    <i class="fas fa-exclamation-triangle warning-icon"></i>
+                                    <span>Price comparing</span>
+                                </div>
+                            </div>
+
+                            <!-- Quick Insights -->
+                            <div class="quick-insights">
+                                <span class="urgency-badge"
+                                      [class]="getUrgencyBadgeClass(getLiveTrackingData(enquiry).aiInsights.urgencyLevel)">
+                                    {{getLiveTrackingData(enquiry).aiInsights.urgencyLevel}}
+                                </span>
+                            </div>
+
+                            <!-- Behavior Panel Button -->
+                            <button class="insight-btn"
+                                    (click)="openBehaviorPanel(enquiry)"
+                                    title="View Full Behavior Analysis">
+                                <i class="fas fa-chart-line"></i>
+                            </button>
+                        </div>
+                    </td>
+
+                    <!-- 🧠 AI PROBABILITY SCORE COLUMN -->
+                    <td class="ai-score-cell">
+                        <div class="ai-probability" *ngIf="getLiveTrackingData(enquiry)">
+                            <!-- Probability Circle -->
+                            <div class="probability-circle">
+                                <div class="circle-progress"
+                                     [style.background]="'conic-gradient(' + getBookingProbabilityColor(getLiveTrackingData(enquiry).aiInsights.bookingProbability) + ' ' + (getLiveTrackingData(enquiry).aiInsights.bookingProbability * 3.6) + 'deg, #e0e0e0 0deg)'">
+                                    <div class="circle-inner">
+                                        <span class="percentage">{{getLiveTrackingData(enquiry).aiInsights.bookingProbability}}%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AI Predictions -->
+                            <div class="ai-predictions">
+                                <div class="prediction-item">
+                                    <i class="fas fa-clock"></i>
+                                    <small>{{getLiveTrackingData(enquiry).aiInsights.decisionTimeline}}</small>
+                                </div>
+                                <div class="prediction-item">
+                                    <i class="fas fa-user-tie"></i>
+                                    <small>{{getLiveTrackingData(enquiry).aiInsights.personalityType}}</small>
+                                </div>
+                            </div>
+
+                            <!-- High Probability Alert -->
+                            <div class="high-probability-alert"
+                                 *ngIf="getLiveTrackingData(enquiry).aiInsights.bookingProbability >= 80">
+                                <i class="fas fa-fire"></i>
+                                <span>HOT LEAD!</span>
+                            </div>
+                        </div>
                     </td>
 
                     <td class="actions-cell">
@@ -153,17 +270,22 @@
                             <button
                                 class="action-btn whatsapp-btn"
                                 (click)="contactViaWhatsApp(enquiry)"
-                                title="Contact via WhatsApp"
-                                [disabled]="getCurrentUser(enquiry).status === 'WhatsApp Contacted'">
+                                title="Contact via WhatsApp">
                                 <i class="fab fa-whatsapp"></i>
                             </button>
 
                             <button
                                 class="action-btn phone-btn"
                                 (click)="contactViaPhone(enquiry)"
-                                title="Contact via Phone"
-                                [disabled]="getCurrentUser(enquiry).status === 'Phone Contacted'">
+                                title="Contact via Phone">
                                 <i class="fas fa-phone"></i>
+                            </button>
+
+                            <button
+                                class="action-btn delete-btn"
+                                (click)="deleteLead(enquiry)"
+                                title="Delete this lead">
+                                <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
                     </td>
@@ -171,7 +293,7 @@
 
                 <!-- Expanded Leads List Row -->
                 <tr *ngIf="isLeadsExpanded(enquiry) && !selectedVenueFilter" class="expanded-row">
-                    <td colspan="6" class="expanded-content">
+                    <td colspan="8" class="expanded-content">
                         <div class="leads-list-container">
                             <div class="leads-list-header">
                                 <h6><i class="fas fa-users"></i> All Leads for {{enquiry.venueName}} ({{enquiry.leadCount}} total)</h6>
@@ -208,16 +330,29 @@
                                                 {{lead.created_at | date:'dd/MM/yyyy HH:mm'}}
                                             </div>
                                             <div class="lead-status">
-                                                <span class="status-indicator"
-                                                      [ngClass]="{
-                                                        'status-whatsapp': lead.status === 'WhatsApp Contacted',
-                                                        'status-phone': lead.status === 'Phone Contacted',
-                                                        'status-new': lead.status === 'New',
-                                                        'status-closed': lead.status === 'Closed'
-                                                      }">
-                                                    <i class="fas fa-circle"></i>
-                                                    {{lead.status}}
-                                                </span>
+                                                <div class="status-display">
+                                                    <span class="status-indicator"
+                                                          [ngClass]="{
+                                                            'status-whatsapp': lead.whatsappClickCount > 0,
+                                                            'status-phone': lead.phoneClickCount > 0,
+                                                            'status-both': lead.whatsappClickCount > 0 && lead.phoneClickCount > 0,
+                                                            'status-new': (!lead.whatsappClickCount && !lead.phoneClickCount) || lead.status === 'New',
+                                                            'status-closed': lead.status === 'Closed'
+                                                          }">
+                                                        <i class="fas fa-circle"></i>
+                                                        <span class="status-text">
+                                                            <span *ngIf="lead.whatsappClickCount > 0" class="click-count">
+                                                                <i class="fab fa-whatsapp"></i> {{lead.whatsappClickCount}}x
+                                                            </span>
+                                                            <span *ngIf="lead.phoneClickCount > 0" class="click-count">
+                                                                <i class="fas fa-phone"></i> {{lead.phoneClickCount}}x
+                                                            </span>
+                                                            <span *ngIf="!lead.whatsappClickCount && !lead.phoneClickCount">
+                                                                {{lead.status || 'New'}}
+                                                            </span>
+                                                        </span>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -226,17 +361,22 @@
                                         <button
                                             class="action-btn whatsapp-btn"
                                             (click)="contactViaWhatsAppForLead(lead, enquiry)"
-                                            title="Contact via WhatsApp"
-                                            [disabled]="lead.status === 'WhatsApp Contacted'">
+                                            title="Contact via WhatsApp">
                                             <i class="fab fa-whatsapp"></i>
                                         </button>
 
                                         <button
                                             class="action-btn phone-btn"
                                             (click)="contactViaPhoneForLead(lead, enquiry)"
-                                            title="Contact via Phone"
-                                            [disabled]="lead.status === 'Phone Contacted'">
+                                            title="Contact via Phone">
                                             <i class="fas fa-phone"></i>
+                                        </button>
+
+                                        <button
+                                            class="action-btn delete-btn"
+                                            (click)="deleteSpecificLead(lead, enquiry)"
+                                            title="Delete this lead">
+                                            <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -443,3 +583,321 @@
         </div>
     </div>
 </div>
+
+<!-- 🔮 REVOLUTIONARY BEHAVIOR TRACKING PANEL -->
+<div class="behavior-panel-overlay" *ngIf="showBehaviorPanel" (click)="closeBehaviorPanel()">
+    <div class="behavior-panel" (click)="$event.stopPropagation()" *ngIf="selectedLeadForTracking">
+        <div class="panel-header">
+            <div class="panel-title">
+                <i class="fas fa-brain"></i>
+                <h3>🔮 Live Behavior Analysis</h3>
+                <div class="lead-info">
+                    <span class="lead-name">{{selectedLeadForTracking.userName}}</span>
+                    <span class="venue-name">- {{selectedLeadForTracking.venueName}}</span>
+                </div>
+            </div>
+            <button class="close-btn" (click)="closeBehaviorPanel()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="panel-content" *ngIf="getLiveTrackingData(selectedLeadForTracking)">
+            <!-- AI Score Dashboard -->
+            <div class="ai-dashboard">
+                <div class="score-card main-score">
+                    <div class="score-circle large">
+                        <div class="circle-bg">
+                            <div class="circle-fill"
+                                 [style.background]="'conic-gradient(' + getBookingProbabilityColor(getLiveTrackingData(selectedLeadForTracking).aiInsights.bookingProbability) + ' ' + (getLiveTrackingData(selectedLeadForTracking).aiInsights.bookingProbability * 3.6) + 'deg, #e0e0e0 0deg)'">
+                                <div class="circle-inner">
+                                    <span class="percentage">{{getLiveTrackingData(selectedLeadForTracking).aiInsights.bookingProbability}}%</span>
+                                    <small>Booking Probability</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="score-grid">
+                    <div class="score-card">
+                        <div class="score-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="score-details">
+                            <span class="score-label">Urgency</span>
+                            <span class="score-value" [class]="getUrgencyBadgeClass(getLiveTrackingData(selectedLeadForTracking).aiInsights.urgencyLevel)">
+                                {{getLiveTrackingData(selectedLeadForTracking).aiInsights.urgencyLevel}}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="score-card">
+                        <div class="score-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="score-details">
+                            <span class="score-label">Personality</span>
+                            <span class="score-value">{{getLiveTrackingData(selectedLeadForTracking).aiInsights.personalityType}}</span>
+                        </div>
+                    </div>
+
+                    <div class="score-card">
+                        <div class="score-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="score-details">
+                            <span class="score-label">Timeline</span>
+                            <span class="score-value">{{getLiveTrackingData(selectedLeadForTracking).aiInsights.decisionTimeline}}</span>
+                        </div>
+                    </div>
+
+                    <div class="score-card">
+                        <div class="score-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="score-details">
+                            <span class="score-label">Communication</span>
+                            <span class="score-value">{{getLiveTrackingData(selectedLeadForTracking).aiInsights.communicationStyle}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Website Activity -->
+            <div class="activity-section">
+                <h4>
+                    <i class="fas fa-globe"></i>
+                    Website Activity
+                    <span class="live-indicator"
+                          *ngIf="getLiveTrackingData(selectedLeadForTracking).websiteActivity.currentlyOnSite">
+                        <i class="fas fa-circle pulse-dot"></i>
+                        LIVE NOW
+                    </span>
+                </h4>
+
+                <div class="activity-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-eye"></i>
+                        <div>
+                            <span class="stat-value">{{getLiveTrackingData(selectedLeadForTracking).websiteActivity.totalVisits}}</span>
+                            <span class="stat-label">Total Visits</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <span class="stat-value">{{getMinutes(getLiveTrackingData(selectedLeadForTracking).websiteActivity.averageSessionTime)}}m</span>
+                            <span class="stat-label">Avg Session</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <i class="fas fa-mouse-pointer"></i>
+                        <div>
+                            <span class="stat-value">{{getLiveTrackingData(selectedLeadForTracking).websiteActivity.heatmapData.galleryClicks}}</span>
+                            <span class="stat-label">Gallery Clicks</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <i class="fas fa-dollar-sign"></i>
+                        <div>
+                            <span class="stat-value">{{getLiveTrackingData(selectedLeadForTracking).websiteActivity.heatmapData.pricingViews}}</span>
+                            <span class="stat-label">Pricing Views</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="last-activity">
+                    <i class="fas fa-history"></i>
+                    <span>Last seen: {{formatTimeAgo(getLiveTrackingData(selectedLeadForTracking).websiteActivity.lastVisit)}}</span>
+                </div>
+            </div>
+
+            <!-- Competitor Analysis -->
+            <div class="competitor-section"
+                 *ngIf="getLiveTrackingData(selectedLeadForTracking).competitorAnalysis.otherVenuesViewed > 0">
+                <h4>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Competitor Intelligence
+                </h4>
+
+                <div class="competitor-warning">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <strong>Alert:</strong> Client has viewed {{getLiveTrackingData(selectedLeadForTracking).competitorAnalysis.otherVenuesViewed}} competitor venues
+                        <div class="competitor-list">
+                            <span *ngFor="let competitor of getLiveTrackingData(selectedLeadForTracking).competitorAnalysis.competitorNames"
+                                  class="competitor-tag">
+                                {{competitor}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="last-competitor-visit"
+                     *ngIf="getLiveTrackingData(selectedLeadForTracking).competitorAnalysis.priceComparisons">
+                    <i class="fas fa-balance-scale"></i>
+                    <span>Price comparison detected: {{formatTimeAgo(getLiveTrackingData(selectedLeadForTracking).competitorAnalysis.lastCompetitorVisit)}}</span>
+                </div>
+            </div>
+
+            <!-- AI Insights & Recommendations -->
+            <div class="insights-section" *ngIf="getAIInsights(selectedLeadForTracking)">
+                <h4>
+                    <i class="fas fa-lightbulb"></i>
+                    AI Insights & Recommendations
+                </h4>
+
+                <div class="insights-list">
+                    <div class="insight-item"
+                         *ngFor="let insight of getAIInsights(selectedLeadForTracking).insights">
+                        <i class="fas fa-brain"></i>
+                        <span>{{insight}}</span>
+                    </div>
+                </div>
+
+                <div class="recommendations">
+                    <h5>
+                        <i class="fas fa-rocket"></i>
+                        Recommended Actions
+                    </h5>
+                    <div class="action-list">
+                        <div class="action-item"
+                             *ngFor="let action of getAIInsights(selectedLeadForTracking).recommendedActions">
+                            <i class="fas fa-chevron-right"></i>
+                            <span>{{action}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Communication Pattern -->
+            <div class="communication-section">
+                <h4>
+                    <i class="fas fa-chart-line"></i>
+                    Communication Pattern
+                </h4>
+
+                <div class="comm-stats">
+                    <div class="comm-item">
+                        <i class="fab fa-whatsapp whatsapp-icon"></i>
+                        <div>
+                            <span class="comm-label">WhatsApp Response</span>
+                            <span class="comm-value">{{getLiveTrackingData(selectedLeadForTracking).communicationPattern.whatsappResponseTime}} minutes avg</span>
+                        </div>
+                    </div>
+
+                    <div class="comm-item">
+                        <i class="fas fa-phone phone-icon"></i>
+                        <div>
+                            <span class="comm-label">Call Duration</span>
+                            <span class="comm-value">{{getMinutes(getLiveTrackingData(selectedLeadForTracking).communicationPattern.phoneCallDuration)}} minutes avg</span>
+                        </div>
+                    </div>
+
+                    <div class="comm-item">
+                        <i class="fas fa-star"></i>
+                        <div>
+                            <span class="comm-label">Preferred Method</span>
+                            <span class="comm-value">{{getLiveTrackingData(selectedLeadForTracking).communicationPattern.preferredContactMethod}}</span>
+                        </div>
+                    </div>
+
+                    <div class="comm-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <span class="comm-label">Best Contact Time</span>
+                            <span class="comm-value">{{getLiveTrackingData(selectedLeadForTracking).aiInsights.bestContactTime}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 🧠 AI COMPREHENSIVE SUMMARY -->
+            <div class="ai-summary-section">
+                <h4>
+                    <i class="fas fa-brain"></i>
+                    🧠 AI Comprehensive Summary
+                </h4>
+                
+                <div class="ai-summary-card">
+                    <div class="summary-header">
+                        <div class="ai-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="ai-info">
+                            <span class="ai-name">EazyVenue AI Assistant</span>
+                            <span class="analysis-timestamp">Analysis updated: {{formatTimeAgo(getLiveTrackingData(selectedLeadForTracking).aiInsights.lastAnalysis)}}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-summary-content">
+                        <div class="summary-text">
+                            {{generateAISummary(selectedLeadForTracking)}}
+                        </div>
+                        
+                        <div class="key-points">
+                            <h5><i class="fas fa-key"></i> Key Points:</h5>
+                            <div class="points-list">
+                                <div class="point-item" 
+                                     *ngFor="let point of getAIKeyPoints(selectedLeadForTracking)"
+                                     [class]="point.type">
+                                    <i [class]="point.icon"></i>
+                                    <span>{{point.text}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="next-steps">
+                            <h5><i class="fas fa-route"></i> Recommended Next Steps:</h5>
+                            <div class="steps-list">
+                                <div class="step-item"
+                                     *ngFor="let step of getAINextSteps(selectedLeadForTracking); let i = index"
+                                     [class.priority]="i === 0">
+                                    <span class="step-number">{{i + 1}}</span>
+                                    <span class="step-text">{{step}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="confidence-score">
+                            <div class="confidence-label">
+                                <i class="fas fa-chart-bar"></i>
+                                AI Confidence Level:
+                            </div>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" 
+                                     [style.width.%]="getLiveTrackingData(selectedLeadForTracking).aiInsights.confidenceScore"
+                                     [class]="getConfidenceClass(getLiveTrackingData(selectedLeadForTracking).aiInsights.confidenceScore)">
+                                </div>
+                            </div>
+                            <span class="confidence-percentage">{{getLiveTrackingData(selectedLeadForTracking).aiInsights.confidenceScore}}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="panel-actions">
+                <button class="action-btn whatsapp-btn"
+                        (click)="contactViaWhatsApp(selectedLeadForTracking)">
+                    <i class="fab fa-whatsapp"></i>
+                    Contact via WhatsApp
+                </button>
+                <button class="action-btn phone-btn"
+                        (click)="contactViaPhone(selectedLeadForTracking)">
+                    <i class="fas fa-phone"></i>
+                    Call Now
+                </button>
+                <button class="action-btn email-btn">
+                    <i class="fas fa-envelope"></i>
+                    Send Email
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-toast key="toastmsg" position="top-right" [style]="{'z-index': '9999', 'margin-top': '70px'}" [preventOpenDuplicates]="true" [preventDuplicates]="true" [showTransformOptions]="'translateX(100%)'" [hideTransformOptions]="'translateX(100%)'"></p-toast>
