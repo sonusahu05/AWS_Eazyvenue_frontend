@@ -29,7 +29,7 @@ import { CityService } from 'src/app/manage/city/service/city.service';
 import * as moment from 'moment';
 import { timer, Subscription } from 'rxjs';
 import { take, filter, elementAt } from 'rxjs/operators';
-import { NgxOtpInputComponent, NgxOtpInputConfig } from 'ngx-otp-input';
+// import { NgxOtpInputComponent, NgxOtpInputConfig } from 'ngx-otp-input';
 import { Meta, Title } from '@angular/platform-browser';
 
 interface City {
@@ -48,6 +48,83 @@ interface AutoCompleteCompleteEvent {
 
 })
 export class VenueListComponent implements OnInit, AfterViewInit {
+    
+    
+    
+    aiPromptVisible = false;
+aiQuery = '';
+// aiResult: string = '';  // Holds the AI response text
+filteredVenues: any[] = []; // Will hold the AI search result list
+
+loadingAI: boolean = false;
+ @ViewChild('aiResultRef') aiResultRef!: ElementRef;
+@HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    // If aiResultRef exists and the click target is not inside it
+    if (this.aiResultRef && !this.aiResultRef.nativeElement.contains(event.target)) {
+      this.filteredVenues = []; // Clear the cards
+    }
+  }
+
+triggerAISearch() {
+  this.aiPromptVisible = !this.aiPromptVisible;
+  this.aiQuery = ''; // reset input when opening
+}
+
+submitAIQuery() {
+  if (this.aiQuery.trim()) {
+    this.loadingAI = true;
+    this.filteredVenues = [];
+
+    fetch('http://localhost:3006/api/aisearch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: this.aiQuery })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && Array.isArray(data.venues)) {
+        this.filteredVenues = data.venues;
+        this.filteredVenues.forEach(venue => {
+  if (Array.isArray(venue.venueImage)) {
+    venue.venueImage = venue.venueImage.map(img => {
+      // Extract the filename from the old URL
+      const fileName = img.split('/').pop();
+      // Rebuild the full correct URL
+      return `https://api.eazyvenue.com/uploads/venuePic/${fileName}`;
+    });
+  }
+});
+      } else {
+        console.error('Invalid venue result:', data);
+      }
+      this.loadingAI = false;
+    })
+    .catch(err => {
+      console.error('AI Search Error:', err);
+      this.loadingAI = false;
+    });
+  }
+}
+
+// goToVenueDetails(venue: any): void {
+//   const venueName = encodeURIComponent(venue.name);
+//   this.router.navigate(['/venue-details', venueName]);
+// }
+goToVenueDetails(venue: any) {
+  const slug = this.generateSlug(venue.name); // convert venue name to slug
+  this.router.navigate(['/venue', slug]);
+}
+
+generateSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+}
+
+
+
+
+
+
     // selectedIndex = 0;
     // showPrev(i : number){
     //     if(this.selectedIndex > 0) {
@@ -214,7 +291,7 @@ export class VenueListComponent implements OnInit, AfterViewInit {
     // @ViewChild('ngxotp') ngxotp: NgxOtpInputComponent;
     @ViewChild('galleryWrapper') galleryWrapper: ElementRef;
     @ViewChild('bannerVideo') bannerVideo: ElementRef<HTMLVideoElement>;
-    public config: NgxOtpInputConfig = {
+    public config = {
         otpLength: 4,
         autofocus: true,
         pattern: /^\d+$/,

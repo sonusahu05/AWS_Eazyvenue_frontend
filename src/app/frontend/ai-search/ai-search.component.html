@@ -1,0 +1,8 @@
+<div class="ai-search-container">
+  <h2>AI Venue Finder</h2>
+  <textarea [(ngModel)]="prompt" rows="4" placeholder="Describe your event, guests, budget..."></textarea>
+  <button (click)="search()">Search</button>
+
+  <div *ngIf="loading">Searching...</div>
+  <div *ngIf="error" style="color: red;">{{ error }}</div>
+</div>

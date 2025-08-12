@@ -39,6 +39,9 @@ interface CompetitionVenue {
   mobileNumber: string;
   propertyType: string;
   isCurrentVenue?: boolean;
+
+  // Add this property to represent the venue owner
+  venueOwnerId?: string;  // New property
 }
 
 interface DistanceFilter {
@@ -55,6 +58,8 @@ interface DistanceFilter {
 export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private isBrowser: boolean;
+  user: any = {}; // Declare the user property
+
   
   // Data
   competitionVenues: CompetitionVenue[] = [];
@@ -79,7 +84,8 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
   // User access control
   userRole: string = '';
   isAdmin = false;
-  isVenueOwner = false;
+  isVenueOwner: boolean = false;
+  isVendorOwner: boolean = false;
   currentUserEmail = '';
   venueOwnerVenueId: string = '';
   
@@ -122,6 +128,16 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
     
     this.initializeColumns();
     this.checkUserAccess();
+
+    // Log the user role when the page loads
+  console.log('Logged-in user role:', this.userRole);  // Check user role
+   // Log the values of isVenueOwner and isVendorOwner to verify the role flags
+  console.log('isVenueOwner:', this.isVenueOwner); // Should be true for venue owners
+  console.log('isVendorOwner:', this.isVendorOwner); // Should be true for vendor owners
+
+    // Assuming you get the user data from a service like TokenStorageService
+  const storedUserData = this.tokenStorageService.getUser(); // Or whichever service you're using
+  this.user = storedUserData.userdata;  // Assign the userdata to the user property
     
     if (this.isBrowser) {
       this.initializeUserLocation();
@@ -153,16 +169,23 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
 
   private checkUserAccess() {
     const userData = this.tokenStorageService.getUser();
-    
+    console.log('Fetched user data:', userData);
+
     if (userData && userData.userdata) {
-      this.userRole = userData.userdata.rolename || '';
+      this.userRole = 'venueowner';
+      // this.userRole = 'vendor-owner';
+      // this.userRole = userData.userdata.rolename || '';
+      console.log('Assigned user role:', this.userRole);
+      
       this.isAdmin = this.userRole === 'admin';
       this.isVenueOwner = this.userRole === 'venueowner';
+      this.isVendorOwner = this.userRole === 'vendor-owner';
       this.currentUserEmail = userData.userdata.email || '';
       
       console.log('User access check:', {
         isAdmin: this.isAdmin,
         isVenueOwner: this.isVenueOwner,
+        isVendorOwner: this.isVendorOwner,
         userRole: this.userRole,
         email: this.currentUserEmail
       });
@@ -183,13 +206,48 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
   private loadCurrentVenue() {
     if (this.isVenueOwner) {
       this.loadVenueOwnerVenue();
-    } else if (this.isAdmin) {
+    }else if (this.isVendorOwner) {
+    this.loadVendorOwnerVenue();
+    }else if (this.isAdmin) {
       // For admin, load available venues first
       this.loadAvailableVenuesForAdmin();
     } else {
       this.showAccessDeniedMessage();
     }
   }
+
+  private loadVendorOwnerVenue() {
+  const query = `?admin=true&vendorId=${encodeURIComponent(this.user.id)}&pageSize=1&pageNumber=1&filterByDisable=false`;
+
+  const sub = this.venueService.getVenueListForFilter(query).subscribe({
+    next: (response) => {
+      if (response?.data?.items && response.data.items.length > 0) {
+        const venueData = response.data.items[0];
+        this.currentVenue = this.mapToCompetitionVenue(venueData, true);
+        this.venueOwnerVenueId = this.currentVenue.id;
+        this.loadCompetitionVenues(); // Load competition venues with the new venue ID
+      } else {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'No Venue Found',
+          detail: 'No venue found for your account. Please contact support.'
+        });
+      }
+    },
+    error: (error) => {
+      console.error('Error loading vendor owner venue:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to load vendor owner venue details'
+      });
+    }
+  });
+
+  this.subscriptions.add(sub);
+}
+
+
 
   private loadAvailableVenuesForAdmin() {
     console.log('Loading venues for admin selection...');
@@ -306,11 +364,13 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       this.loading = false;
     }
   }
-
+//New Feature
   private loadVenueOwnerVenue() {
     // Get venues filtered by the venue owner's email
     const query = `?admin=true&email=${encodeURIComponent(this.currentUserEmail)}&pageSize=1&pageNumber=1&filterByDisable=false`;
-    
+    // const hardcodedEmail = 'chevron@gmail.com'; // Replace with actual working venue owner's email
+// const query = `?admin=true&email=${encodeURIComponent(hardcodedEmail)}&pageSize=1&pageNumber=1&filterByDisable=false`;
+
     const sub = this.venueService.getVenueListForFilter(query).subscribe({
       next: (response) => {
         if (response?.data?.items && response.data.items.length > 0) {
@@ -318,6 +378,8 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
           this.currentVenue = this.mapToCompetitionVenue(venueData, true);
           this.venueOwnerVenueId = this.currentVenue.id;
           
+           console.log('Venue Owner Venue ID:', this.venueOwnerVenueId);
+
           console.log('Current venue loaded:', this.currentVenue);
           this.loadCompetitionVenues();
         } else {
@@ -348,6 +410,27 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
     }
 
     console.log('=== LOAD COMPETITION VENUES START ===');
+
+    // Filter venues based on user role
+  if (this.isVenueOwner) {
+    console.log('Filtering venues for venue owner...');
+    // Venue owners should only see their own venue
+    this.competitionVenues = this.competitionVenues.filter(venue => venue.id === this.venueOwnerVenueId);
+
+    // Log the filtered venues for venue owners
+    console.log('Filtered venues for venue owner:', this.competitionVenues);
+  } else if (this.isVendorOwner) {
+    console.log('Filtering venues for vendor owner...');
+    // Vendor owners should see venues linked to their venue owner
+    this.competitionVenues = this.competitionVenues.filter(venue => venue.venueOwnerId === this.venueOwnerVenueId);
+  } else if (this.isAdmin) {
+    console.log('Admin viewing all venues...');
+    this.competitionVenues = this.competitionVenues;  // No filtering for admin
+  }
+
+  console.log('Filtered venues:', this.competitionVenues);
+
+
     console.log('Current venue ID:', this.currentVenue.id);
     console.log('Distance filter:', this.selectedDistanceFilter.value);
 

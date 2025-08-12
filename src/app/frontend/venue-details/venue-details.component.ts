@@ -98,7 +98,7 @@ interface City {
 export class VenueDetailsComponent implements OnInit, OnDestroy {
     
     // Review source & toggling states
-    appLoading=true;
+
     [x: string]: any;
     venueDetailSearch: boolean = false;
     responsiveOptions: any[] | undefined;
@@ -911,7 +911,7 @@ get mockCompareReviews(): CompareReview[] {
       plateRating: "₹1200 per plate",
       capacity: 300,
       reviewtitle: "company 3",
-      reviewdescription: "Convenient location and friendly staff. Highly recommended for large events.",
+      reviewdescription: "",
       reviewrating: 4.5,
       created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
       author_name: "company 3"

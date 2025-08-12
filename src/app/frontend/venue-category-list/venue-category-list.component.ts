@@ -237,19 +237,33 @@ export class VenueCategoryListComponent {
     //     ceil: 1000000
     // };
     // @ViewChild('capacity') capacity: ElementRef;
-    @ViewChild('ngxotp') ngxotp: NgxOtpInputComponent;
-    public config: NgxOtpInputConfig = {
-        otpLength: 4,
-        autofocus: true,
-        classList: {
-            inputBox: 'my-super-box-class',
-            input: 'my-super-class',
-            inputFilled: 'my-super-filled-class',
-            inputDisabled: 'my-super-disable-class',
-            inputSuccess: 'my-super-success-class',
-            inputError: 'my-super-error-class',
-        },
-    };
+    // @ViewChild('ngxotp') ngxotp: NgxOtpInputComponent;
+    // public config: NgxOtpInputConfig = {
+    //     otpLength: 4,
+    //     autofocus: true,
+    //     classList: {
+    //         inputBox: 'my-super-box-class',
+    //         input: 'my-super-class',
+    //         inputFilled: 'my-super-filled-class',
+    //         inputDisabled: 'my-super-disable-class',
+    //         inputSuccess: 'my-super-success-class',
+    //         inputError: 'my-super-error-class',
+    //     },
+    // };
+    otpConfig = {
+  length: 4,
+  allowNumbersOnly: true,
+  inputStyles: {
+    width: '40px',
+    height: '40px',
+    border: '1px solid #ccc',
+    borderRadius: '4px'
+  }
+};
+
+onOtpChange(otp: string) {
+  console.log('OTP Changed:', otp);
+}
     @ViewChild('minVenuePriceInput') minVenuePriceInput: ElementRef;
     @ViewChild('maxVenuePriceInput') maxVenuePriceInput: ElementRef;
     @ViewChild('faqComponent') faqComponent!: FaqComponent;
@@ -2884,7 +2898,7 @@ export class VenueCategoryListComponent {
             this.numberPopup = true;
             this.otpPopup = false;
             this.otpthankyouPopup = false;
-            this.ngxotp.clear();
+            // this.ngxotp.clear();
             this.otp = undefined;
         } else {
             let selectedCities = JSON.stringify(this.selectedCities);

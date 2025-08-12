@@ -54,7 +54,14 @@
                             "babel-runtime/helpers/slicedToArray",
                             "ng2-validation",
                             "moment-timezone",
-                            "moment"
+                            "moment",
+                            "core-js",
+  "raf",
+  "canvg",
+  "html2canvas",
+  "jspdf",
+  "dompurify",
+  "file-saver"
                         ]
                     },
                     "configurations": {
