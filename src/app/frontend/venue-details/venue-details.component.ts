@@ -98,7 +98,7 @@ interface City {
 export class VenueDetailsComponent implements OnInit, OnDestroy {
     
     // Review source & toggling states
-
+    appLoading=true;
     [x: string]: any;
     venueDetailSearch: boolean = false;
     responsiveOptions: any[] | undefined;

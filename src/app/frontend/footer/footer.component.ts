@@ -24,7 +24,7 @@ export class FooterComponent implements OnInit {
   ngOnInit(): void {
      setTimeout(() => {
     this.appLoading = false;
-  }, 1500);
+  }, 2000);
     this.subscribeForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email, CustomValidators.email]]
     });

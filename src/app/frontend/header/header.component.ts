@@ -366,7 +366,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         setTimeout(() => {
     this.appLoading = false;
-  }, 1500);
+  }, 2000);
         // Initialize mobile view detection
         if (isPlatformBrowser(this.platformId)) {
             this.isMobileView = window.innerWidth <= 768;
