@@ -141,6 +141,7 @@ generateSlug(name: string): string {
     showHomeSearch() {
         this.homeSearch = true;
     }
+    appLoading = true;
     userLocation: UserLocation | null = null;
     locationEnabled: boolean = false;
     locationError: string = '';
@@ -474,6 +475,9 @@ displayLimit: number = 25;
         this.datePickerMobile.hideOverlay();
       }
     async ngOnInit() {
+        setTimeout(() => {
+    this.appLoading = false;
+  }, 1500);
         const canonicalLink = this.renderer.createElement('link');
         this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
         this.renderer.setAttribute(canonicalLink, 'href', window.location.href);

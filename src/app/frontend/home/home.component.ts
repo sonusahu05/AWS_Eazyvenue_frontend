@@ -61,7 +61,7 @@ export class HomeComponent implements OnInit {
       numScroll: 1
     }
   ];
-
+appLoading = true;
   public listingblock;
   public loading: boolean = true;
   public bannerList: any[] = [];
@@ -125,6 +125,9 @@ export class HomeComponent implements OnInit {
       : this.currentClassIdx + 1;
   }
   ngOnInit() {
+    setTimeout(() => {
+    this.appLoading = false;
+  }, 2000);
     this.filterCapacityArray = environment.capacity;
     
     // Load basic data synchronously for SSR

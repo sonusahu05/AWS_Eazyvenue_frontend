@@ -9,7 +9,6 @@ import {
     PLATFORM_ID,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
 import { isPlatformBrowser, DOCUMENT } from '@angular/common';
 // import data from '../../../assets/demo/data/navigation.json';
 import { EnquiryService } from '../../manage/eventmanager/service/eventmanager.service';
@@ -30,7 +29,6 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { VenueOrderService } from 'src/app/services/venueOrder.service';
 import { HttpClient } from '@angular/common/http';
-
 import {
     FormBuilder,
     FormGroup,
@@ -53,19 +51,24 @@ import { GeolocationService, UserLocation, VenueWithDistance } from '../../servi
 import { BookingService, BookingData } from '../../services/booking.service';
 import { Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
-const apiUrl = 'http://localhost:5000/api'; // ✅ Replace with your actual backend URL if different
-
 declare var google: any;
 
 declare var Razorpay;
-interface Venue {
-  name: string;
-  location: string;
+interface CompareReview {
+  text: string;
+  rating: number;
+  plateRating: string;
   capacity: number;
-  description: string;
-  mobileNumber: string;
-  venueImage: string[];
+  reviewtitle?: string;
+  reviewdescription?: string;
+  reviewrating?: number;
+  created_at?: string;
+  author_name?: string;
 }
+
+
+
+
 interface City {
     name: string;
     code: string;
@@ -93,35 +96,13 @@ interface City {
     ],
 })
 export class VenueDetailsComponent implements OnInit, OnDestroy {
-// venueDetails: any;
-  venueNameFromRoute: string = '';
+    
     // Review source & toggling states
-    venue: Venue;
-loadVenueDetails(venueName: string): void {
-    this.venueService.getVenueByName(venueName).subscribe(
-    (response: any) => {
-      this.venueDetails = response;
-      console.log('✅ Venue details loaded:', this.venueDetails);
-
-      // Now call getUserDetails only if venueDetails.createdBy exists
-      const userId = this.venueDetails?.createdBy;
-      if (userId) {
-        this.getUserDetails(userId);
-      } else {
-        console.warn('Venue does not have a valid createdBy userId');
-      }
-    },
-    (error) => {
-      console.error('❌ Error loading venue details:', error);
-    }
-  );
-}
-
 
     [x: string]: any;
     venueDetailSearch: boolean = false;
     responsiveOptions: any[] | undefined;
-    selectedReviewSource: string = 'eazyvenue';
+    //selectedReviewSource: string = 'eazyvenue';
   showReviewForm: boolean = false;
   showAllReviews: boolean = false;
   googleReviews: any[] = [];
@@ -130,7 +111,7 @@ loadVenueDetails(venueName: string): void {
    currentSlide: number = 0;
   reviewsPerSlide: number = 3;
   userPhotos: any[] = [];
-
+  CompareReviews:any[]=[];
   newReview = {
     reviewtitle: '',
     reviewrating: 0,
@@ -426,7 +407,6 @@ loadVenueDetails(venueName: string): void {
         private venueOrderService: VenueOrderService,
         private vendorService: VendorService,
         private router: Router,
-        private route: ActivatedRoute,
         private formBuilder: FormBuilder,
         private roleService: RoleService,
         private authService: AuthService,
@@ -453,12 +433,8 @@ loadVenueDetails(venueName: string): void {
     }
 
     ngOnInit() {
-        this.route.paramMap.subscribe(params => {
-    const venueName = params.get('name');
-    if (venueName) {
-      this.fetchVenueByName(venueName);
-    }
-  });
+        this.initReviewForm();
+
         // Browser-only code - wrapped in platform check
         if (isPlatformBrowser(this.platformId)) {
             const canonicalLink = this.renderer.createElement('link');
@@ -565,6 +541,7 @@ loadVenueDetails(venueName: string): void {
             { name: 'Popularity', code: 'popularity' },
             // { name: 'Distance', code: 'distance' }
         ];
+        this.CompareReviews = this.mockCompareReviews;
         if (this.activeRoute.snapshot.params.id) {
             this.id = this.activeRoute.snapshot.params.id;
         }
@@ -775,22 +752,17 @@ loadVenueDetails(venueName: string): void {
     get h() {
         return this.mobileForm.controls;
     }
-// getCarouselReviews() {
-//     const reviews = this.selectedReviewSource === 'google' ? this.googleReviews : (this.venueDetails.reviews || []);
-//     return reviews;
-//   }
 getCarouselReviews() {
+  // This method is probably still using the old logic
+  // Change it to:
   if (this.selectedReviewSource === 'google') {
-    return this.googleReviews;
+    return this.googleReviews || [];
+  } else if (this.selectedReviewSource === 'Compare Reviews') {
+    return this.CompareReviews || []; // Make sure this line exists
   } else {
-    // Check venueDetails is defined before accessing reviews
-    if (!this.venueDetails || !this.venueDetails.reviews) {
-      return [];
-    }
-    return this.venueDetails.reviews;
+    return this.venueDetails.reviews || [];
   }
 }
-
 
   // Get total number of slides
   getTotalSlides(): number {
@@ -901,66 +873,131 @@ getCarouselReviews() {
     return photos.slice(0, 6); // Limit to 6 photos
   }
 
-  // Open photo modal (if you want to implement photo viewing)
-  openPhotoModal(photo: any) {
-    // Implement photo modal logic here
-    console.log('Opening photo modal for:', photo);
+
+// Fixed toggleReviewSource method
+toggleReviewSource(source: string) {
+  this.selectedReviewSource = source;
+  this.currentSlide = 0; // Reset to first slide when switching sources
+  
+  // Reset showAllReviews when switching sources
+  this.showAllReviews = false;
+  console.log('CompareReviews available:', this.CompareReviews);
+}
+
+// Get truncated review text
+
+
+// Check if there are user photos available
+
+
+
+
+// Open photo modal
+openPhotoModal(photo: any) {
+  console.log('Opening photo modal for:', photo);
+}
+
+// Check if compare reviews should be shown
+get shouldShowCompareReviews(): boolean {
+  return this.selectedReviewSource === 'Compare Reviews';
+}
+
+// Enhanced mock compare reviews with proper structure
+get mockCompareReviews(): CompareReview[] {
+  return [
+    {
+      text: "eazy venue have better option",
+      rating: 4.5,
+      plateRating: "₹1200 per plate",
+      capacity: 300,
+      reviewtitle: "company 3",
+      reviewdescription: "",
+      reviewrating: 4.5,
+      created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
+      author_name: "company 3"
+    },
+    {
+      text: "Eazy have better option",
+      rating: 4.2,
+      plateRating: "₹1500 per plate",
+      capacity: 250,
+      reviewtitle: "company 2",
+      reviewdescription: "Great service and decoration. A bit pricey but worth it for special occasions.",
+      reviewrating: 4.2,
+      created_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days ago
+      author_name: "company 2"
+    },
+    {
+      text: "company 3",
+      rating: 4.8,
+      plateRating: "₹1000 per plate",
+      capacity: 400,
+      reviewtitle: "company 1",
+      reviewdescription: "Convenient location and friendly staff. Highly recommended for large events.",
+      reviewrating: 4.8,
+      created_at: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(), // 21 days ago
+      author_name: "company1"
+    },
+  ];
+}
+
+// Enhanced getDisplayedReviews with better handling for compare reviews
+getDisplayedReviews() {
+  let reviews = [];
+  
+  if (this.selectedReviewSource === 'google') {
+    reviews = this.googleReviews || [];
+  } else if (this.selectedReviewSource === 'Compare Reviews') {
+     reviews = this.CompareReviews || []; 
+  } else {
+    reviews = this.venueDetails.reviews || [];
   }
+   // Add these debug logs:
+  console.log('getDisplayedReviews - Current source:', this.selectedReviewSource);
+  console.log('getDisplayedReviews - Reviews found:', reviews);
+  console.log('getDisplayedReviews - Reviews length:', reviews.length);
 
-  // Enhanced getDisplayedReviews with better sorting
-  getDisplayedReviews() {
-    let reviews = [];
+  // Handle sorting safely for all review types
+  reviews = reviews.sort((a, b) => {
+    const ratingA = a.reviewrating || a.rating || 0;
+    const ratingB = b.reviewrating || b.rating || 0;
+    const dateA = new Date(a.created_at || '').getTime() || 0;
+    const dateB = new Date(b.created_at || '').getTime() || 0;
 
-    if (this.selectedReviewSource === 'google') {
-      reviews = this.googleReviews || [];
-    } else {
-      reviews = this.venueDetails.reviews || [];
+    // Sort by rating first (highest first)
+    if (ratingA !== ratingB) {
+      return ratingB - ratingA;
     }
 
-    // Sort reviews by rating (highest first) and then by date (newest first)
-    reviews = reviews.sort((a, b) => {
-      if (a.reviewrating !== b.reviewrating) {
-        return b.reviewrating - a.reviewrating;
-      }
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
+    // Then by date (newest first)
+    return dateB - dateA;
+  });
 
-    return this.showAllReviews ? reviews : reviews.slice(0, 6);
-  }
+  return this.showAllReviews ? reviews : reviews.slice(0, 6);
+}
 
-  // Get reviews count with better formatting
-  getReviewsCountText(): string {
-    const count = this.getTotalReviewsCount();
-    if (count === 0) return 'No reviews';
-    if (count === 1) return '1 Review';
-    return `${count} Reviews`;
-  }
+// Get reviews count with better formatting
+getReviewsCountText(): string {
+  const count = this.getTotalReviewsCount();
+  if (count === 0) return 'No reviews';
+  if (count === 1) return '1 Review';
+  return `${count} Reviews`;
+}
 
-  // Enhanced getCurrentRating with fallback logic
-//   getCurrentRating(): number {
-//     if (this.selectedReviewSource === 'google') {
-//       return this.venueDetails.googleRating || 0;
-//     } else {
-//       // If no EazyVenue reviews, show Google rating as fallback
-//       const eazyRating = this.venueDetails.eazyVenueRating || 0;
-//       const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
-
-//       if (eazyReviewsCount === 0 && this.venueDetails.googleRating) {
-//         return this.venueDetails.googleRating;
-//       }
-
-//       return eazyRating;
-//     }
-//   }
-
+// Enhanced getCurrentRating with compare reviews support
 getCurrentRating(): number {
-  if (!this.venueDetails) {
-    return 0; // or some default rating
-  }
-
-  if (this.selectedReviewSource === 'google') {
+   if (this.selectedReviewSource === 'google') {
     return this.venueDetails.googleRating || 0;
+  } else if (this.selectedReviewSource === 'Compare Reviews') {
+    // Change this line:
+    const compareReviews = this.CompareReviews; // Change from this.mockCompareReviews
+    if (compareReviews && compareReviews.length > 0) {
+      const totalRating = compareReviews.reduce((sum, review) => sum + review.rating, 0);
+      return Math.round((totalRating / compareReviews.length) * 10) / 10;
+    }
+    return 0;
   } else {
+    // EazyVenue reviews
     const eazyRating = this.venueDetails.eazyVenueRating || 0;
     const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
 
@@ -972,347 +1009,234 @@ getCurrentRating(): number {
   }
 }
 
+// Enhanced setInitialReviewSource with compare reviews consideration
+setInitialReviewSource() {
+  const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
+  const googleReviewsCount = this.googleReviews?.length || 0;
+ const compareReviewsCount = this.CompareReviews?.length || 0;
 
-  // Enhanced setInitialReviewSource with better logic
-  setInitialReviewSource() {
-    const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
-    const googleReviewsCount = this.googleReviews?.length || 0;
-
-    if (eazyReviewsCount <= 2 && googleReviewsCount > 0) {
-      this.selectedReviewSource = 'google';
-    } else if (eazyReviewsCount > 0) {
-      this.selectedReviewSource = 'eazyvenue';
-    } else if (googleReviewsCount > 0) {
-      this.selectedReviewSource = 'google';
-    } else {
-      this.selectedReviewSource = 'eazyvenue'; // Default to EazyVenue for writing reviews
-    }
-  }
-
-  // Enhanced loadGoogleReviews with better error handling
-  loadGoogleReviews() {
-    if (!this.venueDetails.name || !this.venueDetails.cityname) {
-      console.log('Venue name or city not available for Google reviews');
-      return;
-    }
-
-    this.isLoadingGoogleReviews = true;
-
-    this.venueService.getGoogleReviews(this.venueDetails.name, this.venueDetails.cityname)
-      .subscribe({
-        next: (response) => {
-          console.log('Google reviews response:', response);
-
-          if (response.result && response.result.reviews) {
-            this.googleReviews = response.result.reviews.map(review => ({
-              ...review,
-              reviewtitle: this.generateReviewTitle(review.rating),
-              reviewdescription: review.text || 'No review text available',
-              reviewrating: review.rating,
-              created_at: review.time ? new Date(review.time * 1000).toISOString() : new Date().toISOString(),
-              author_name: review.author_name || 'Anonymous',
-              profile_photo_url: review.profile_photo_url
-            }));
-
-            // Update Google rating if available
-            if (response.result.rating) {
-              this.venueDetails.googleRating = response.result.rating;
-            }
-          } else {
-            this.googleReviews = [];
-          }
-
-          this.isLoadingGoogleReviews = false;
-          this.setInitialReviewSource();
-        },
-        error: (error) => {
-          console.error('Error loading Google reviews:', error);
-          this.googleReviews = [];
-          this.isLoadingGoogleReviews = false;
-          this.setInitialReviewSource();
-        }
-      });
-  }
-
-  // Enhanced generateReviewTitle with more variety
-  generateReviewTitle(rating: number): string {
-    const titles = {
-      5: ['Outstanding Experience', 'Perfect Venue', 'Excellent Choice', 'Highly Recommended'],
-      4: ['Great Experience', 'Very Good Venue', 'Good Choice', 'Recommended'],
-      3: ['Average Experience', 'Decent Venue', 'Okay Choice', 'Fair Experience'],
-      2: ['Below Average', 'Could Be Better', 'Not Impressed', 'Disappointing'],
-      1: ['Poor Experience', 'Not Recommended', 'Very Disappointing', 'Avoid']
-    };
-
-    const ratingGroup = Math.floor(rating);
-    const titleArray = titles[ratingGroup] || titles[3];
-    return titleArray[Math.floor(Math.random() * titleArray.length)];
-  }
-
-  // Enhanced submitReview with better success handling
-  submitReview() {
-    if (!this.newReview.reviewtitle || !this.newReview.reviewrating || !this.newReview.reviewdescription) {
-      alert('Please fill all required fields');
-      return;
-    }
-
-    const reviewData = {
-      ...this.newReview,
-      venueId: this.venueDetails.id,
-      created_at: new Date().toISOString(),
-      author_name: 'You' // You can get this from user service
-    };
-
-    this.venueService.addReview(this.venueDetails.id, reviewData).subscribe({
-      next: (response) => {
-        console.log('Review submitted successfully:', response);
-
-        // Add the new review to the existing reviews
-        if (!this.venueDetails.reviews) {
-          this.venueDetails.reviews = [];
-        }
-        this.venueDetails.reviews.unshift(reviewData);
-
-        // Update the EazyVenue rating
-        this.updateEazyVenueRating();
-
-        // Reset form and close it
-        this.resetReviewForm();
-        this.showReviewForm = false;
-
-        // Switch to EazyVenue reviews to show the new review
-        this.selectedReviewSource = 'eazyvenue';
-        this.showAllReviews = false;
-
-        // Show success message
-        this.showSuccessMessage('Review submitted successfully!');
-      },
-      error: (error) => {
-        console.error('Error submitting review:', error);
-        this.showErrorMessage('Error submitting review. Please try again.');
-      }
-    });
-  }
-
-  // Show success message (you can implement toast notifications)
-  showSuccessMessage(message: string) {
-    // Implement your success message display logic here
-    alert(message); // Replace with proper toast notification
-  }
-
-  // Show error message
-  showErrorMessage(message: string) {
-    // Implement your error message display logic here
-    alert(message); // Replace with proper toast notification
-  }
-
-  // Method to handle review card interactions
-  onReviewCardClick(review: any, index: number) {
-    // You can implement review detail modal or expand functionality
-    console.log('Review card clicked:', review);
-  }
-
-  // Method to get review statistics for the selected source
-  getReviewStatistics() {
-    const reviews = this.selectedReviewSource === 'google' ? this.googleReviews : (this.venueDetails.reviews || []);
-
-    const stats = {
-      5: 0, 4: 0, 3: 0, 2: 0, 1: 0
-    };
-
-    reviews.forEach(review => {
-      const rating = Math.floor(review.reviewrating);
-      if (stats[rating] !== undefined) {
-        stats[rating]++;
-      }
-    });
-
-    return stats;
-  }
-
-  // Method to get percentage for each rating
-  getRatingPercentage(rating: number): number {
-    const stats = this.getReviewStatistics();
-    const total = Object.values(stats).reduce((sum, count) => sum + count, 0);
-    return total > 0 ? Math.round((stats[rating] / total) * 100) : 0;
-  }
-
-//     setInitialReviewSource() {
-//     const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
-
-//     if (eazyReviewsCount <= 2) {
-//       // If EazyVenue has 2 or fewer reviews, show Google reviews by default
-//       this.selectedReviewSource = 'google';
-//     } else {
-//       // If EazyVenue has more than 2 reviews, show EazyVenue reviews by default
-//       this.selectedReviewSource = 'eazyvenue';
-//     }
-//   }
-
-//   // Updated loadGoogleReviews method
-//   loadGoogleReviews() {
-//     if (!this.venueDetails.name || !this.venueDetails.cityname) {
-//       console.log('Venue name or city not available for Google reviews');
-//       return;
-//     }
-
-//     this.isLoadingGoogleReviews = true;
-//     this.venueService.getGoogleReviews(this.venueDetails.name, this.venueDetails.cityname)
-//       .subscribe(
-//         (response) => {
-//           console.log('Google reviews response:', response);
-//           if (response.result && response.result.reviews) {
-//             this.googleReviews = response.result.reviews.map(review => ({
-//               ...review,
-//               reviewtitle: this.generateReviewTitle(review.rating),
-//               reviewdescription: review.text,
-//               reviewrating: review.rating,
-//               created_at: new Date(review.time * 1000).toISOString(),
-//               author_name: review.author_name,
-//               profile_photo_url: review.profile_photo_url
-//             }));
-//           }
-//           this.isLoadingGoogleReviews = false;
-//         },
-//         (error) => {
-//           console.error('Error loading Google reviews:', error);
-//           this.isLoadingGoogleReviews = false;
-//         }
-//       );
-//   }
-
-//   // Helper method to generate review titles for Google reviews
-//   generateReviewTitle(rating: number): string {
-//     if (rating >= 4.5) return 'Excellent Experience';
-//     if (rating >= 4) return 'Great Place';
-//     if (rating >= 3.5) return 'Good Experience';
-//     if (rating >= 3) return 'Average Experience';
-//     return 'Below Average';
-//   }
-
-  // Toggle review source
-  toggleReviewSource(source: string) {
-    this.selectedReviewSource = source;
-  }
-
-  // Toggle review form
-  toggleReviewForm() {
-    this.showReviewForm = !this.showReviewForm;
-    if (!this.showReviewForm) {
-      this.resetReviewForm();
-    }
-  }
-
-  // Reset review form
-  resetReviewForm() {
-    this.newReview = {
-      reviewtitle: '',
-      reviewrating: 0,
-      reviewdescription: ''
-    };
-  }
-
-  // Submit new review
-//   submitReview() {
-//     if (!this.newReview.reviewtitle || !this.newReview.reviewrating || !this.newReview.reviewdescription) {
-//       alert('Please fill all required fields');
-//       return;
-//     }
-
-//     const reviewData = {
-//       ...this.newReview,
-//       venueId: this.venueDetails.id,
-//       created_at: new Date().toISOString()
-//     };
-
-//     this.venueService.addReview(this.venueDetails.id, reviewData).subscribe(
-//       (response) => {
-//         console.log('Review submitted successfully:', response);
-//         // Add the new review to the existing reviews
-//         if (!this.venueDetails.reviews) {
-//           this.venueDetails.reviews = [];
-//         }
-//         this.venueDetails.reviews.unshift(reviewData);
-
-//         // Update the EazyVenue rating
-//         this.updateEazyVenueRating();
-
-//         // Reset form and close it
-//         this.resetReviewForm();
-//         this.showReviewForm = false;
-
-//         // Switch to EazyVenue reviews to show the new review
-//         this.selectedReviewSource = 'eazyvenue';
-
-//         alert('Review submitted successfully!');
-//       },
-//       (error) => {
-//         console.error('Error submitting review:', error);
-//         alert('Error submitting review. Please try again.');
-//       }
-//     );
-//   }
-
-  // Update EazyVenue rating based on all reviews
-  updateEazyVenueRating() {
-    if (this.venueDetails.reviews && this.venueDetails.reviews.length > 0) {
-      const totalRating = this.venueDetails.reviews.reduce((sum, review) => sum + review.reviewrating, 0);
-      this.venueDetails.eazyVenueRating = Math.round((totalRating / this.venueDetails.reviews.length) * 10) / 10;
-    }
-  }
-
-  // Get displayed reviews based on selected source
-//   getDisplayedReviews() {
-//     if (this.selectedReviewSource === 'google') {
-//       return this.showAllReviews ? this.googleReviews : this.googleReviews.slice(0, 3);
-//     } else {
-//       const eazyReviews = this.venueDetails.reviews || [];
-//       return this.showAllReviews ? eazyReviews : eazyReviews.slice(0, 3);
-//     }
-//   }
-
-  // Get total reviews count for selected source
-//   getTotalReviewsCount(): number {
-//     if (this.selectedReviewSource === 'google') {
-//       return this.googleReviews.length;
-//     } else {
-//       return this.venueDetails.reviews?.length || 0;
-//     }
-//   }
-
-getTotalReviewsCount(): number {
-  if (this.selectedReviewSource === 'google') {
-    return this.googleReviews.length;
+  if (eazyReviewsCount <= 2 && googleReviewsCount > 0) {
+    this.selectedReviewSource = 'google';
+  } else if (eazyReviewsCount > 0) {
+    this.selectedReviewSource = 'eazyvenue';
+  } else if (googleReviewsCount > 0) {
+    this.selectedReviewSource = 'google';
+  } else if (compareReviewsCount > 0) {
+    this.selectedReviewSource = 'Compare Reviews';
   } else {
-    if (!this.venueDetails || !this.venueDetails.reviews) {
-      return 0;
-    }
-    return this.venueDetails.reviews.length;
+    this.selectedReviewSource = 'eazyvenue'; // Default to EazyVenue for writing reviews
   }
 }
 
-
-  // Get rating for selected source
-//   getCurrentRating(): number {
-//     if (this.selectedReviewSource === 'google') {
-//       return this.venueDetails.googleRating || 0;
-//     } else {
-//       return this.venueDetails.eazyVenueRating || 0;
-//     }
-//   }
-
-//   // Get reviews count text
-//   getReviewsCountText(): string {
-//     const count = this.getTotalReviewsCount();
-//     return count === 1 ? '1 Review' : `${count} Reviews`;
-//   }
-
-  // Check if should show "Show all reviews" button
-  shouldShowAllReviewsButton(): boolean {
-    const totalReviews = this.getTotalReviewsCount();
-    return totalReviews > 3 && !this.showAllReviews;
+// Enhanced loadGoogleReviews with better error handling
+loadGoogleReviews() {
+  if (!this.venueDetails.name || !this.venueDetails.cityname) {
+    console.log('Venue name or city not available for Google reviews');
+    return;
   }
 
+  this.isLoadingGoogleReviews = true;
+
+  this.venueService.getGoogleReviews(this.venueDetails.name, this.venueDetails.cityname)
+    .subscribe({
+      next: (response) => {
+        console.log('Google reviews response:', response);
+
+        if (response.result && response.result.reviews) {
+          this.googleReviews = response.result.reviews.map(review => ({
+            ...review,
+            reviewtitle: this.generateReviewTitle(review.rating),
+            reviewdescription: review.text || 'No review text available',
+            reviewrating: review.rating,
+            created_at: review.time ? new Date(review.time * 1000).toISOString() : new Date().toISOString(),
+            author_name: review.author_name || 'Anonymous',
+            profile_photo_url: review.profile_photo_url
+          }));
+
+          // Update Google rating if available
+          if (response.result.rating) {
+            this.venueDetails.googleRating = response.result.rating;
+          }
+        } else {
+          this.googleReviews = [];
+        }
+
+        this.isLoadingGoogleReviews = false;
+        this.setInitialReviewSource();
+      },
+      error: (error) => {
+        console.error('Error loading Google reviews:', error);
+        this.googleReviews = [];
+        this.isLoadingGoogleReviews = false;
+        this.setInitialReviewSource();
+      }
+    });
+}
+
+// Enhanced generateReviewTitle with more variety
+generateReviewTitle(rating: number): string {
+  const titles = {
+    5: ['Outstanding Experience', 'Perfect Venue', 'Excellent Choice', 'Highly Recommended'],
+    4: ['Great Experience', 'Very Good Venue', 'Good Choice', 'Recommended'],
+    3: ['Average Experience', 'Decent Venue', 'Okay Choice', 'Fair Experience'],
+    2: ['Below Average', 'Could Be Better', 'Not Impressed', 'Disappointing'],
+    1: ['Poor Experience', 'Not Recommended', 'Very Disappointing', 'Avoid']
+  };
+
+  const ratingGroup = Math.floor(rating);
+  const titleArray = titles[ratingGroup] || titles[3];
+  return titleArray[Math.floor(Math.random() * titleArray.length)];
+}
+
+// Enhanced submitReview with better success handling
+submitReview() {
+  if (!this.newReview.reviewtitle || !this.newReview.reviewrating || !this.newReview.reviewdescription) {
+    alert('Please fill all required fields');
+    return;
+  }
+
+  const reviewData = {
+    ...this.newReview,
+    venueId: this.venueDetails.id,
+    created_at: new Date().toISOString(),
+    author_name: 'You' // You can get this from user service
+  };
+
+  this.venueService.addReview(this.venueDetails.id, reviewData).subscribe({
+    next: (response) => {
+      console.log('Review submitted successfully:', response);
+
+      // Add the new review to the existing reviews
+      if (!this.venueDetails.reviews) {
+        this.venueDetails.reviews = [];
+      }
+      this.venueDetails.reviews.unshift(reviewData);
+
+      // Update the EazyVenue rating
+      this.updateEazyVenueRating();
+
+      // Reset form and close it
+      this.resetReviewForm();
+      this.showReviewForm = false;
+
+      // Switch to EazyVenue reviews to show the new review
+      this.selectedReviewSource = 'eazyvenue';
+      this.showAllReviews = false;
+
+      // Show success message
+      this.showSuccessMessage('Review submitted successfully!');
+    },
+    error: (error) => {
+      console.error('Error submitting review:', error);
+      this.showErrorMessage('Error submitting review. Please try again.');
+    }
+  });
+}
+
+// Show success message
+showSuccessMessage(message: string) {
+  alert(message); // Replace with proper toast notification
+}
+
+// Show error message
+showErrorMessage(message: string) {
+  alert(message); // Replace with proper toast notification
+}
+
+// Method to handle review card interactions
+onReviewCardClick(review: any, index: number) {
+  console.log('Review card clicked:', review);
+}
+
+// Method to get review statistics for the selected source
+getReviewStatistics() {
+  let reviews = [];
+  
+  if (this.selectedReviewSource === 'google') {
+    reviews = this.googleReviews || [];
+  } else if (this.selectedReviewSource === 'Compare Reviews') {
+        reviews = this.CompareReviews || []; 
+  } else {
+    reviews = this.venueDetails.reviews || [];
+  }
+
+  const stats = {
+    5: 0, 4: 0, 3: 0, 2: 0, 1: 0
+  };
+
+  reviews.forEach(review => {
+    const rating = Math.floor(review.reviewrating || review.rating || 0);
+    if (stats[rating] !== undefined) {
+      stats[rating]++;
+    }
+  });
+
+  return stats;
+}
+
+// Method to get percentage for each rating
+getRatingPercentage(rating: number): number {
+  const stats = this.getReviewStatistics();
+  const total = Object.values(stats).reduce((sum, count) => sum + count, 0);
+  return total > 0 ? Math.round((stats[rating] / total) * 100) : 0;
+}
+
+// Toggle review form
+toggleReviewForm() {
+  this.showReviewForm = !this.showReviewForm;
+  if (!this.showReviewForm) {
+    this.resetReviewForm();
+  }
+}
+
+// Reset review form
+resetReviewForm() {
+  this.newReview = {
+    reviewtitle: '',
+    reviewrating: 0,
+    reviewdescription: ''
+  };
+}
+
+// Update EazyVenue rating based on all reviews
+updateEazyVenueRating() {
+  if (this.venueDetails.reviews && this.venueDetails.reviews.length > 0) {
+    const totalRating = this.venueDetails.reviews.reduce((sum, review) => sum + review.reviewrating, 0);
+    this.venueDetails.eazyVenueRating = Math.round((totalRating / this.venueDetails.reviews.length) * 10) / 10;
+  }
+}
+
+// Get total reviews count for selected source
+getTotalReviewsCount(): number {
+  if (this.selectedReviewSource === 'google') {
+    return this.googleReviews?.length || 0;
+  } else if (this.selectedReviewSource === 'Compare Reviews') {
+    return this.CompareReviews?.length || 0;
+  } else {
+    return this.venueDetails.reviews?.length || 0;
+  }
+}
+
+// Check if should show "Show all reviews" button
+shouldShowAllReviewsButton(): boolean {
+  const totalReviews = this.getTotalReviewsCount();
+  return totalReviews > 3 && !this.showAllReviews;
+}
+
+// Helper method to get review text for display (handles both text and reviewdescription)
+getReviewText(review: any): string {
+  return review.reviewdescription || review.text || '';
+}
+
+// Helper method to get review rating for display (handles both rating and reviewrating)
+getReviewRating(review: any): number {
+  return review.reviewrating || review.rating || 0;
+}
+
+// Helper method to check if review is from compare reviews
+isCompareReview(review: any): boolean {
+  return this.selectedReviewSource === 'Compare Reviews';
+}
 
     loadNearbyVendors(): void {
         if (this.vendorLoading) return;
@@ -1375,18 +1299,6 @@ getTotalReviewsCount(): number {
         this.router.navigate(['/vendor/detail', vendorId]);
       }
 
-      // Method to handle venue details navigation
-//       goToVenueDetails(venue: any) {
-//   this.router.navigate(['/venues', venue.name]);
-// }
-goToVenueDetails(venue: any) {
-  const slug = this.generateSlug(venue.name); // convert venue name to slug
-  this.router.navigate(['/venue', slug]);
-}
-
-generateSlug(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-}
       createSlug(input):string {
         return input.toLowerCase().replace(/ /g, '_');
       }
@@ -3070,40 +2982,20 @@ loadMoreGoogleReviews(): void {
         );
     }
 
-    // getUserDetails(id: string) {
-    //     this.userService.getUserDetails(id).subscribe(
-    //         data => {
-    //             this.fullUserDetails = data;
-    //             console.log('👤 VENUE: Full user details loaded:', this.fullUserDetails);
-
-    //             // Check and start enquiry timer after user details are loaded
-    //             this.checkAndStartEnquiryTimer();
-    //         },
-    //         err => {
-    //             console.error('❌ VENUE: Failed to load user details:', err);
-    //         }
-    //     );
-    // }
     getUserDetails(id: string) {
-  if (!id) {
-    console.error('User ID is undefined. Cannot load user details.');
-    return;
-  }
+        this.userService.getUserDetails(id).subscribe(
+            data => {
+                this.fullUserDetails = data;
+                console.log('👤 VENUE: Full user details loaded:', this.fullUserDetails);
 
-  this.userService.getUserDetails(id).subscribe(
-    data => {
-      this.fullUserDetails = data;
-      console.log('👤 VENUE: Full user details loaded:', this.fullUserDetails);
-
-      this.checkAndStartEnquiryTimer();
-    },
-    err => {
-      console.error('❌ VENUE: Failed to load user details:', err);
+                // Check and start enquiry timer after user details are loaded
+                this.checkAndStartEnquiryTimer();
+            },
+            err => {
+                console.error('❌ VENUE: Failed to load user details:', err);
+            }
+        );
     }
-  );
-}
-
-
 
     // 6. Update your createAutoEnquiry method to use fullUserDetails
     // Fixed createAutoEnquiry method with proper error handling

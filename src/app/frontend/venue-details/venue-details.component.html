@@ -1540,7 +1540,56 @@
                     <img src="assets/img/svg/google.png" alt="Google" style="width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 1px solid #eee;" />
                     <span>Google Reviews ({{googleReviews.length}})</span>
                 </button>
+ <!-- Compare Reviews Button -->
+<button 
+  [ngClass]="{ active: selectedReviewSource === 'Compare Reviews' }"
+  (click)="toggleReviewSource('Compare Reviews')"
+  [style.background]="selectedReviewSource === 'Compare Reviews' ? '#007bff' : '#f8f9fa'"
+  [style.color]="selectedReviewSource === 'Compare Reviews' ? '#fff' : '#333'"
+  [style.border]="selectedReviewSource === 'Compare Reviews' ? '1px solid #007bff' : '1px solid #ddd'"
+  [style.box-shadow]="selectedReviewSource === 'Compare Reviews' ? '0 2px 8px rgba(0,123,255,0.3)' : 'none'"
+  style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 14px; transition: all 0.3s ease;">
+  <!-- <img src="assets/images/logo.png" alt="Compare" style="width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 1px solid #eee;" /> -->
+  <span>Compare venue({{CompareReviews.length}})</span>
+</button>
+
             </div>
+         <!-- Flex container -->
+<div 
+  *ngIf="selectedReviewSource === 'Compare Reviews'" 
+  style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: flex-start;"
+>
+  <!-- Individual review card -->
+  <div 
+    *ngFor="let review of CompareReviews" 
+    style="flex: 1 1 calc(50% - 16px); min-width: 300px; box-sizing: border-box; padding: 15px; border: 1px solid #ccc; border-radius: 8px; background: #fff;"
+  >
+    <h3 style="margin: 0 0 5px 0;">{{ review.reviewtitle }}</h3>
+
+    <!-- Description with read more -->
+    <p style="margin: 0 0 8px 0; font-size: 14px; color: #555;">
+      {{ review.showFullDescription ? review.reviewdescription : (review.reviewdescription | slice:0:100) + (review.reviewdescription.length > 100 ? '...' : '') }}
+      <span 
+        *ngIf="review.reviewdescription.length > 100" 
+        style="color: #007bff; cursor: pointer;" 
+        (click)="review.showFullDescription = !review.showFullDescription"
+      >
+        {{ review.showFullDescription ? 'Read Less' : 'Read More' }}
+      </span>
+    </p>
+
+    <p style="margin: 0 0 4px 0;"><strong>Rating:</strong> {{ review.reviewrating }}</p>
+    <p style="margin: 0 0 4px 0;"><strong>Plate Rate:</strong> {{ review.plateRating }}</p>
+    <p style="margin: 0 0 4px 0;"><strong>Capacity:</strong> {{ review.capacity }}</p>
+    <p style="margin: 0 0 4px 0;"><strong>Source:</strong> {{ review.text }}</p>
+    <p style="margin: 0 0 4px 0;"><strong>Author:</strong> {{ review.author_name }}</p>
+    <p style="margin: 0; font-size: 12px; color: #888;">
+      <em>Posted on: {{ review.created_at | date:'mediumDate' }}</em>
+    </p>
+  </div>
+</div>
+
+
 
             <!-- Write Review Button -->
             <button 
@@ -4243,29 +4292,3 @@
         </div>
     </div>
 </p-dialog>
-<!-- DEBUG: Show raw venue object -->
-<pre>{{ venue | json }}</pre>
-
-<div *ngIf="venue" class="venue-details-container">
-  <h2 class="venue-title">{{ venue.name }}</h2>
-  
-  <div class="venue-info">
-    <!-- <p><strong>Location:</strong> {{ venue.location }}</p> -->
-     <p><strong>Location:</strong> {{ venue.location }}</p>
-    <p><strong>Capacity:</strong> {{ venue.capacity }}</p>
-    <p><strong>Description:</strong> {{ venue.description }}</p>
-    <p><strong>Contact:</strong> {{ venue.mobileNumber }}</p>
-  </div>
-
-  <div class="venue-images" *ngIf="venue.venueImage && venue.venueImage.length">
-    <h3>Images:</h3>
-    <div class="image-gallery">
-      <img
-        *ngFor="let img of venue.venueImage"
-        [src]="img"
-        alt="Venue Image"
-        class="venue-image"
-      />
-    </div>
-  </div>
-</div>

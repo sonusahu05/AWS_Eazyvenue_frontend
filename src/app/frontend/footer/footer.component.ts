@@ -13,6 +13,7 @@ import { SubscribeService } from '../service/subscribeService.service';
   providers: [MessageService],
 })
 export class FooterComponent implements OnInit {
+  appLoading = true;
   sidebarVisible4: boolean;
   subscribeForm: FormGroup;
   submitted: boolean;
@@ -21,6 +22,9 @@ export class FooterComponent implements OnInit {
   constructor(private formBuilder: FormBuilder, private messageService: MessageService, private router: Router, private subscribeService: SubscribeService) { }
 
   ngOnInit(): void {
+     setTimeout(() => {
+    this.appLoading = false;
+  }, 2000);
     this.subscribeForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email, CustomValidators.email]]
     });

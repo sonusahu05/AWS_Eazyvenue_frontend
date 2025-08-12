@@ -1,3 +1,4 @@
+<ng-container *ngIf="!appLoading; else footerSkeleton">
 <!-- Footer Start -->
 <footer class="style-4 has-bg">
     <div class="container-fluid pl-0 pr-0">
@@ -41,4 +42,32 @@
         </div>
     </div>
 </footer>
+
+</ng-container>
+<ng-template #footerSkeleton>
+  <footer class="style-4 has-bg p-4">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        
+        <!-- Left copyright skeleton -->
+        <div class="col-md-4 mb-3">
+          <p-skeleton width="80%" height="1.5rem"></p-skeleton>
+        </div>
+
+        <!-- Footer menu skeleton -->
+        <div class="col-md-8">
+          <div class="d-flex flex-wrap gap-2">
+            <p-skeleton width="100px" height="1rem"></p-skeleton>
+            <p-skeleton width="120px" height="1rem"></p-skeleton>
+            <p-skeleton width="90px" height="1rem"></p-skeleton>
+            <p-skeleton width="140px" height="1rem"></p-skeleton>
+            <p-skeleton width="110px" height="1rem"></p-skeleton>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+</ng-template>
+
 <!-- Footer End -->

@@ -50,6 +50,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         this.isMobileView = window.innerWidth <= 768;
       }
     }
+    appLoading=true;
     venuecityname: any;
     subarealist: any;
     selectedCountries: any[];
@@ -363,6 +364,9 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         return segments.some(segment => segment.includes('venue') || segment.includes('banquet'));
       }
     ngOnInit() {
+        setTimeout(() => {
+    this.appLoading = false;
+  }, 2000);
         // Initialize mobile view detection
         if (isPlatformBrowser(this.platformId)) {
             this.isMobileView = window.innerWidth <= 768;
