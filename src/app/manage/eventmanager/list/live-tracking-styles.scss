@@ -7,14 +7,14 @@
   top: 20px !important;
   right: 20px !important;
   z-index: 9999 !important;
-  
+
   // Ensure only one notification at a time
   .p-toast-message-container {
     max-height: 70px !important;
     overflow: hidden !important;
     position: relative !important;
   }
-  
+
   .p-toast-message {
     border-radius: 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
@@ -26,55 +26,55 @@
     top: 0 !important;
     right: 0 !important;
     max-width: 300px;
-    
+
     // Exit animation
     &.p-toast-message-exit {
       animation: slideOutRight 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53);
     }
-    
+
     &.p-toast-message-success {
       background: linear-gradient(135deg, rgba(0, 200, 81, 0.95) 0%, rgba(0, 150, 60, 0.95) 100%);
       color: white;
-      
+
       .p-toast-message-icon {
         color: white;
       }
     }
-    
+
     &.p-toast-message-info {
       background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
       color: white;
-      
+
       .p-toast-message-icon {
         color: white;
       }
     }
-    
+
     &.p-toast-message-warn {
       background: linear-gradient(135deg, rgba(255, 187, 51, 0.95) 0%, rgba(255, 140, 0, 0.95) 100%);
       color: white;
-      
+
       .p-toast-message-icon {
         color: white;
       }
     }
-    
+
     &.p-toast-message-error {
       background: linear-gradient(135deg, rgba(255, 69, 58, 0.95) 0%, rgba(204, 36, 32, 0.95) 100%);
       color: white;
-      
+
       .p-toast-message-icon {
         color: white;
       }
     }
-    
+
     .p-toast-message-text {
       .p-toast-summary {
         font-weight: 600;
         margin-bottom: 2px;
         font-size: 13px;
       }
-      
+
       .p-toast-detail {
         opacity: 0.9;
         font-size: 12px;
@@ -217,7 +217,7 @@
   min-width: 100px; // Smaller width for table
   height: 32px; // Smaller height for table
   justify-content: center;
-  
+
   &:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -265,7 +265,7 @@
     height: 32px;
     padding: 0;
     font-size: 14px;
-    
+
     &:hover {
       background: linear-gradient(135deg, #ff3838 0%, #e84118 100%);
     }
@@ -350,7 +350,7 @@
   padding: 8px !important;
   min-width: 120px;
   max-width: 120px;
-  
+
   .action-btn {
     margin: 0;
   }
@@ -364,7 +364,7 @@
   gap: 4px;
   flex-wrap: nowrap;
   margin-top: 8px;
-  
+
   .action-btn {
     margin: 0;
     flex-shrink: 0;
@@ -386,14 +386,14 @@
     .p-datatable-wrapper {
       overflow-x: auto;
     }
-    
+
     .p-datatable-table {
       min-width: 600px; // Minimum table width for horizontal scroll
     }
-    
+
     .p-datatable-tbody > tr > td {
       white-space: nowrap;
-      
+
       &:last-child { // Actions column mobile
         width: 100px !important;
         max-width: 100px !important;
@@ -414,7 +414,7 @@
       border-radius: 8px;
       background: #f8fafc;
       margin-bottom: 8px;
-      
+
       i {
         width: 24px;
         height: 24px;
@@ -423,39 +423,39 @@
         justify-content: center;
         border-radius: 50%;
         font-size: 12px;
-        
+
         &.whatsapp-icon {
           background: linear-gradient(135deg, #25d366 0%, #1da851 100%);
           color: white;
         }
-        
+
         &.phone-icon {
           background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
           color: white;
         }
-        
+
         &.fas.fa-star {
           background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
           color: white;
         }
-        
+
         &.fas.fa-clock {
           background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
           color: white;
         }
       }
-      
+
       div {
         display: flex;
         flex-direction: column;
         gap: 2px;
-        
+
         .comm-label {
           font-size: 12px;
           color: #666;
           font-weight: 500;
         }
-        
+
         .comm-value {
           font-size: 13px;
           color: #333;
@@ -767,7 +767,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    
+
     &:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -776,11 +776,11 @@
     &.whatsapp-btn {
       background: linear-gradient(135deg, #25d366 0%, #1da851 100%);
       color: white;
-      
+
       i.fab.fa-whatsapp {
         font-size: 16px;
       }
-      
+
       &:hover {
         background: linear-gradient(135deg, #1da851 0%, #157f3f 100%);
       }
@@ -789,11 +789,11 @@
     &.phone-btn {
       background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
       color: white;
-      
+
       i.fas.fa-phone {
         font-size: 14px;
       }
-      
+
       &:hover {
         background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
       }
@@ -802,11 +802,11 @@
     &.email-btn {
       background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
       color: white;
-      
+
       i.fas.fa-envelope {
         font-size: 14px;
       }
-      
+
       &:hover {
         background: linear-gradient(135deg, #495057 0%, #343a40 100%);
       }
@@ -821,21 +821,21 @@
       flex-direction: column !important;
       align-items: flex-start !important;
       gap: 8px !important;
-      
+
       .lead-name {
         font-size: 14px !important;
         font-weight: 600;
       }
-      
+
       .lead-details {
         font-size: 11px !important;
         opacity: 0.8;
       }
     }
-    
+
     .lead-content {
       padding: 8px !important;
-      
+
       .live-insights {
         .activity-summary {
           .activity-item {
@@ -845,11 +845,11 @@
         }
       }
     }
-    
+
     .lead-actions {
       padding: 6px !important;
       gap: 2px !important;
-      
+
       .action-btn {
         min-width: 26px !important;
         width: 26px !important;
@@ -858,72 +858,72 @@
       }
     }
   }
-  
+
   // Mobile AI Summary Section
   .ai-summary-section {
     margin: 15px 0;
-    
+
     h4 {
       padding: 12px 15px;
       font-size: 14px;
     }
-    
+
     .ai-summary-card {
       padding: 15px;
-      
+
       .summary-header {
         gap: 12px;
         margin-bottom: 15px;
-        
+
         .ai-avatar {
           width: 40px;
           height: 40px;
-          
+
           i {
             font-size: 18px;
           }
         }
-        
+
         .ai-info {
           .ai-name {
             font-size: 14px;
           }
-          
+
           .analysis-timestamp {
             font-size: 11px;
           }
         }
       }
-      
+
       .ai-summary-content {
         .summary-text {
           padding: 12px;
           font-size: 13px;
         }
-        
+
         .key-points, .next-steps {
           margin-bottom: 15px;
-          
+
           h5 {
             font-size: 13px;
             margin-bottom: 10px;
           }
-          
+
           .points-list .point-item,
           .steps-list .step-item {
             padding: 6px 10px;
             font-size: 11px;
           }
         }
-        
+
         .confidence-score {
           padding: 10px;
           gap: 10px;
-          
+
           .confidence-label {
             font-size: 11px;
           }
-          
+
           .confidence-percentage {
             font-size: 11px;
             min-width: 30px;
@@ -932,18 +932,18 @@
       }
     }
   }
-  
+
   // Mobile Panel Actions
   .panel-actions {
     padding: 15px;
     gap: 8px;
     margin: 0 -15px -15px -15px;
-    
+
     .action-btn {
       padding: 10px 12px;
       font-size: 12px;
       gap: 6px;
-      
+
       i {
         font-size: 14px;
       }
@@ -1635,12 +1635,12 @@
   ::ng-deep .p-datatable {
     display: none !important;
   }
-  
+
   // Create mobile card layout
   .mobile-leads-container {
     display: block !important;
     padding: 10px;
-    
+
     .mobile-lead-card {
       background: white;
       border-radius: 16px;
@@ -1649,56 +1649,56 @@
       padding: 16px;
       border: 1px solid #e9ecef;
       transition: all 0.3s ease;
-      
+
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
       }
-      
+
       .mobile-lead-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         margin-bottom: 12px;
-        
+
         .mobile-lead-info {
           flex: 1;
-          
+
           .mobile-lead-name {
             font-size: 16px;
             font-weight: 700;
             color: #333;
             margin-bottom: 4px;
           }
-          
+
           .mobile-lead-contact {
             font-size: 13px;
             color: #666;
             margin-bottom: 2px;
-            
+
             i {
               margin-right: 6px;
               color: #007bff;
             }
           }
-          
+
           .mobile-lead-venue {
             font-size: 12px;
             color: #888;
-            
+
             i {
               margin-right: 4px;
               color: #28a745;
             }
           }
         }
-        
+
         .mobile-lead-status {
           .status-indicator {
             padding: 6px 10px !important;
             font-size: 10px !important;
             border-radius: 20px;
-            
+
             .status-text {
               .click-count {
                 padding: 2px 4px !important;
@@ -1709,21 +1709,21 @@
           }
         }
       }
-      
+
       .mobile-lead-insights {
         background: #f8f9fa;
         border-radius: 12px;
         padding: 12px;
         margin-bottom: 12px;
-        
+
         .mobile-insights-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 16px;
-          
+
           .mobile-insight-item {
             text-align: center;
-            
+
             .mobile-ai-score {
               width: 50px;
               height: 50px;
@@ -1737,7 +1737,7 @@
               color: white;
               background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             }
-            
+
             .mobile-live-status {
               display: flex;
               align-items: center;
@@ -1745,40 +1745,40 @@
               gap: 4px;
               font-size: 11px;
               font-weight: 600;
-              
+
               &.online {
                 color: #28a745;
-                
+
                 i {
                   color: #28a745;
                   animation: pulse 1.5s infinite;
                 }
               }
-              
+
               &.offline {
                 color: #6c757d;
               }
             }
-            
+
             .mobile-activity-summary {
               font-size: 10px;
               color: #666;
               margin-top: 4px;
-              
+
               .activity-item {
                 margin-bottom: 2px;
-                
+
                 i {
                   margin-right: 4px;
                   width: 12px;
                 }
-                
+
                 &.warning {
                   color: #ffc107;
                 }
               }
             }
-            
+
             .mobile-urgency-badge {
               display: inline-block;
               padding: 3px 8px;
@@ -1787,23 +1787,23 @@
               font-weight: 600;
               text-transform: uppercase;
               margin-top: 4px;
-              
+
               &.urgency-critical {
                 background: #dc3545;
                 color: white;
                 animation: pulse 1s infinite;
               }
-              
+
               &.urgency-high {
                 background: #fd7e14;
                 color: white;
               }
-              
+
               &.urgency-medium {
                 background: #ffc107;
                 color: #333;
               }
-              
+
               &.urgency-low {
                 background: #e9ecef;
                 color: #6c757d;
@@ -1811,7 +1811,7 @@
             }
           }
         }
-        
+
         .mobile-insight-button {
           width: 100%;
           background: linear-gradient(45deg, #667eea, #764ba2);
@@ -1823,23 +1823,23 @@
           font-weight: 600;
           margin-top: 12px;
           transition: all 0.3s ease;
-          
+
           &:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
           }
-          
+
           i {
             margin-right: 6px;
           }
         }
       }
-      
+
       .mobile-lead-actions {
         display: flex;
         justify-content: center;
         gap: 12px;
-        
+
         .action-btn {
           flex: 1;
           max-width: 60px;
@@ -1852,22 +1852,22 @@
           border: none;
           cursor: pointer;
           transition: all 0.3s ease;
-          
+
           &:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
           }
-          
+
           &.whatsapp-btn {
             background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
             color: white;
           }
-          
+
           &.phone-btn {
             background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
             color: white;
           }
-          
+
           &.delete-btn {
             background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
             color: white;
@@ -1876,48 +1876,47 @@
       }
     }
   }
-  
+
 // Desktop and tablet - show normal table, hide mobile cards
 @media (min-width: 769px) {
   ::ng-deep .p-datatable {
     display: block !important;
-  }
-  
+
+
   .mobile-leads-container {
     display: none !important;
   }
-}
 
 // Mobile - hide table, show cards
 @media (max-width: 768px) {
   ::ng-deep .p-datatable {
     display: none !important;
   }
-  
+
   .mobile-leads-container {
     display: block !important;
   }
 }
-  
+
   // Toast notifications for mobile - better positioning
   ::ng-deep .p-toast {
     top: 10px !important;
     right: 10px !important;
     left: 10px !important;
     width: auto !important;
-    
+
     .p-toast-message {
       max-width: none !important;
       width: 100% !important;
       font-size: 14px !important;
       border-radius: 12px !important;
-      
+
       .p-toast-message-text {
         .p-toast-summary {
           font-size: 14px !important;
           font-weight: 700;
         }
-        
+
         .p-toast-detail {
           font-size: 12px !important;
         }
@@ -1930,29 +1929,29 @@
     padding: 12px 16px;
     margin-bottom: 16px;
     border-radius: 12px;
-    
+
     .alert-ticker {
       .alert-label {
         font-size: 13px;
         text-align: center;
         margin-bottom: 8px;
       }
-      
+
       .scrolling-alerts {
         justify-content: center;
         flex-wrap: wrap;
         gap: 8px;
-        
+
         .alert-item {
           padding: 8px 12px;
           font-size: 11px;
           border-radius: 16px;
-          
+
           .alert-text {
             font-size: 11px;
             font-weight: 600;
           }
-          
+
           .alert-time {
             font-size: 10px;
             opacity: 0.8;
@@ -1968,7 +1967,7 @@
     gap: 8px;
     margin-bottom: 16px;
     padding: 0 10px;
-    
+
     .action-btn {
       &.add-enquiry-btn,
       &.export-btn {
@@ -1978,7 +1977,7 @@
         padding: 12px 16px !important;
         border-radius: 12px;
         font-weight: 600;
-        
+
         i {
           margin-right: 6px;
         }
@@ -1997,12 +1996,12 @@
     .panel-header {
       padding: 16px 20px !important;
       border-radius: 0 !important;
-      
+
       .panel-title {
         h3 {
           font-size: 18px !important;
         }
-        
+
         .lead-info {
           font-size: 14px !important;
         }
@@ -2020,18 +2019,18 @@
         grid-template-columns: 1fr !important;
         text-align: center;
         gap: 16px !important;
-        
+
         .main-score {
           .score-circle.large {
             .circle-bg {
               .circle-fill {
                 width: 100px !important;
                 height: 100px !important;
-                
+
                 .circle-inner {
                   width: 75px !important;
                   height: 75px !important;
-                  
+
                   .percentage {
                     font-size: 18px !important;
                   }
@@ -2040,28 +2039,28 @@
             }
           }
         }
-        
+
         .score-grid {
           grid-template-columns: 1fr 1fr !important;
           gap: 12px !important;
-          
+
           .score-card {
             padding: 12px !important;
-            
+
             .score-icon {
               width: 40px !important;
               height: 40px !important;
-              
+
               i {
                 font-size: 16px !important;
               }
             }
-            
+
             .score-details {
               .score-label {
                 font-size: 10px !important;
               }
-              
+
               .score-value {
                 font-size: 14px !important;
               }
@@ -2080,15 +2079,15 @@
           grid-template-columns: 1fr 1fr !important;
           gap: 12px !important;
         }
-        
+
         .stat-item,
         .comm-item {
           padding: 12px !important;
-          
+
           i {
             font-size: 18px !important;
           }
-          
+
           .stat-value,
           .comm-value {
             font-size: 14px !important;
@@ -2104,7 +2103,7 @@
         padding: 16px 0 0 0 !important;
         margin: 16px -16px -16px -16px;
         border-top: 1px solid #e9ecef;
-        
+
         .action-btn {
           width: 100% !important;
           height: 48px !important;
@@ -2116,8 +2115,6 @@
       }
     }
   }
-}
-
 @media (max-width: 1024px) and (min-width: 769px) {
   // Tablet specific styles
   .behavior-panel {
@@ -2141,15 +2138,280 @@
   .ai-score-cell {
     min-width: 150px !important;
   }
-  
+
   // Action buttons for tablet
   .action-btn {
     &.whatsapp-btn,
-    &.phone-btn, 
+    &.phone-btn,
     &.delete-btn {
       min-width: 30px !important;
       width: 30px !important;
       height: 30px !important;
     }
   }
+}
+}
+}
+
+// 📱 BEHAVIOR PANEL MOBILE RESPONSIVE ENHANCEMENTS
+// =================================================
+
+@media (max-width: 768px) {
+  .behavior-panel-overlay {
+    .behavior-panel {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: 100vw !important;
+      max-height: 100vh !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+
+      .panel-header {
+        padding: 15px 20px !important;
+        border-radius: 0 !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+        position: relative !important;
+
+        .panel-title {
+          h3 {
+            font-size: 20px !important;
+          }
+
+          .lead-info {
+            font-size: 14px !important;
+          }
+        }
+
+        .close-btn {
+          position: absolute !important;
+          top: 15px !important;
+          right: 20px !important;
+          width: 35px !important;
+          height: 35px !important;
+
+          i {
+            font-size: 16px !important;
+          }
+        }
+      }
+
+      .panel-content {
+        padding: 20px 15px !important;
+
+        .ai-dashboard {
+          grid-template-columns: 1fr !important;
+          gap: 20px !important;
+          text-align: center;
+
+          .main-score .score-circle.large {
+            .circle-fill {
+              width: 100px !important;
+              height: 100px !important;
+
+              .circle-inner {
+                width: 75px !important;
+                height: 75px !important;
+
+                .score-value {
+                  font-size: 24px !important;
+                }
+
+                .score-label {
+                  font-size: 11px !important;
+                }
+              }
+            }
+          }
+
+          .score-breakdown {
+            .breakdown-item {
+              flex: 1;
+              min-width: 120px;
+              padding: 12px !important;
+
+              .breakdown-value {
+                font-size: 18px !important;
+              }
+
+              .breakdown-label {
+                font-size: 11px !important;
+              }
+            }
+          }
+        }
+
+        .activity-section {
+          .activity-stats {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+
+            .activity-stat {
+              padding: 12px !important;
+
+              .stat-value {
+                font-size: 16px !important;
+              }
+
+              .stat-label {
+                font-size: 11px !important;
+              }
+            }
+          }
+
+          .activity-timeline {
+            .timeline-item {
+              padding: 8px 0 !important;
+
+              .timeline-content {
+                margin-left: 12px !important;
+
+                .timeline-title {
+                  font-size: 13px !important;
+                }
+
+                .timeline-details {
+                  font-size: 11px !important;
+                }
+              }
+            }
+          }
+        }
+
+        .competitor-section {
+          .competitor-grid {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+
+            .competitor-card {
+              padding: 12px !important;
+
+              .competitor-name {
+                font-size: 14px !important;
+              }
+
+              .visits-count {
+                font-size: 16px !important;
+              }
+            }
+          }
+        }
+
+        .insights-section {
+          .insight-cards {
+            .insight-card {
+              padding: 15px !important;
+              margin-bottom: 12px !important;
+
+              .insight-title {
+                font-size: 14px !important;
+              }
+
+              .insight-description {
+                font-size: 12px !important;
+              }
+            }
+          }
+        }
+
+        .communication-section {
+          .comm-stats {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+
+            .comm-item {
+              padding: 12px !important;
+
+              .comm-count {
+                font-size: 18px !important;
+              }
+
+              .comm-label {
+                font-size: 11px !important;
+              }
+            }
+          }
+        }
+
+        .ai-summary-section {
+          margin: 15px 0 !important;
+
+          h4 {
+            padding: 12px 15px !important;
+            font-size: 16px !important;
+          }
+
+          .ai-summary-card {
+            padding: 15px !important;
+
+            .summary-header {
+              margin-bottom: 15px !important;
+              padding-bottom: 12px !important;
+
+              .ai-avatar {
+                width: 45px !important;
+                height: 45px !important;
+              }
+
+              .ai-info h5 {
+                font-size: 16px !important;
+              }
+
+              .ai-info span {
+                font-size: 12px !important;
+              }
+            }
+
+            .ai-summary-content {
+              .summary-text {
+                font-size: 13px !important;
+                line-height: 1.5;
+              }
+
+              .key-points {
+                .point-item {
+                  font-size: 12px !important;
+                  padding: 8px 0 !important;
+                }
+              }
+
+              .next-steps {
+                .step-item {
+                  font-size: 12px !important;
+                  padding: 8px 0 !important;
+                }
+              }
+
+              .confidence-score {
+                margin-top: 15px !important;
+                padding: 12px !important;
+
+                .score-text {
+                  font-size: 14px !important;
+                }
+
+                .score-bar {
+                  height: 8px !important;
+                }
+              }
+            }
+          }
+        }
+
+        .panel-actions {
+          padding: 15px !important;
+          gap: 8px !important;
+          margin: 0 -15px -20px -15px !important;
+          border-radius: 0 !important;
+
+          .action-btn {
+            padding: 12px 16px !important;
+            font-size: 13px !important;
+          }
+        }
+      }
+    }
+  }
+}
 }

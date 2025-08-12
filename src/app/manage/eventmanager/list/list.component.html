@@ -19,14 +19,16 @@
 
     <div class="dashboard-header">
         <div class="header-content">
-            <h2 class="dashboard-title">
-                <i class="fas fa-building"></i>
-                Venue Enquiry Dashboard
-                <span class="live-indicator">
-                    <i class="fas fa-circle pulse-dot"></i>
-                    LIVE TRACKING ACTIVE
-                </span>
-            </h2>
+            <div class="title-section">
+                <h2 class="dashboard-title">
+                    <i class="fas fa-building"></i>
+                    <span class="title-text">Venue Enquiry Dashboard</span>
+                    <span class="live-indicator">
+                        <i class="fas fa-circle pulse-dot"></i>
+                        <span class="live-text">LIVE TRACKING ACTIVE</span>
+                    </span>
+                </h2>
+            </div>
             <div class="header-stats">
                 <button
                     class="action-btn add-enquiry-btn"
@@ -34,14 +36,14 @@
                     *ngIf="!isVenueOwner"
                     title="Add Manual Enquiries">
                     <i class="fas fa-plus"></i>
-                    Add Enquiries
+                    <span class="btn-text">Add Enquiries</span>
                 </button>
                 <button
                     class="action-btn export-btn"
                     (click)="exportEnquiriesToCSV()"
                     title="Export to CSV">
                     <i class="pi pi-download"></i>
-                    Export CSV
+                    <span class="btn-text">Export CSV</span>
                 </button>
                 <!-- Update only the filter section in your HTML -->
 <div class="filter-dropdown">
@@ -50,7 +52,7 @@
         (click)="toggleVenueFilter()"
         [class.active]="showVenueFilter">
         <i class="fas fa-filter"></i>
-        {{selectedVenueFilter ? getSelectedVenueInfo() : totalRecords + ' Total Venues'}}
+        <span class="filter-text">{{selectedVenueFilter ? getSelectedVenueInfo() : totalRecords + ' Total Venues'}}</span>
         <i class="fas fa-chevron-down" [class.rotate]="showVenueFilter"></i>
     </button>
 
@@ -82,7 +84,8 @@
         </div>
     </div>
 
-    <div class="table-wrapper">
+    <!-- Desktop Table View -->
+    <div class="table-wrapper desktop-view">
 <p-table
     [value]="getDisplayEnquiries()"
     [loading]="loading"
@@ -399,6 +402,308 @@
             </ng-template>
         </p-table>
     </div>
+
+    <!-- 📱 MOBILE CARD VIEW -->
+    <div class="mobile-view">
+        <div class="mobile-enquiries-container" *ngIf="!loading">
+            <!-- Mobile Enquiry Cards -->
+            <div class="mobile-enquiry-card" *ngFor="let enquiry of getDisplayEnquiries(); let cardIndex = index">
+                <!-- Card Header with Venue Info -->
+                <div class="mobile-card-header">
+                    <div class="venue-info">
+                        <div class="venue-name">
+                            <i class="fas fa-map-marker-alt venue-icon"></i>
+                            <strong>{{enquiry.venueName}}</strong>
+                        </div>
+                        <div *ngIf="selectedVenueFilter" class="lead-indicator">
+                            <span class="lead-number">Lead {{enquiry.leadIndex}}</span>
+                        </div>
+                    </div>
+                    <div class="leads-count-mobile">
+                        <span class="leads-badge" 
+                              [class.clickable-leads]="!selectedVenueFilter && enquiry.leadCount > 1"
+                              (click)="!selectedVenueFilter && enquiry.leadCount > 1 ? toggleLeadsExpansion(enquiry) : null">
+                            {{selectedVenueFilter ? '1' : enquiry.leadCount}}
+                            <i class="fas fa-chevron-down expand-icon" 
+                               *ngIf="!selectedVenueFilter && enquiry.leadCount > 1"
+                               [class.rotated]="isLeadsExpanded(enquiry)"></i>
+                        </span>
+                        <small>{{selectedVenueFilter ? 'of ' + enquiry.originalLeadCount : 'leads'}}</small>
+                    </div>
+                </div>
+
+                <!-- Contact Info Section -->
+                <div class="mobile-contact-section">
+                    <div class="contact-details">
+                        <div class="user-name">
+                            <i class="fas fa-user"></i>
+                            {{getCurrentUser(enquiry).userName}}
+                        </div>
+                        <div class="user-contact">
+                            <i class="fas fa-phone-alt"></i>
+                            {{getCurrentUser(enquiry).userContact}}
+                        </div>
+                        <div class="user-email" *ngIf="getCurrentUser(enquiry).userEmail">
+                            <i class="fas fa-envelope"></i>
+                            {{getCurrentUser(enquiry).userEmail}}
+                        </div>
+                    </div>
+                    <div class="contact-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>{{getCurrentUser(enquiry).created_at | date:'dd/MM/yyyy'}}</span>
+                        <small>{{getCurrentUser(enquiry).created_at | date:'HH:mm'}}</small>
+                    </div>
+                </div>
+
+                <!-- Live Activity Section -->
+                <div class="mobile-activity-section" *ngIf="getLiveTrackingData(enquiry)">
+                    <div class="activity-header">
+                        <div class="live-status-mobile"
+                             [class.online]="getLiveTrackingData(enquiry).websiteActivity.currentlyOnSite">
+                            <i class="fas fa-circle"
+                               [class.pulse-dot]="getLiveTrackingData(enquiry).websiteActivity.currentlyOnSite"></i>
+                            <span>{{getLiveTrackingData(enquiry).websiteActivity.currentlyOnSite ? 'LIVE' : 'Offline'}}</span>
+                        </div>
+                        <div class="urgency-mobile">
+                            <span class="urgency-badge"
+                                  [class]="'urgency-' + getLiveTrackingData(enquiry).aiInsights.urgencyLevel.toLowerCase()">
+                                {{getLiveTrackingData(enquiry).aiInsights.urgencyLevel}}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-eye"></i>
+                            <span>{{getLiveTrackingData(enquiry).websiteActivity.totalVisits}} visits</span>
+                        </div>
+                        <div class="stat-item" *ngIf="getLiveTrackingData(enquiry).websiteActivity.currentlyOnSite">
+                            <i class="fas fa-clock"></i>
+                            <span>{{getLiveTrackingData(enquiry).websiteActivity.pagesViewed}} pages • {{getMinutes(getLiveTrackingData(enquiry).websiteActivity.timeOnSite)}}min</span>
+                        </div>
+                        <div class="stat-item warning" *ngIf="getLiveTrackingData(enquiry).competitorAnalysis.priceComparisons">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Price comparing</span>
+                        </div>
+                        <div class="stat-item" *ngIf="!getLiveTrackingData(enquiry).websiteActivity.currentlyOnSite">
+                            <i class="fas fa-clock"></i>
+                            <span>No recent activity</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status and Interaction Section -->
+                <div class="mobile-status-section">
+                    <div class="mobile-status">
+                        <span class="status-indicator"
+                              [ngClass]="{
+                                'status-whatsapp': getCurrentUser(enquiry).whatsappClickCount > 0,
+                                'status-phone': getCurrentUser(enquiry).phoneClickCount > 0,
+                                'status-both': getCurrentUser(enquiry).whatsappClickCount > 0 && getCurrentUser(enquiry).phoneClickCount > 0,
+                                'status-new': (!getCurrentUser(enquiry).whatsappClickCount && !getCurrentUser(enquiry).phoneClickCount) || getCurrentUser(enquiry).status === 'New',
+                                'status-closed': getCurrentUser(enquiry).status === 'Closed'
+                              }">
+                            <i class="fas fa-circle"></i>
+                            <span class="status-text">
+                                <span *ngIf="getCurrentUser(enquiry).whatsappClickCount > 0" class="click-count">
+                                    <i class="fab fa-whatsapp"></i> {{getCurrentUser(enquiry).whatsappClickCount}}x
+                                </span>
+                                <span *ngIf="getCurrentUser(enquiry).phoneClickCount > 0" class="click-count">
+                                    <i class="fas fa-phone"></i> {{getCurrentUser(enquiry).phoneClickCount}}x
+                                </span>
+                                <span *ngIf="!getCurrentUser(enquiry).whatsappClickCount && !getCurrentUser(enquiry).phoneClickCount">
+                                    {{getCurrentUser(enquiry).status || 'New Lead'}}
+                                </span>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- AI Score and Predictions Section -->
+                <div class="mobile-ai-section" *ngIf="getLiveTrackingData(enquiry)">
+                    <div class="ai-probability-mobile">
+                        <div class="probability-circle-mobile">
+                            <div class="circle-progress-mobile"
+                                 [style.background]="'conic-gradient(' + getBookingProbabilityColor(getLiveTrackingData(enquiry).aiInsights.bookingProbability) + ' ' + (getLiveTrackingData(enquiry).aiInsights.bookingProbability * 3.6) + 'deg, #e0e0e0 0deg)'">
+                                <div class="circle-inner-mobile">
+                                    <span class="percentage-mobile">{{getLiveTrackingData(enquiry).aiInsights.bookingProbability}}%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ai-details-mobile">
+                            <div class="ai-score-label">AI Booking Score</div>
+                            <div class="ai-predictions-mobile">
+                                <div class="prediction-item-mobile" *ngIf="getLiveTrackingData(enquiry).aiInsights.decisionTimeline">
+                                    <i class="fas fa-clock"></i>
+                                    <small>{{getLiveTrackingData(enquiry).aiInsights.decisionTimeline}}</small>
+                                </div>
+                                <div class="prediction-item-mobile" *ngIf="getLiveTrackingData(enquiry).aiInsights.personalityType">
+                                    <i class="fas fa-user-tie"></i>
+                                    <small>{{getLiveTrackingData(enquiry).aiInsights.personalityType}}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- High Probability Alert -->
+                    <div class="high-probability-alert-mobile"
+                         *ngIf="getLiveTrackingData(enquiry).aiInsights.bookingProbability >= 80">
+                        <i class="fas fa-fire"></i>
+                        <span>HOT LEAD!</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mobile-action-buttons">
+                    <button
+                        class="action-btn whatsapp-btn mobile-action"
+                        (click)="contactViaWhatsApp(enquiry)"
+                        title="Contact via WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>WhatsApp</span>
+                    </button>
+
+                    <button
+                        class="action-btn phone-btn mobile-action"
+                        (click)="contactViaPhone(enquiry)"
+                        title="Contact via Phone">
+                        <i class="fas fa-phone"></i>
+                        <span>Call</span>
+                    </button>
+
+                    <button
+                        class="action-btn insight-btn mobile-action"
+                        (click)="openBehaviorPanel(enquiry)"
+                        title="View Live Insights">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Insights</span>
+                    </button>
+
+                    <button
+                        class="action-btn delete-btn mobile-action"
+                        (click)="deleteLead(enquiry)"
+                        title="Delete Lead">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Delete</span>
+                    </button>
+                </div>
+
+                <!-- Expanded Leads List for Mobile -->
+                <div class="mobile-expanded-leads" *ngIf="isLeadsExpanded(enquiry) && !selectedVenueFilter">
+                    <div class="expanded-header">
+                        <h6><i class="fas fa-users"></i> All {{enquiry.leadCount}} Leads</h6>
+                        <button class="collapse-btn-mobile" (click)="toggleLeadsExpansion(enquiry)">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+
+                    <div class="mobile-leads-list">
+                        <div class="mobile-lead-item" *ngFor="let lead of getAllLeadsForVenue(enquiry); let i = index">
+                            <div class="lead-number-mobile">{{i + 1}}</div>
+                            
+                            <div class="lead-content-mobile">
+                                <div class="lead-contact-mobile">
+                                    <div class="contact-name-mobile">
+                                        <i class="fas fa-user"></i>
+                                        <strong>{{lead.userName}}</strong>
+                                    </div>
+                                    <div class="contact-phone-mobile">
+                                        <i class="fas fa-phone-alt"></i>
+                                        {{lead.userContact}}
+                                    </div>
+                                    <div class="contact-email-mobile" *ngIf="lead.userEmail">
+                                        <i class="fas fa-envelope"></i>
+                                        {{lead.userEmail}}
+                                    </div>
+                                </div>
+
+                                <div class="lead-meta-mobile">
+                                    <div class="lead-date-mobile">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        {{lead.created_at | date:'dd/MM/yyyy HH:mm'}}
+                                    </div>
+                                    <div class="lead-status-mobile">
+                                        <span class="status-indicator"
+                                              [ngClass]="{
+                                                'status-whatsapp': lead.whatsappClickCount > 0,
+                                                'status-phone': lead.phoneClickCount > 0,
+                                                'status-both': lead.whatsappClickCount > 0 && lead.phoneClickCount > 0,
+                                                'status-new': (!lead.whatsappClickCount && !lead.phoneClickCount) || lead.status === 'New',
+                                                'status-closed': lead.status === 'Closed'
+                                              }">
+                                            <i class="fas fa-circle"></i>
+                                            <span class="status-text">
+                                                <span *ngIf="lead.whatsappClickCount > 0" class="click-count">
+                                                    <i class="fab fa-whatsapp"></i> {{lead.whatsappClickCount}}x
+                                                </span>
+                                                <span *ngIf="lead.phoneClickCount > 0" class="click-count">
+                                                    <i class="fas fa-phone"></i> {{lead.phoneClickCount}}x
+                                                </span>
+                                                <span *ngIf="!lead.whatsappClickCount && !lead.phoneClickCount">
+                                                    New
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="lead-actions-mobile">
+                                    <button
+                                        class="action-btn whatsapp-btn"
+                                        (click)="contactViaWhatsAppForLead(lead, enquiry)"
+                                        title="Contact via WhatsApp">
+                                        <i class="fab fa-whatsapp"></i>
+                                    </button>
+
+                                    <button
+                                        class="action-btn phone-btn"
+                                        (click)="contactViaPhoneForLead(lead, enquiry)"
+                                        title="Contact via Phone">
+                                        <i class="fas fa-phone"></i>
+                                    </button>
+
+                                    <button
+                                        class="action-btn delete-btn"
+                                        (click)="deleteSpecificLead(lead, enquiry)"
+                                        title="Delete this lead">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Empty State -->
+        <div class="mobile-empty-state" *ngIf="!loading && getDisplayEnquiries().length === 0">
+            <div class="empty-content">
+                <i class="fas fa-search"></i>
+                <h4>No enquiries found</h4>
+                <p>Try adjusting your filters or check back later</p>
+            </div>
+        </div>
+
+        <!-- Mobile Loading State -->
+        <div class="mobile-loading" *ngIf="loading">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading enquiries...</p>
+            </div>
+        </div>
+
+        <!-- Mobile Pagination -->
+        <div class="mobile-pagination" *ngIf="!loading && getDisplayEnquiries().length > 0">
+            <p-paginator 
+                [rows]="10" 
+                [totalRecords]="getDisplayEnquiries().length"
+                [pageLinkSize]="3"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+            </p-paginator>
+        </div>
+    </div>
+
 <div class="modal-overlay" *ngIf="showAddEnquiryModal" (click)="closeAddEnquiryModal()">
     <div class="add-enquiry-modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
