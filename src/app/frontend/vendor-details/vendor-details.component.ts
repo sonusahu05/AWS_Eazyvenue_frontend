@@ -72,7 +72,7 @@ export class VendorDetailsComponent implements OnInit {
     }
   ];
   checked: boolean = true;
-  public slotList: any[] = [];;
+  public slotList: any[] = [];
   selectedVendorServices: any[] = [];
   selectedStartDate: any;
   selectedEndDate: any;
@@ -98,7 +98,7 @@ export class VendorDetailsComponent implements OnInit {
   categoryHeader:string;
 
   isBookingFilter: boolean = false;
-  categoryMenuList: any[]
+  categoryMenuList: any[] = [];
   occasionResponsiveOptions;
   selectedOccasion;
 
