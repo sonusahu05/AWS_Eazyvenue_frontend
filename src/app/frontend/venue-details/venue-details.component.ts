@@ -910,37 +910,37 @@ get shouldShowCompareReviews(): boolean {
 get mockCompareReviews(): CompareReview[] {
   return [
     {
-      text: "eazy venue have better option",
+      text: "Eazy Venue have better option",
       rating: 4.5,
       plateRating: "₹1200 per plate",
       capacity: 300,
-      reviewtitle: "company 3",
-      reviewdescription: "",
+      reviewtitle: "Company 3",
+      reviewdescription: "Great service and decoration. A bit pricey but worth it for special occasions.",
       reviewrating: 4.5,
       created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
-      author_name: "company 3"
+      author_name: "--"
     },
     {
-      text: "Eazy have better option",
+      text: "Eazy Venue have better option",
       rating: 4.2,
       plateRating: "₹1500 per plate",
-      capacity: 250,
-      reviewtitle: "company 2",
+      capacity: 400,
+      reviewtitle: "Company 2",
       reviewdescription: "Great service and decoration. A bit pricey but worth it for special occasions.",
       reviewrating: 4.2,
       created_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days ago
-      author_name: "company 2"
+      author_name: "--"
     },
     {
-      text: "company 3",
+      text: "Eazy Venue have better option",
       rating: 4.8,
       plateRating: "₹1000 per plate",
       capacity: 400,
-      reviewtitle: "company 1",
+      reviewtitle: "Company 1",
       reviewdescription: "Convenient location and friendly staff. Highly recommended for large events.",
       reviewrating: 4.8,
       created_at: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(), // 21 days ago
-      author_name: "company1"
+      author_name: "--"
     },
   ];
 }
