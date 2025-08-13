@@ -49,8 +49,9 @@ interface AutoCompleteCompleteEvent {
 })
 export class VenueListComponent implements OnInit, AfterViewInit {
     
-appLoading: boolean = true;
-aiPromptVisible = false;
+    
+    
+    aiPromptVisible = false;
 aiQuery = '';
 // aiResult: string = '';  // Holds the AI response text
 filteredVenues: any[] = []; // Will hold the AI search result list
@@ -140,6 +141,7 @@ generateSlug(name: string): string {
     showHomeSearch() {
         this.homeSearch = true;
     }
+    appLoading = true;
     userLocation: UserLocation | null = null;
     locationEnabled: boolean = false;
     locationError: string = '';
@@ -473,11 +475,9 @@ displayLimit: number = 25;
         this.datePickerMobile.hideOverlay();
       }
     async ngOnInit() {
-        this.appLoading = true;
-        this.loading = true;
-         await this.initializeLocation();
-        this.getVenueList();
-        this.getAllVenueList();
+        setTimeout(() => {
+    this.appLoading = false;
+  }, 1500);
         const canonicalLink = this.renderer.createElement('link');
         this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
         this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
@@ -592,6 +592,7 @@ displayLimit: number = 25;
         this.getCities();
         // this.getVenues();
         //this.getVenueList(this.selectedCategoryId);
+        await this.initializeLocation();
         this.getVenueList();
         this.getAllVenueList();
         this.title.setTitle("Find the Right Banquet Halls Near You at EazyVenue.com")
@@ -897,7 +898,6 @@ displayLimit: number = 25;
         this.venueService.getVenueListAllVenues().subscribe(
             data => {
                 // console.log(data);
-                this.allVenueList = data.data.items;
 
                 //if (data.data.items.length > 0) {
                 this.allVenueList = data.data.items;
@@ -996,7 +996,7 @@ displayLimit: number = 25;
             return;
         }
         if (this.selectedCities.length === 0 && this.selectedSubareaIds.length === 0 && this.selectedVenueIds.length === 0) {
-            this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please enter city or area or venue.', life: 3000 });
+            this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please enter city or area for venue.', life: 3000 });
             return;
         }
         if (this.capacity === undefined) {
@@ -1139,7 +1139,6 @@ displayLimit: number = 25;
         if (this.selectedCategoryId == undefined) {
             this.selectedCategoryId = [];
         }
-        this.appLoading = true;
         this.finalVenueList = [];
         this.pageNumber = 1;
         this.getVenueList();
@@ -1207,9 +1206,7 @@ displayLimit: number = 25;
         // console.log(this.startDate);
         // console.log(this.endDate);
 
-        this.loading = true;
-        this.appLoading = true;
-        
+
         let params = "";
         let rows = 32;
         let query = "filterByDisable=false&filterByStatus=true&filterByAssured=true";
@@ -1265,12 +1262,12 @@ displayLimit: number = 25;
 
 
 
+        this.loading = true;
         this.venueService.getVenueListForFilter(newQuery).subscribe(
         // this.venueService.getVenueListWithoutAuth(query).subscribe(
             data => {
                 //if (data.data.items.length > 0) {
                 this.loading = false;
-                this.appLoading = false;
                 this.tmpVenueList = data.data.items;
                 this.tmpVenueList.forEach(tElement => {
                     if (tElement.venueVideo !== '') {
@@ -1341,8 +1338,6 @@ displayLimit: number = 25;
             },
             err => {
                 this.errorMessage = err.error.message;
-                 this.loading = false;
-                this.appLoading = false;
             });
     }
 
