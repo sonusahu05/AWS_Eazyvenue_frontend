@@ -7,18 +7,48 @@ footer.style-4.has-bg {
     box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.1);
 }
 
+// .footer-menu {
+//     list-style: none;
+//     display: flex;
+//     justify-content: space-around;
+//     padding: 0;
+//     margin: 0;
+// }
+
+// .footer-menu li {
+//     display: inline-block;
+//     margin-right: 10px;
+// }
 .footer-menu {
     list-style: none;
     display: flex;
-    justify-content: space-around;
+    flex-wrap: nowrap;  // 👈 Prevent wrapping
+    align-items: center;
+    justify-content: flex-start;
     padding: 0;
     margin: 0;
+    gap: 15px; // 👈 Consistent spacing
+    white-space: nowrap; // 👈 Prevent line breaks
+    overflow-x: auto; // 👈 Optional: allow horizontal scroll on very small screens
 }
 
 .footer-menu li {
     display: inline-block;
-    margin-right: 10px;
 }
+.footer-menu .dot {
+  all: unset; // ← resets all inherited styles
+  display: inline;
+  color: #555;
+  font-size: 14px;
+  padding: 0 8px;
+}
+@media (max-width: 576px) {
+  .footer-menu {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 
 .footer-menu li a {
     font-size: 14px;
