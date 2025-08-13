@@ -2516,6 +2516,12 @@ loadMoreGoogleReviews(): void {
             return;
         }
 
+        // Only check bookings if user is logged in
+        if (!this.isLoggedIn) {
+            console.log('[DEBUG] User not logged in, skipping booking check');
+            return;
+        }
+
         console.log('[DEBUG] Loading all booked dates for venue:', this.venueDetails.id);
         
         // Get all bookings for this venue (no date filter for initial load)
@@ -3604,7 +3610,7 @@ loadMoreGoogleReviews(): void {
         console.log('[DEBUG] onClickEventDate called with event:', event);
         console.log('[DEBUG] venueDetails:', this.venueDetails);
         console.log('[DEBUG] Calculated startDate (DD/MM/YYYY):', startDate, 'endDate (DD/MM/YYYY):', endDate);
-        if (this.venueDetails && this.venueDetails.id) {
+        if (this.venueDetails && this.venueDetails.id && this.isLoggedIn) {
             console.log('[DEBUG] Checking for existing bookings for venueId:', this.venueDetails.id);
             this.bookingService.getVenueBookings(this.venueDetails.id, {
                 startDate: startDate,
