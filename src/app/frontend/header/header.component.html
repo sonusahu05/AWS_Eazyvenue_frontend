@@ -934,16 +934,26 @@
 </ng-container>
 <ng-template #skeletonHeader>
   <div class="skeleton-header p-3">
-    <div class="flex justify-content-between align-items-center">
-      <p-skeleton width="200px" height="3rem" class="mb-2"></p-skeleton>
-      <div class="flex gap-2">
-        <p-skeleton width="80px" height="1.5rem"></p-skeleton>
-        <p-skeleton width="80px" height="1.5rem"></p-skeleton>
-        <p-skeleton width="80px" height="1.5rem"></p-skeleton>
+    <div class="d-flex justify-content-between align-items-center">
+      
+      <!-- Left: Logo + Nav items -->
+      <div class="d-flex align-items-center" style="gap: 40px;">
+        <!-- Logo -->
+        <p-skeleton width="180px" height="40px" class="mb-2"></p-skeleton>
+
+        <!-- Nav Items -->
+        <div class="d-flex" style="gap: 20px;">
+          <p-skeleton width="100px" height="25px"></p-skeleton>
+          <p-skeleton width="100px" height="25px"></p-skeleton>
+          <p-skeleton width="100px" height="25px"></p-skeleton>
+          <p-skeleton width="120px" height="25px"></p-skeleton>
+        </div>
       </div>
-    </div>
-    <div class="mt-2">
-      <p-skeleton width="100%" height="2rem"></p-skeleton>
+
+      <!-- Right: Login/Vendor -->
+      <div class="d-flex gap-2">
+        <p-skeleton width="120px" height="25px"></p-skeleton>
+      </div>
     </div>
   </div>
 </ng-template>

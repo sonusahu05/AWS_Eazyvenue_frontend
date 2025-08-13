@@ -127,7 +127,7 @@ appLoading = true;
   ngOnInit() {
     setTimeout(() => {
     this.appLoading = false;
-  }, 2000);
+  }, 1000);
     this.filterCapacityArray = environment.capacity;
     
     // Load basic data synchronously for SSR
