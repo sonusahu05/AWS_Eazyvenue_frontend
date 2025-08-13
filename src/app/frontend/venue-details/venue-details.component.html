@@ -1578,11 +1578,15 @@
       </span>
     </p>
 
-    <p style="margin: 0 0 4px 0;"><strong>Rating:</strong> {{ review.reviewrating }}</p>
+    <p style="margin: 0 0 4px 0;">
+  <strong>Rating:</strong> 
+  <span style="color: #f5c518; font-size: 16px;">★</span> 
+  <strong>{{ review.reviewrating }}</strong>
+</p>
     <p style="margin: 0 0 4px 0;"><strong>Plate Rate:</strong> {{ review.plateRating }}</p>
     <p style="margin: 0 0 4px 0;"><strong>Capacity:</strong> {{ review.capacity }}</p>
     <p style="margin: 0 0 4px 0;"><strong>Source:</strong> {{ review.text }}</p>
-    <p style="margin: 0 0 4px 0;"><strong>Author:</strong> {{ review.author_name }}</p>
+    <!-- <p style="margin: 0 0 4px 0;"><strong>Author:</strong> {{ review.author_name }}</p> -->
     <p style="margin: 0; font-size: 12px; color: #888;">
       <em>Posted on: {{ review.created_at | date:'mediumDate' }}</em>
     </p>
