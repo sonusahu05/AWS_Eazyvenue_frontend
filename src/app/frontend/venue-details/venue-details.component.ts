@@ -582,7 +582,11 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
                 ],
             ],
         });
-        this.getUserDetails(this.loggedInUser.id);
+        
+        // Only get user details if user is logged in
+        if (this.isLoggedIn && this.loggedInUser && this.loggedInUser.id) {
+            this.getUserDetails(this.loggedInUser.id);
+        }
 
         this.defaultDate = new Date();
         let today = new Date();
