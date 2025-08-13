@@ -592,7 +592,6 @@ displayLimit: number = 25;
         this.getCities();
         // this.getVenues();
         //this.getVenueList(this.selectedCategoryId);
-        await this.initializeLocation();
         this.getVenueList();
         this.getAllVenueList();
         this.title.setTitle("Find the Right Banquet Halls Near You at EazyVenue.com")
