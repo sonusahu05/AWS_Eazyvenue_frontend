@@ -72,7 +72,7 @@ export class VendorDetailsComponent implements OnInit {
     }
   ];
   checked: boolean = true;
-  public slotList: any[] = [];;
+  public slotList: any[] = [];
   selectedVendorServices: any[] = [];
   selectedStartDate: any;
   selectedEndDate: any;
@@ -98,7 +98,7 @@ export class VendorDetailsComponent implements OnInit {
   categoryHeader:string;
 
   isBookingFilter: boolean = false;
-  categoryMenuList: any[]
+  categoryMenuList: any[] = [];
   occasionResponsiveOptions;
   selectedOccasion;
 
@@ -336,41 +336,76 @@ export class VendorDetailsComponent implements OnInit {
       // this.getVenueList(this.lazyLoadEvent, this.mode);
     }
   }
+  // getCities() {
+  //   let query = "?filterByDisable=false&filterByStatus=true";
+  //   this.cityService.getcityList(query).subscribe(
+  //     data => {
+  //       this.cityList = data.data.items;
+  //       if (this.cityList.length > 0) {
+  //         this.selectedLocationFilter = [];
+  //         this.cityList.forEach(element => {
+  //           if (this.filterCityIds !== undefined) {
+  //             if (this.filterCityIds.length > 0) {
+  //               this.filterCityIds.forEach(cElement => {
+  //                 element.mode = 'city';
+  //                 if (cElement === element.id) {
+  //                   if (this.selectedLocationFilter == undefined) {
+  //                     this.selectedLocationFilter = [element];
+  //                   } else {
+  //                     this.selectedLocationFilter.push(element);
+  //                   }
+  //                 }
+  //               });
+  //             }
+  //           }
+  //         })
+  //         this.selectedSubareaData.forEach(sElement => {
+  //           sElement.mode = 'subarea';
+  //           this.selectedLocationFilter.push(sElement);
+  //         });
+
+  //       }
+  //     },
+  //     err => {
+  //       this.errorMessage = err.error.message;
+  //     }
+  //   );
+  // }
   getCities() {
-    let query = "?filterByDisable=false&filterByStatus=true";
-    this.cityService.getcityList(query).subscribe(
-      data => {
-        this.cityList = data.data.items;
-        if (this.cityList.length > 0) {
-          this.selectedLocationFilter = [];
-          this.cityList.forEach(element => {
-            if (this.filterCityIds !== undefined) {
-              if (this.filterCityIds.length > 0) {
-                this.filterCityIds.forEach(cElement => {
-                  element.mode = 'city';
-                  if (cElement === element.id) {
-                    if (this.selectedLocationFilter == undefined) {
-                      this.selectedLocationFilter = [element];
-                    } else {
-                      this.selectedLocationFilter.push(element);
-                    }
-                  }
-                });
+  let query = "?filterByDisable=false&filterByStatus=true";
+  this.cityService.getcityList(query).subscribe(
+    data => {
+      this.cityList = data?.data?.items ?? [];
+
+      if (this.cityList.length > 0) {
+        this.selectedLocationFilter = [];
+
+        this.cityList.forEach(element => {
+          if (Array.isArray(this.filterCityIds) && this.filterCityIds.length > 0) {
+            this.filterCityIds.forEach(cElement => {
+              element.mode = 'city';
+              if (cElement === element.id) {
+                this.selectedLocationFilter.push(element);
               }
-            }
-          })
+            });
+          }
+        });
+
+        // ✅ Check that selectedSubareaData is an array before using forEach
+        if (Array.isArray(this.selectedSubareaData)) {
           this.selectedSubareaData.forEach(sElement => {
             sElement.mode = 'subarea';
             this.selectedLocationFilter.push(sElement);
           });
-
         }
-      },
-      err => {
-        this.errorMessage = err.error.message;
       }
-    );
-  }
+    },
+    err => {
+      this.errorMessage = err?.error?.message ?? 'Failed to load cities';
+    }
+  );
+}
+
 
   getSubareas() {
     let query = "?filterByDisable=false&filterByStatus=true";

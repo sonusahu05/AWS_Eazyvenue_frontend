@@ -277,6 +277,16 @@
 	80% { opacity: 0; }
 	100% { opacity: 0; }
 }
+/* Standard keyframes without vendor prefix */
+@keyframes vertical {
+  0% { opacity: 0; }
+  5% { opacity: 0.25; transform: rotateX(180deg); }
+  10% { opacity: 0.5; transform: translateY(0px); }
+  25% { opacity: 0.75; transform: translateY(0px); }
+  30% { opacity: 1; transform: translateY(0px); }
+  80% { opacity: 0; }
+  100% { opacity: 0; }
+}
  
 /*Vertical Flip*/
 .verticalFlip{

@@ -172,9 +172,9 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
     console.log('Fetched user data:', userData);
 
     if (userData && userData.userdata) {
-      this.userRole = 'venueowner';
+      // this.userRole = 'venueowner';
       // this.userRole = 'vendor-owner';
-      // this.userRole = userData.userdata.rolename || '';
+      this.userRole = userData.userdata.rolename || '';
       console.log('Assigned user role:', this.userRole);
       
       this.isAdmin = this.userRole === 'admin';

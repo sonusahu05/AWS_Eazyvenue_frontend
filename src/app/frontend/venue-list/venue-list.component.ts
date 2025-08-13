@@ -996,7 +996,7 @@ displayLimit: number = 25;
             return;
         }
         if (this.selectedCities.length === 0 && this.selectedSubareaIds.length === 0 && this.selectedVenueIds.length === 0) {
-            this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please enter city or area or venue.', life: 3000 });
+            this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please enter city or area for venue.', life: 3000 });
             return;
         }
         if (this.capacity === undefined) {
