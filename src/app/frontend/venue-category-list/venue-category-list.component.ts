@@ -2875,7 +2875,7 @@ onOtpChange(otp: string) {
                 key: 'toastmsg',
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Please enter city or area or venue.',
+                detail: 'Please enter city or area for venue.',
                 life: 3000,
             });
             return;

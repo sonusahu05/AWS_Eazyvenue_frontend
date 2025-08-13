@@ -863,37 +863,75 @@ export class VendorListComponent implements OnInit {
   getCities() {
     // let query = "?filterByDisable=false&filterByStatus=true";
     let query = "list=true";
+    // this.cityService.getcityList(query).subscribe(
+    //   data => {
+    //     this.cityList = data.data.items;
+    //     if (this.cityList.length > 0) {
+    //       this.cityList.forEach(element => {
+    //         if (this.filterCityIds !== undefined) {
+    //           if (this.filterCityIds.length > 0) {
+    //             this.filterCityIds.forEach(cElement => {
+    //               element.mode = 'city';
+    //               if (cElement === element.id) {
+    //                 if (this.selectedLocationFilter == undefined) {
+    //                   this.selectedLocationFilter = [element];
+    //                 } else {
+    //                   this.selectedLocationFilter.push(element);
+    //                 }
+    //               }
+    //             });
+    //           }
+    //         }
+    //       })
+    //       this.selectedSubareaData.forEach(sElement => {
+    //         sElement.mode = 'subarea';
+    //         this.selectedLocationFilter.push(sElement);
+    //       });
+
+    //     }
+    //   },
+    //   err => {
+    //     this.errorMessage = err.error.message;
+    //   }
+    // );
     this.cityService.getcityList(query).subscribe(
-      data => {
-        this.cityList = data.data.items;
-        if (this.cityList.length > 0) {
-          this.cityList.forEach(element => {
-            if (this.filterCityIds !== undefined) {
-              if (this.filterCityIds.length > 0) {
-                this.filterCityIds.forEach(cElement => {
-                  element.mode = 'city';
-                  if (cElement === element.id) {
-                    if (this.selectedLocationFilter == undefined) {
-                      this.selectedLocationFilter = [element];
-                    } else {
-                      this.selectedLocationFilter.push(element);
-                    }
-                  }
-                });
+  data => {
+    this.cityList = data?.data?.items ?? [];
+
+    if (this.cityList.length > 0) {
+      this.cityList.forEach(element => {
+        if (this.filterCityIds && this.filterCityIds.length > 0) {
+          this.filterCityIds.forEach(cElement => {
+            element.mode = 'city';
+            if (cElement === element.id) {
+              if (!this.selectedLocationFilter) {
+                this.selectedLocationFilter = [element];
+              } else {
+                this.selectedLocationFilter.push(element);
               }
             }
-          })
-          this.selectedSubareaData.forEach(sElement => {
-            sElement.mode = 'subarea';
-            this.selectedLocationFilter.push(sElement);
           });
-
         }
-      },
-      err => {
-        this.errorMessage = err.error.message;
+      });
+
+      // Check if selectedSubareaData is defined and is an array before looping
+      if (Array.isArray(this.selectedSubareaData)) {
+        // Initialize selectedLocationFilter if undefined
+        if (!this.selectedLocationFilter) {
+          this.selectedLocationFilter = [];
+        }
+        this.selectedSubareaData.forEach(sElement => {
+          sElement.mode = 'subarea';
+          this.selectedLocationFilter.push(sElement);
+        });
       }
-    );
+    }
+  },
+  err => {
+    this.errorMessage = err?.error?.message || 'An error occurred';
+  }
+);
+
   }
 
   getSubareas() {
