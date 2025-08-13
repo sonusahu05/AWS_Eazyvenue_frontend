@@ -172,22 +172,52 @@ export class ContactUsComponent implements OnInit {
       });
   }
 
+  // getBanner() {
+  //   let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=contact_us";
+  //   this.bannerService.getbannerList(query).subscribe(
+  //     data => {
+  //       this.loading = false;
+  //       this.bannerList = data.data.items;
+  //       this.totalRecords = data.data.totalCount;
+  //       this.bannerList.forEach(element => {
+  //         this.bannerImageList = element.banner_image;
+  //       });
+  //       console.log(this.bannerImageList);
+  //     },
+  //     err => {
+  //       this.errorMessage = err.error.message;
+  //     });
+  // }
   getBanner() {
-    let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=contact_us";
-    this.bannerService.getbannerList(query).subscribe(
-      data => {
-        this.loading = false;
+  const query = "?filterByDisable=false&filterByStatus=true&filterBySlug=contact_us";
+  
+  this.bannerService.getbannerList(query).subscribe(
+    (data) => {
+      this.loading = false;
+
+      if (data?.data?.items) {
         this.bannerList = data.data.items;
         this.totalRecords = data.data.totalCount;
-        this.bannerList.forEach(element => {
-          this.bannerImageList = element.banner_image;
-        });
+
+        // Collect all banner images
+        this.bannerImageList = this.bannerList.map(item => item.banner_image);
+
         console.log(this.bannerImageList);
-      },
-      err => {
-        this.errorMessage = err.error.message;
-      });
-  }
+      } else {
+        console.warn("No banner items found in response:", data);
+        this.bannerList = [];
+        this.bannerImageList = [];
+        this.totalRecords = 0;
+      }
+    },
+    (err) => {
+      this.loading = false;
+      this.errorMessage = err?.error?.message || "An error occurred while fetching banners.";
+      console.error(this.errorMessage);
+    }
+  );
+}
+
 
   onSubmit() {
     this.submitted = true;
