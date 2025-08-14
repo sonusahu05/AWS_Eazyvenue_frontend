@@ -1552,50 +1552,9 @@
   <!-- <img src="assets/images/logo.png" alt="Compare" style="width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 1px solid #eee;" /> -->
   <span>Compare venue({{CompareReviews.length}})</span>
 </button>
-
-            </div>
-         <!-- Flex container -->
-<div 
-  *ngIf="selectedReviewSource === 'Compare Reviews'" 
-  style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: flex-start;"
->
-  <!-- Individual review card -->
-  <div 
-    *ngFor="let review of CompareReviews" 
-    style="flex: 1 1 calc(50% - 16px); min-width: 300px; box-sizing: border-box; padding: 15px; border: 1px solid #ccc; border-radius: 8px; background: #fff;"
-  >
-    <h3 style="margin: 0 0 5px 0;">{{ review.reviewtitle }}</h3>
-
-    <!-- Description with read more -->
-    <p style="margin: 0 0 8px 0; font-size: 14px; color: #555;">
-      {{ review.showFullDescription ? review.reviewdescription : (review.reviewdescription | slice:0:100) + (review.reviewdescription.length > 100 ? '...' : '') }}
-      <span 
-        *ngIf="review.reviewdescription.length > 100" 
-        style="color: #007bff; cursor: pointer;" 
-        (click)="review.showFullDescription = !review.showFullDescription"
-      >
-        {{ review.showFullDescription ? 'Read Less' : 'Read More' }}
-      </span>
-    </p>
-
-    <p style="margin: 0 0 4px 0;">
-  <strong>Rating:</strong> 
-  <span style="color: #f5c518; font-size: 16px;">★</span> 
-  <strong>{{ review.reviewrating }}</strong>
-</p>
-    <p style="margin: 0 0 4px 0;"><strong>Plate Rate:</strong> {{ review.plateRating }}</p>
-    <p style="margin: 0 0 4px 0;"><strong>Capacity:</strong> {{ review.capacity }}</p>
-    <p style="margin: 0 0 4px 0;"><strong>Source:</strong> {{ review.text }}</p>
-    <!-- <p style="margin: 0 0 4px 0;"><strong>Author:</strong> {{ review.author_name }}</p> -->
-    <p style="margin: 0; font-size: 12px; color: #888;">
-      <em>Posted on: {{ review.created_at | date:'mediumDate' }}</em>
-    </p>
-  </div>
 </div>
 
-
-
-            <!-- Write Review Button -->
+    <!-- Write Review Button -->
             <button 
                 class="write-review-btn" 
                 (click)="toggleReviewForm()" 
@@ -1607,7 +1566,7 @@
             </button>
         </div>
     </div>
-
+ 
     <!-- Review Form (same as before) -->
     <div *ngIf="showReviewForm" class="review-form-container" style="background: #f9f9fb; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 24px; margin-bottom: 24px;">
         <h3 style="color: #333; margin-bottom: 20px; font-size: 1.3rem; font-weight: 600;">Write Your Review</h3>
@@ -1686,142 +1645,236 @@
             </div>
         </form>
     </div>
+<!-- Compare Reviews Section - Separate from other reviews -->
+<div *ngIf="selectedReviewSource === 'Compare Reviews'" class="comparison-container mt-4">
+  <div class="comparison-card">
+    <div class="card-header">
+      <h2 class="card-title">
+        <i class="fas fa-balance-scale me-3"></i>
+        Review Comparison
+      </h2>
+    </div>
+    
+    <div class="table-container">
+      <table class="table comparison-table">
+        <thead>
+          <tr>
+            <th scope="col">Attribute</th>
+            <th *ngFor="let review of CompareReviews" 
+                scope="col" 
+                class="review-column">
+              <div class="review-title">{{ review.reviewtitle }}</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Description Row -->
+          <tr>
+            <td><i class="fas fa-align-left me-2"></i>Description</td>
+            <td *ngFor="let review of CompareReviews" class="review-column">
+              <div class="description-text" *ngIf="review.text !== 'eazyvenue'">
+                <span>
+                  {{ review.showFullDescription ? 
+                     review.reviewdescription : 
+                     (review.reviewdescription | slice:0:100) + 
+                     (review.reviewdescription.length > 100 ? '...' : '') 
+                  }}
+                </span>
+                <button *ngIf="review.reviewdescription.length > 100"
+                        class="read-more-btn ms-2"
+                        (click)="toggleDescription(review)">
+                  {{ review.showFullDescription ? 'Read Less' : 'Read More' }}
+                </button>
+              </div>
+              <div *ngIf="review.text === 'eazyvenue'" class="description-text text-muted">
+                <em>No description available</em>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Rating Row -->
+          <tr>
+            <td><i class="fas fa-star me-2"></i>Rating</td>
+            <td *ngFor="let review of CompareReviews">
+              <div class="rating-container">
+                <span class="rating-star">★</span>
+                <span class="rating-value">{{ review.reviewrating }}</span>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Plate Rate Row -->
+          <tr>
+            <td><i class="fas fa-utensils me-2"></i>Plate Rate</td>
+            <td *ngFor="let review of CompareReviews" class="text-center">
+              <span class="plate-rate">
+                {{ review.plateRating || 'N/A' }}
+              </span>
+            </td>
+          </tr>
+          
+          <!-- Capacity Row -->
+          <tr>
+            <td><i class="fas fa-users me-2"></i>Capacity</td>
+            <td *ngFor="let review of CompareReviews" class="text-center">
+              <span class="capacity">
+                {{ review.capacity || 'N/A' }}
+              </span>
+            </td>
+          </tr>
+          
+          <!-- Posted On Row -->
+          <tr>
+            <td><i class="fas fa-calendar me-2"></i>Posted On</td>
+            <td *ngFor="let review of CompareReviews" class="text-center">
+              <span class="date-text">
+                <em>{{ review.created_at | date:'mediumDate' }}</em>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-    <!-- Reviews Carousel -->
-    <div class="reviews-carousel-container" style="background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px; position: relative;">
-        <!-- Loading State -->
-        <div *ngIf="selectedReviewSource === 'google' && isLoadingGoogleReviews" class="loading-reviews" style="text-align: center; padding: 60px;">
-            <i class="pi pi-spinner pi-spin" style="font-size: 2.5rem; color: #007bff;"></i>
-            <p style="margin-top: 20px; color: #666; font-size: 1.1rem;">Loading Google reviews...</p>
+<!-- Reviews Carousel Section - Separate from Compare Reviews -->
+<div *ngIf="selectedReviewSource !== 'Compare Reviews'" class="reviews-carousel-container" 
+     style="background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px; position: relative;">
+  
+  <!-- Loading State -->
+  <div *ngIf="selectedReviewSource === 'google' && isLoadingGoogleReviews" class="loading-reviews" 
+       style="text-align: center; padding: 60px;">
+    <i class="pi pi-spinner pi-spin" style="font-size: 2.5rem; color: #007bff;"></i>
+    <p style="margin-top: 20px; color: #666; font-size: 1.1rem;">Loading Google reviews...</p>
+  </div>
+
+  <!-- Reviews Carousel -->
+  <div *ngIf="!isLoadingGoogleReviews" class="reviews-carousel">
+    <div *ngIf="getCarouselReviews()?.length > 0; else noReviewsMsg" class="carousel-content">
+      
+      <!-- Carousel Navigation -->
+      <div class="carousel-navigation" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h3 style="color: #333; font-size: 1.4rem; font-weight: 600; margin: 0;">
+          {{selectedReviewSource === 'google' ? 'Google Reviews' : 'EazyVenue Reviews'}}
+        </h3>
+        
+        <div class="carousel-controls" style="display: flex; align-items: center; gap: 16px;">
+          <!-- Slide Indicators -->
+          <div class="slide-indicators" style="display: flex; gap: 8px;" *ngIf="getTotalSlides() > 1">
+            <button 
+              *ngFor="let slide of [].constructor(getTotalSlides()); let i = index" 
+              (click)="goToSlide(i)"
+              [style.background]="currentSlide === i ? '#007bff' : '#e4e5e9'"
+              style="width: 8px; height: 8px; border-radius: 50%; border: none; cursor: pointer; transition: background-color 0.3s ease;">
+            </button>
+          </div>
+          
+          <!-- Arrow Controls -->
+          <div class="arrow-controls" style="display: flex; gap: 8px;" *ngIf="getTotalSlides() > 1">
+            <button 
+              (click)="previousSlide()" 
+              [disabled]="isPreviousDisabled()"
+              [style.opacity]="isPreviousDisabled() ? '0.4' : '1'"
+              [style.cursor]="isPreviousDisabled() ? 'not-allowed' : 'pointer'"
+              style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ddd; background: #fff; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
+              onmouseover="if(!this.disabled) { this.style.background='#f8f9fa'; this.style.transform='translateY(-2px)'; }"
+              onmouseout="this.style.background='#fff'; this.style.transform='translateY(0)';">
+              <i class="pi pi-chevron-left" style="color: #333; font-size: 1rem;"></i>
+            </button>
+            
+            <button 
+              (click)="nextSlide()" 
+              [disabled]="isNextDisabled()"
+              [style.opacity]="isNextDisabled() ? '0.4' : '1'"
+              [style.cursor]="isNextDisabled() ? 'not-allowed' : 'pointer'"
+              style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ddd; background: #fff; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
+              onmouseover="if(!this.disabled) { this.style.background='#f8f9fa'; this.style.transform='translateY(-2px)'; }"
+              onmouseout="this.style.background='#fff'; this.style.transform='translateY(0)';">
+              <i class="pi pi-chevron-right" style="color: #333; font-size: 1rem;"></i>
+            </button>
+          </div>
         </div>
+      </div>
 
-        <!-- Reviews Carousel -->
-        <div *ngIf="!isLoadingGoogleReviews" class="reviews-carousel">
-            <div *ngIf="getCarouselReviews()?.length > 0; else noReviewsMsg" class="carousel-content">
-                
-                <!-- Carousel Navigation -->
-                <div class="carousel-navigation" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h3 style="color: #333; font-size: 1.4rem; font-weight: 600; margin: 0;">
-                        {{selectedReviewSource === 'google' ? 'Google Reviews' : 'EazyVenue Reviews'}}
-                    </h3>
-                    
-                    <div class="carousel-controls" style="display: flex; align-items: center; gap: 16px;">
-                        <!-- Slide Indicators -->
-                        <div class="slide-indicators" style="display: flex; gap: 8px;" *ngIf="getTotalSlides() > 1">
-                            <button 
-                                *ngFor="let slide of [].constructor(getTotalSlides()); let i = index" 
-                                (click)="goToSlide(i)"
-                                [style.background]="currentSlide === i ? '#007bff' : '#e4e5e9'"
-                                style="width: 8px; height: 8px; border-radius: 50%; border: none; cursor: pointer; transition: background-color 0.3s ease;">
-                            </button>
-                        </div>
-                        
-                        <!-- Arrow Controls -->
-                        <div class="arrow-controls" style="display: flex; gap: 8px;" *ngIf="getTotalSlides() > 1">
-                            <button 
-                                (click)="previousSlide()" 
-                                [disabled]="isPreviousDisabled()"
-                                [style.opacity]="isPreviousDisabled() ? '0.4' : '1'"
-                                [style.cursor]="isPreviousDisabled() ? 'not-allowed' : 'pointer'"
-                                style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ddd; background: #fff; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
-                                onmouseover="if(!this.disabled) { this.style.background='#f8f9fa'; this.style.transform='translateY(-2px)'; }"
-                                onmouseout="this.style.background='#fff'; this.style.transform='translateY(0)';">
-                                <i class="pi pi-chevron-left" style="color: #333; font-size: 1rem;"></i>
-                            </button>
-                            
-                            <button 
-                                (click)="nextSlide()" 
-                                [disabled]="isNextDisabled()"
-                                [style.opacity]="isNextDisabled() ? '0.4' : '1'"
-                                [style.cursor]="isNextDisabled() ? 'not-allowed' : 'pointer'"
-                                style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ddd; background: #fff; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
-                                onmouseover="if(!this.disabled) { this.style.background='#f8f9fa'; this.style.transform='translateY(-2px)'; }"
-                                onmouseout="this.style.background='#fff'; this.style.transform='translateY(0)';">
-                                <i class="pi pi-chevron-right" style="color: #333; font-size: 1rem;"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Reviews Cards Grid -->
-                <div class="reviews-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; transition: all 0.3s ease;">
-                    <div 
-                        class="review-card" 
-                        *ngFor="let review of getCurrentSlideReviews()" 
-                        style="background: #f9f9fb; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; border: 1px solid #e9ecef;"
-                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'"
-                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'">
-                        
-                        <!-- Review Header -->
-                        <div class="review-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-                            <div class="reviewer-info" style="display: flex; align-items: center; gap: 12px;">
-                                <!-- User Avatar -->
-                                <div class="user-avatar" style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 1.2rem;">
-                                    <img *ngIf="review.profile_photo_url" [src]="review.profile_photo_url" alt="User" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
-                                    <span *ngIf="!review.profile_photo_url">{{(review.author_name || 'A').charAt(0).toUpperCase()}}</span>
-                                </div>
-                                
-                                <div class="reviewer-details">
-                                    <h4 style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #333;">{{review.author_name || 'Anonymous'}}</h4>
-                                    <p style="margin: 0; font-size: 0.85rem; color: #666;">{{review.created_at | date:'MMM d, y'}}</p>
-                                </div>
-                            </div>
-                            
-                            <div class="rating-display" style="display: flex; flex-direction: column; align-items: flex-end;">
-                                <div class="rating-stars" style="display: flex; align-items: center; gap: 2px; margin-bottom: 2px;">
-                                    <ng-container *ngFor="let star of [1,2,3,4,5]">
-                                        <i class="pi pi-star-fill" 
-                                           [style.color]="review.reviewrating >= star ? '#ffc107' : '#e4e5e9'"
-                                           style="font-size: 1rem;"></i>
-                                    </ng-container>
-                                </div>
-                                <span style="font-size: 0.9rem; font-weight: 600; color: #333;">{{review.reviewrating}}/5</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Review Content -->
-                        <div class="review-content">
-                            <h5 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 600; color: #333; line-height: 1.4;">
-                                {{review.reviewtitle}}
-                            </h5>
-                            <p style="margin: 0; line-height: 1.6; color: #555; font-size: 0.95rem; text-align: justify;">
-                                {{review.reviewdescription.length > 150 ? (review.reviewdescription | slice:0:150) + '...' : review.reviewdescription}}
-                            </p>
-                        </div>
-                        
-                        <!-- Read More Button (if text is truncated) -->
-                        <button 
-                            *ngIf="review.reviewdescription.length > 150"
-                            style="background: none; border: none; color: #007bff; font-weight: 600; cursor: pointer; padding: 8px 0 0 0; font-size: 0.9rem; transition: color 0.2s ease;"
-                            onmouseover="this.style.color='#0056b3'"
-                            onmouseout="this.style.color='#007bff'">
-                            Read more
-                        </button>
-                    </div>
-                </div>
+      <!-- Reviews Cards Grid -->
+      <div class="reviews-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; transition: all 0.3s ease;">
+        <div 
+          class="review-card" 
+          *ngFor="let review of getCurrentSlideReviews()" 
+          style="background: #f9f9fb; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; border: 1px solid #e9ecef;"
+          onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'"
+          onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'">
+          
+          <!-- Review Header -->
+          <div class="review-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+            <div class="reviewer-info" style="display: flex; align-items: center; gap: 12px;">
+              <!-- User Avatar -->
+              <div class="user-avatar" style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 1.2rem;">
+                <img *ngIf="review.profile_photo_url" [src]="review.profile_photo_url" alt="User" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                <span *ngIf="!review.profile_photo_url">{{(review.author_name || 'A').charAt(0).toUpperCase()}}</span>
+              </div>
+              
+              <div class="reviewer-details">
+                <h4 style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #333;">{{review.author_name || 'Anonymous'}}</h4>
+                <p style="margin: 0; font-size: 0.85rem; color: #666;">{{review.created_at | date:'MMM d, y'}}</p>
+              </div>
             </div>
             
-            <!-- No Reviews Message -->
-            <ng-template #noReviewsMsg>
-                <div class="no-reviews-container" style="text-align: center; padding: 80px 20px; color: #888;">
-                    <i class="pi pi-star" style="font-size: 4rem; color: #ddd; margin-bottom: 20px;"></i>
-                    <div class="no-reviews-text" style="font-size: 1.3rem; font-weight: 600; margin-bottom: 8px; color: #666;">
-                        No reviews yet
-                    </div>
-                    <div style="font-size: 1.1rem; color: #aaa; margin-bottom: 24px;">
-                        Be the first to share your experience!
-                    </div>
-                    <button 
-                        (click)="toggleReviewForm()" 
-                        style="background: #007bff; color: #fff; border: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,123,255,0.3);"
-                        onmouseover="this.style.background='#0056b3'; this.style.transform='translateY(-2px)'"
-                        onmouseout="this.style.background='#007bff'; this.style.transform='translateY(0)'">
-                        Write First Review
-                    </button>
-                </div>
-            </ng-template>
+            <div class="rating-display" style="display: flex; flex-direction: column; align-items: flex-end;">
+              <div class="rating-stars" style="display: flex; align-items: center; gap: 2px; margin-bottom: 2px;">
+                <ng-container *ngFor="let star of [1,2,3,4,5]">
+                  <i class="pi pi-star-fill" 
+                     [style.color]="review.reviewrating >= star ? '#ffc107' : '#e4e5e9'"
+                     style="font-size: 1rem;"></i>
+                </ng-container>
+              </div>
+              <span style="font-size: 0.9rem; font-weight: 600; color: #333;">{{review.reviewrating}}/5</span>
+            </div>
+          </div>
+          
+          <!-- Review Content -->
+          <div class="review-content">
+            <h5 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 600; color: #333; line-height: 1.4;">
+              {{review.reviewtitle}}
+            </h5>
+            <p style="margin: 0; line-height: 1.6; color: #555; font-size: 0.95rem; text-align: justify;">
+              {{review.reviewdescription.length > 150 ? (review.reviewdescription | slice:0:150) + '...' : review.reviewdescription}}
+            </p>
+          </div>
+          
+          <!-- Read More Button (if text is truncated) -->
+          <button 
+            *ngIf="review.reviewdescription.length > 150"
+            style="background: none; border: none; color: #007bff; font-weight: 600; cursor: pointer; padding: 8px 0 0 0; font-size: 0.9rem; transition: color 0.2s ease;"
+            onmouseover="this.style.color='#0056b3'"
+            onmouseout="this.style.color='#007bff'">
+            Read more
+          </button>
         </div>
+      </div>
     </div>
+    
+    <!-- No Reviews Message -->
+    <ng-template #noReviewsMsg>
+      <div class="no-reviews-container" style="text-align: center; padding: 80px 20px; color: #888;">
+        <i class="pi pi-star" style="font-size: 4rem; color: #ddd; margin-bottom: 20px;"></i>
+        <div class="no-reviews-text" style="font-size: 1.3rem; font-weight: 600; margin-bottom: 8px; color: #666;">
+          No reviews yet
+        </div>
+        <div style="font-size: 1.1rem; color: #aaa; margin-bottom: 24px;">
+          Be the first to share your experience!
+        </div>
+        <button 
+          (click)="toggleReviewForm()" 
+          style="background: #007bff; color: #fff; border: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,123,255,0.3);"
+          onmouseover="this.style.background='#0056b3'; this.style.transform='translateY(-2px)'"
+          onmouseout="this.style.background='#007bff'; this.style.transform='translateY(0)'">
+          Write First Review
+        </button>
+      </div>
+    </ng-template>
+  </div>
 </div>
 
 <!-- Responsive Styles -->

@@ -4657,3 +4657,285 @@ h5.resend-head {
         }
     }
 }
+.comparison-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.comparison-card {
+  background: #fff;
+  border-radius: 0; /* Changed from 20px */
+  box-shadow: 0 20px 40px rgba(0, 123, 255, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 123, 255, 0.1);
+}
+
+.comparison-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 50px rgba(0, 123, 255, 0.15);
+}
+
+.card-header {
+  background: linear-gradient(135deg, #eb3438 0%, #eb3438 100%);
+  padding: 25px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: rotate(45deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -50%; }
+  100% { left: 150%; }
+}
+
+.card-title {
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.table-container {
+  padding: 0;
+  overflow-x: auto;
+}
+
+.comparison-table {
+  margin: 0;
+  border: none;
+  background: #fff;
+  border-collapse: collapse; /* Added for better border handling */
+}
+
+.comparison-table th {
+  background: linear-gradient(135deg, #f8f9ff 0%, #e3e8ff 100%);
+  color: #2c3e50;
+  font-weight: 600;
+  padding: 20px 15px;
+  border: none;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  text-align: center;
+  font-size: 1rem;
+  background-clip: padding-box; /* Ensure background covers properly */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+}
+
+.comparison-table th:first-child {
+  background: linear-gradient(135deg, #eb3438 0%, #eb3438 100%);
+  color: white;
+  text-align: left;
+  min-width: 150px;
+  border-top-left-radius: 0; /* Changed from 15px */
+  position: sticky;
+  left: 0;
+  z-index: 15; /* Increased z-index to ensure it's above everything */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15); /* Enhanced shadow for sticky header */
+}
+
+.comparison-table td {
+  padding: 20px 15px;
+  border: none;
+  border-bottom: 1px solid #f1f3f4;
+  vertical-align: middle;
+  transition: all 0.3s ease;
+  position: relative;
+  background: #fff; /* Explicit white background */
+}
+
+.comparison-table td:first-child {
+  background: linear-gradient(135deg, #eb3438 0%, #eb3438 100%) !important; /* Added !important */
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: left;
+  position: sticky;
+  left: 0;
+  z-index: 12; /* Higher than regular cells, lower than header */
+  min-width: 150px;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1); /* Shadow to separate from content */
+}
+
+.comparison-table tbody tr:hover td:not(:first-child) {
+  background: rgba(0, 123, 255, 0.02);
+}
+
+.comparison-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 0; /* Changed from 15px */
+}
+
+/* Ensure proper stacking context for sticky elements */
+.comparison-table thead {
+  z-index: 14;
+  position: relative;
+}
+
+.comparison-table tbody {
+  z-index: 1;
+  position: relative;
+}
+
+.review-column {
+  min-width: 280px;
+  max-width: 300px;
+}
+
+.review-title {
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 5px;
+  font-size: 1.1rem;
+}
+
+.description-text {
+  color: #666;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.read-more-btn {
+  color: #007bff;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  background: none;
+  padding: 2px 4px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border-radius: 0; /* Changed from 4px */
+}
+
+.read-more-btn:hover {
+  color: #0056b3;
+  background: rgba(0, 123, 255, 0.1);
+}
+
+.rating-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.rating-star {
+  color: #ffc107;
+  font-size: 1.2rem;
+  filter: drop-shadow(0 2px 4px rgba(255, 193, 7, 0.3));
+}
+
+.rating-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.plate-rate {
+  font-weight: 600;
+  color: #28a745;
+  font-size: 1.05rem;
+}
+
+.capacity {
+  font-weight: 600;
+  color: #6f42c1;
+  font-size: 1.05rem;
+}
+
+.source-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  color: white;
+  border-radius: 0; /* Changed from 20px */
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.source-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Source badge color classes */
+.badge-google {
+  background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%);
+}
+
+.badge-zomato {
+  background: linear-gradient(135deg, #e23744 0%, #c8102e 100%);
+}
+
+.badge-eazyvenue {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.badge-default {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+}
+
+.date-text {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .comparison-table th:first-child,
+  .comparison-table td:first-child {
+    min-width: 120px;
+  }
+  
+  .review-column {
+    min-width: 250px;
+  }
+  
+  .card-title {
+    font-size: 1.5rem;
+  }
+  
+  .comparison-table th,
+  .comparison-table td {
+    padding: 15px 10px;
+  }
+}
+
+/* Custom scrollbar */
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 0; /* Changed from 10px */
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border-radius: 0; /* Changed from 10px */
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+}

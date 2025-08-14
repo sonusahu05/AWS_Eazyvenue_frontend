@@ -761,9 +761,11 @@ getCarouselReviews() {
   // Change it to:
   if (this.selectedReviewSource === 'google') {
     return this.googleReviews || [];
-  } else if (this.selectedReviewSource === 'Compare Reviews') {
-    return this.CompareReviews || []; // Make sure this line exists
-  } else {
+  } 
+//   else if (this.selectedReviewSource === 'Compare Reviews') {
+//     return this.CompareReviews || []; // Make sure this line exists
+//   }
+   else {
     return this.venueDetails.reviews || [];
   }
 }
@@ -909,6 +911,17 @@ get shouldShowCompareReviews(): boolean {
 // Enhanced mock compare reviews with proper structure
 get mockCompareReviews(): CompareReview[] {
   return [
+     {
+      text: "EazyVenue",
+      rating: 4.5,
+      plateRating: "₹1000 per plate",
+      capacity: 300,
+      reviewtitle: "EazyVenue",
+      reviewdescription: "Great service and decoration. A bit pricey but worth it for special occasions.",
+      reviewrating: 4.5,
+      created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
+      author_name: "--"
+    },
     {
       text: "Google",
       rating: 4.5,
