@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment'; // Adjust the path as necessary
 
 @Component({
   selector: 'app-ai-search',
@@ -19,7 +20,8 @@ export class AiSearchComponent {
     this.loading = true;
     this.error = '';
 
-    this.http.post<any>('http://localhost:3006/api/aisearch', { prompt: this.prompt }).subscribe({
+    // this.http.post<any>('http://localhost:3006/api/aisearch', { prompt: this.prompt }).subscribe({
+    this.http.post<any>(`${environment.apiUrl}aisearch`, { prompt: this.prompt }).subscribe({
       next: (res) => {
         this.loading = false;
         if (res.success) {

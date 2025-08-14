@@ -75,7 +75,8 @@ submitAIQuery() {
     this.loadingAI = true;
     this.filteredVenues = [];
 
-    fetch('http://localhost:3006/api/aisearch', {
+    // fetch('http://localhost:3006/api/aisearch', {
+    fetch(`${environment.apiUrl}aisearch`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt: this.aiQuery })
@@ -90,7 +91,8 @@ submitAIQuery() {
       // Extract the filename from the old URL
       const fileName = img.split('/').pop();
       // Rebuild the full correct URL
-      return `https://api.eazyvenue.com/uploads/venuePic/${fileName}`;
+    //   return `https://api.eazyvenue.com/uploads/venuePic/${fileName}`;
+    return `${environment.productUploadUrl}venuePic/${fileName}`;
     });
   }
 });
