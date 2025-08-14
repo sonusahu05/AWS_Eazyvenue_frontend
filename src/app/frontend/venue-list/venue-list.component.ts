@@ -75,7 +75,7 @@ submitAIQuery() {
     this.loadingAI = true;
     this.filteredVenues = [];
 
-    fetch('https://api.eazyvenue.in/api/aisearch', {
+    fetch('https://api.eazyvenue.in/api/aisearch/ai-search.route', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt: this.aiQuery })
