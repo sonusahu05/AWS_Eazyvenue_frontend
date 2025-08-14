@@ -13,8 +13,7 @@ const API_URL = environment.apiUrl + 'venue';
     providedIn: 'root',
 })
 export class VenueService {
-    // private baseUrl = 'http://localhost:3006/api';// adjust if needed
-    private baseUrl = 'https://api.eazyvenue.in/api/';// adjust if needed
+    private baseUrl = 'http://localhost:3006/api';// adjust if needed
 getVenueByName(name: string): Observable<any> {
   return this.http.get(`${this.baseUrl}/api/aisearch/name/${encodeURIComponent(name)}`);
 }
