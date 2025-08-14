@@ -19,7 +19,7 @@ export class AiSearchComponent {
     this.loading = true;
     this.error = '';
 
-    this.http.post<any>('https://api.eazyvenue.in/api/aisearch/ai-search.route', { prompt: this.prompt }).subscribe({
+    this.http.post<any>('http://localhost:3006/api/aisearch', { prompt: this.prompt }).subscribe({
       next: (res) => {
         this.loading = false;
         if (res.success) {
