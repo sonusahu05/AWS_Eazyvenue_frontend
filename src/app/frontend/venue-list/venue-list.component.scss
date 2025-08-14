@@ -1887,7 +1887,6 @@ label.mobile-number-text {
       background-color: #c62828;
       border-color: #c62828;
     }
-  }
 
   .ai-result-container {
     max-width: 100%;
@@ -1932,4 +1931,123 @@ label.mobile-number-text {
       }
     }
   }
+}
 
+@media (max-width: 360px) {
+  .search-bar-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 0 15px;
+  }
+
+  .main-search-btn {
+    width: 48px;
+    height: 48px;
+    align-self: flex-end;
+  }
+
+  .ai-search-btn-container {
+    width: 100%;
+    margin-top: 12px;
+    align-items: center; /* center buttons */
+  }
+
+  .ai-search-btn {
+    width: auto;             /* auto width */
+    max-width: 300px;        /* max width so it doesn’t stretch too far */
+    font-size: 14px;
+    padding: 10px 30px;      /* more balanced padding */
+    border-radius: 20px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;          /* center horizontally */
+  }
+
+  .ai-search-form {
+  display: flex;         /* ensure flex container */
+  gap: 0;                /* no gap between elements */
+//   max-width: 100%;
+  margin-top: 12px;
+  padding: 0 15px;
+}
+
+.ai-search-form input[type="text"] {
+  flex: 1;
+  font-size: 14px;
+  padding: 10px 10px;
+  border-radius: 20px 0 0 20px;  /* round left corners only */
+  min-height: 50px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-right: none;     /* remove border between input & button */
+  outline: none;
+  margin: 0;
+}
+
+.ai-search-form button {
+  flex: none;
+  font-size: 14px;
+  padding: 10px 30px;
+  border-radius: 0 20px 20px 0;  /* round right corners only */
+  cursor: pointer;
+  border: 1px solid #e53935;
+  border-left: none;      /* remove border between button & input */
+  background-color: #e53935;
+  color: white;
+  font-weight: 600;
+  margin: 0;
+  display: block;
+  transition: background-color 0.3s ease;
+}
+
+
+    button:hover {
+      background-color: #c62828;
+      border-color: #c62828;
+    }
+
+  .ai-result-container {
+    max-width: 100%;
+    margin: 20px 10px;
+    padding: 20px 15px;
+    font-size: 14px;
+  }
+
+  .venue-grid,
+  .ai-results-grid {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 15px;
+    margin-left: 0;
+    padding: 0 10px;
+    max-width: 100%;
+  }
+
+  .venue-card {
+    flex-direction: column;
+
+    .venue-image {
+      height: 160px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+    }
+
+    .venue-info {
+      padding: 15px;
+
+      .venue-title {
+        font-size: 18px;
+      }
+
+      .venue-location,
+      .venue-capacity,
+      .venue-description {
+        font-size: 13px;
+      }
+
+      .venue-contact {
+        font-size: 13px;
+      }
+    }
+  }
+}
