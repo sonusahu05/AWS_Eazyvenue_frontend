@@ -17,7 +17,7 @@ export class VenueService {
     private baseUrl = environment.apiUrl;// adjust if needed
 getVenueByName(name: string): Observable<any> {
 //   return this.http.get(`${this.baseUrl}/api/aisearch/name/${encodeURIComponent(name)}`);
-    return this.http.get(`${this.baseUrl}/aisearch/name/${encodeURIComponent(name)}`);
+    return this.http.get(`${this.baseUrl}aisearch/name/${encodeURIComponent(name)}`);
 }
 
 
