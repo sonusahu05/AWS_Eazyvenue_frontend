@@ -173,13 +173,13 @@
                     <h3>Top Performing Venues</h3>
                     <p class="text-muted">Most visited venues</p>
                 </div>
-                <div class="chart-content" style="height: 300px;">
+                <div class="chart-content" style="height: 392px;">
                     <p-chart 
                         type="bar" 
                         [data]="venueClicksChartData" 
                         [options]="venueClicksChartOptions"
                         width="100%"
-                        height="300">
+                        height="400">
                     </p-chart>
                 </div>
             </div>
@@ -560,7 +560,7 @@
         </div>
     </div>
 </p-sidebar>
-
+<br>
 <!-- Top Subareas Table -->
 <div class="subareas-table-section p-mb-4" *ngIf="topSubareas.length > 0">
     <div class="card">
