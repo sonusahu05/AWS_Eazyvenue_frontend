@@ -27,7 +27,7 @@
     </div>
 
     <!-- Show More Button -->
-    <button *ngIf="!showMore" (click)="toggleShowMore()">Show More</button>
+    <button *ngIf="!showMore" (click)="toggleShowMore()" style="color: white; font-size: 12px; background-color: #EC3539; border-radius: 6px; padding: 2px 6px 4px;">Show More</button>
 
     <!-- Display additional FAQs when "Show More" is clicked -->
     <div *ngIf="showMore">
@@ -43,7 +43,7 @@
       </div>
 
       <!-- Show Less Button -->
-      <button (click)="toggleShowMore()">Show Less</button>
+      <button (click)="toggleShowMore()" style="color: white; font-size: 12px; background-color: #EC3539; border-radius: 6px; padding: 2px 6px 4px;">Show Less</button>
     </div>
   </div>
 
@@ -59,8 +59,6 @@
         <div class="search-list">
           <span *ngFor="let search of nearMeSearches">{{ search }}</span>
         </div> -->
-
-          <h2>Find Banquet Halls in the Following Subareas</h2>
           <h2>Find Banquet Halls in the Following Subareas</h2>
           <div class="search-list">
             <a routerLink="/banquet-halls/wedding/mumbai/andheri" href="/banquet-halls/wedding/mumbai/andheri">Banquet halls in Andheri</a>
