@@ -1375,3 +1375,39 @@
     min-width: 80px;
   }
 }
+/* Style for the Export PDF Button */
+.p-button-outlined.p-button-sm {
+  background-color: #007bff;  /* Blue background for visibility */
+  color: white;  /* White text for contrast */
+  font-size: 1rem;  /* Make the text readable */
+  padding: 10px 20px;  /* Add some padding for better size */
+  border-radius: 5px;  /* Rounded corners for the button */
+  border: none;  /* Remove border for a clean look */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;  /* Smooth transition for hover effects */
+
+  /* Icon Styling */
+  .pi {
+    margin-right: 8px;  /* Space between the icon and text */
+    font-size: 1.2rem;  /* Increase the icon size */
+  }
+
+  &:hover {
+    background-color: #0056b3;  /* Darker blue on hover */
+    transform: translateY(-3px);  /* Slightly lift the button on hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);  /* Add shadow to button */
+  }
+
+  &:focus {
+    outline: none;  /* Remove the outline for a clean look */
+  }
+
+  /* Adjusting button on smaller screens */
+  @media (max-width: 768px) {
+    font-size: 0.9rem;  /* Slightly smaller text */
+    padding: 8px 16px;  /* Adjust padding */
+  }
+}
