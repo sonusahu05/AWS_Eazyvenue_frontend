@@ -928,7 +928,7 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       this.messageService.add({
         severity: 'info',
         summary: 'Generating PDF',
-        detail: 'Please wait while we generate your competition analysis report...'
+        detail: 'Please wait while we generate your high-quality competition analysis report...'
       });
 
       // Ensure all data is loaded first
@@ -957,12 +957,12 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       this.messageService.add({
         severity: 'info',
         summary: 'Processing',
-        detail: 'Capturing competition analysis content...'
+        detail: 'Capturing competition analysis content in high quality...'
       });
 
-      // Configure html2canvas options
+      // Configure html2canvas options for better quality
       const canvas = await html2canvas(competitionElement, {
-        scale: 2,
+        scale: 2, // Increased for better quality
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
@@ -1004,6 +1004,18 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
               cell.style.opacity = '1';
               cell.style.visibility = 'visible';
             });
+            
+            // Hide PrimeNG components that might not render properly
+            const pTags = clonedElement.querySelectorAll('p-tag');
+            pTags.forEach((tag: any) => {
+              tag.style.display = 'none';
+            });
+            
+            // Also hide any .p-tag elements (rendered tags)
+            const renderedTags = clonedElement.querySelectorAll('.p-tag');
+            renderedTags.forEach((tag: any) => {
+              tag.style.display = 'none';
+            });
           }
         }
       });
@@ -1018,7 +1030,7 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let heightLeft = imgHeight;
 
-      // Create PDF
+      // Create PDF with compression
       const pdf = new (jsPDF as any)({
         orientation: 'p',
         unit: 'mm',
@@ -1026,6 +1038,57 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
         compress: true
       });
       let position = 0;
+
+      // Add logo to the first page with maximum quality
+      try {
+        // Try to load SVG logo first for best quality
+        const svgLogo = await this.loadSvgLogo();
+        
+        if (svgLogo) {
+          // Calculate optimal logo dimensions
+          const maxLogoWidth = 50; // 50mm for prominent visibility
+          const aspectRatio = svgLogo.height / svgLogo.width;
+          const logoWidth = maxLogoWidth;
+          const logoHeight = logoWidth * aspectRatio;
+          
+          // Add SVG logo with maximum quality (positioned top-right)
+          pdf.addImage(svgLogo.dataUrl, 'PNG', 210 - logoWidth - 10, 10, logoWidth, logoHeight);
+          
+          console.log('✅ Ultra-high-quality SVG logo added to PDF:', {
+            format: 'SVG->PNG',
+            width: logoWidth,
+            height: logoHeight,
+            aspectRatio: aspectRatio
+          });
+        } else {
+          // Fallback to PNG logo with maximum quality
+          const logoImg = new Image();
+          logoImg.crossOrigin = 'anonymous';
+          
+          await new Promise<void>((resolve, reject) => {
+            logoImg.onload = () => resolve();
+            logoImg.onerror = () => {
+              console.warn('Could not load PNG logo either');
+              resolve();
+            };
+            logoImg.src = 'assets/images/eazyvneu-logo.png';
+          });
+          
+          if (logoImg.complete && logoImg.naturalWidth > 0) {
+            const maxLogoWidth = 50;
+            const aspectRatio = logoImg.naturalHeight / logoImg.naturalWidth;
+            const logoWidth = maxLogoWidth;
+            const logoHeight = logoWidth * aspectRatio;
+            
+            // Add PNG logo without any compression
+            pdf.addImage(logoImg.src, 'PNG', 210 - logoWidth - 10, 10, logoWidth, logoHeight);
+            
+            console.log('✅ High-quality PNG logo added to PDF');
+          }
+        }
+      } catch (error) {
+        console.warn('Error adding logo to PDF:', error);
+      }
 
       // Add title page content
       pdf.setFontSize(24);
@@ -1036,43 +1099,77 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       pdf.setFont('helvetica', 'normal');
       pdf.text('Competition Analysis Report', 20, 42);
       
-      // Add current venue info if available
-      if (this.currentVenue) {
-        pdf.setFontSize(12);
-        pdf.text(`Venue: ${this.currentVenue.name}`, 20, 60);
-        pdf.text(`Location: ${this.currentVenue.cityname}, ${this.currentVenue.subarea}`, 20, 70);
-      }
-      
-      pdf.setFontSize(10);
-      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 85);
-      pdf.text(`Distance Filter: ${this.selectedDistanceFilter.label}`, 20, 95);
-      
-      // Add horizontal line
+      // Add a horizontal line
       pdf.setDrawColor(44, 62, 80);
       pdf.setLineWidth(0.5);
-      pdf.line(20, 105, 190, 105);
+      pdf.line(20, 50, 190, 50);
+      
+      pdf.setFontSize(12);
+      const reportDate = new Date().toLocaleDateString('en-GB');
+      const reportTime = new Date().toLocaleTimeString('en-GB');
+      pdf.text(`Generated on: ${reportDate} at ${reportTime}`, 20, 65);
+      pdf.text(`Distance Filter: ${this.selectedDistanceFilter.label}`, 20, 75);
+      
+      // Add current venue info if available
+      if (this.currentVenue) {
+        pdf.text(`Venue: ${this.currentVenue.name}`, 20, 85);
+        pdf.text(`Location: ${this.currentVenue.cityname}, ${this.currentVenue.subarea}`, 20, 95);
+      }
 
-      // Add main content
-      position = 115;
-      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, position, imgWidth - 20, (imgHeight * (imgWidth - 20)) / imgWidth);
+      // Add summary statistics
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Summary Statistics:', 20, 115);
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      
+      let yPos = 125;
+      if (this.statistics) {
+        pdf.text(`Total Competitors: ${this.statistics.totalCompetitors}`, 25, yPos);
+        yPos += 8;
+        pdf.text(`Average Competitor Price: ₹${this.statistics.avgCompetitorPrice.toLocaleString()}`, 25, yPos);
+        yPos += 8;
+        pdf.text(`Price Range: ₹${this.statistics.minCompetitorPrice.toLocaleString()} - ₹${this.statistics.maxCompetitorPrice.toLocaleString()}`, 25, yPos);
+        yPos += 8;
+        pdf.text(`Average Distance: ${this.statistics.avgDistance} km`, 25, yPos);
+        yPos += 8;
+        if (this.statistics.priceAdvantage !== 0) {
+          const advantageText = this.statistics.priceAdvantage > 0 ? 
+            `₹${this.statistics.priceAdvantage.toLocaleString()} higher than average` : 
+            `₹${Math.abs(this.statistics.priceAdvantage).toLocaleString()} lower than average`;
+          pdf.text(`Price Advantage: ${advantageText}`, 25, yPos);
+        }
+      }
+
+      // Add new page for main content
+      pdf.addPage();
+
+      // Add main content with optimized compression
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
       heightLeft -= pageHeight;
 
       // Add additional pages if needed
-      while (heightLeft >= 0) {
+      while (heightLeft > 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
-        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, position, imgWidth - 20, (imgHeight * (imgWidth - 20)) / imgWidth);
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
       }
 
+      // Generate filename
+      const venueText = this.currentVenue?.name ? 
+        `-${this.currentVenue.name.replace(/[^a-zA-Z0-9]/g, '_')}` : '';
+      const dateText = new Date().toISOString().split('T')[0];
+      const filename = `EazyVenue_Competition_Analysis${venueText}_${dateText}.pdf`;
+
       // Save the PDF
-      const fileName = `competition-analysis-${this.currentVenue?.name || 'report'}-${new Date().toISOString().split('T')[0]}.pdf`;
-      pdf.save(fileName);
+      pdf.save(filename);
       
       this.messageService.add({
         severity: 'success',
         summary: 'Export Successful',
-        detail: 'Competition analysis exported to PDF successfully'
+        detail: `Competition analysis exported as ${filename}`
       });
       
     } catch (error) {
@@ -1082,6 +1179,73 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
         summary: 'Export Failed',
         detail: 'Failed to export PDF. Please try again.'
       });
+    }
+  }
+
+  /**
+   * Load SVG logo and convert to high-quality PNG for PDF (browser only)
+   */
+  private async loadSvgLogo(): Promise<{dataUrl: string, width: number, height: number} | null> {
+    // Only run in browser
+    if (!this.isBrowser) {
+      return null;
+    }
+
+    try {
+      // Fetch the SVG content
+      const response = await fetch('assets/images/logo/eazyvneu-logo.svg');
+      if (!response.ok) {
+        console.warn('Could not fetch SVG logo');
+        return null;
+      }
+      
+      const svgText = await response.text();
+      
+      // Create SVG blob
+      const svgBlob = new Blob([svgText], { type: 'image/svg+xml' });
+      const svgUrl = URL.createObjectURL(svgBlob);
+      
+      // Create canvas to convert SVG to PNG
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      return new Promise((resolve) => {
+        img.onload = () => {
+          // Set canvas size for high quality
+          canvas.width = img.width * 2; // 2x for high quality
+          canvas.height = img.height * 2;
+          
+          // Scale context for high quality
+          ctx?.scale(2, 2);
+          
+          // Draw image
+          ctx?.drawImage(img, 0, 0);
+          
+          // Convert to data URL
+          const dataUrl = canvas.toDataURL('image/png');
+          
+          // Clean up
+          URL.revokeObjectURL(svgUrl);
+          
+          resolve({
+            dataUrl: dataUrl,
+            width: img.width,
+            height: img.height
+          });
+        };
+        
+        img.onerror = () => {
+          console.warn('Could not load SVG logo');
+          URL.revokeObjectURL(svgUrl);
+          resolve(null);
+        };
+        
+        img.src = svgUrl;
+      });
+    } catch (error) {
+      console.warn('Error loading SVG logo:', error);
+      return null;
     }
   }
 
