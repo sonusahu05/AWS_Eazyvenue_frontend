@@ -171,113 +171,6 @@ button.p-element.p-ripple.float-end.p-button-secondary.p-button.p-component {
   font-weight: 500;
 }
 
-/*Vertical Flip Animation*/
-@-moz-keyframes vertical{
-	0% { opacity: 0; }
-	5% { opacity: 0; -moz-transform: rotateX(180deg); }
-	10% { opacity: 1; -moz-transform: translateY(0px); }
-	25% { opacity: 1; -moz-transform: translateY(0px); }
-	30% { opacity: 0; -moz-transform: translateY(0px); }
-	80% { opacity: 0; }
-	100% { opacity: 0;}
-}
-@-webkit-keyframes vertical{
-	0% { opacity: 0; }
-	5% { opacity: 0; -webkit-transform: rotateX(180deg); }
-	10% { opacity: 1; -webkit-transform: translateY(0px); }
-	25% { opacity: 1; -webkit-transform: translateY(0px); }
-	30% { opacity: 0; -webkit-transform: translateY(0px); }
-	80% { opacity: 0; }
-	100% { opacity: 0; }
-}
-@-ms-keyframes vertical{
-	0% { opacity: 0; }
-	5% { opacity: 0; -ms-transform: rotateX(180deg); }
-	10% { opacity: 1; -ms-transform: translateY(0px); }
-	25% { opacity: 1; -ms-transform: translateY(0px); }
-	30% { opacity: 0; -ms-transform: translateY(0px); }
-	80% { opacity: 0; }
-	100% { opacity: 0; }
-}
-
-/*Vertical Flip*/
-.row.justify-content-center.search-bar.search_bar_listing_page {
-    margin-top: 20px;
-}
-/*Vertical Flip*/
-.verticalFlip{
-	display: inline;
-  margin-bottom: 30px;
-
-}
-.verticalFlip span{
-	animation: vertical 30s linear infinite 0s; /*total animation duration */
-	-ms-animation: vertical 30s linear infinite 0s;
-	-webkit-animation: vertical 30s linear infinite 0s;
-    color: #ffffff;
-	opacity: 0;
-	overflow: visible;
-	position: absolute;
-}
-/* Add this with added number of options */
-.verticalFlip span:nth-child(2){
-	animation-delay: 2.5s;
-	-ms-animation-delay: 2.5s;
-	-webkit-animation-delay: 2.5s;
-}
-.verticalFlip span:nth-child(3){
-	animation-delay: 5s;
-	-ms-animation-delay: 5s;
-	-webkit-animation-delay: 5s;
-}
-.verticalFlip span:nth-child(4){
-	animation-delay: 7.5s;
-	-ms-animation-delay: 7.5s;
-	-webkit-animation-delay: 7.5s;
-}
-.verticalFlip span:nth-child(5){
-	animation-delay: 10s;
-	-ms-animation-delay: 10s;
-	-webkit-animation-delay: 10s;
-}
-.verticalFlip span:nth-child(6){
-	animation-delay: 12.5s;
-	-ms-animation-delay: 12.5s;
-	-webkit-animation-delay: 12.5s;
-}
-.verticalFlip span:nth-child(7){
-	animation-delay: 15s;
-	-ms-animation-delay: 15s;
-	-webkit-animation-delay: 15s;
-}
-.verticalFlip span:nth-child(8){
-	animation-delay: 17.5s;
-	-ms-animation-delay: 17.5s;
-	-webkit-animation-delay: 17.5s;
-}
-.verticalFlip span:nth-child(9){
-	animation-delay: 20s;
-	-ms-animation-delay: 20s;
-	-webkit-animation-delay: 20s;
-}
-.verticalFlip span:nth-child(10){
-	animation-delay: 22.5s;
-	-ms-animation-delay: 22.5s;
-	-webkit-animation-delay: 22.5s;
-}
-.verticalFlip span:nth-child(11){
-	animation-delay: 25s;
-	-ms-animation-delay: 25s;
-	-webkit-animation-delay: 25s;
-}
-.verticalFlip span:nth-child(12){
-	animation-delay: 27.5s;
-	-ms-animation-delay: 27.5s;
-	-webkit-animation-delay: 27.5s;
-}
-
-
-
 .container {
   max-width: 1340px;
 }
@@ -451,11 +344,6 @@ p.animation-text-heading {
       margin-bottom: 30px;
       margin-top: 24px;
   }
-  .verticalFlip {
-      display: inline;
-      margin-bottom: 30px;
-      font-size: 25px;
-  }
 
   }
 
@@ -487,8 +375,4 @@ p.animation-text-heading {
     display: block !important;
     margin-top: 30px;
 }
-  .verticalFlip {
-      font-size: 14px!important;
-      line-height: 12px;
-  }
 }

@@ -11559,9 +11559,9 @@ opacity: 0;
 
 
 .verticalFlip span {
-    animation: vertical 22.5s linear infinite 1s;
-    -ms-animation: vertical 22.5s linear infinite 1s;
-    -webkit-animation: vertical 22.5s linear infinite 1s;
+    animation: vertical 30s linear infinite 1s;
+    -ms-animation: vertical 30s linear infinite 1s;
+    -webkit-animation: vertical 30s linear infinite 1s;
     color: #ffffff;
     position: absolute;
     white-space: nowrap;
@@ -11616,6 +11616,24 @@ opacity: 0;
     animation-delay: 20s !important;
     -ms-animation-delay: 20s !important;
     -webkit-animation-delay: 20s !important;
+}
+
+.verticalFlip span:nth-child(10) {
+    animation-delay: 22.5s !important;
+    -ms-animation-delay: 22.5s !important;
+    -webkit-animation-delay: 22.5s !important;
+}
+
+.verticalFlip span:nth-child(11) {
+    animation-delay: 25s !important;
+    -ms-animation-delay: 25s !important;
+    -webkit-animation-delay: 25s !important;
+}
+
+.verticalFlip span:nth-child(12) {
+    animation-delay: 27.5s !important;
+    -ms-animation-delay: 27.5s !important;
+    -webkit-animation-delay: 27.5s !important;
 }
 
 /* End Vetical Flip Animation for Occasions*/
