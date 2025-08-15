@@ -78,6 +78,25 @@ export class AnalyticsService {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
+
+// Get all venues data (for admin)
+getAllGeographyData() {
+    return this.http.get<any[]>(`${this.apiUrl}/all`); 
+}
+
+// Get venue-specific data (for venue owner)
+getVenueGeographyData(venueName: string) {
+    return this.http.get<any[]>(`${this.apiUrl}/venue/${encodeURIComponent(venueName)}`);
+}
+
+// Get vendor-specific data
+getVendorGeographyData(vendorId: string) {
+    return this.http.get<any[]>(`${this.apiUrl}/vendor/${vendorId}`);
+}
+
+
+
+
   /**
    * Track venue click/view
    */

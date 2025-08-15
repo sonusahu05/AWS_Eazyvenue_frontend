@@ -46,7 +46,9 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     timelineChartOptions: any;
     subareaChartData: any;
     subareaChartOptions: any;
-    
+    geographyData: any[] = [];
+
+
     // Filters
     dateRange: Date[] = [];
     selectedVenue: any;
@@ -71,38 +73,66 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
     }
     
     ngOnInit() {
-        this.setDefaultDateRange(); // Set default dates FIRST
-        this.checkUserAccess();
-        
-        // Only initialize charts and load data in browser
-        if (this.isBrowser) {
-            this.initializeChartOptions();
-            this.initializeChartData();
-            this.loadDashboardData();
-        }
+    this.setDefaultDateRange(); // Set default dates FIRST
+    this.checkUserAccess();
+
+    // Only initialize charts and load data in browser
+    if (this.isBrowser) {
+        this.initializeChartOptions();
+        this.initializeChartData();
+        this.loadDashboardData();
     }
-    
-    checkUserAccess() {
-        const roleCheck = this.analyticsService.checkUserRole();
-        const venueOwnerCheck = this.analyticsService.checkVenueOwnerAccess();
-        
-        this.isAdmin = roleCheck.hasAdminAccess;
-        this.userRole = roleCheck.userRole;
-        this.isVenueOwner = venueOwnerCheck.isVenueOwner;
-        this.currentVenueName = venueOwnerCheck.venueName;
-        
-        // Print full user data structure for debugging
-        const fullUserData = this.analyticsService.getFullUserData();
-        console.log('🔍 FULL USER DATA STRUCTURE:', JSON.stringify(fullUserData, null, 2));
-        
-        console.log('User access check:', {
-            isAdmin: this.isAdmin,
-            isVenueOwner: this.isVenueOwner,
-            userRole: this.userRole,
-            venueName: this.currentVenueName,
-            fullUserData: fullUserData
+}
+
+checkUserAccess() {
+    // Get role info
+    const roleCheck = this.analyticsService.checkUserRole();
+    const venueOwnerCheck = this.analyticsService.checkVenueOwnerAccess();
+
+    this.isAdmin = roleCheck.hasAdminAccess;
+    this.userRole = roleCheck.userRole;
+    this.isVenueOwner = venueOwnerCheck.isVenueOwner;
+    this.currentVenueName = venueOwnerCheck.venueName;
+
+    const fullUserData = this.analyticsService.getFullUserData();
+    console.log('🔍 FULL USER DATA STRUCTURE:', JSON.stringify(fullUserData, null, 2));
+
+    console.log('User access check:', {
+        isAdmin: this.isAdmin,
+        isVenueOwner: this.isVenueOwner,
+        userRole: this.userRole,
+        venueName: this.currentVenueName,
+        fullUserData: fullUserData
+    });
+
+    // Load data after role check
+    this.loadGeographyData();
+}
+
+loadGeographyData() {
+    const fullUserData = this.analyticsService.getFullUserData();
+
+    if (this.isAdmin) {
+        this.analyticsService.getAllGeographyData().subscribe(data => {
+            this.geographyData = data;
+            console.log('✅ Admin geography data:', data);
         });
+    } else if (this.isVenueOwner && this.currentVenueName) {
+        this.analyticsService.getVenueGeographyData(this.currentVenueName).subscribe(data => {
+            this.geographyData = data;
+            console.log('✅ Venue owner geography data:', data);
+        });
+    } else if (this.userRole === 'vendor' && fullUserData.vendorId) {
+        this.analyticsService.getVendorGeographyData(fullUserData.vendorId).subscribe(data => {
+            this.geographyData = data;
+            console.log('✅ Vendor geography data:', data);
+        });
+    } else {
+        console.warn('⚠️ No valid role detected, geography data not loaded');
+        this.geographyData = [];
     }
+}
+
     
     ngOnDestroy() {
         this.subscriptions.unsubscribe();

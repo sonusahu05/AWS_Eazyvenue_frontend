@@ -39,7 +39,9 @@ interface CompetitionVenue {
   mobileNumber: string;
   propertyType: string;
   isCurrentVenue?: boolean;
-  venueOwnerId?: string;
+
+  // Add this property to represent the venue owner
+  venueOwnerId?: string;  // New property
 }
 
 interface DistanceFilter {
@@ -56,8 +58,9 @@ interface DistanceFilter {
 export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
   private isBrowser: boolean;
-  user: any = {};
+  user: any = {}; // Declare the user property
 
+  
   // Data
   competitionVenues: CompetitionVenue[] = [];
   currentVenue: CompetitionVenue | null = null;
@@ -72,7 +75,7 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
     { label: '25 km', value: 25 },
     { label: '50 km', value: 50 }
   ];
-  selectedDistanceFilter: DistanceFilter = this.distanceFilters[0];
+  selectedDistanceFilter: DistanceFilter = this.distanceFilters[0]; // Default 5km
   
   // Loading and UI states
   loading = true;
@@ -97,7 +100,7 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
     minCompetitorPrice: 0,
     maxCompetitorPrice: 0,
     avgDistance: 0,
-    priceAdvantage: 0
+    priceAdvantage: 0 // Positive if current venue is cheaper, negative if more expensive
   };
   
   // Table settings
@@ -118,6 +121,7 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    // Ensure statistics is always initialized
     if (!this.statistics) {
       this.statistics = this.getEmptyStatistics();
     }
@@ -125,12 +129,15 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
     this.initializeColumns();
     this.checkUserAccess();
 
-    console.log('Logged-in user role:', this.userRole);
-    console.log('isVenueOwner:', this.isVenueOwner);
-    console.log('isVendorOwner:', this.isVendorOwner);
+    // Log the user role when the page loads
+  console.log('Logged-in user role:', this.userRole);  // Check user role
+   // Log the values of isVenueOwner and isVendorOwner to verify the role flags
+  console.log('isVenueOwner:', this.isVenueOwner); // Should be true for venue owners
+  console.log('isVendorOwner:', this.isVendorOwner); // Should be true for vendor owners
 
-    const storedUserData = this.tokenStorageService.getUser();
-    this.user = storedUserData.userdata;
+    // Assuming you get the user data from a service like TokenStorageService
+  const storedUserData = this.tokenStorageService.getUser(); // Or whichever service you're using
+  this.user = storedUserData.userdata;  // Assign the userdata to the user property
     
     if (this.isBrowser) {
       this.initializeUserLocation();
@@ -165,6 +172,8 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
     console.log('Fetched user data:', userData);
 
     if (userData && userData.userdata) {
+      this.userRole = 'venueowner';
+      this.userRole = 'vendor-owner';
       this.userRole = userData.userdata.rolename || '';
       console.log('Assigned user role:', this.userRole);
       
@@ -190,16 +199,17 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       this.loadCurrentVenue();
     } catch (error) {
       console.error('Error getting user location:', error);
-      this.loadCurrentVenue();
+      this.loadCurrentVenue(); // Load without location
     }
   }
 
   private loadCurrentVenue() {
     if (this.isVenueOwner) {
       this.loadVenueOwnerVenue();
-    } else if (this.isVendorOwner) {
-      this.loadVendorOwnerVenue();
-    } else if (this.isAdmin) {
+    }else if (this.isVendorOwner) {
+    this.loadVendorOwnerVenue();
+    }else if (this.isAdmin) {
+      // For admin, load available venues first
       this.loadAvailableVenuesForAdmin();
     } else {
       this.showAccessDeniedMessage();
@@ -207,39 +217,42 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
   }
 
   private loadVendorOwnerVenue() {
-    const query = `?admin=true&vendorId=${encodeURIComponent(this.user.id)}&pageSize=1&pageNumber=1&filterByDisable=false`;
+  const query = `?admin=true&vendorId=${encodeURIComponent(this.user.id)}&pageSize=1&pageNumber=1&filterByDisable=false`;
 
-    const sub = this.venueService.getVenueListForFilter(query).subscribe({
-      next: (response) => {
-        if (response?.data?.items && response.data.items.length > 0) {
-          const venueData = response.data.items[0];
-          this.currentVenue = this.mapToCompetitionVenue(venueData, true);
-          this.venueOwnerVenueId = this.currentVenue.id;
-          this.loadCompetitionVenues();
-        } else {
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'No Venue Found',
-            detail: 'No venue found for your account. Please contact support.'
-          });
-        }
-      },
-      error: (error) => {
-        console.error('Error loading vendor owner venue:', error);
+  const sub = this.venueService.getVenueListForFilter(query).subscribe({
+    next: (response) => {
+      if (response?.data?.items && response.data.items.length > 0) {
+        const venueData = response.data.items[0];
+        this.currentVenue = this.mapToCompetitionVenue(venueData, true);
+        this.venueOwnerVenueId = this.currentVenue.id;
+        this.loadCompetitionVenues(); // Load competition venues with the new venue ID
+      } else {
         this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load vendor owner venue details'
+          severity: 'warn',
+          summary: 'No Venue Found',
+          detail: 'No venue found for your account. Please contact support.'
         });
       }
-    });
+    },
+    error: (error) => {
+      console.error('Error loading vendor owner venue:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to load vendor owner venue details'
+      });
+    }
+  });
 
-    this.subscriptions.add(sub);
-  }
+  this.subscriptions.add(sub);
+}
+
+
 
   private loadAvailableVenuesForAdmin() {
     console.log('Loading venues for admin selection...');
     
+    // Load all active venues for admin to choose from - increased page size for better selection
     const query = `?admin=true&pageSize=500&pageNumber=1&filterByDisable=false&filterByStatus=true`;
     
     const sub = this.venueService.getVenueListForFilter(query).subscribe({
@@ -247,28 +260,45 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
         if (response?.data?.items && response.data.items.length > 0) {
           console.log(`Loaded ${response.data.items.length} venues from API before deduplication`);
           
+          // Remove duplicates by venue name before processing
           const uniqueVenues = this.removeDuplicateVenuesByName(response.data.items);
           console.log(`Unique venues after deduplication: ${uniqueVenues.length}`);
           
+          // Create enhanced venue options with better formatting
           this.availableVenues = uniqueVenues.map(venue => {
-            const prices = this.extractPricesFromVenue(venue);
+            // Calculate average price for display
+            let avgPrice = 0;
+            if (venue.foodMenuType) {
+              const vegPrice = venue.foodMenuType.veg_food?.[0]?.value || 0;
+              const nonVegPrice = venue.foodMenuType.non_veg_food?.[0]?.value || 0;
+              if (vegPrice > 0 && nonVegPrice > 0) {
+                avgPrice = (vegPrice + nonVegPrice) / 2;
+              } else if (vegPrice > 0) {
+                avgPrice = vegPrice;
+              } else if (nonVegPrice > 0) {
+                avgPrice = nonVegPrice;
+              }
+            }
+
             return {
               label: `${venue.name} - ${venue.cityname}${venue.subarea ? ', ' + venue.subarea : ''}`,
               value: {
                 ...venue,
-                avgPrice: prices.avgPrice
+                avgPrice: avgPrice
               }
             };
-          }).sort((a, b) => a.label.localeCompare(b.label));
+          }).sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
           
           console.log(`Final available venues for admin selection: ${this.availableVenues.length}`);
           
+          // Don't auto-select any venue - let admin choose
           this.selectedVenueForAdmin = null;
           this.currentVenue = null;
           this.competitionVenues = [];
           this.filteredVenues = [];
           this.statistics = this.getEmptyStatistics();
           
+          // Show message to admin
           this.messageService.add({
             severity: 'info',
             summary: 'Admin Mode',
@@ -283,6 +313,7 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
           });
         }
         
+        // Set loading to false since admin needs to select venue manually
         this.loading = false;
       },
       error: (error) => {
@@ -306,12 +337,15 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       
       console.log('Admin selected venue changed:', this.currentVenue);
       
+      // Show loading state while fetching competition data
       this.loading = true;
       
+      // Reset previous data
       this.competitionVenues = [];
       this.filteredVenues = [];
       this.statistics = this.getEmptyStatistics();
       
+      // Show selection confirmation
       this.messageService.add({
         severity: 'success',
         summary: 'Venue Selected',
@@ -319,8 +353,10 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
         life: 3000
       });
       
+      // Load competition data for selected venue
       this.loadCompetitionVenues();
     } else {
+      // Clear data if no venue selected
       this.currentVenue = null;
       this.competitionVenues = [];
       this.filteredVenues = [];
@@ -328,9 +364,12 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       this.loading = false;
     }
   }
-
+//New Feature
   private loadVenueOwnerVenue() {
+    // Get venues filtered by the venue owner's email
     const query = `?admin=true&email=${encodeURIComponent(this.currentUserEmail)}&pageSize=1&pageNumber=1&filterByDisable=false`;
+    // const hardcodedEmail = 'chevron@gmail.com'; // Replace with actual working venue owner's email
+// const query = `?admin=true&email=${encodeURIComponent(hardcodedEmail)}&pageSize=1&pageNumber=1&filterByDisable=false`;
 
     const sub = this.venueService.getVenueListForFilter(query).subscribe({
       next: (response) => {
@@ -339,7 +378,8 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
           this.currentVenue = this.mapToCompetitionVenue(venueData, true);
           this.venueOwnerVenueId = this.currentVenue.id;
           
-          console.log('Venue Owner Venue ID:', this.venueOwnerVenueId);
+           console.log('Venue Owner Venue ID:', this.venueOwnerVenueId);
+
           console.log('Current venue loaded:', this.currentVenue);
           this.loadCompetitionVenues();
         } else {
@@ -370,16 +410,38 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
     }
 
     console.log('=== LOAD COMPETITION VENUES START ===');
+
+    // Filter venues based on user role
+  if (this.isVenueOwner) {
+    console.log('Filtering venues for venue owner...');
+    // Venue owners should only see their own venue
+    this.competitionVenues = this.competitionVenues.filter(venue => venue.id === this.venueOwnerVenueId);
+
+    // Log the filtered venues for venue owners
+    console.log('Filtered venues for venue owner:', this.competitionVenues);
+  } else if (this.isVendorOwner) {
+    console.log('Filtering venues for vendor owner...');
+    // Vendor owners should see venues linked to their venue owner
+    this.competitionVenues = this.competitionVenues.filter(venue => venue.venueOwnerId === this.venueOwnerVenueId);
+  } else if (this.isAdmin) {
+    console.log('Admin viewing all venues...');
+    this.competitionVenues = this.competitionVenues;  // No filtering for admin
+  }
+
+  console.log('Filtered venues:', this.competitionVenues);
+
+
     console.log('Current venue ID:', this.currentVenue.id);
     console.log('Distance filter:', this.selectedDistanceFilter.value);
 
     this.loading = true;
 
+    // Use the competition analysis API to get all venues (backend no longer filters by distance)
     const sub = this.venueService.getCompetitionAnalysis(
       this.currentVenue.id,
       {
         pageNumber: 1,
-        pageSize: 1000
+        pageSize: 1000 // Get all venues available
       }
     ).subscribe({
       next: (response) => {
@@ -387,6 +449,7 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
         console.log('=== LOADING STATE SET TO FALSE ===');
         console.log('Loading is now:', this.loading);
         
+        // Force change detection
         this.cdr.detectChanges();
         
         console.log('=== FRONTEND: API RESPONSE RECEIVED ===');
@@ -405,6 +468,7 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
         }
         
         if (response?.success && response?.data) {
+          // Map the API response to our interface
           console.log('=== MAPPING VENUES ===');
           const mappedVenues = response.data.competitionVenues.map(venue => {
             const mapped = this.mapApiResponseToCompetitionVenue(venue);
@@ -412,29 +476,19 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
             return mapped;
           });
           
+          // Remove duplicate venues by name
           console.log('=== REMOVING DUPLICATES ===');
           console.log(`Venues before deduplication: ${mappedVenues.length}`);
           this.competitionVenues = this.removeDuplicateVenues(mappedVenues);
           console.log(`Venues after deduplication: ${this.competitionVenues.length}`);
           
-          // Filter venues based on user role
-          if (this.isVenueOwner) {
-            console.log('Filtering venues for venue owner...');
-            this.competitionVenues = this.competitionVenues.filter(venue => venue.id === this.venueOwnerVenueId);
-            console.log('Filtered venues for venue owner:', this.competitionVenues);
-          } else if (this.isVendorOwner) {
-            console.log('Filtering venues for vendor owner...');
-            this.competitionVenues = this.competitionVenues.filter(venue => venue.venueOwnerId === this.venueOwnerVenueId);
-          } else if (this.isAdmin) {
-            console.log('Admin viewing all venues...');
-            // No filtering for admin
-          }
-
-          console.log('Filtered venues:', this.competitionVenues);
-          
+          // Apply frontend-based distance filtering and calculate distances
           this.applyDistanceFilter();
+          
+          // Calculate statistics based on filtered venues
           this.calculateStatistics();
           
+          // Force UI refresh after data is loaded
           setTimeout(() => {
             this.cdr.detectChanges();
           }, 100);
@@ -455,19 +509,24 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
         console.log('=== ERROR: LOADING STATE SET TO FALSE ===');
         console.log('Loading is now:', this.loading);
         
+        // Force change detection
         this.cdr.detectChanges();
         
         console.error('Error loading competition venues:', error);
         
+        // Always ensure statistics is initialized first
         if (!this.statistics) {
           this.statistics = this.getEmptyStatistics();
         }
         
+        // Check if this is a 400 error with coordinate issues but still has data structure
         if (error.status === 400 && error.error?.data) {
+          // Handle 400 error but with data (coordinates missing)
           console.log('=== 400 ERROR WITH DATA - APPLYING DEDUPLICATION ===');
           const rawVenues = error.error.data.competitionVenues || [];
           console.log(`Venues from error response before deduplication: ${rawVenues.length}`);
           
+          // Map venues and apply deduplication
           const mappedVenues = rawVenues.map(venue => this.mapApiResponseToCompetitionVenue(venue));
           this.competitionVenues = this.removeDuplicateVenues(mappedVenues);
           
@@ -515,35 +574,23 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
     this.subscriptions.add(sub);
   }
 
-  // Fixed method to extract prices from venue data
-  private extractPricesFromVenue(venue: any): {vegPrice: number, nonVegPrice: number, avgPrice: number} {
+
+
+  private mapToCompetitionVenue(venue: any, isCurrentVenue: boolean = false): CompetitionVenue {
+    // Calculate prices from foodMenuType
     let vegPrice = 0;
     let nonVegPrice = 0;
     let avgPrice = 0;
 
     if (venue.foodMenuType) {
-      // Extract veg price
-      if (venue.foodMenuType.veg_food && Array.isArray(venue.foodMenuType.veg_food) && venue.foodMenuType.veg_food.length > 0) {
-        const vegItem = venue.foodMenuType.veg_food.find(item => 
-          item && !item.disabled && item.value && parseFloat(item.value) > 0
-        );
-        if (vegItem) {
-          vegPrice = parseFloat(vegItem.value) || 0;
-        }
+      if (venue.foodMenuType.veg_food && venue.foodMenuType.veg_food.length > 0) {
+        vegPrice = venue.foodMenuType.veg_food[0].value || 0;
       }
-
-      // Extract non-veg price - FIXED LOGIC
-      if (venue.foodMenuType.non_veg && Array.isArray(venue.foodMenuType.non_veg) && venue.foodMenuType.non_veg.length > 0) {
-        // Find the first valid non-veg item that is not disabled and has a valid price
-        const nonVegItem = venue.foodMenuType.non_veg.find(item => 
-          item && !item.disabled && item.value && parseFloat(item.value) > 0
-        );
-        if (nonVegItem) {
-          nonVegPrice = parseFloat(nonVegItem.value) || 0;
-        }
+      if (venue.foodMenuType.non_veg_food && venue.foodMenuType.non_veg_food.length > 0) {
+        nonVegPrice = venue.foodMenuType.non_veg_food[0].value || 0;
       }
       
-      // Calculate average price
+      // Average of veg and non-veg prices
       if (vegPrice > 0 && nonVegPrice > 0) {
         avgPrice = (vegPrice + nonVegPrice) / 2;
       } else if (vegPrice > 0) {
@@ -553,13 +600,7 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       }
     }
 
-    return { vegPrice, nonVegPrice, avgPrice };
-  }
-
-  private mapToCompetitionVenue(venue: any, isCurrentVenue: boolean = false): CompetitionVenue {
-    // Use the fixed price extraction method
-    const prices = this.extractPricesFromVenue(venue);
-    
+    // Parse amenities
     let amenitiesList: string[] = [];
     if (venue.amenities) {
       if (typeof venue.amenities === 'string') {
@@ -569,10 +610,13 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       }
     }
 
+    // Extract coordinates from multiple possible field names
     const latitude = venue.latitude ? parseFloat(venue.latitude) : 
                     (venue.lat ? parseFloat(venue.lat) : undefined);
     const longitude = venue.longitude ? parseFloat(venue.longitude) : 
                      (venue.lng ? parseFloat(venue.lng) : undefined);
+
+    console.log(`Mapping venue ${venue.name}: coordinates lat=${latitude}, lng=${longitude}, isCurrentVenue=${isCurrentVenue}`);
 
     return {
       id: venue.id || venue._id,
@@ -581,11 +625,11 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       cityname: venue.cityname || '',
       subarea: venue.subarea || venue.subareadata?.[0]?.name || '',
       capacity: venue.capacity || 0,
-      minPrice: venue.minPrice || Math.min(prices.vegPrice, prices.nonVegPrice) || 0,
-      maxPrice: venue.maxPrice || Math.max(prices.vegPrice, prices.nonVegPrice) || 0,
-      avgPrice: prices.avgPrice,
-      vegPrice: prices.vegPrice,
-      nonVegPrice: prices.nonVegPrice,
+      minPrice: venue.minPrice || Math.min(vegPrice, nonVegPrice) || 0,
+      maxPrice: venue.maxPrice || Math.max(vegPrice, nonVegPrice) || 0,
+      avgPrice: avgPrice,
+      vegPrice: vegPrice,
+      nonVegPrice: nonVegPrice,
       theatreCapacity: venue.theaterSitting || venue.theatreCapacity || 0,
       floatingCapacity: venue.floatingCapacity || venue.capacity || 0,
       amenities: amenitiesList,
@@ -605,7 +649,7 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
   }
 
   private mapApiResponseToCompetitionVenue(venue: any): CompetitionVenue {
-    console.log('Mapping venue:', venue.name);
+    console.log('Mapping venue:', venue.name); // Debug log
     console.log('Raw coordinates from API:', { 
       latitude: venue.latitude, 
       longitude: venue.longitude, 
@@ -625,7 +669,7 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       cityname: venue.cityname || '',
       subarea: venue.subarea || '',
       capacity: venue.capacity || 0,
-      distance: undefined,
+      distance: undefined, // Don't set default distance, let frontend calculate it
       minPrice: venue.minPrice || 0,
       maxPrice: venue.maxPrice || 0,
       avgPrice: venue.avgPrice || 0,
@@ -645,9 +689,10 @@ export class CompetitionAnalysisComponent implements OnInit, OnDestroy {
       email: venue.email || '',
       mobileNumber: venue.mobileNumber || '',
       propertyType: venue.propertyType || '',
-      isCurrentVenue: venue.isCurrentVenue || false
+      isCurrentVenue: venue.isCurrentVenue || false // Use the flag from backend
     };
   }
+
   private getEmptyStatistics() {
     return {
       totalCompetitors: 0,
