@@ -1,276 +1,50 @@
-<!-- Loading State -->
-<div *ngIf="loading" class="loading-container">
-    <div class="spinner"></div>
-    <p>Loading blog posts...</p>
-  </div>
+<div class="blog-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <h1 class="hero-title">Our Blog</h1>
+      <p class="hero-subtitle">Discover stories, tips, and insights from experts to help you stay ahead.</p>
+    </div>
+  </section>
 
-  <!-- Main Blog Container -->
-  <div *ngIf="!loading" class="blog-container">
+  <!-- Blog Cards Section -->
+  <section class="blog-cards-section">
+    <div class="container">
+      <h2 class="section-title">Latest Blog Posts</h2>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-      <div class="container">
-        <h1 class="hero-title">Our Blog</h1>
-        <p class="hero-subtitle">Discover stories, insights, and inspiration</p>
-      </div>
-    </section>
+      <!-- Grid of Blog Cards -->
+      <div class="blog-cards-grid">
+        <!-- Loop through blog posts -->
+        <div class="blog-card" *ngFor="let post of blogPosts">
+          <div class="card-image">
+            <img [src]="post.imageUrl" alt="Blog Post Image">
+          </div>
+          <div class="card-content">
+            <div class="post-meta">
+              <span class="category">{{ post.category }}</span>
+              <span class="date">{{ post.date }}</span>
+              <span class="reading-time">{{ post.readingTime }}</span>
+            </div>
+            <h3 class="card-title">{{ post.title }}</h3>
+            <p class="card-description">{{ post.excerpt }}</p>
 
-    <!-- Navigation Tabs -->
-    <section class="blog-navigation">
-      <div class="container">
-        <div class="nav-tabs">
-          <button
-            class="nav-tab"
-            [class.active]="activeTab === 'all'"
-            (click)="setActiveTab('all')">
-            All Posts
-          </button>
-          <button
-            class="nav-tab"
-            [class.active]="activeTab === 'featured'"
-            (click)="setActiveTab('featured')">
-            Featured
-          </button>
-          <button
-            class="nav-tab"
-            [class.active]="activeTab === 'instagram'"
-            (click)="setActiveTab('instagram')">
-            Instagram
-          </button>
-          <button
-            class="nav-tab"
-            [class.active]="activeTab === 'regular'"
-            (click)="setActiveTab('regular')">
-            Latest Posts
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Featured Posts Section -->
-    <section *ngIf="activeTab === 'all' || activeTab === 'featured'" class="featured-section">
-      <div class="container">
-        <h2 class="section-title">Featured Posts</h2>
-        <div class="featured-grid" *ngIf="featuredPosts.length > 0">
-          <article
-            *ngFor="let post of featuredPosts; let i = index"
-            class="featured-card"
-            [class.large]="i === 0">
-
-            <div class="card-image">
-                <img [src]="getImageUrl(post.banner_image && post.banner_image.length > 0 ? post.banner_image[0].banner_image_src : '')"
-                [alt]="post.banner_title"
-                loading="lazy">
-              <div class="post-badge">Featured</div>
+            <div class="tags">
+              <span class="tag" *ngFor="let tag of post.tags">{{ tag }}</span>
             </div>
 
-            <div class="card-content">
-              <div class="post-meta">
-                <span class="category">{{formatCategoryName(post.category)}}</span>
-                <span class="date">{{post.publish_date | date:'MMM dd, yyyy'}}</span>
-                <span class="reading-time" *ngIf="post.reading_time">{{post.reading_time}}</span>
-              </div>
-
-              <h3 class="post-title">{{post.banner_title}}</h3>
-              <p class="post-excerpt">{{truncateText(post.banner_content, 120)}}</p>
-
-              <div class="post-footer">
-                <div class="author">
-                  <span>By {{post.author}}</span>
-                </div>
-                <div class="post-tags" *ngIf="getPostTags(post).length > 0">
-                  <span class="tag" *ngFor="let tag of getPostTags(post).slice(0, 2)">
-                    {{tag}}
-                  </span>
-                </div>
-              </div>
-
-              <div class="post-actions">
-                <button class="read-more-btn" [routerLink]="['/blog', post.slug]">
-                  Read More
-                </button>
-                <div class="share-buttons">
-                  <button (click)="sharePost(post, 'facebook')" class="share-btn facebook">
-                    <i class="pi pi-facebook"></i>
-                  </button>
-                  <button (click)="sharePost(post, 'twitter')" class="share-btn twitter">
-                    <i class="pi pi-twitter"></i>
-                  </button>
-                  <button (click)="sharePost(post, 'linkedin')" class="share-btn linkedin">
-                    <i class="pi pi-linkedin"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div *ngIf="featuredPosts.length === 0" class="no-posts">
-          <p>No featured posts available.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Instagram Posts Section -->
-    <section *ngIf="activeTab === 'all' || activeTab === 'instagram'" class="instagram-section">
-      <div class="container">
-        <h2 class="section-title">From Instagram</h2>
-        <div class="instagram-grid" *ngIf="instagramPosts.length > 0">
-          <div
-            *ngFor="let post of instagramPosts"
-            class="instagram-card"
-            (click)="openInstagramPost(post.instagram_url)">
-
-            <div class="instagram-image">
-              <img
-                [src]="getImageUrl(post.banner_image && post.banner_image[0] ? post.banner_image[0].banner_image_src : '')"
-                [alt]="post.banner_title"
-                loading="lazy">
-              <div class="instagram-overlay">
-                <div class="instagram-icon">
-                  <i class="pi pi-instagram"></i>
-                </div>
-                <div class="instagram-stats" *ngIf="post.is_video">
-                  <i class="pi pi-play"></i>
-                </div>
-              </div>
-            </div>
-
-            <div class="instagram-caption">
-              <p>{{truncateText(post.instagram_caption || post.banner_title, 60)}}</p>
+            <div class="post-footer">
+              <span class="author">By {{ post.author }}</span>
             </div>
           </div>
         </div>
-
-        <div *ngIf="instagramPosts.length === 0" class="no-posts">
-          <p>No Instagram posts available.</p>
-        </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Regular Posts Section -->
-    <section *ngIf="activeTab === 'all' || activeTab === 'regular'" class="regular-posts-section">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">Latest Posts</h2>
-
-          <!-- Search and Filter Controls -->
-          <div class="controls-row">
-            <div class="search-box">
-              <input
-                type="text"
-                [(ngModel)]="searchTerm"
-                (input)="onSearch()"
-                placeholder="Search posts..."
-                class="search-input">
-              <i class="pi pi-search search-icon"></i>
-            </div>
-
-            <div class="category-filter">
-              <select
-                [(ngModel)]="selectedCategory"
-                (change)="setActiveCategory($event.target.value)"
-                class="category-select">
-                <option value="all">All Categories</option>
-                <option *ngFor="let category of categories" [value]="category.id">
-                  {{category.name}}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Posts Grid -->
-        <div class="posts-grid" *ngIf="getFilteredPosts().length > 0">
-          <article *ngFor="let post of getFilteredPosts()" class="post-card">
-            <div class="card-image">
-              <img
-                [src]="getImageUrl(post.banner_image && post.banner_image[0] ? post.banner_image[0].banner_image_src : '')"
-                [alt]="post.banner_title"
-                loading="lazy">
-            </div>
-
-            <div class="card-content">
-              <div class="post-meta">
-                <span class="category">{{formatCategoryName(post.category)}}</span>
-                <span class="date">{{post.publish_date | date:'MMM dd, yyyy'}}</span>
-                <span class="reading-time" *ngIf="post.reading_time">{{post.reading_time}}</span>
-              </div>
-
-              <h3 class="post-title">
-                <a [routerLink]="['/blog', post.slug]">{{post.banner_title}}</a>
-              </h3>
-
-              <p class="post-excerpt">{{truncateText(post.banner_content, 150)}}</p>
-
-              <div class="post-footer">
-                <div class="author">
-                  <span>By {{post.author}}</span>
-                </div>
-
-                <div class="post-tags" *ngIf="getPostTags(post).length > 0">
-                  <span class="tag" *ngFor="let tag of getPostTags(post).slice(0, 3)">
-                    {{tag}}
-                  </span>
-                </div>
-              </div>
-
-              <div class="post-actions">
-                <button class="read-more-btn" [routerLink]="['/blog', post.slug]">
-                  Read More
-                </button>
-                <div class="share-buttons">
-                  <button (click)="sharePost(post, 'facebook')" class="share-btn">
-                    <i class="pi pi-facebook"></i>
-                  </button>
-                  <button (click)="sharePost(post, 'twitter')" class="share-btn">
-                    <i class="pi pi-twitter"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <!-- No Posts Message -->
-        <div *ngIf="getFilteredPosts().length === 0 && !loading" class="no-posts">
-          <div class="no-posts-content">
-            <i class="pi pi-search no-posts-icon"></i>
-            <h3>No posts found</h3>
-            <p *ngIf="searchTerm">No posts match your search for "{{searchTerm}}"</p>
-            <p *ngIf="selectedCategory !== 'all' && !searchTerm">No posts found in this category</p>
-            <p *ngIf="selectedCategory === 'all' && !searchTerm">No posts available at the moment</p>
-          </div>
-        </div>
-
-        <!-- Pagination -->
-        <div class="pagination" *ngIf="getTotalPages() > 1">
-          <button
-            class="page-btn prev"
-            [disabled]="currentPage === 1"
-            (click)="prevPage()">
-            <i class="pi pi-chevron-left"></i>
-            Previous
-          </button>
-
-          <div class="page-numbers">
-            <button
-              *ngFor="let page of [].constructor(getTotalPages()); let i = index"
-              class="page-number"
-              [class.active]="currentPage === i + 1"
-              (click)="goToPage(i + 1)">
-              {{i + 1}}
-            </button>
-          </div>
-
-          <button
-            class="page-btn next"
-            [disabled]="currentPage === getTotalPages()"
-            (click)="nextPage()">
-            Next
-            <i class="pi pi-chevron-right"></i>
-          </button>
-        </div>
-      </div>
-    </section>
-  </div>
+  <!-- Thanks for Visiting Section -->
+  <section class="thanks-for-visiting">
+    <div class="container">
+      <p>Thanks for visiting our blog! We hope you found the content useful. Stay tuned for more posts and updates!</p>
+    </div>
+  </section>
+</div>
