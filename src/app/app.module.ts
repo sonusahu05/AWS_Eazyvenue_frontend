@@ -214,6 +214,7 @@ import { FaqComponent } from './frontend/faq/faq.component';
 import { HotMuhuratsComponent } from './frontend/hot-muhrats/muhrats.component';
 import { SignupComponent } from './pages/venue-signup.component';
 import { BookingAnalyticsComponent } from './manage/analytics/bookings/booking-analytics.component';
+import { InstagramBlogComponent } from './components/shared/instagram-blog/instagram-blog.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -433,6 +434,7 @@ FullCalendarModule.registerPlugins([
         VendorCompareComponent,
         CancellationComponent,
         BookingAnalyticsComponent,
+        InstagramBlogComponent,
     ],
     providers: [
         { provide: LocationStrategy, useClass: PathLocationStrategy },
