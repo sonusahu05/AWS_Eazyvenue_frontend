@@ -1092,3 +1092,286 @@
   }
 }
 
+@media (max-width: 768px) {
+  /* Flex container for the cards only */
+  .overview-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Adds space between the cards */
+  }
+
+  /* Adjust each card to take up 50% of the width */
+  .overview-card {
+    flex: 1 1 calc(50% - 10px); /* 50% width minus gap */
+    margin-bottom: 15px; /* Adds space at the bottom of each card */
+    box-sizing: border-box; /* Ensures padding and margin are included in width */
+  }
+
+  /* Ensure the grid classes don't interfere with other sections like charts */
+  .overview-cards .p-col-12 {
+    flex: 1 1 calc(50% - 10px); /* Apply 50% width to the cards only */
+  }
+
+  .overview-cards .p-md-3 {
+    flex: 1 1 calc(50% - 10px); /* Apply 50% width to the cards only */
+  }
+}
+
+@media (max-width: 576px) {
+  /* For smaller screens, ensure the cards take full width */
+  .overview-card {
+    flex: 1 1 100%; /* Full width on smaller screens */
+  }
+}
+
+
+
+
+  /* Table container styling */
+.subareas-table-section {
+  width: 100%;
+  overflow-x: auto; /* Allow horizontal scrolling */
+}
+
+.p-datatable-gridlines {
+  table-layout: fixed; /* Fix table layout */
+  width: 100%;
+}
+
+.p-datatable {
+  display: block;
+  overflow-x: auto;
+}
+
+/* Mobile-specific adjustments for horizontal scrolling */
+@media (max-width: 768px) {
+  .subareas-table-section .p-datatable {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    display: block; /* Prevent switching to cards */
+  }
+
+  /* Adjust cell widths for smaller screens */
+  .subarea-col, .clicks-col, .users-col, .venues-col, .score-col {
+    width: 20%;
+  }
+
+  .p-datatable td, .p-datatable th {
+    font-size: 0.8rem !important;
+    padding: 8px !important;
+  }
+}
+/* Table container styling */
+.subareas-table-section {
+  width: 100%;
+  overflow-x: auto; /* Allow horizontal scrolling */
+}
+
+.p-datatable-gridlines {
+  table-layout: fixed; /* Fix table layout to ensure columns align */
+  width: 100%;
+}
+
+/* Ensure table is scrollable */
+.p-datatable {
+  display: block;
+  overflow-x: auto;
+}
+
+/* Mobile-specific adjustments for horizontal scrolling */
+@media (max-width: 768px) {
+  .subareas-table-section .p-datatable {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    display: block; /* Prevent switching to cards */
+  }
+
+  /* Set equal widths for all columns for mobile view */
+  .subarea-col, .clicks-col, .users-col, .venues-col, .score-col {
+    width: 20%; /* Each column gets equal width */
+    min-width: 120px; /* Ensures columns don’t shrink too much */
+  }
+
+  /* Ensure proper alignment and padding for header and body cells */
+  .p-datatable th, .p-datatable td {
+    text-align: center; /* Centers text for consistency */
+    padding: 10px !important; /* Ensures padding is the same across all cells */
+    font-size: 0.85rem !important; /* Make text more readable */
+  }
+  
+  .subarea-name,
+  .clicks-count,
+  .user-count,
+  .venue-count {
+    display: block; /* Ensure block display for better mobile alignment */
+    text-align: center; /* Center the text */
+  }
+}
+/* Table container styling */
+.subareas-table-section {
+  width: 100%;
+  overflow-x: auto; /* Allow horizontal scrolling */
+}
+
+.p-datatable-gridlines {
+  table-layout: fixed; /* Fix table layout to ensure columns align */
+  width: 100%;
+}
+
+.p-datatable {
+  display: block;
+  overflow-x: auto;
+}
+
+/* Mobile-specific adjustments for horizontal scrolling */
+@media (max-width: 768px) {
+  .subareas-table-section .p-datatable {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    display: block; /* Prevent switching to cards */
+  }
+
+  /* Set equal widths for all columns for mobile view */
+  .subarea-col, .clicks-col, .users-col, .venues-col, .score-col {
+    width: 20%; /* Each column gets equal width */
+    min-width: 120px; /* Ensures columns don’t shrink too much */
+  }
+
+  /* Ensure proper alignment and padding for header and body cells */
+  .p-datatable th, .p-datatable td {
+    text-align: center; /* Centers text for consistency */
+    padding: 10px !important; /* Ensures padding is the same across all cells */
+    font-size: 0.85rem !important; /* Make text more readable */
+  }
+  
+  /* Make sure the content inside the cells is aligned properly */
+  .subarea-name,
+  .clicks-count,
+  .user-count,
+  .venue-count {
+    display: block; /* Ensure block display for better mobile alignment */
+    text-align: center; /* Center the text */
+  }
+}
+/* Device Analytics Table container styling */
+.device-analytics-section {
+  width: 100%;
+  overflow-x: auto; /* Allow horizontal scrolling */
+}
+
+.p-datatable-gridlines {
+  table-layout: fixed; /* Fix table layout to ensure columns align */
+  width: 100%;
+}
+
+.p-datatable {
+  display: block;
+  overflow-x: auto;
+}
+
+/* Mobile-specific adjustments for horizontal scrolling */
+@media (max-width: 768px) {
+  .device-analytics-section .p-datatable {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    display: block; /* Prevent switching to cards */
+  }
+
+  /* Set equal widths for all columns */
+  .device-type-col, .platform-col, .browser-col, .clicks-col, .score-col, .time-col {
+    width: 16% !important; /* Equal width for each column */
+    min-width: 120px !important; /* Prevent columns from shrinking too much */
+  }
+
+  /* Ensure proper alignment and padding for header and body cells */
+  .p-datatable th, .p-datatable td {
+    text-align: center; /* Centers text for consistency */
+    padding: 10px !important; /* Ensures padding is the same across all cells */
+    font-size: 0.85rem !important; /* Make text more readable */
+  }
+  
+  .device-type {
+    display: inline-block;
+    text-align: center; /* Center the text */
+  }
+
+  /* Adjust the display for better mobile alignment */
+  .pi-mobile, .pi-desktop {
+    font-size: 1.2rem !important;
+  }
+
+  /* Handle empty data case for readability */
+  .quality-score-na {
+    font-style: italic;
+    color: #bbb; /* Ensure that "N/A" has different styling */
+  }
+}
+/* Popular Venues Table container styling */
+.venues-table-section {
+  width: 100%;
+  overflow-x: auto; /* Allow horizontal scrolling */
+}
+
+/* Fix the table layout for equal column widths */
+.p-datatable-gridlines {
+  table-layout: fixed; /* Fixed layout ensures equal column widths */
+  width: 100%;
+}
+
+/* Ensure the table is scrollable */
+.p-datatable {
+  display: block;
+  overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+/* Mobile-specific adjustments for horizontal scrolling */
+@media (max-width: 768px) {
+  .venues-table-section .p-datatable {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    display: block; /* Prevent switching to cards on small screens */
+  }
+
+  /* Equalize column widths for mobile view */
+  .venue-name-col, .clicks-col, .users-col, .score-col, .engagement-col, .enquiry-col, .cities-col, .subareas-col, .actions-col {
+    width: 16%; /* Set equal width for each column */
+    min-width: 100px; /* Prevent columns from shrinking too much */
+  }
+
+  /* Ensure proper alignment and padding for header and body cells */
+  .p-datatable th, .p-datatable td {
+    text-align: center; /* Center text in each cell */
+    padding: 12px 8px !important; /* Add padding for spacing */
+    font-size: 0.85rem !important; /* Adjust font size for mobile */
+  }
+
+  /* Ensure the content in each cell is aligned properly */
+  .venue-name, .clicks-count, .user-count, .score-cell {
+    display: block;
+    text-align: center; /* Center text content in cells */
+  }
+
+  .city-tag, .subarea-tag {
+    display: inline-block;
+    margin-right: 5px; /* Space between city/subarea tags */
+  }
+
+  /* Adjust button styling for mobile */
+  .p-button-rounded {
+    font-size: 0.8rem; /* Smaller button text on mobile */
+    padding: 5px 10px; /* Adjust padding for better fit */
+  }
+}
+
+/* Adjustments for smaller screen (less than 576px) */
+@media (max-width: 576px) {
+  .venues-table-section .p-datatable {
+    overflow-x: auto; /* Ensure table can still scroll horizontally */
+  }
+
+  .p-datatable th, .p-datatable td {
+    font-size: 0.75rem !important; /* Make text smaller on very small screens */
+    padding: 8px !important; /* Reduce padding for small screens */
+  }
+
+  /* Adjust column width slightly more for smaller devices */
+  .venue-name-col, .clicks-col, .users-col, .score-col, .engagement-col, .enquiry-col, .cities-col, .subareas-col, .actions-col {
+    width: 18%; /* Set a reasonable width for smaller screens */
+    min-width: 80px;
+  }
+}

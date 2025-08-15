@@ -228,190 +228,316 @@
     </div>
     
     <!-- Popular Venues Table -->
-    <div class="venues-table-section p-mb-4">
-        <div class="card">
-            <div class="card-header p-d-flex p-jc-between p-ai-center p-mb-3">
-                <div>
-                    <h3>Popular Venues</h3>
-                    <p class="text-muted">Detailed venue performance metrics</p>
+<div class="venues-table-section p-mb-4">
+  <div class="card">
+    <div class="card-header p-d-flex p-jc-between p-ai-center p-mb-3">
+      <div>
+        <h3>Popular Venues</h3>
+        <p class="text-muted">Detailed venue performance metrics</p>
+      </div>
+    </div>
+
+    <p-table 
+      [value]="popularVenues"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [sortField]="'clicks'"
+      [sortOrder]="1"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} venues"
+      [globalFilterFields]="['venueName', 'cityname']"
+      styleClass="p-datatable-gridlines modern-table"
+      [scrollable]="true"
+      [loading]="loading"
+      [reorderableColumns]="true"
+      [resizableColumns]="true">
+
+      <!-- Global Filter -->
+      <ng-template pTemplate="caption">
+        <div class="table-caption">
+          <div class="search-section">
+            <span class="p-input-icon-right search-container">
+              <input 
+                pInputText 
+                type="text" 
+                [(ngModel)]="searchValue"
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
+                placeholder="Search venues..."
+                class="search-input" />
+              <i class="pi pi-search search-icon"></i>
+            </span>
+            <div class="search-hint">
+              <i class="pi pi-info-circle"></i>
+              <span>Find venues by typing their name</span>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- Table Header -->
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="venueName" pReorderableColumn class="venue-name-col">
+            <div class="flex align-items-center">
+              Venue Name
+              <p-sortIcon field="venueName"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="clicks" pReorderableColumn class="clicks-col">
+            <div class="flex align-items-center">
+              Total Clicks
+              <p-sortIcon field="clicks"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="uniqueUsersCount" pReorderableColumn class="users-col">
+            <div class="flex align-items-center">
+              Unique Users
+              <p-sortIcon field="uniqueUsersCount"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="averageQualityScore" pReorderableColumn class="score-col">
+            <div class="flex align-items-center">
+              Quality Score
+              <p-sortIcon field="averageQualityScore"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="engagementLevel" pReorderableColumn class="engagement-col">
+            <div class="flex align-items-center">
+              Engagement Level
+              <p-sortIcon field="engagementLevel"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="enquiryRate" pReorderableColumn class="enquiry-col">
+            <div class="flex align-items-center">
+              Enquiry Rate
+              <p-sortIcon field="enquiryRate"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="topCities" pReorderableColumn class="cities-col">
+            <div class="flex align-items-center">
+              Top Cities
+              <p-sortIcon field="topCities"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="topSubareas" pReorderableColumn class="subareas-col">
+            <div class="flex align-items-center">
+              Top Subareas
+              <p-sortIcon field="topSubareas"></p-sortIcon>
+            </div>
+          </th>
+          <th class="actions-col">Actions</th>
+        </tr>
+      </ng-template>
+
+      <!-- Table Body -->
+      <ng-template pTemplate="body" let-venue>
+        <tr>
+          <td class="venue-name-cell">
+            <div class="venue-name-container">
+              <span class="venue-name">{{ venue.name }}</span>
+            </div>
+          </td>
+          <td class="clicks-cell">
+            <span class="clicks-count">{{ venue.clicks | number }}</span>
+          </td>
+          <td class="users-cell">
+            <span class="user-count">{{ venue.uniqueUsersCount | number }}</span>
+          </td>
+          <td class="score-cell">
+            <p-tag 
+              *ngIf="venue.averageQualityScore !== null" 
+              [value]="venue.averageQualityScore | number:'1.2-2'" 
+              [severity]="getQualityScoreColor(venue.averageQualityScore)">
+            </p-tag>
+            <span *ngIf="venue.averageQualityScore === null" class="quality-score-na">N/A</span>
+          </td>
+          <td class="engagement-cell">
+            <span class="engagement-level">{{ venue.engagementLevel }}</span>
+          </td>
+          <td class="enquiry-cell">
+            <span class="enquiry-rate">{{ venue.enquiryRate }}%</span>
+          </td>
+          <td class="cities-cell">
+            <span *ngFor="let city of venue.topCities?.slice(0, 3); let last = last" class="city-tag">
+              {{ city }}<span *ngIf="!last">, </span>
+            </span>
+          </td>
+          <td class="subareas-cell">
+            <span *ngFor="let subarea of venue.topSubareas?.slice(0, 3); let last = last" class="subarea-tag">
+              {{ subarea }}<span *ngIf="!last">, </span>
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-text p-button-sm"
+              pTooltip="View Details" (click)="viewVenueDetails(venue)">
+            </button>
+            <button pButton pRipple icon="pi pi-users" class="p-button-rounded p-button-text p-button-sm"
+              pTooltip="View User Clicks" (click)="viewUserClickDetails(venue)">
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- Empty State -->
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="getColumnCount()" class="empty-state-cell">
+            <div class="empty-state-container">
+              <div class="empty-state-content">
+                <div class="empty-state-icon">
+                  <i class="pi pi-chart-bar" style="font-size: 3rem; color: #ccc;"></i>
                 </div>
+                <div class="empty-state-message">
+                  <h3>No Analytics Data</h3>
+                  <p>No venue analytics data available for the selected period.</p>
+                </div>
+              </div>
             </div>
-            
-            <p-table 
-                [value]="popularVenues" 
-                [paginator]="true" 
-                [rows]="10"
-                [responsive]="true"
-                styleClass="p-datatable-gridlines"
-                [loading]="loading">
-                
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Venue Name</th>
-                        <th>Total Clicks</th>
-                        <th>Unique Users</th>
-                        <th>Quality Score</th>
-                        <th>Engagement Level</th>
-                        <th>Enquiry Rate</th>
-                        <th>Top Cities</th>
-                        <th>Top Subareas</th>
-                        <th>Actions</th>
-                    </tr>
-                </ng-template>
-                
-                <ng-template pTemplate="body" let-venue>
-                    <tr>
-                        <td>
-                            <div class="venue-name-container" 
-                                 [pTooltip]="venue.venueName || venue.venueId"
-                                 tooltipPosition="top">
-                                <span class="venue-name multiline-text">
-                                    {{ getVenueDisplayName(venue) }}
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="click-count">{{ venue.clicks | number }}</span>
-                        </td>
-                        <td>
-                            <span class="user-count">{{ venue.uniqueUsersCount | number }}</span>
-                        </td>
-                        <td>
-                            <p-tag 
-                                *ngIf="hasQualityScore(venue)"
-                                [value]="getQualityScoreDisplay(venue)" 
-                                [severity]="getQualityScoreColor(venue.averageQualityScore || venue.qualityScore || venue.avgQualityScore)"
-                                [attr.data-quality-score]="getQualityScoreDisplay(venue)">
-                            </p-tag>
-                            <span *ngIf="!hasQualityScore(venue)" class="quality-score-na">N/A</span>
-                            <!-- Fallback text for PDF capture -->
-                            <span class="pdf-fallback" style="display: none;">{{ getQualityScoreDisplay(venue) }}</span>
-                        </td>
-                        <td>
-                            <span *ngIf="hasQualityScore(venue)" 
-                                  class="engagement-level" 
-                                  [class]="'level-' + getEngagementLevel(venue.averageQualityScore || venue.qualityScore || venue.avgQualityScore).toLowerCase()">
-                                {{ getEngagementLevel(venue.averageQualityScore || venue.qualityScore || venue.avgQualityScore) }}
-                            </span>
-                            <span *ngIf="!hasQualityScore(venue)" class="engagement-level level-na">
-                                N/A
-                            </span>
-                        </td>
-                        <td>
-                            <span class="enquiry-rate">{{ venue.enquiryRate }}%</span>
-                        </td>
-                        <td>
-                            <div class="top-cities">
-                                <span *ngFor="let city of venue.topCities?.slice(0, 3); let last = last" 
-                                      class="city-tag">
-                                    {{ city }}<span *ngIf="!last">, </span>
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="top-subareas">
-                                <span *ngFor="let subarea of venue.topSubareas?.slice(0, 3); let last = last" 
-                                      class="subarea-tag">
-                                    {{ subarea }}<span *ngIf="!last">, </span>
-                                </span>
-                                <span *ngIf="!venue.topSubareas || venue.topSubareas.length === 0" 
-                                      class="text-muted">-</span>
-                            </div>
-                        </td>
-                        <td>
-                            <button 
-                                pButton 
-                                pRipple 
-                                icon="pi pi-eye" 
-                                class="p-button-rounded p-button-text p-button-sm p-mr-2"
-                                pTooltip="View Details"
-                                (click)="viewVenueDetails(venue)">
-                            </button>
-                            <button 
-                                pButton 
-                                pRipple 
-                                icon="pi pi-users" 
-                                class="p-button-rounded p-button-text p-button-sm"
-                                pTooltip="View User Clicks"
-                                (click)="viewUserClickDetails(venue)">
-                            </button>
-                        </td>
-                    </tr>
-                </ng-template>
-                
-                <ng-template pTemplate="emptymessage">
-                    <tr>
-                        <td colspan="9" class="text-center">
-                            <div class="empty-state">
-                                <i class="pi pi-chart-bar" style="font-size: 3rem; color: #ccc;"></i>
-                                <h4>No Analytics Data</h4>
-                                <p>No venue analytics data available for the selected period.</p>
-                            </div>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
-    </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
     
-    <!-- Device Analytics Table -->
-    <div class="device-analytics-section" *ngIf="deviceAnalytics.length > 0">
-        <div class="card">
-            <div class="card-header p-mb-3">
-                <h3>Device Analytics</h3>
-                <p class="text-muted">Detailed device and platform breakdown</p>
-            </div>
-            
-            <p-table 
-                [value]="deviceAnalytics" 
-                [paginator]="true" 
-                [rows]="10"
-                [responsive]="true"
-                styleClass="p-datatable-gridlines">
-                
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Platform</th>
-                        <th>Browser</th>
-                        <th>Device Type</th>
-                        <th>Total Clicks</th>
-                        <th>Avg Quality Score</th>
-                        <th>Avg Time Spent</th>
-                    </tr>
-                </ng-template>
-                
-                <ng-template pTemplate="body" let-device>
-                    <tr>
-                        <td>{{ device.platform || 'Unknown' }}</td>
-                        <td>{{ device.browser || 'Unknown' }}</td>
-                        <td>
-                            <span class="device-type" [class]="'device-' + (device.isMobile ? 'mobile' : 'desktop')">
-                                <i class="pi" [class]="device.isMobile ? 'pi-mobile' : 'pi-desktop'"></i>
-                                {{ device.isMobile ? 'Mobile' : 'Desktop' }}
-                            </span>
-                        </td>
-                        <td>{{ device.clicks | number }}</td>
-                        <td>
-                            <p-tag 
-                                *ngIf="device.averageQualityScore !== null && device.averageQualityScore !== undefined"
-                                [value]="device.averageQualityScore | number:'1.2-2'" 
-                                [severity]="getQualityScoreColor(device.averageQualityScore)"
-                                [attr.data-quality-score]="device.averageQualityScore">
-                            </p-tag>
-                            <span *ngIf="device.averageQualityScore === null || device.averageQualityScore === undefined" 
-                                  class="quality-score-na">N/A</span>
-                            <!-- Fallback text for PDF capture -->
-                            <span class="pdf-fallback" style="display: none;">
-                                {{ device.averageQualityScore !== null && device.averageQualityScore !== undefined ? 
-                                   (device.averageQualityScore | number:'1.2-2') : 'N/A' }}
-                            </span>
-                        </td>
-                        <td>{{ device.averageTimeSpent | number:'1.0-0' }}s</td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
+        <!-- Device Analytics Table -->
+<div class="device-analytics-section p-mb-4" *ngIf="deviceAnalytics.length > 0">
+  <div class="card">
+    <div class="card-header p-d-flex p-jc-between p-ai-center p-mb-3">
+      <div>
+        <h3>Device Analytics</h3>
+        <p class="text-muted">Detailed device and platform breakdown</p>
+      </div>
     </div>
+
+    <p-table
+      [value]="deviceAnalytics"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [sortField]="'clicks'"
+      [sortOrder]="1"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} devices"
+      [globalFilterFields]="['platform', 'browser', 'deviceType']"
+      styleClass="p-datatable-gridlines modern-table"
+      [scrollable]="true"
+      [loading]="loading"
+      [reorderableColumns]="true"
+      [resizableColumns]="true">
+
+      <!-- Global Filter -->
+      <ng-template pTemplate="caption">
+        <div class="table-caption">
+          <div class="search-section">
+            <span class="p-input-icon-right search-container">
+              <input
+                pInputText
+                type="text"
+                [(ngModel)]="searchValue"
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                placeholder="Search devices..."
+                class="search-input" />
+              <i class="pi pi-search search-icon"></i>
+            </span>
+            <div class="search-hint">
+              <i class="pi pi-info-circle"></i>
+              <span>Find devices by typing platform, browser, or device type</span>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- Table Header -->
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="platform" pReorderableColumn class="platform-col">
+            <div class="flex align-items-center">
+              Platform
+              <p-sortIcon field="platform"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="browser" pReorderableColumn class="browser-col">
+            <div class="flex align-items-center">
+              Browser
+              <p-sortIcon field="browser"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="deviceType" pReorderableColumn class="device-type-col">
+            <div class="flex align-items-center">
+              Device Type
+              <p-sortIcon field="deviceType"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="clicks" pReorderableColumn class="clicks-col">
+            <div class="flex align-items-center">
+              Total Clicks
+              <p-sortIcon field="clicks"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="averageQualityScore" pReorderableColumn class="score-col">
+            <div class="flex align-items-center">
+              Avg Quality Score
+              <p-sortIcon field="averageQualityScore"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="averageTimeSpent" pReorderableColumn class="time-col">
+            <div class="flex align-items-center">
+              Avg Time Spent
+              <p-sortIcon field="averageTimeSpent"></p-sortIcon>
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+
+      <!-- Table Body -->
+      <ng-template pTemplate="body" let-device>
+        <tr>
+          <td>{{ device.platform || 'Unknown' }}</td>
+          <td>{{ device.browser || 'Unknown' }}</td>
+          <td>
+            <span class="device-type" [class]="'device-' + (device.isMobile ? 'mobile' : 'desktop')">
+              <i class="pi" [class]="device.isMobile ? 'pi-mobile' : 'pi-desktop'"></i>
+              {{ device.isMobile ? 'Mobile' : 'Desktop' }}
+            </span>
+          </td>
+          <td>{{ device.clicks | number }}</td>
+          <td>
+            <p-tag *ngIf="device.averageQualityScore !== null && device.averageQualityScore !== undefined"
+              [value]="device.averageQualityScore | number:'1.2-2'"
+              [severity]="getQualityScoreColor(device.averageQualityScore)">
+            </p-tag>
+            <span *ngIf="device.averageQualityScore === null || device.averageQualityScore === undefined"
+              class="quality-score-na">N/A</span>
+          </td>
+          <td>{{ device.averageTimeSpent | number:'1.0-0' }}s</td>
+        </tr>
+      </ng-template>
+
+      <!-- Empty State -->
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="getColumnCount()" class="empty-state-cell">
+            <div class="empty-state-container">
+              <div class="empty-state-content">
+                <div class="empty-state-icon">
+                  <i class="pi pi-search"></i>
+                </div>
+                <div class="empty-state-message">
+                  <h3>No Device Data Found</h3>
+                  <p>No device analytics data available for the selected period.</p>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
 
 <!-- Venue Details Sidebar -->
 <p-sidebar 
@@ -563,72 +689,134 @@
 <br>
 <!-- Top Subareas Table -->
 <div class="subareas-table-section p-mb-4" *ngIf="topSubareas.length > 0">
-    <div class="card">
-        <div class="card-header p-d-flex p-jc-between p-ai-center p-mb-3">
-            <div>
-                <h3>Top Subareas</h3>
-                <p class="text-muted">Most active geographic locations</p>
-            </div>
-        </div>
-        
-        <p-table 
-            [value]="topSubareas" 
-            [paginator]="true" 
-            [rows]="10"
-            [responsive]="true"
-            styleClass="p-datatable-gridlines"
-            [loading]="loading">
-            
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>Subarea</th>
-                    <th>Total Clicks</th>
-                    <th>Unique Users</th>
-                    <th>Unique Venues</th>
-                    <th>Quality Score</th>
-                </tr>
-            </ng-template>
-            
-            <ng-template pTemplate="body" let-subarea>
-                <tr>
-                    <td>
-                        <span class="subarea-name font-bold">{{ subarea.subarea }}</span>
-                    </td>
-                    <td>
-                        <span class="click-count">{{ subarea.clicks | number }}</span>
-                    </td>
-                    <td>
-                        <span class="user-count">{{ subarea.uniqueUsers | number }}</span>
-                    </td>
-                    <td>
-                        <span class="venue-count">{{ subarea.uniqueVenues | number }}</span>
-                    </td>
-                    <td>
-                        <p-tag 
-                            [value]="subarea.averageQualityScore | number:'1.2-2'" 
-                            [severity]="getQualityScoreColor(subarea.averageQualityScore)"
-                            [attr.data-quality-score]="subarea.averageQualityScore">
-                        </p-tag>
-                        <!-- Fallback text for PDF capture -->
-                        <span class="pdf-fallback" style="display: none;">{{ subarea.averageQualityScore | number:'1.2-2' }}</span>
-                    </td>
-                </tr>
-            </ng-template>
-            
-            <ng-template pTemplate="emptymessage">
-                <tr>
-                    <td colspan="5" class="text-center">
-                        <div class="empty-state">
-                            <i class="pi pi-map-marker" style="font-size: 3rem; color: #ccc;"></i>
-                            <h4>No Subarea Data</h4>
-                            <p>No subarea analytics data available for the selected period.</p>
-                        </div>
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
+  <div class="card">
+    <div class="card-header p-d-flex p-jc-between p-ai-center p-mb-3">
+      <div>
+        <h3>Top Subareas</h3>
+        <p class="text-muted">Most active geographic locations</p>
+      </div>
     </div>
+    
+    <p-table 
+      [value]="topSubareas" 
+      [paginator]="true" 
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [sortField]="'clicks'"
+      [sortOrder]="1"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} subareas"
+      [globalFilterFields]="['subarea', 'cityname']"
+      styleClass="p-datatable-gridlines modern-table"
+      [scrollable]="true"
+      [loading]="loading"
+      [reorderableColumns]="true"
+      [resizableColumns]="true">
+
+      <!-- Global Filter -->
+      <ng-template pTemplate="caption">
+        <div class="table-caption">
+          <div class="search-section">
+            <span class="p-input-icon-right search-container">
+              <input 
+                pInputText 
+                type="text" 
+                [(ngModel)]="searchValue"
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
+                placeholder="Search subareas..."
+                class="search-input" />
+              <i class="pi pi-search search-icon"></i>
+            </span>
+            <div class="search-hint">
+              <i class="pi pi-info-circle"></i>
+              <span>Find subareas by typing their name</span>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- Table Header -->
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="subarea" pReorderableColumn class="subarea-col">
+            <div class="flex align-items-center">
+              Subarea
+              <p-sortIcon field="subarea"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="clicks" pReorderableColumn class="clicks-col">
+            <div class="flex align-items-center">
+              Total Clicks
+              <p-sortIcon field="clicks"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="uniqueUsers" pReorderableColumn class="users-col">
+            <div class="flex align-items-center">
+              Unique Users
+              <p-sortIcon field="uniqueUsers"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="uniqueVenues" pReorderableColumn class="venues-col">
+            <div class="flex align-items-center">
+              Unique Venues
+              <p-sortIcon field="uniqueVenues"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="averageQualityScore" pReorderableColumn class="score-col">
+            <div class="flex align-items-center">
+              Quality Score
+              <p-sortIcon field="averageQualityScore"></p-sortIcon>
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+
+      <!-- Table Body -->
+      <ng-template pTemplate="body" let-subarea>
+        <tr>
+          <td class="subarea-cell">
+            <span class="subarea-name">{{ subarea.subarea }}</span>
+          </td>
+          <td class="clicks-cell">
+            <span class="clicks-count">{{ subarea.clicks | number }}</span>
+          </td>
+          <td class="users-cell">
+            <span class="user-count">{{ subarea.uniqueUsers | number }}</span>
+          </td>
+          <td class="venues-cell">
+            <span class="venue-count">{{ subarea.uniqueVenues | number }}</span>
+          </td>
+          <td class="score-cell">
+            <p-tag 
+              [value]="subarea.averageQualityScore | number:'1.2-2'" 
+              [severity]="getQualityScoreColor(subarea.averageQualityScore)">
+            </p-tag>
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- Empty State -->
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="getColumnCount()" class="empty-state-cell">
+            <div class="empty-state-container">
+              <div class="empty-state-content">
+                <div class="empty-state-icon">
+                  <i class="pi pi-search"></i>
+                </div>
+                <div class="empty-state-message">
+                  <h3>No Subareas Found</h3>
+                  <p>No subarea data available within the selected distance. Try adjusting your search radius or location settings.</p>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </div>
+
 
 <!-- User Click Details Dialog -->
 <p-dialog 
