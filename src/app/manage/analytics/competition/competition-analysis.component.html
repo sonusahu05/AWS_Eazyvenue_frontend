@@ -6,18 +6,14 @@
   <!-- Header -->
   <div class="dashboard-header">
     <div class="header-content">
+      <!-- Title Section - Separate lines -->
       <div class="title-section">
         <h1 class="page-title">Competition Analysis</h1>
         <p class="page-subtitle">Analyze competing venues in your area and compare pricing strategies</p>
-        
-        <!-- Current Venue Badge -->
-        <div class="venue-owner-notice" *ngIf="currentVenue">
-          <p-tag severity="info" [value]="'Analyzing for: ' + currentVenue.name" icon="pi pi-building"></p-tag>
-          <p-tag severity="warning" [value]="'Within ' + selectedDistanceFilter.label" icon="pi pi-map-marker" class="ml-2"></p-tag>
-        </div>
       </div>
       
-      <div class="header-actions">
+      <!-- Filters and Actions Row -->
+      <div class="filters-actions-row">
         <!-- Admin Venue Selection -->
         <div class="filter-group admin-venue-selection" *ngIf="isAdmin">
           <label class="filter-label">
@@ -35,7 +31,7 @@
             filterPlaceholder="Type to search venues..."
             [showClear]="true"
             styleClass="venue-dropdown"
-            [style]="{'min-width': '350px'}"
+            [style]="{'width': '100%'}"
             appendTo="body">
             <ng-template pTemplate="selectedItem">
               <div class="selected-venue" *ngIf="selectedVenueForAdmin">
@@ -88,6 +84,12 @@
             [disabled]="!filteredVenues.length">
           </button>
         </div>
+      </div>
+      
+      <!-- Current Venue Badge -->
+      <div class="venue-owner-notice" *ngIf="currentVenue">
+        <p-tag severity="info" [value]="'Analyzing for: ' + currentVenue.name" icon="pi pi-building"></p-tag>
+        <p-tag severity="warning" [value]="'Within ' + selectedDistanceFilter.label" icon="pi pi-map-marker" class="ml-2"></p-tag>
       </div>
     </div>
   </div>
@@ -261,60 +263,61 @@
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="name" pReorderableColumn class="venue-name-col">
-              <div class="flex align-items-center">
-                Venue Name
-                <p-sortIcon field="name"></p-sortIcon>
+              <div class="header-content-wrapper">
+                <span class="header-text">Venue Name</span>
+                <p-sortIcon field="name" class="sort-icon"></p-sortIcon>
               </div>
             </th>
             <th pSortableColumn="distance" pReorderableColumn class="distance-col">
-              <div class="flex align-items-center">
-                <span *ngIf="!isAdmin">Distance</span>
-                <span *ngIf="isAdmin && currentVenue">Distance from {{ currentVenue.name }}</span>
-                <span *ngIf="isAdmin && !currentVenue">Distance</span>
-                <p-sortIcon field="distance"></p-sortIcon>
+              <div class="header-content-wrapper">
+                <span class="header-text">
+                  <span *ngIf="!isAdmin">Distance</span>
+                  <span *ngIf="isAdmin && currentVenue">Distance from {{ currentVenue.name }}</span>
+                  <span *ngIf="isAdmin && !currentVenue">Distance</span>
+                </span>
+                <p-sortIcon field="distance" class="sort-icon"></p-sortIcon>
               </div>
             </th>
             <th pSortableColumn="cityname" pReorderableColumn class="location-col">
-              <div class="flex align-items-center">
-                Location
-                <p-sortIcon field="cityname"></p-sortIcon>
+              <div class="header-content-wrapper">
+                <span class="header-text">Location</span>
+                <p-sortIcon field="cityname" class="sort-icon"></p-sortIcon>
               </div>
             </th>
             <th pSortableColumn="capacity" pReorderableColumn class="capacity-col">
-              <div class="flex align-items-center">
-                Capacity
-                <p-sortIcon field="capacity"></p-sortIcon>
+              <div class="header-content-wrapper">
+                <span class="header-text">Capacity</span>
+                <p-sortIcon field="capacity" class="sort-icon"></p-sortIcon>
               </div>
             </th>
             <th pSortableColumn="avgPrice" pReorderableColumn class="price-col">
-              <div class="flex align-items-center">
-                Avg Price
-                <p-sortIcon field="avgPrice"></p-sortIcon>
+              <div class="header-content-wrapper">
+                <span class="header-text">Avg Price</span>
+                <p-sortIcon field="avgPrice" class="sort-icon"></p-sortIcon>
               </div>
             </th>
             <th pSortableColumn="vegPrice" pReorderableColumn class="price-col">
-              <div class="flex align-items-center">
-                Veg Price
-                <p-sortIcon field="vegPrice"></p-sortIcon>
+              <div class="header-content-wrapper">
+                <span class="header-text">Veg Price</span>
+                <p-sortIcon field="vegPrice" class="sort-icon"></p-sortIcon>
               </div>
             </th>
             <th pSortableColumn="nonVegPrice" pReorderableColumn class="price-col">
-              <div class="flex align-items-center">
-                Non-Veg Price
-                <p-sortIcon field="nonVegPrice"></p-sortIcon>
+              <div class="header-content-wrapper">
+                <span class="header-text">Non-Veg Price</span>
+                <p-sortIcon field="nonVegPrice" class="sort-icon"></p-sortIcon>
               </div>
             </th>
-
             <th pSortableColumn="rating" pReorderableColumn class="rating-col">
-              <div class="flex align-items-center">
-                Ratings
-                <p-sortIcon field="rating"></p-sortIcon>
+              <div class="header-content-wrapper">
+                <span class="header-text">Ratings</span>
+                <p-sortIcon field="rating" class="sort-icon"></p-sortIcon>
               </div>
             </th>
             <th pSortableColumn="isAssured" pReorderableColumn class="assured-col">
-              <div class="flex align-items-center">
-                Assured
-                <p-sortIcon field="isAssured"></p-sortIcon>
+              <div class="header-content-wrapper">
+                <span class="header-text">Assured</span>
+                <p-sortIcon field="isAssured" class="sort-icon"></p-sortIcon>
               </div>
             </th>
           </tr>
@@ -461,9 +464,9 @@
     </div>
   </div>
 
-  <!-- Debug Section (for development only) -->
+  <!-- Debug Section (for development only)
   <div class="debug-section" *ngIf="false">
     <div class="debug-card">
   </div>
 </div>
-</div>
+</div> -->

@@ -61,54 +61,68 @@
 
 .header-content {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 20px;
 }
 
 .title-section {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .page-title {
   color: #2c3e50;
   font-size: 2rem;
   font-weight: 600;
-  margin: 0 0 8px 0;
+  margin: 0;
 }
 
 .page-subtitle {
   color: #6c757d;
   font-size: 0.95rem;
-  margin: 0 0 15px 0;
+  margin: 0;
 }
 
 .venue-owner-notice {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
-.header-actions {
+/* Filters and Actions Row */
+.filters-actions-row {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-end; /* This ensures all items align to the bottom */
   gap: 20px;
+  flex-wrap: wrap;
+  min-height: 120px; /* Increased more to accommodate helper text */
+  margin-bottom: 20px; /* Add space so helper text doesn't overflow dashboard header */
+  margin-top: -10px; /* Move up by reducing top margin */
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  justify-content: flex-end; /* Push content to bottom */
+  min-height: 80px; /* Match the row height */
+}
+
+/* Ensure all filter elements are properly aligned at the same level */
+.filter-group .p-dropdown,
+.export-actions button {
+  margin-top: auto; /* Push to bottom of container */
 }
 
 .filter-label {
   font-size: 0.85rem;
   color: #6c757d;
   font-weight: 500;
+  margin-bottom: 4px;
 }
 
-.distance-dropdown {
+.filter-group .distance-dropdown {
   min-width: 150px;
 }
 
@@ -116,11 +130,36 @@
   min-width: 300px;
 }
 
+/* Ensure consistent heights for dropdowns and buttons */
+::ng-deep .distance-dropdown .p-dropdown,
+::ng-deep .venue-dropdown .p-dropdown {
+  height: 40px;
+}
+
+::ng-deep .distance-dropdown .p-dropdown .p-dropdown-trigger,
+::ng-deep .venue-dropdown .p-dropdown .p-dropdown-trigger {
+  height: 40px;
+  width: 40px;
+}
+
+::ng-deep .distance-dropdown .p-dropdown .p-dropdown-label,
+::ng-deep .venue-dropdown .p-dropdown .p-dropdown-label {
+  line-height: 40px;
+  padding: 0 12px;
+}
+
 .export-actions {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 10px;
+  min-height: 80px; /* Match filter group height */
 }
+
+.export-actions button {
+  height: 40px; /* Match dropdown height */
+}
+
+
 
 /* Overview Cards */
 .overview-cards {
@@ -129,7 +168,7 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(2, 1fr); /* 2x2 grid for desktop */
   gap: 20px;
   margin-bottom: 25px;
 }
@@ -380,6 +419,11 @@
   margin-bottom: 30px;
 }
 
+/* Table Section */
+.venues-table-section {
+  margin-bottom: 30px;
+}
+
 .table-card {
   background: white;
   border-radius: 12px;
@@ -387,40 +431,62 @@
   overflow: hidden;
 }
 
+/* Enhanced Table Header */
 .table-header {
-  padding: 25px;
-  border-bottom: 1px solid #eee;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 30px;
+  border-bottom: 2px solid #eee;
+  background: #f8f9fa;
+  position: relative;
 }
 
 .table-header h3 {
   margin: 0;
   color: #2c3e50;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  position: relative;
 }
 
 .text-muted {
   color: #6c757d;
-  font-size: 0.9rem;
-  margin: 5px 0 0 0;
+  font-size: 1.1rem;
+  margin: 8px 0 0 0;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .table-info {
   display: flex;
   align-items: center;
   gap: 15px;
+  margin-top: 20px;
+  background-color: transparent !important;
+}
+
+/* Override any blue backgrounds that might be applied from global CSS */
+.table-info,
+.table-info > td,
+.table-info > th {
+  background-color: transparent !important;
 }
 
 .venue-count {
-  color: #6c757d;
-  font-size: 0.9rem;
-  font-weight: 500;
+  color: #2c3e50;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #f8f9fa;
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: 2px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.venue-count:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: #e9ecef;
 }
 
 /* Table Caption (Search) */
@@ -470,8 +536,8 @@
 }
 
 .search-input:focus {
-  border-color: #3498db;
-  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+  border-color: #6c757d;
+  box-shadow: 0 0 0 4px rgba(108, 117, 125, 0.1);
   outline: none;
 }
 
@@ -491,24 +557,57 @@
 }
 
 .search-hint i {
-  color: #3498db;
+  color: #6c757d;
   font-size: 0.875rem;
   flex-shrink: 0;
 }
 
 /* Table Styles */
 ::ng-deep .modern-table {
-  table-layout: fixed;
-  width: 100%;
+  table-layout: fixed !important;
+  width: 100% !important;
   
   .p-datatable-wrapper {
     overflow-x: auto;
+    max-width: 100%;
   }
   
   .p-datatable-table {
-    min-width: 800px; // Minimum table width for horizontal scroll
+    min-width: 1000px;
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
   }
   
+  /* Desktop column widths */
+  .p-datatable-thead > tr > th:nth-child(1),
+  .p-datatable-tbody > tr > td:nth-child(1) { width: 22%; }
+  
+  .p-datatable-thead > tr > th:nth-child(2),
+  .p-datatable-tbody > tr > td:nth-child(2) { width: 9%; }
+  
+  .p-datatable-thead > tr > th:nth-child(3),
+  .p-datatable-tbody > tr > td:nth-child(3) { width: 14%; }
+  
+  .p-datatable-thead > tr > th:nth-child(4),
+  .p-datatable-tbody > tr > td:nth-child(4) { width: 9%; }
+  
+  .p-datatable-thead > tr > th:nth-child(5),
+  .p-datatable-tbody > tr > td:nth-child(5) { width: 11%; }
+  
+  .p-datatable-thead > tr > th:nth-child(6),
+  .p-datatable-tbody > tr > td:nth-child(6) { width: 11%; }
+  
+  .p-datatable-thead > tr > th:nth-child(7),
+  .p-datatable-tbody > tr > td:nth-child(7) { width: 11%; }
+  
+  .p-datatable-thead > tr > th:nth-child(8),
+  .p-datatable-tbody > tr > td:nth-child(8) { width: 16%; }
+  
+  .p-datatable-thead > tr > th:nth-child(9),
+  .p-datatable-tbody > tr > td:nth-child(9) { width: 8%; }
+  
+  /* Header styles */
   .p-datatable-header {
     background: #f8f9fa;
     border: none;
@@ -516,88 +615,462 @@
   }
 
   .p-datatable-thead > tr > th {
-    background: #f8f9fa;
-    border: none;
-    padding: 15px 12px;
-    font-weight: 600;
-    color: #2c3e50;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    background: #f8f9fa !important;
+    border: none !important;
+    border-bottom: 2px solid #e9ecef !important;
+    padding: 16px 12px !important;
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    text-align: center !important;
+    vertical-align: middle !important;
   }
 
   .p-datatable-tbody > tr > td {
-    border: none;
-    border-bottom: 1px solid #f1f1f1;
-    padding: 15px 12px;
-    vertical-align: middle;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    border: none !important;
+    border-bottom: 1px solid #f1f1f1 !important;
+    padding: 15px 12px !important;
+    vertical-align: middle !important;
+    font-size: 0.9rem !important;
   }
 
   .p-datatable-tbody > tr:hover {
-    background: #f8f9fa;
+    background: #f8f9fa !important;
   }
 
   .p-paginator {
-    border: none;
-    padding: 20px;
-    background: #f8f9fa;
+    border: none !important;
+    padding: 20px !important;
+    background: #f8f9fa !important;
+  }
+  
+  /* Responsive breakpoints with proper alignment */
+  
+  /* Tablet Large (1200px) */
+  @media (max-width: 1200px) {
+    .p-datatable-table {
+      min-width: 900px;
+    }
+    
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 14px 10px !important;
+      font-size: 0.8rem !important;
+    }
+    
+    .p-datatable-thead > tr > th {
+      font-size: 0.8rem !important;
+    }
+  }
+  
+  /* Tablet (992px) */
+  @media (max-width: 992px) {
+    .p-datatable-table {
+      min-width: 800px;
+    }
+    
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 12px 8px !important;
+      font-size: 0.75rem !important;
+    }
+    
+    .p-datatable-thead > tr > th {
+      font-size: 0.75rem !important;
+    }
+    
+    /* Adjust column widths for tablet */
+    .p-datatable-thead > tr > th:nth-child(1),
+    .p-datatable-tbody > tr > td:nth-child(1) { width: 20%; }
+    
+    .p-datatable-thead > tr > th:nth-child(8),
+    .p-datatable-tbody > tr > td:nth-child(8) { width: 18%; }
+  }
+  
+  /* Mobile Large (768px) */
+  @media (max-width: 768px) {
+    .p-datatable-table {
+      min-width: 700px;
+    }
+    
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 10px 6px !important;
+      font-size: 0.7rem !important;
+    }
+    
+    .p-datatable-thead > tr > th {
+      font-size: 0.7rem !important;
+      padding: 12px 6px !important;
+    }
+    
+    /* Mobile column width adjustments */
+    .p-datatable-thead > tr > th:nth-child(1),
+    .p-datatable-tbody > tr > td:nth-child(1) { width: 24%; }
+    
+    .p-datatable-thead > tr > th:nth-child(2),
+    .p-datatable-tbody > tr > td:nth-child(2) { width: 8%; }
+    
+    .p-datatable-thead > tr > th:nth-child(3),
+    .p-datatable-tbody > tr > td:nth-child(3) { width: 12%; }
+    
+    .p-datatable-thead > tr > th:nth-child(4),
+    .p-datatable-tbody > tr > td:nth-child(4) { width: 8%; }
+    
+    .p-datatable-thead > tr > th:nth-child(5),
+    .p-datatable-tbody > tr > td:nth-child(5) { width: 10%; }
+    
+    .p-datatable-thead > tr > th:nth-child(6),
+    .p-datatable-tbody > tr > td:nth-child(6) { width: 10%; }
+    
+    .p-datatable-thead > tr > th:nth-child(7),
+    .p-datatable-tbody > tr > td:nth-child(7) { width: 10%; }
+    
+    .p-datatable-thead > tr > th:nth-child(8),
+    .p-datatable-tbody > tr > td:nth-child(8) { width: 20%; }
+    
+    .p-datatable-thead > tr > th:nth-child(9),
+    .p-datatable-tbody > tr > td:nth-child(9) { width: 8%; }
+  }
+  
+  /* Mobile Medium (576px) */
+  @media (max-width: 576px) {
+    .p-datatable-table {
+      min-width: 600px;
+    }
+    
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 8px 4px !important;
+      font-size: 0.65rem !important;
+    }
+    
+    .p-datatable-thead > tr > th {
+      font-size: 0.65rem !important;
+      padding: 10px 4px !important;
+      line-height: 1.2 !important;
+    }
+    
+    /* Smaller mobile column adjustments */
+    .p-datatable-thead > tr > th:nth-child(1),
+    .p-datatable-tbody > tr > td:nth-child(1) { width: 26%; }
+    
+    .p-datatable-thead > tr > th:nth-child(2),
+    .p-datatable-tbody > tr > td:nth-child(2) { width: 7%; }
+    
+    .p-datatable-thead > tr > th:nth-child(3),
+    .p-datatable-tbody > tr > td:nth-child(3) { width: 13%; }
+    
+    .p-datatable-thead > tr > th:nth-child(4),
+    .p-datatable-tbody > tr > td:nth-child(4) { width: 7%; }
+    
+    .p-datatable-thead > tr > th:nth-child(5),
+    .p-datatable-tbody > tr > td:nth-child(5) { width: 9%; }
+    
+    .p-datatable-thead > tr > th:nth-child(6),
+    .p-datatable-tbody > tr > td:nth-child(6) { width: 9%; }
+    
+    .p-datatable-thead > tr > th:nth-child(7),
+    .p-datatable-tbody > tr > td:nth-child(7) { width: 9%; }
+    
+    .p-datatable-thead > tr > th:nth-child(8),
+    .p-datatable-tbody > tr > td:nth-child(8) { width: 18%; }
+    
+    .p-datatable-thead > tr > th:nth-child(9),
+    .p-datatable-tbody > tr > td:nth-child(9) { width: 7%; }
+  }
+  
+  /* Mobile Small (480px) */
+  @media (max-width: 480px) {
+    .p-datatable-table {
+      min-width: 500px;
+    }
+    
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 6px 3px !important;
+      font-size: 0.6rem !important;
+    }
+    
+    .p-datatable-thead > tr > th {
+      font-size: 0.6rem !important;
+      padding: 8px 3px !important;
+      line-height: 1.1 !important;
+    }
+    
+    /* Extra small mobile adjustments */
+    .p-datatable-thead > tr > th:nth-child(1),
+    .p-datatable-tbody > tr > td:nth-child(1) { width: 28%; }
+    
+    .p-datatable-thead > tr > th:nth-child(2),
+    .p-datatable-tbody > tr > td:nth-child(2) { width: 6%; }
+    
+    .p-datatable-thead > tr > th:nth-child(3),
+    .p-datatable-tbody > tr > td:nth-child(3) { width: 14%; }
+    
+    .p-datatable-thead > tr > th:nth-child(4),
+    .p-datatable-tbody > tr > td:nth-child(4) { width: 6%; }
+    
+    .p-datatable-thead > tr > th:nth-child(5),
+    .p-datatable-tbody > tr > td:nth-child(5) { width: 8%; }
+    
+    .p-datatable-thead > tr > th:nth-child(6),
+    .p-datatable-tbody > tr > td:nth-child(6) { width: 8%; }
+    
+    .p-datatable-thead > tr > th:nth-child(7),
+    .p-datatable-tbody > tr > td:nth-child(7) { width: 8%; }
+    
+    .p-datatable-thead > tr > th:nth-child(8),
+    .p-datatable-tbody > tr > td:nth-child(8) { width: 20%; }
+    
+    .p-datatable-thead > tr > th:nth-child(9),
+    .p-datatable-tbody > tr > td:nth-child(9) { width: 6%; }
+    
+    /* Hide sort icons on very small screens */
+    .p-sortable-column-icon {
+      display: none !important;
+    }
+  }
+  
+  /* Mobile Extra Small (360px) */
+  @media (max-width: 360px) {
+    .p-datatable-table {
+      min-width: 450px;
+    }
+    
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 4px 2px !important;
+      font-size: 0.55rem !important;
+    }
+    
+    .p-datatable-thead > tr > th {
+      font-size: 0.55rem !important;
+      padding: 6px 2px !important;
+      line-height: 1.0 !important;
+    }
+    
+    /* Ultra small screen adjustments */
+    .p-datatable-thead > tr > th:nth-child(1),
+    .p-datatable-tbody > tr > td:nth-child(1) { width: 30%; }
+    
+    .p-datatable-thead > tr > th:nth-child(2),
+    .p-datatable-tbody > tr > td:nth-child(2) { width: 5%; }
+    
+    .p-datatable-thead > tr > th:nth-child(3),
+    .p-datatable-tbody > tr > td:nth-child(3) { width: 15%; }
+    
+    .p-datatable-thead > tr > th:nth-child(4),
+    .p-datatable-tbody > tr > td:nth-child(4) { width: 5%; }
+    
+    .p-datatable-thead > tr > th:nth-child(5),
+    .p-datatable-tbody > tr > td:nth-child(5) { width: 8%; }
+    
+    .p-datatable-thead > tr > th:nth-child(6),
+    .p-datatable-tbody > tr > td:nth-child(6) { width: 8%; }
+    
+    .p-datatable-thead > tr > th:nth-child(7),
+    .p-datatable-tbody > tr > td:nth-child(7) { width: 8%; }
+    
+    .p-datatable-thead > tr > th:nth-child(8),
+    .p-datatable-tbody > tr > td:nth-child(8) { width: 18%; }
+    
+    .p-datatable-thead > tr > th:nth-child(9),
+    .p-datatable-tbody > tr > td:nth-child(9) { width: 5%; }
   }
 }
 
-// Column width definitions for better layout
+// Column alignment and text alignment classes
 .venue-name-col, .venue-name-cell {
-  min-width: 200px;
-  width: 25%;
-  max-width: 300px;
+  text-align: left;
 }
 
 .distance-col, .distance-cell {
-  min-width: 100px;
-  width: 10%;
-  max-width: 120px;
   text-align: center;
 }
 
 .location-col, .location-cell {
-  min-width: 150px;
-  width: 15%;
-  max-width: 200px;
+  text-align: left;
 }
 
 .capacity-col, .capacity-cell {
-  min-width: 100px;
-  width: 10%;
-  max-width: 120px;
   text-align: center;
 }
 
 .price-col, .price-cell {
-  min-width: 110px;
-  width: 12%;
-  max-width: 130px;
   text-align: right;
 }
 
 .rating-col, .rating-cell {
-  min-width: 160px;
-  width: 18%;
-  max-width: 200px;
+  text-align: left;
 }
 
 .assured-col, .assured-cell {
-  min-width: 80px;
-  width: 10%;
-  max-width: 100px;
   text-align: center;
 }
 
+/* Enhanced responsive table styles */
+@media (max-width: 1200px) {
+  .venue-name-col, .venue-name-cell {
+    width: 22%;
+    min-width: 180px;
+  }
+  
+  .rating-col, .rating-cell {
+    width: 20%;
+    min-width: 140px;
+  }
+  
+  .p-datatable-thead > tr > th {
+    padding: 10px 6px !important;
+  }
+  
+  .header-text {
+    font-size: 0.8rem !important;
+    letter-spacing: 0.3px !important;
+  }
+  
+  .sort-icon {
+    font-size: 0.75rem !important;
+  }
+}
+
+@media (max-width: 992px) {
+  .venue-name-col, .venue-name-cell {
+    width: 20%;
+    min-width: 160px;
+  }
+  
+  .location-col, .location-cell {
+    width: 12%;
+    min-width: 120px;
+  }
+  
+  .price-col, .price-cell {
+    width: 11%;
+    min-width: 90px;
+  }
+  
+  .rating-col, .rating-cell {
+    width: 16%;
+    min-width: 120px;
+  }
+  
+  .p-datatable-thead > tr > th {
+    padding: 8px 4px !important;
+  }
+  
+  .header-text {
+    font-size: 0.75rem !important;
+    letter-spacing: 0.2px !important;
+  }
+  
+  .sort-icon {
+    font-size: 0.7rem !important;
+  }
+  
+  .header-content-wrapper {
+    gap: 3px !important;
+  }
+}
+
 /* Table Cell Styles */
+
+/* Enhanced table header styles for better mobile responsiveness */
+.p-datatable-thead > tr > th {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  hyphens: auto !important;
+  vertical-align: top !important;
+  text-align: center !important;
+  padding: 12px 8px !important;
+  min-height: 50px !important;
+  box-sizing: border-box !important;
+  width: auto !important; /* Let the nth-child selectors control width */
+}
+
+/* New header content wrapper styles */
+.header-content-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  gap: 4px !important;
+  min-height: 40px !important;
+  width: 100% !important;
+}
+
+.header-text {
+  font-weight: 600 !important;
+  color: #2c3e50 !important;
+  text-align: center !important;
+  word-wrap: break-word !important;
+  hyphens: auto !important;
+  line-height: 1.2 !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.sort-icon {
+  font-size: 0.8rem !important;
+  color: #6c757d !important;
+  flex-shrink: 0 !important;
+  margin-top: 2px !important;
+}
+
+/* Improve text wrapping for long header texts */
+.header-text {
+  max-width: 100% !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  hyphens: auto !important;
+}
+
+/* Special handling for distance column with long text */
+.distance-col .header-text {
+  font-size: 0.8rem !important;
+  line-height: 1.1 !important;
+}
+
+@media (max-width: 768px) {
+  .distance-col .header-text {
+    font-size: 0.6rem !important;
+    line-height: 1.0 !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .distance-col .header-text {
+    font-size: 0.55rem !important;
+    line-height: 1.0 !important;
+  }
+}
+
+/* Legacy flex styles for backward compatibility */
+.p-datatable-thead > tr > th .flex {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  min-height: 40px !important;
+}
+
+.p-datatable-thead > tr > th .flex span {
+  text-align: center !important;
+  word-wrap: break-word !important;
+  hyphens: auto !important;
+  line-height: 1.2 !important;
+}
+
 .venue-name-container {
   display: flex;
   align-items: center;
@@ -628,11 +1101,11 @@
 }
 
 .venue-name-link:hover .venue-name {
-  color: #3498db;
+  color: #6c757d;
 }
 
 .current-venue-name .venue-name {
-  color: #3498db !important;
+  color: #2c3e50 !important;
   font-weight: 700;
 }
 
@@ -783,18 +1256,18 @@
 }
 
 .action-btn:hover {
-  background: #3498db !important;
+  background: #6c757d !important;
   color: white !important;
 }
 
 /* Row Styles */
 .current-venue-row {
-  background: #e3f2fd !important;
-  border-left: 4px solid #3498db;
+  background: #f8f9fa !important;
+  border-left: 4px solid #6c757d;
 }
 
 .current-venue-row:hover {
-  background: #bbdefb !important;
+  background: #e9ecef !important;
 }
 
 .same-venue-highlight {
@@ -959,6 +1432,11 @@
 
 /* Responsive Table Styles */
 @media (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr); /* Keep 2x2 on large screens */
+    gap: 18px;
+  }
+  
   ::ng-deep .modern-table {
     .p-datatable-thead > tr > th,
     .p-datatable-tbody > tr > td {
@@ -1005,6 +1483,288 @@
   .rating-col, .rating-cell {
     width: 16%;
     min-width: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .competition-analysis-dashboard {
+    padding: 15px;
+  }
+  
+  .dashboard-header {
+    padding: 20px;
+  }
+  
+  .header-content {
+    gap: 15px;
+  }
+  
+  .filters-actions-row {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .filter-group {
+    flex: 1;
+    min-width: 200px;
+    min-height: 80px; /* Maintain consistent height on mobile */
+  }
+  
+  .export-actions {
+    flex-shrink: 0;
+    min-height: 80px; /* Maintain consistent height on mobile */
+  }
+  
+  .export-actions button {
+    height: 40px;
+  }
+  
+  /* Ensure filters stay in row on very small screens */
+  .filter-group,
+  .export-actions {
+    min-height: 80px;
+  }
+  
+  /* Ensure proper alignment on mobile */
+  .filter-group .p-dropdown,
+  .export-actions button {
+    margin-top: auto;
+  }
+  
+
+  
+  /* Mobile 2x2 Grid for Stats */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  .overview-card {
+    height: auto;
+    min-height: 120px;
+  }
+  
+  .overview-card .icon {
+    font-size: 2rem;
+    margin-right: 15px;
+    width: 50px;
+  }
+  
+  .overview-card .stats h3 {
+    font-size: 1.5rem;
+  }
+  
+  .overview-card .stats p {
+    font-size: 0.8rem;
+  }
+  
+  .current-venue-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .venue-stats-horizontal {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .stat-divider {
+    display: none;
+  }
+  
+  .table-header {
+    padding: 20px;
+  }
+  
+  .search-container {
+    max-width: 100%;
+  }
+  
+  .search-section {
+    gap: 12px;
+  }
+  
+  .search-hint {
+    font-size: 0.8rem;
+    margin-left: 0;
+    margin-top: 6px;
+  }
+  
+  .admin-venue-selection {
+    position: relative;
+    min-width: 350px;
+    flex: 1;
+    max-width: 450px; /* Prevent it from getting too wide */
+    
+    .filter-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: #3498db !important;
+      margin-bottom: 8px;
+  }
+}
+  
+  .admin-venue-selection .venue-dropdown {
+    max-width: 100%;
+  }
+}
+::ng-deep .p-dropdown-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 576px) {
+  .competition-analysis-dashboard {
+    padding: 10px;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .page-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .overview-card {
+    padding: 20px;
+    height: auto;
+    min-height: 100px;
+  }
+  
+  .overview-card .icon {
+    font-size: 1.8rem;
+    margin-right: 12px;
+    width: 45px;
+  }
+  
+  .overview-card .stats h3 {
+    font-size: 1.3rem;
+  }
+  
+  .overview-card .stats p {
+    font-size: 0.75rem;
+  }
+  
+  .current-venue-card {
+    padding: 20px;
+  }
+  
+  .venue-name-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .review-list-vertical {
+    gap: 4px;
+    min-width: 100px;
+  }
+  
+  .icon-review {
+    padding: 3px 6px;
+    
+    img {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+    }
+    
+    .rating-style {
+      font-size: 11px;
+    }
+  }
+
+  .search-input {
+    padding: 12px 16px 12px 40px;
+    font-size: 0.95rem;
+  }
+  
+  // Extra small screen table adjustments
+  ::ng-deep .modern-table {
+    .p-datatable-thead > tr > th {
+      font-size: 0.65rem;
+      padding: 6px 3px;
+      max-width: 100px;
+    }
+    
+    .p-datatable-tbody > tr > td {
+      font-size: 0.65rem;
+      padding: 6px 3px;
+    }
+  }
+  
+  .venue-name-col, .venue-name-cell {
+    width: 30%;
+    min-width: 120px;
+  }
+  
+  .distance-col, .distance-cell {
+    width: 7%;
+    min-width: 60px;
+  }
+  
+  .location-col, .location-cell {
+    width: 12%;
+    min-width: 80px;
+  }
+  
+  .capacity-col, .capacity-cell {
+    width: 7%;
+    min-width: 60px;
+  }
+  
+  .price-col, .price-cell {
+    width: 9%;
+    min-width: 70px;
+  }
+  
+  .rating-col, .rating-cell {
+    width: 18%;
+    min-width: 100px;
+  }
+  
+  .assured-col, .assured-cell {
+    width: 7%;
+    min-width: 50px;
+  }
+  
+  // Ensure stats grid works well on very small screens
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .overview-card {
+    min-height: 90px;
+    padding: 15px;
+  }
+  
+  .overview-card .icon {
+    font-size: 1.5rem;
+    margin-right: 10px;
+    width: 40px;
+  }
+  
+  .overview-card .stats h3 {
+    font-size: 1.2rem;
+  }
+  
+  .overview-card .stats p {
+    font-size: 0.7rem;
+  }
+  
+  /* Ensure proper alignment on very small screens */
+  .filter-group .p-dropdown,
+  .export-actions button {
+    margin-top: auto;
   }
 }
 
@@ -1120,7 +1880,7 @@
   }
   
   &:focus {
-    outline: 2px solid #3498db;
+    outline: 2px solid #6c757d;
     outline-offset: 2px;
     text-decoration: none;
   }
@@ -1140,7 +1900,7 @@
   align-items: center;
   gap: 6px;
   font-weight: 600;
-  color: #3498db;
+  color: #3498db !important;
 }
 
 .admin-venue-selection .filter-label i {
@@ -1148,17 +1908,38 @@
 }
 
 .admin-helper-text {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 4px;
   color: #7f8c8d;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   margin-top: 4px;
   font-style: italic;
+  z-index: 1;
+  line-height: 1.3;
+  word-wrap: break-word;
+  max-width: 100%; /* Match the dropdown width */
+  
+  /* Icon stays at top */
+  i {
+    flex-shrink: 0;
+      margin-top: 1px;
+      font-size: 0.6rem;
+  }
+  
+  /* Text wraps properly */
+  span {
+    flex: 1;
+    word-break: break-word;
+  }
 }
 
 .admin-helper-text i {
-  color: #3498db;
+  color: #3498db !important;
   font-size: 0.75rem;
 }
 
@@ -1166,6 +1947,10 @@
 ::ng-deep .venue-dropdown .p-dropdown-panel {
   max-height: 300px;
 }
+.filter-group:not(.admin-venue-selection) {
+  min-height: 80px; /* Smaller height for regular filters */
+}
+
 
 ::ng-deep .venue-option {
   display: flex;
@@ -1205,7 +1990,7 @@
 }
 
 ::ng-deep .venue-capacity {
-  color: #3498db;
+  color: #6c757d;
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -1224,7 +2009,7 @@
 }
 
 ::ng-deep .selected-venue .venue-icon {
-  color: #3498db;
+  color: #6c757d;
   font-size: 0.9rem;
 }
 
@@ -1316,284 +2101,643 @@
   flex-shrink: 0;
 }
 
-/* Responsive Design */
+/* Base dropdown styles - override PrimeNG defaults */
+::ng-deep .venue-dropdown {
+  width: 100% !important;
+  
+  .p-dropdown {
+    width: 100% !important;
+    min-height: 40px;
+    
+    .p-dropdown-label {
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+      padding-right: 45px !important; /* More space for trigger */
+      padding-left: 12px !important;
+      line-height: 38px !important;
+      font-size: 0.9rem;
+      display: block !important;
+      box-sizing: border-box !important;
+    }
+    
+    .p-dropdown-label.p-placeholder {
+      color: #6c757d !important;
+      font-style: italic !important;
+    }
+    
+    /* Selected item styles */
+    .p-dropdown-label:not(.p-placeholder) {
+      color: #2c3e50 !important;
+      font-weight: 500 !important;
+    }
+    
+    .p-dropdown-trigger {
+      width: 40px !important;
+      height: 100% !important;
+      right: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      
+      .p-dropdown-trigger-icon {
+        font-size: 0.9rem !important;
+      }
+    }
+  }
+}
+
+/* Distance dropdown consistency */
+::ng-deep .distance-dropdown {
+  .p-dropdown {
+    min-height: 40px;
+    
+    .p-dropdown-label {
+      line-height: 38px !important;
+      padding: 0 12px !important;
+      font-size: 0.9rem;
+    }
+    
+    .p-dropdown-trigger {
+      width: 40px !important;
+      height: 100% !important;
+    }
+  }
+}
+
+/* Admin venue selection specific fixes */
+.admin-venue-selection {
+  position: relative;
+  flex: 1;
+  min-width: 300px;
+  max-width: 100%;
+  
+  .filter-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: #3498db !important;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+  }
+  
+  .admin-helper-text {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    color: #7f8c8d;
+    font-size: 0.7rem;
+    margin-top: 4px;
+    font-style: italic;
+    z-index: 1;
+    line-height: 1.3;
+    
+    i {
+      flex-shrink: 0;
+      margin-top: 1px;
+      font-size: 0.6rem;
+      color: #3498db !important;
+    }
+    
+    span {
+      flex: 1;
+      word-break: break-word;
+    }
+  }
+}
+
+/* Filters row layout */
+.filters-actions-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+  min-height: 120px;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100px;
+}
+
+.export-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  min-height: 80px;
+}
+
+/* Responsive breakpoints */
 @media (max-width: 1200px) {
-  .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  .admin-venue-selection {
+    min-width: 280px;
+    max-width: 350px;
   }
   
-  .venue-stats-horizontal {
-    gap: 16px;
+  ::ng-deep .venue-dropdown .p-dropdown {
+    .p-dropdown-label {
+      font-size: 0.85rem !important;
+      padding-right: 40px !important;
+    }
   }
   
-  .stat-item {
-    flex-direction: column;
-    text-align: center;
-    gap: 8px;
+  .filters-actions-row {
+    gap: 15px;
+    min-height: 100px;
+  }
+}
+
+@media (max-width: 992px) {
+  .admin-venue-selection {
+    min-width: 250px;
+    max-width: 300px;
   }
   
-  .stat-divider {
-    display: none;
+  ::ng-deep .venue-dropdown .p-dropdown {
+    .p-dropdown-label {
+      font-size: 0.8rem !important;
+      padding-right: 38px !important;
+      padding-left: 10px !important;
+    }
+    
+    .p-dropdown-trigger {
+      width: 35px !important;
+    }
+  }
+  
+  .filters-actions-row {
+    gap: 15px;
   }
 }
 
 @media (max-width: 768px) {
-  .competition-analysis-dashboard {
-    padding: 15px;
-  }
-  
-  .dashboard-header {
-    padding: 20px;
-  }
-  
-  .header-content {
+  .filters-actions-row {
     flex-direction: column;
     align-items: stretch;
     gap: 15px;
+    min-height: auto;
+    margin-bottom: 10px;
   }
   
-  .header-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 15px;
-  }
-  
+  .filter-group,
+  .admin-venue-selection,
   .export-actions {
-    justify-content: stretch;
-  }
-  
-  .export-actions button {
-    flex: 1;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  
-  .current-venue-card {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 20px;
-    padding: 20px;
-  }
-  
-  // Mobile table adjustments
-  ::ng-deep .modern-table {
-    .p-datatable-thead > tr > th,
-    .p-datatable-tbody > tr > td {
-      padding: 8px 4px;
-      font-size: 0.7rem;
-    }
-  }
-  
-  .venue-name-col, .venue-name-cell {
-    width: 25%;
-    min-width: 140px;
-  }
-  
-  .distance-col, .distance-cell {
-    width: 8%;
-    min-width: 70px;
-  }
-  
-  .location-col, .location-cell {
-    width: 15%;
-    min-width: 100px;
-  }
-  
-  .capacity-col, .capacity-cell {
-    width: 8%;
-    min-width: 70px;
-  }
-  
-  .price-col, .price-cell {
-    width: 10%;
-    min-width: 80px;
-  }
-  
-  .rating-col, .rating-cell {
-    width: 20%;
-    min-width: 120px;
-  }
-  
-  .assured-col, .assured-cell {
-    width: 8%;
-    min-width: 60px;
-  }
-  
-  .venue-stats-horizontal {
-    flex-direction: column;
-    gap: 16px;
-  }
-  
-  .stat-divider {
-    display: none;
-  }
-  
-  .table-header {
-    padding: 20px;
-  }
-  
-  .header-content {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-  
-  .search-container {
+    min-height: auto;
+    width: 100%;
     max-width: 100%;
-  }
-  
-  .search-section {
-    gap: 12px;
-  }
-  
-  .search-hint {
-    font-size: 0.8rem;
-    margin-left: 0;
-    margin-top: 6px;
+    min-width: auto;
+    flex: none;
   }
   
   .admin-venue-selection {
-    width: 100%;
+    order: 1; /* Place venue selection first */
+    
+    .admin-helper-text {
+      position: static;
+      margin-top: 8px;
+      font-size: 0.7rem;
+      max-width: 100%;
+    }
   }
   
-  .admin-venue-selection .venue-dropdown {
-    max-width: 100%;
+  .filter-group {
+    order: 2;
   }
   
-  .admin-welcome-card {
-    padding: 25px 20px;
-    margin: 15px 0;
-  }
-  
-  .welcome-content {
-    gap: 20px;
-  }
-  
-  .welcome-icon {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .welcome-icon i {
-    font-size: 2rem;
-  }
-  
-  .welcome-text h3 {
-    font-size: 1.5rem;
-  }
-  
-  .welcome-text p {
-    font-size: 1rem;
-  }
-  
-  .welcome-instructions {
-    align-items: center;
-    text-align: center;
-  }
-  
-  .instruction-item {
-    flex-direction: column;
-    gap: 8px;
-    text-align: center;
-  }
-  
-  ::ng-deep .venue-option {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-  
-  ::ng-deep .venue-meta {
-    align-items: flex-start;
+  .export-actions {
+    order: 3;
     flex-direction: row;
-    gap: 10px;
+    justify-content: flex-start;
+  }
+  
+  ::ng-deep .venue-dropdown {
+    .p-dropdown {
+      width: 100% !important;
+      
+      .p-dropdown-label {
+        font-size: 0.8rem !important;
+        padding-right: 40px !important;
+        padding-left: 10px !important;
+        line-height: 36px !important;
+      }
+      
+      .p-dropdown-trigger {
+        width: 35px !important;
+        
+        .p-dropdown-trigger-icon {
+          font-size: 0.8rem !important;
+        }
+      }
+    }
+  }
+  
+  ::ng-deep .distance-dropdown .p-dropdown {
+    .p-dropdown-label {
+      font-size: 0.8rem !important;
+      line-height: 36px !important;
+    }
   }
 }
 
 @media (max-width: 576px) {
-  .competition-analysis-dashboard {
-    padding: 10px;
+  .dashboard-header {
+    padding: 15px;
   }
   
   .page-title {
     font-size: 1.5rem;
   }
   
-  .overview-card {
-    padding: 20px;
-    height: auto;
-    min-height: 100px;
+  .page-subtitle {
+    font-size: 0.85rem;
   }
   
-  .overview-card .icon {
-    font-size: 2rem;
-    margin-right: 15px;
-    width: 50px;
-  }
-  
-  .overview-card .stats h3 {
-    font-size: 1.5rem;
-  }
-  
-  .current-venue-card {
-    padding: 20px;
-  }
-  
-  .venue-stats {
-    grid-template-columns: 1fr;
-  }
-   .venue-name-container {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  
-  .review-list-vertical {
-    gap: 4px;
-    min-width: 100px;
-  }
-  
-  .icon-review {
-    padding: 3px 6px;
-    
-    img {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
+  .admin-venue-selection {
+    .filter-label {
+      font-size: 0.8rem;
+      margin-bottom: 6px;
     }
     
-    .rating-style {
-      font-size: 11px;
+    .admin-helper-text {
+      font-size: 0.65rem;
+      line-height: 1.2;
+      margin-top: 6px;
     }
   }
-
-  .search-input {
-    padding: 12px 16px 12px 40px;
-    font-size: 0.95rem;
+  
+  ::ng-deep .venue-dropdown {
+    .p-dropdown {
+      min-height: 38px;
+      
+      .p-dropdown-label {
+        font-size: 0.75rem !important;
+        padding-right: 35px !important;
+        padding-left: 8px !important;
+        line-height: 34px !important;
+      }
+      
+      .p-dropdown-trigger {
+        width: 32px !important;
+        
+        .p-dropdown-trigger-icon {
+          font-size: 0.75rem !important;
+        }
+      }
+    }
+  }
+  
+  ::ng-deep .distance-dropdown .p-dropdown {
+    min-height: 38px;
+    
+    .p-dropdown-label {
+      font-size: 0.75rem !important;
+      line-height: 34px !important;
+      padding: 0 8px !important;
+    }
+    
+    .p-dropdown-trigger {
+      width: 32px !important;
+    }
+  }
+  
+  .export-actions button {
+    font-size: 0.8rem !important;
+    padding: 8px 12px !important;
+    height: 38px !important;
   }
 }
 
-/* Print Styles */
-@media print {
-  .competition-analysis-dashboard {
-    background: white;
-    padding: 0;
+@media (max-width: 480px) {
+  .filters-actions-row {
+    gap: 12px;
   }
   
-  .export-actions,
-  .search-container,
-  .debug-section {
-    display: none !important;
+  .admin-venue-selection {
+    .filter-label {
+      font-size: 0.75rem;
+    }
+    
+    .admin-helper-text {
+      font-size: 0.6rem;
+    }
   }
   
-  .overview-card,
-  .current-venue-card,
-  .table-card {
-    box-shadow: none;
-    border: 1px solid #ddd;
-    page-break-inside: avoid;
+  /* Extra small screen paginator dropdown fixes */
+  .p-paginator {
+    padding: 10px;
+  }
+  
+  ::ng-deep .p-paginator .p-dropdown .p-dropdown-panel {
+    max-height: 120px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  ::ng-deep .p-paginator .p-dropdown .p-dropdown-item {
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  /* Ultra small screen table improvements */
+  @media (max-width: 480px) {
+    .p-datatable-table {
+      min-width: 350px;
+    }
+    
+         /* Responsive column widths for 480px - HEADERS AND CELLS MUST MATCH */
+     .p-datatable-thead > tr > th:nth-child(1),
+     .p-datatable-tbody > tr > td:nth-child(1) {
+       width: 35% !important;
+     }
+     
+     .p-datatable-thead > tr > th:nth-child(2),
+     .p-datatable-tbody > tr > td:nth-child(2) {
+       width: 6% !important;
+     }
+     
+     .p-datatable-thead > tr > th:nth-child(3),
+     .p-datatable-tbody > tr > td:nth-child(3) {
+       width: 15% !important;
+     }
+     
+     .p-datatable-thead > tr > th:nth-child(4),
+     .p-datatable-tbody > tr > td:nth-child(4) {
+       width: 6% !important;
+     }
+     
+     .p-datatable-thead > tr > th:nth-child(5),
+     .p-datatable-tbody > tr > td:nth-child(5) {
+       width: 8% !important;
+     }
+     
+     .p-datatable-thead > tr > th:nth-child(6),
+     .p-datatable-tbody > tr > td:nth-child(6) {
+       width: 8% !important;
+     }
+     
+     .p-datatable-thead > tr > th:nth-child(7),
+     .p-datatable-tbody > tr > td:nth-child(7) {
+       width: 8% !important;
+     }
+     
+     .p-datatable-thead > tr > th:nth-child(8),
+     .p-datatable-tbody > tr > td:nth-child(8) {
+       width: 20% !important;
+     }
+     
+     .p-datatable-thead > tr > th:nth-child(9),
+     .p-datatable-tbody > tr > td:nth-child(9) {
+       width: 5% !important;
+     }
+    
+          /* Column widths are now handled by nth-child selectors above */
+    
+    .p-datatable-thead > tr > th {
+      font-size: 0.55rem !important;
+      padding: 4px 2px !important;
+    }
+    
+    .header-text {
+      font-size: 0.55rem !important;
+      letter-spacing: 0px !important;
+      word-break: break-word !important;
+      hyphens: auto !important;
+    }
+    
+    .sort-icon {
+      font-size: 0.5rem !important;
+    }
+    
+    .p-datatable-tbody > tr > td {
+      font-size: 0.55rem;
+      padding: 4px 2px;
+    }
+  }
+  
+  ::ng-deep .venue-dropdown {
+    .p-dropdown {
+      min-height: 36px;
+      
+      .p-dropdown-label {
+        font-size: 0.7rem !important;
+        padding-right: 32px !important;
+        padding-left: 6px !important;
+        line-height: 32px !important;
+      }
+      
+      .p-dropdown-trigger {
+        width: 30px !important;
+        
+        .p-dropdown-trigger-icon {
+          font-size: 0.7rem !important;
+        }
+      }
+    }
+  }
+  
+  ::ng-deep .distance-dropdown .p-dropdown {
+    min-height: 36px;
+    
+    .p-dropdown-label {
+      font-size: 0.7rem !important;
+      line-height: 32px !important;
+      padding: 0 6px !important;
+    }
+    
+    .p-dropdown-trigger {
+      width: 30px !important;
+    }
+  }
+  
+  .export-actions button {
+    font-size: 0.75rem !important;
+    padding: 6px 10px !important;
+    height: 36px !important;
+  }
+}
+
+/* Dropdown panel responsive styles */
+::ng-deep .venue-dropdown .p-dropdown-panel {
+  max-height: 250px;
+  
+  @media (max-width: 768px) {
+    max-height: 200px;
+    
+    .p-dropdown-item {
+      padding: 8px 10px !important;
+      font-size: 0.8rem !important;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    max-height: 180px;
+    
+    .p-dropdown-item {
+      padding: 6px 8px !important;
+      font-size: 0.75rem !important;
+    }
+  }
+}
+
+/* Ensure selected venue display is properly truncated */
+::ng-deep .selected-venue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  overflow: hidden;
+  
+  .venue-icon {
+    flex-shrink: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+  
+  .venue-name {
+    font-weight: 600;
+    color: #2c3e50;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .venue-location {
+    color: #7f8c8d;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    margin-left: auto;
+    max-width: 30%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  @media (max-width: 768px) {
+    .venue-location {
+      display: none; /* Hide location on small screens to save space */
+    }
+    
+    .venue-name {
+      font-size: 0.8rem;
+    }
+    
+    .venue-icon {
+      font-size: 0.8rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    gap: 6px;
+    
+    .venue-name {
+      font-size: 0.75rem;
+    }
+    
+    .venue-icon {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+/* Venue option styles in dropdown */
+::ng-deep .venue-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f1f1;
+  gap: 10px;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  .venue-details {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0; /* Allow shrinking */
+  }
+  
+  .venue-name {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .venue-location {
+    color: #7f8c8d;
+    font-size: 0.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .venue-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  
+  .venue-capacity,
+  .venue-price {
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  
+  .venue-capacity {
+    color: #6c757d;
+  }
+  
+  .venue-price {
+    color: #27ae60;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 8px 10px;
+    gap: 8px;
+    
+    .venue-name {
+      font-size: 0.8rem;
+    }
+    
+    .venue-location {
+      font-size: 0.75rem;
+    }
+    
+    .venue-capacity,
+    .venue-price {
+      font-size: 0.7rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    padding: 6px 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    
+    .venue-meta {
+      align-items: flex-start;
+      flex-direction: row;
+      gap: 8px;
+      width: 100%;
+      justify-content: space-between;
+    }
   }
 }
