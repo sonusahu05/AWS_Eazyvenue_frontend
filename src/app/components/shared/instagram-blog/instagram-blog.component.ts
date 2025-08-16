@@ -1,12 +1,4 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  AfterViewInit,
-  Input,
-  PLATFORM_ID,
-  Inject
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Input, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { InstagramService, InstagramEmbed } from '../../../services/instagram.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -30,7 +22,7 @@ export class InstagramBlogComponent implements OnInit, OnDestroy, AfterViewInit 
     private instagramService: InstagramService,
     private sanitizer: DomSanitizer,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadInstagramPosts();
@@ -40,43 +32,59 @@ export class InstagramBlogComponent implements OnInit, OnDestroy, AfterViewInit 
     // Load Instagram script after view is initialized
     if (isPlatformBrowser(this.platformId)) {
       this.instagramService.loadInstagramScript();
+      
+      // Process embeds after a short delay to ensure content is rendered
+      setTimeout(() => {
+        this.instagramService.processEmbeds();
+      }, 1000);
     }
   }
 
   ngOnDestroy(): void {
-    // Add any necessary cleanup here if needed
+    // Cleanup if needed
   }
 
   loadInstagramPosts(): void {
     this.loading = true;
     this.error = null;
 
-    const postObservable = this.account
-      ? this.instagramService.getInstagramEmbedsByAccount(this.account, this.limit)
-      : this.instagramService.getInstagramEmbeds(this.limit);
-
-    postObservable.subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.instagramPosts = response.data;
-
-          // Wait for Angular to render embed code, then call Instagram's script
-          setTimeout(() => {
-            if (isPlatformBrowser(this.platformId)) {
-              this.instagramService.processEmbeds();
+    if (this.account) {
+      // Load posts for specific account
+      this.instagramService.getInstagramEmbedsByAccount(this.account, this.limit)
+        .subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.instagramPosts = response.data;
+            } else {
+              this.error = 'Failed to load Instagram posts';
             }
-          }, 300); // Adjust delay if needed
-        } else {
-          this.error = 'Failed to load Instagram posts';
-        }
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error loading Instagram posts:', error);
-        this.error = 'Failed to load Instagram posts';
-        this.loading = false;
-      }
-    });
+            this.loading = false;
+          },
+          error: (error) => {
+            console.error('Error loading Instagram posts:', error);
+            this.error = 'Failed to load Instagram posts';
+            this.loading = false;
+          }
+        });
+    } else {
+      // Load all posts
+      this.instagramService.getInstagramEmbeds(this.limit)
+        .subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.instagramPosts = response.data;
+            } else {
+              this.error = 'Failed to load Instagram posts';
+            }
+            this.loading = false;
+          },
+          error: (error) => {
+            console.error('Error loading Instagram posts:', error);
+            this.error = 'Failed to load Instagram posts';
+            this.loading = false;
+          }
+        });
+    }
   }
 
   getSafeHtml(htmlContent: string): SafeHtml {
@@ -101,6 +109,7 @@ export class InstagramBlogComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   onPostClick(post: InstagramEmbed): void {
+    // Optional: Track analytics or perform actions when post is clicked
     console.log('Instagram post clicked:', post.title);
   }
 
