@@ -88,4 +88,20 @@ export class EnquiryService {
         })
       );
   }
+
+  deleteEnquiry(id: string): Observable<any> {
+    console.log('🗑️ SERVICE: Deleting enquiry by ID:', id);
+    console.log('🗑️ SERVICE: API URL:', environment.apiUrl + 'eventplanner/' + id);
+
+    return this.http.delete<any>(environment.apiUrl + 'eventplanner/' + id, this.httpOptions)
+      .pipe(
+        tap(response => {
+          console.log('🗑️ SERVICE: Delete enquiry response:', response);
+        }),
+        catchError(error => {
+          console.error('🗑️ SERVICE: Delete enquiry error:', error);
+          return throwError(error);
+        })
+      );
+  }
 }
