@@ -8,90 +8,90 @@
     place-items: center;
 }
 
-/*Vertical Flip*/
-.verticalFlip {
-    display: inline;
-    margin-bottom: 30px;
+// /*Vertical Flip*/
+// .verticalFlip {
+//     display: inline;
+//     margin-bottom: 30px;
 
-}
+// }
 
-.verticalFlip span {
-    animation: vertical 30s linear infinite 0s;
-    /*total animation duration */
-    -ms-animation: vertical 30s linear infinite 0s;
-    -webkit-animation: vertical 30s linear infinite 0s;
-    color: #ffffff;
-    opacity: 0;
-    overflow: visible;
-    position: absolute;
-}
+// .verticalFlip span {
+//     animation: vertical 30s linear infinite 0s;
+//     /*total animation duration */
+//     -ms-animation: vertical 30s linear infinite 0s;
+//     -webkit-animation: vertical 30s linear infinite 0s;
+//     color: #ffffff;
+//     opacity: 0;
+//     overflow: visible;
+//     position: absolute;
+// }
 
-/* Add this with added number of options */
-.verticalFlip span:nth-child(2) {
-    animation-delay: 2.5s;
-    -ms-animation-delay: 2.5s;
-    -webkit-animation-delay: 2.5s;
-}
+// /* Add this with added number of options */
+// .verticalFlip span:nth-child(2) {
+//     animation-delay: 2.5s;
+//     -ms-animation-delay: 2.5s;
+//     -webkit-animation-delay: 2.5s;
+// }
 
-.verticalFlip span:nth-child(3) {
-    animation-delay: 5s;
-    -ms-animation-delay: 5s;
-    -webkit-animation-delay: 5s;
-}
+// .verticalFlip span:nth-child(3) {
+//     animation-delay: 5s;
+//     -ms-animation-delay: 5s;
+//     -webkit-animation-delay: 5s;
+// }
 
-.verticalFlip span:nth-child(4) {
-    animation-delay: 7.5s;
-    -ms-animation-delay: 7.5s;
-    -webkit-animation-delay: 7.5s;
-}
+// .verticalFlip span:nth-child(4) {
+//     animation-delay: 7.5s;
+//     -ms-animation-delay: 7.5s;
+//     -webkit-animation-delay: 7.5s;
+// }
 
-.verticalFlip span:nth-child(5) {
-    animation-delay: 10s;
-    -ms-animation-delay: 10s;
-    -webkit-animation-delay: 10s;
-}
+// .verticalFlip span:nth-child(5) {
+//     animation-delay: 10s;
+//     -ms-animation-delay: 10s;
+//     -webkit-animation-delay: 10s;
+// }
 
-.verticalFlip span:nth-child(6) {
-    animation-delay: 12.5s;
-    -ms-animation-delay: 12.5s;
-    -webkit-animation-delay: 12.5s;
-}
+// .verticalFlip span:nth-child(6) {
+//     animation-delay: 12.5s;
+//     -ms-animation-delay: 12.5s;
+//     -webkit-animation-delay: 12.5s;
+// }
 
-.verticalFlip span:nth-child(7) {
-    animation-delay: 15s;
-    -ms-animation-delay: 15s;
-    -webkit-animation-delay: 15s;
-}
+// .verticalFlip span:nth-child(7) {
+//     animation-delay: 15s;
+//     -ms-animation-delay: 15s;
+//     -webkit-animation-delay: 15s;
+// }
 
-.verticalFlip span:nth-child(8) {
-    animation-delay: 17.5s;
-    -ms-animation-delay: 17.5s;
-    -webkit-animation-delay: 17.5s;
-}
+// .verticalFlip span:nth-child(8) {
+//     animation-delay: 17.5s;
+//     -ms-animation-delay: 17.5s;
+//     -webkit-animation-delay: 17.5s;
+// }
 
-.verticalFlip span:nth-child(9) {
-    animation-delay: 20s;
-    -ms-animation-delay: 20s;
-    -webkit-animation-delay: 20s;
-}
+// .verticalFlip span:nth-child(9) {
+//     animation-delay: 20s;
+//     -ms-animation-delay: 20s;
+//     -webkit-animation-delay: 20s;
+// }
 
-.verticalFlip span:nth-child(10) {
-    animation-delay: 22.5s;
-    -ms-animation-delay: 22.5s;
-    -webkit-animation-delay: 22.5s;
-}
+// .verticalFlip span:nth-child(10) {
+//     animation-delay: 22.5s;
+//     -ms-animation-delay: 22.5s;
+//     -webkit-animation-delay: 22.5s;
+// }
 
-.verticalFlip span:nth-child(11) {
-    animation-delay: 25s;
-    -ms-animation-delay: 25s;
-    -webkit-animation-delay: 25s;
-}
+// .verticalFlip span:nth-child(11) {
+//     animation-delay: 25s;
+//     -ms-animation-delay: 25s;
+//     -webkit-animation-delay: 25s;
+// }
 
-.verticalFlip span:nth-child(12) {
-    animation-delay: 27.5s;
-    -ms-animation-delay: 27.5s;
-    -webkit-animation-delay: 27.5s;
-}
+// .verticalFlip span:nth-child(12) {
+//     animation-delay: 27.5s;
+//     -ms-animation-delay: 27.5s;
+//     -webkit-animation-delay: 27.5s;
+// }
 
 .listing-page {
     background: #FFFFFF 0% 0% no-repeat padding-box;

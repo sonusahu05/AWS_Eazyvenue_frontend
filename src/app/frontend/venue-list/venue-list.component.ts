@@ -1285,6 +1285,9 @@ displayLimit: number = 25;
                     }
                 })
                 this.finalVenueList = [...this.venueList, ...this.tmpVenueList];
+                
+                // Preload first images to improve loading performance
+                this.preloadVenueImages();
                 this.totalRecords = data.data.totalCount;
                 if (this.finalVenueList.length > 0) {
                     this.finalVenueList.forEach(element => {
@@ -1341,6 +1344,9 @@ displayLimit: number = 25;
                         this.updateDisplayedVenues();
                     }
                     this.noVenueFlag = false;
+                    
+                    // Refresh galleries to fix any loading issues
+                    this.refreshGalleries();
                 } else {
                     this.noVenueFlag = true;
                 }
@@ -2429,6 +2435,94 @@ displayLimit: number = 25;
         aggregateRatingScript.setAttribute('data-schema', 'aggregate-rating');
         aggregateRatingScript.text = JSON.stringify(aggregateRatingSchema);
         document.head.appendChild(aggregateRatingScript);
+    }
+
+    // Image error handling methods
+    onImageError(event: any, imageData: any) {
+        console.error('Image failed to load:', imageData.venue_image_src);
+        const img = event.target;
+        
+        // Remove loading state
+        const container = img.closest('.listing-thumbnail');
+        if (container) {
+            container.classList.remove('loading');
+        }
+        
+        // Attempt to reload with a different URL format if available
+        if (imageData.venue_image_src && !img.hasAttribute('data-retry')) {
+            img.setAttribute('data-retry', 'true');
+            // Try with a different URL structure or fallback
+            const fallbackUrl = imageData.venue_image_src.replace('api.eazyvenue.in', 'api.eazyvenue.com');
+            if (fallbackUrl !== imageData.venue_image_src) {
+                img.src = fallbackUrl;
+                return;
+            }
+        }
+        // Set a default image if all retries fail
+        img.src = 'assets/default-img.jpg';
+        img.style.backgroundColor = '#f8f9fa';
+        img.style.border = '1px solid #dee2e6';
+        img.style.opacity = '1';
+        img.setAttribute('data-loaded', 'true');
+    }
+
+    onImageLoad(event: any) {
+        const img = event.target;
+        img.style.opacity = '1';
+        img.style.transition = 'opacity 0.3s ease-in-out';
+        img.setAttribute('data-loaded', 'true');
+        
+        // Remove loading state from parent container
+        const container = img.closest('.listing-thumbnail');
+        if (container) {
+            container.classList.remove('loading');
+        }
+    }
+
+    // Preload venue images to improve loading performance
+    preloadVenueImages() {
+        if (!this.finalVenueList || this.finalVenueList.length === 0) {
+            return;
+        }
+
+        // Preload first 6 venues' first images for better initial loading experience
+        const venuesToPreload = this.finalVenueList.slice(0, 6);
+        
+        venuesToPreload.forEach(venue => {
+            if (venue.venueImage && venue.venueImage.length > 0) {
+                const firstImage = venue.venueImage[0];
+                if (firstImage && firstImage.venue_image_src && !firstImage.video) {
+                    const img = new Image();
+                    img.src = firstImage.venue_image_src;
+                    
+                    // Add error handling for preloaded images
+                    img.onerror = () => {
+                        console.warn('Failed to preload image:', firstImage.venue_image_src);
+                        // Try alternative URL format
+                        const fallbackUrl = firstImage.venue_image_src.replace('api.eazyvenue.in', 'api.eazyvenue.com');
+                        if (fallbackUrl !== firstImage.venue_image_src) {
+                            const fallbackImg = new Image();
+                            fallbackImg.src = fallbackUrl;
+                        }
+                    };
+                }
+            }
+        });
+    }
+
+    // Force refresh galleries after a small delay to ensure images are loaded
+    refreshGalleries() {
+        setTimeout(() => {
+            // Trigger change detection for galleries
+            if (this.finalVenueList && this.finalVenueList.length > 0) {
+                // Force a re-render of galleries by temporarily changing a property
+                const originalList = [...this.finalVenueList];
+                this.finalVenueList = [];
+                setTimeout(() => {
+                    this.finalVenueList = originalList;
+                }, 50);
+            }
+        }, 1000);
     }
 
 }

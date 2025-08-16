@@ -418,7 +418,7 @@
                             *ngFor="let item of displayedVenueList"
                         >
                             <div class="listing">
-                                <div class="listing-thumbnail">
+                                <div class="listing-thumbnail loading">
                                     <div
                                         class="mobile-view-gallery"
                                         #galleryContainer
@@ -438,6 +438,8 @@
                                             [showIndicators]="false"
                                             [showItemNavigatorsOnHover]="true"
                                             [showIndicatorsOnItem]="true"
+                                            [autoPlay]="false"
+                                            [changeItemOnIndicatorHover]="false"
                                             [attr.aria-label]="item.name + ' venue image gallery'"
                                             role="region"
                                         >
@@ -451,11 +453,17 @@
                                                     <img
                                                         *ngIf="!img.video"
                                                         [src]="img.venue_image_src"
+                                                        loading="eager"
+                                                        decoding="async"
                                                         style="
                                                             width: 100%;
                                                             display: block;
+                                                            min-height: 200px;
+                                                            object-fit: cover;
                                                         "
                                                         [alt]="item.name + ' venue image'"
+                                                        (error)="onImageError($event, img)"
+                                                        (load)="onImageLoad($event)"
                                                     />
                                                 </a>
                                                 <a [routerLink]="['/venue', item.metaUrl]" 
@@ -466,6 +474,7 @@
                                                         muted
                                                         controls
                                                         loop
+                                                        preload="metadata"
                                                     >
                                                         <source
                                                             [src]="img.video"
@@ -494,6 +503,8 @@
                                             [showIndicators]="false"
                                             [showItemNavigatorsOnHover]="true"
                                             [showIndicatorsOnItem]="true"
+                                            [autoPlay]="false"
+                                            [changeItemOnIndicatorHover]="false"
                                             [attr.aria-label]="item.name + ' venue image gallery'"
                                             role="region"
                                         >
@@ -509,11 +520,17 @@
                                                         [src]="
                                                             iItem.venue_image_src
                                                         "
+                                                        loading="eager"
+                                                        decoding="async"
                                                         style="
                                                             width: 100%;
                                                             display: block;
+                                                            min-height: 250px;
+                                                            object-fit: cover;
                                                         "
                                                         [alt]="item.name + ' venue image'"
+                                                        (error)="onImageError($event, iItem)"
+                                                        (load)="onImageLoad($event)"
                                                     />
                                                 </a>
                                                 <a [routerLink]="['/venue', item.metaUrl]" 
@@ -528,6 +545,7 @@
                                                         muted
                                                         controls
                                                         loop
+                                                        preload="metadata"
                                                     >
                                                         <source
                                                             src="{{ iItem.video }}"
