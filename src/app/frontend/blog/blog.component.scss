@@ -1,7 +1,7 @@
 /* General Styles */
 .blog-container {
   padding: 60px 0;
-  background-color: #f8f8f8;
+  background-color: #ffffff;
 }
 
 /* Hero Section */
@@ -58,7 +58,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .blog-card:hover {
@@ -152,25 +152,6 @@
   margin-bottom: 40px;
 }
 
-/* Thanks for Visiting Section */
-.thanks-for-visiting {
-  background-color: #f8f8f8;
-  padding-bottom: 15px;
-  text-align: center;
-  font-size: 1.2rem;
-  color: #333;
-}
-
-.thanks-for-visiting p {
-  font-weight: 600;
-  margin: 0;
-}
-
-.thanks-for-visiting p {
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {

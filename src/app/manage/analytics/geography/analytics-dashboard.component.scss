@@ -1,3 +1,182 @@
+.p-datatable-gridlines {
+  width: 100% !important;
+  table-layout: auto !important;
+
+  th, td {
+    padding: 0.75rem 1.5rem;     // equal padding for header and cells
+    white-space: nowrap;         // no wrapping to keep alignment
+    vertical-align: middle;
+    min-width: 100px;            // minimum width so columns stay consistent
+  }
+
+  td span, td div {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;     // ellipsis for overflow text
+  }
+
+  /* Specific fix for icons in cells to not shrink column */
+  td .icon, td svg, td img {
+    min-width: 24px;
+    display: inline-block;
+  }
+}
+
+/* Mobile-specific tweaks */
+@media (max-width: 767px) {
+  .p-datatable-gridlines-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  .p-datatable-gridlines {
+    min-width: 750px;
+    table-layout: auto !important;
+  }
+
+  th, td {
+    padding: 0.5rem 1.5rem;
+    white-space: nowrap;
+    min-width: 120px;           // a bit bigger min-width on mobile for touch-friendliness
+  }
+
+  td .icon, td svg, td img {
+    min-width: 24px;
+  }
+}
+/* General Table Styles */
+.p-datatable-gridlines {
+  width: 100% !important;
+  table-layout: fixed !important; /* fixed table layout for consistent columns */
+  border-collapse: collapse;
+}
+
+.p-datatable-gridlines th,
+.p-datatable-gridlines td {
+  padding: 0.5rem 0.8rem; /* balanced padding for mobile and desktop */
+  white-space: nowrap; /* keep text in one line, for alignment */
+  overflow: hidden;    /* hide overflow */
+  text-overflow: ellipsis; /* add "..." for overflow */
+  vertical-align: middle;
+  word-break: normal;  /* avoid breaking words */
+}
+
+/* Specific min-widths for columns to keep consistent width */
+/* Use class selectors matching Angular templates' classes */
+
+
+
+.venues-table-section .venue-name-col,
+.venues-table-section .venue-name-cell {
+  min-width: 130px;
+  max-width: 130px;
+}
+
+.venues-table-section .clicks-col,
+.venues-table-section .clicks-cell,
+.venues-table-section .users-col,
+.venues-table-section .users-cell,
+.venues-table-section .score-col,
+.venues-table-section .score-cell,
+.venues-table-section .engagement-col,
+.venues-table-section .engagement-cell,
+.venues-table-section .enquiry-col,
+.venues-table-section .enquiry-cell {
+  min-width: 90px;
+  max-width: 90px;
+  text-align: center;
+}
+
+.venues-table-section .cities-col,
+.venues-table-section .cities-cell,
+.venues-table-section .subareas-col,
+.venues-table-section .subareas-cell {
+  min-width: 150px;
+  max-width: 150px;
+}
+
+.venues-table-section .actions-col,
+.venues-table-section .actions-cell {
+  min-width: 100px;
+  max-width: 100px;
+  text-align: center;
+}
+
+/* Device Analytics Table column widths */
+
+.device-analytics-section .platform-col,
+.device-analytics-section .platform-col td {
+  min-width: 100px;
+  max-width: 100px;
+}
+
+.device-analytics-section .browser-col,
+.device-analytics-section .browser-col td {
+  min-width: 100px;
+  max-width: 100px;
+}
+
+.device-analytics-section .device-type-col,
+.device-analytics-section .device-type-col td {
+  min-width: 110px;
+  max-width: 110px;
+  text-align: center;
+}
+
+.device-analytics-section .clicks-col,
+.device-analytics-section .clicks-col td,
+.device-analytics-section .score-col,
+.device-analytics-section .score-col td,
+.device-analytics-section .time-col,
+.device-analytics-section .time-col td {
+  min-width: 90px;
+  max-width: 90px;
+  text-align: center;
+}
+
+/* Scroll wrapper */
+.p-datatable-gridlines-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+/* Responsive tuning for smaller screens */
+@media (max-width: 767px) {
+  .p-datatable-gridlines th,
+  .p-datatable-gridlines td {
+    padding: 0.4rem 0.6rem;
+  }
+
+  .venues-table-section .venue-name-col,
+  .venues-table-section .venue-name-cell {
+    min-width: 110px;
+    max-width: 110px;
+  }
+
+  .venues-table-section .cities-col,
+  .venues-table-section .cities-cell,
+  .venues-table-section .subareas-col,
+  .venues-table-section .subareas-cell {
+    min-width: 130px;
+    max-width: 130px;
+  }
+
+  /* For device analytics table */
+  .device-analytics-section .platform-col,
+  .device-analytics-section .platform-col td,
+  .device-analytics-section .browser-col,
+  .device-analytics-section .browser-col td,
+  .device-analytics-section .device-type-col,
+  .device-analytics-section .device-type-col td {
+    min-width: 90px;
+    max-width: 90px;
+  }
+}
+
 /* Analytics Dashboard Styles */
 .analytics-dashboard {
   padding: 20px;
