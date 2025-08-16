@@ -1,3 +1,73 @@
+/* ✅ Popular Venues Table - Responsive */
+.venues-table-section {
+  width: 100%;
+  overflow-x: auto;
+
+  .p-datatable {
+    table-layout: fixed; // keep columns aligned
+    width: 100%;
+
+    th, td {
+      text-align: center;
+      white-space: nowrap; // prevent text wrapping
+      padding: 12px 8px;
+      font-size: 0.9rem;
+    }
+
+    th {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    td {
+      font-size: 0.85rem;
+      vertical-align: middle;
+    }
+  }
+}
+
+/* ✅ Mobile adjustments */
+@media (max-width: 768px) {
+  .venues-table-section {
+    overflow-x: auto; // enable scroll
+    -webkit-overflow-scrolling: touch;
+
+    .p-datatable {
+      min-width: 1000px; // force horizontal scroll if needed
+      display: block;
+
+      th, td {
+        font-size: 0.8rem;
+        padding: 10px 6px;
+      }
+    }
+
+    .p-button-rounded {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+    }
+
+    .city-tag, .subarea-tag {
+      display: inline-block;
+      margin: 0 2px;
+      font-size: 0.75rem;
+    }
+  }
+}
+
+/* ✅ Tiny screen adjustments */
+@media (max-width: 480px) {
+  .venues-table-section .p-datatable {
+    min-width: 1200px; // ensure scroll for very small screens
+  }
+
+  .venues-table-section th, 
+  .venues-table-section td {
+    font-size: 0.75rem;
+    padding: 8px 5px;
+  }
+}
+
 .p-datatable-gridlines {
   width: 100% !important;
   table-layout: auto !important;
@@ -71,22 +141,30 @@
 
 .venues-table-section .venue-name-col,
 .venues-table-section .venue-name-cell {
-  min-width: 130px;
-  max-width: 130px;
+  min-width: 200px;
+  max-width: 200px;
 }
 
-.venues-table-section .clicks-col,
+.venues-table-section .clicks-col
 .venues-table-section .clicks-cell,
 .venues-table-section .users-col,
 .venues-table-section .users-cell,
 .venues-table-section .score-col,
-.venues-table-section .score-cell,
-.venues-table-section .engagement-col,
-.venues-table-section .engagement-cell,
 .venues-table-section .enquiry-col,
 .venues-table-section .enquiry-cell {
   min-width: 90px;
   max-width: 90px;
+  text-align: center;
+}
+.venues-table-section .engagement-col,
+.venues-table-section .engagement-cell{
+  min-width: 150px;
+  max-width: 150px;
+  text-align: center;
+}
+.venues-table-section .score-cell{
+  min-width: 120px;
+  max-width: 150px;
   text-align: center;
 }
 
@@ -153,16 +231,19 @@
 
   .venues-table-section .venue-name-col,
   .venues-table-section .venue-name-cell {
-    min-width: 110px;
-    max-width: 110px;
+    min-width: 200px;
+    max-width: 200px;
   }
 
   .venues-table-section .cities-col,
-  .venues-table-section .cities-cell,
+  .venues-table-section .cities-cell{
+    min-width: 230px;
+    max-width: 230px;
+  }
   .venues-table-section .subareas-col,
   .venues-table-section .subareas-cell {
-    min-width: 130px;
-    max-width: 130px;
+    min-width: 250px;
+    max-width: 250px;
   }
 
   /* For device analytics table */
@@ -1507,7 +1588,38 @@
   }
 
   /* Equalize column widths for mobile view */
-  .venue-name-col, .clicks-col, .users-col, .score-col, .engagement-col, .enquiry-col, .cities-col, .subareas-col, .actions-col {
+  .venue-name-col{
+    width: 36%; /* Set equal width for each column */
+    min-width: 200px; /* Prevent columns from shrinking too much */
+  } 
+  .clicks-col{
+    width: 16%; /* Set equal width for each column */
+    min-width: 100px; /* Prevent columns from shrinking too much */
+  }
+  .users-col{
+    width: 16%; /* Set equal width for each column */
+    min-width: 100px; /* Prevent columns from shrinking too much */
+  }
+  .score-col{
+    width: 16%; /* Set equal width for each column */
+    min-width: 100px; /* Prevent columns from shrinking too much */
+  }
+  .engagement-col{
+    width: 16%; /* Set equal width for each column */
+    min-width: 100px; /* Prevent columns from shrinking too much */
+  }.enquiry-col{
+    width: 16%; /* Set equal width for each column */
+    min-width: 100px; /* Prevent columns from shrinking too much */
+  }
+  .cities-col{
+    width: 16%; /* Set equal width for each column */
+    min-width: 100px; /* Prevent columns from shrinking too much */
+  }
+  .subareas-col{
+    width: 16%; /* Set equal width for each column */
+    min-width: 100px; /* Prevent columns from shrinking too much */
+  } 
+  .actions-col {
     width: 16%; /* Set equal width for each column */
     min-width: 100px; /* Prevent columns from shrinking too much */
   }
@@ -1549,9 +1661,41 @@
   }
 
   /* Adjust column width slightly more for smaller devices */
-  .venue-name-col, .clicks-col, .users-col, .score-col, .engagement-col, .enquiry-col, .cities-col, .subareas-col, .actions-col {
-    width: 18%; /* Set a reasonable width for smaller screens */
-    min-width: 80px;
+  .venue-name-col{
+    width: 48%; /* Set a reasonable width for smaller screens */
+    min-width: 200px;
+  } 
+  .clicks-col{
+    width: 48%; /* Set a reasonable width for smaller screens */
+    min-width: 120px;
+  } 
+  .users-col{
+    width: 48%; /* Set a reasonable width for smaller screens */
+    min-width: 120px;
+  } 
+  .score-col{
+    width: 48%; /* Set a reasonable width for smaller screens */
+    min-width: 120px;
+  } 
+  .engagement-col{
+    width: 48%; /* Set a reasonable width for smaller screens */
+    min-width: 120px;
+  } 
+  .enquiry-col{
+    width: 48%; /* Set a reasonable width for smaller screens */
+    min-width: 120px;
+  } 
+  .cities-col{
+    width: 48%; /* Set a reasonable width for smaller screens */
+    min-width: 120px;
+  } 
+  .subareas-col{
+    width: 48%; /* Set a reasonable width for smaller screens */
+    min-width: 120px;
+  } 
+  .actions-col {
+    width: 48%; /* Set a reasonable width for smaller screens */
+    min-width: 120px;
   }
 }
 /* Style for the Export PDF Button */

@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-   apiUrl: 'https://api.eazyvenue.com/api/',
+   apiUrl: 'https://api.eazyvenue.in/api/',
     // apiUrl: 'http://localhost:3006/api/',
     googleMapsApiKey: 'AIzaSyDdMU6wNTU1kPRIMyuKtfLKRSpIgr5JL_s',
     ageDiff: 18,
