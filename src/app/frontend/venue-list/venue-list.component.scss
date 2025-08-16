@@ -939,6 +939,26 @@ span.find-venue-icon {
     opacity: 1;
 }
 
+/* Fix z-index issue - ensure galleria stays below navigation */
+:host ::ng-deep .p-galleria,
+:host ::ng-deep .p-galleria-item-wrapper,
+:host ::ng-deep .p-galleria-item-container,
+:host ::ng-deep .p-galleria-item,
+:host ::ng-deep .p-galleria-item-nav {
+    z-index: 1 !important;
+}
+
+// /* Ensure navigation header stays on top */
+// :host ::ng-deep .sigma_header {
+//     z-index: 999999 !important;
+//     position: relative;
+// }
+
+// /* Additional fix for any overlay panels */
+// :host ::ng-deep .p-overlaypanel {
+//     z-index: 1000 !important;
+// }
+
 .p-galleria-thumbnail-item-content img[data-loaded="true"] {
     opacity: 1;
 }
