@@ -31,31 +31,42 @@
     </button>
   </div>
 
-  <!-- Instagram Thumbnails Grid -->
+  <!-- Instagram Posts Grid -->
   <div class="instagram-posts-grid" *ngIf="!loading && !error && instagramPosts.length > 0">
     <div class="row">
       <div 
-        class="instagram-post-wrapper {{ getGridClass() }} mb-4"
+        class="instagram-post-wrapper {{ getGridClass() }} mb-4" 
         *ngFor="let post of instagramPosts; trackBy: trackByPostId">
+        
+        <!-- Instagram Embed Container -->
+        <div class="instagram-embed-container" (click)="onPostClick(post)">
+          <!-- Post Title -->
+          <div class="instagram-post-header mb-3" *ngIf="post.title">
+            <h6 class="post-title">{{ post.title }}</h6>
+            <small class="post-date text-muted">
+              <i class="fas fa-calendar"></i>
+              {{ post.created_at | date:'mediumDate' }}
+            </small>
+          </div>
 
-        <div class="instagram-thumbnail-container">
-          <a [href]="post.url" target="_blank" rel="noopener noreferrer">
-            <img 
-              [src]="instagramService.getThumbnailUrl(post)" 
-              alt="{{ post.title || 'Instagram post' }}" 
-              class="img-fluid rounded shadow-sm w-100"
-              (error)="onImgError($event)"
-            />
-          </a>
-        </div>
+          <!-- Instagram Embed -->
+          <div class="instagram-embed" [innerHTML]="getSafeHtml(post.embed_code)">
+          </div>
 
-        <!-- Post Title & Date -->
-        <div class="instagram-post-meta mt-2 text-center">
-          <h6 class="post-title mb-1" *ngIf="post.title">{{ post.title }}</h6>
-          <small class="post-date text-muted" *ngIf="post.created_at">
-            <i class="fas fa-calendar"></i>
-            {{ post.created_at | date:'mediumDate' }}
-          </small>
+          <!-- Post Description -->
+          <div class="instagram-post-footer mt-3" *ngIf="post.description">
+            <p class="post-description">{{ post.description }}</p>
+          </div>
+
+          <!-- Post Actions -->
+          <div class="instagram-post-actions mt-3">
+            <a [href]="post.url" target="_blank" class="btn btn-outline-primary btn-sm">
+              <i class="fab fa-instagram"></i> View on Instagram
+            </a>
+            <span class="post-type-badge" *ngIf="post.is_video">
+              <i class="fas fa-play-circle"></i> Video
+            </span>
+          </div>
         </div>
       </div>
     </div>

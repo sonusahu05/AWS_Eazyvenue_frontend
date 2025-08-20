@@ -15,9 +15,6 @@ export interface InstagramEmbed {
   is_published: boolean;
   created_at: Date;
   updated_at: Date;
-
-  // ✅ optional thumbnail field
-  thumbnail?: string;
 }
 
 export interface InstagramApiResponse {
@@ -37,21 +34,24 @@ export interface SingleInstagramResponse {
 export class InstagramService {
   private baseUrl = `${environment.apiUrl}instagram`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
-   * Get all Instagram embeds
+   * Get all Instagram embeds for blog
+   * @param limit - Number of posts to retrieve (default: 10)
+   * @param published - Filter by published status (default: true)
    */
   getInstagramEmbeds(limit: number = 10, published: boolean = true): Observable<InstagramApiResponse> {
-    let params = new HttpParams()
-      .set('limit', limit.toString())
-      .set('published', published.toString());
+    let params = new HttpParams();
+    params = params.set('limit', limit.toString());
+    params = params.set('published', published.toString());
 
     return this.http.get<InstagramApiResponse>(this.baseUrl, { params });
   }
 
   /**
    * Get single Instagram embed by ID
+   * @param id - Instagram embed ID
    */
   getInstagramEmbed(id: number): Observable<SingleInstagramResponse> {
     return this.http.get<SingleInstagramResponse>(`${this.baseUrl}/${id}`);
@@ -59,19 +59,44 @@ export class InstagramService {
 
   /**
    * Get Instagram embeds for specific account
+   * @param account - Account name (e.g., 'eazyvenue')
+   * @param limit - Number of posts to retrieve (default: 10)
    */
   getInstagramEmbedsByAccount(account: string, limit: number = 10): Observable<InstagramApiResponse> {
-    let params = new HttpParams().set('limit', limit.toString());
+    let params = new HttpParams();
+    params = params.set('limit', limit.toString());
+
     return this.http.get<InstagramApiResponse>(`${this.baseUrl}/account/${account}`, { params });
   }
 
   /**
-   * ✅ Generate thumbnail URL (if API doesn’t return it)
+   * Get Instagram embed script
    */
-  getThumbnailUrl(post: InstagramEmbed): string {
-    if (post.thumbnail) {
-      return post.thumbnail;
+  getInstagramScript(): Observable<{success: boolean, script: string, usage: string}> {
+    return this.http.get<{success: boolean, script: string, usage: string}>(`${this.baseUrl}/script/embed`);
+  }
+
+  /**
+   * Load Instagram embed script dynamically
+   * This should be called once per page to enable Instagram embeds
+   */
+  loadInstagramScript(): void {
+    if (typeof window !== 'undefined' && !document.getElementById('instagram-embed-script')) {
+      const script = document.createElement('script');
+      script.id = 'instagram-embed-script';
+      script.src = 'https://www.instagram.com/embed.js';
+      script.async = true;
+      document.head.appendChild(script);
     }
-    return `https://www.instagram.com/p/${post.post_id}/media/?size=l`;
+  }
+
+  /**
+   * Process Instagram embeds after they are loaded into the DOM
+   * This should be called after embedding Instagram content
+   */
+  processEmbeds(): void {
+    if (typeof window !== 'undefined' && (window as any).instgrm) {
+      (window as any).instgrm.Embeds.process();
+    }
   }
 }
