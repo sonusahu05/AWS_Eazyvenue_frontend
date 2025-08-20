@@ -14,6 +14,7 @@ export interface InstagramEmbed {
   is_video?: boolean;
   is_published: boolean;
   created_at: Date;
+  thumbnail?: string;
   updated_at: Date;
 }
 

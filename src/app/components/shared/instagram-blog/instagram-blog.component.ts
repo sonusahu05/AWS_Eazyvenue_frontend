@@ -157,6 +157,14 @@ export class InstagramBlogComponent implements OnInit, AfterViewChecked {
       this.instagramService.processEmbeds();
     }
   }
+getThumbnailSrc(post: InstagramEmbed): string {
+  return post.thumbnail || '/assets/instagram/placeholder.jpg';
+}
+
+onImgError(event: Event) {
+  const img = event.target as HTMLImageElement;
+  img.src = '/assets/instagram/placeholder.jpg';
+}
 
   // loadPosts(): void {
   //   this.loading = true;

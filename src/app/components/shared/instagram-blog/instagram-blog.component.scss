@@ -253,3 +253,19 @@
 .instagram-post-wrapper:nth-child(4) { animation-delay: 0.4s; }
 .instagram-post-wrapper:nth-child(5) { animation-delay: 0.5s; }
 .instagram-post-wrapper:nth-child(6) { animation-delay: 0.6s; }
+.instagram-thumbnail-card {
+  display: block;
+  position: relative;
+
+  img {
+    width: 100%;
+    aspect-ratio: 1 / 1;  // keep square grid
+    object-fit: cover;
+    border-radius: 12px;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  img:hover {
+    transform: scale(1.03);
+  }
+}
