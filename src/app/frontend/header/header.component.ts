@@ -44,6 +44,7 @@ interface Vendor {
 export class HeaderComponent implements OnInit, AfterViewInit {
     isNavbarFixed: boolean = false;
     isMobileView: boolean = false; // Will be set in ngOnInit
+    isBrowser: boolean = false; // SSR safety flag for TabView and DOM operations
     @HostListener('window:resize', [])
     onResize() {
       if (isPlatformBrowser(this.platformId)) {
@@ -208,6 +209,9 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         private el: ElementRef,
         @Inject(PLATFORM_ID) private platformId: Object
     ) {
+        // Initialize browser detection for SSR safety
+        this.isBrowser = isPlatformBrowser(this.platformId);
+        
         this.router.events.subscribe((event) => {
             if (event instanceof NavigationEnd) {
               this.sidebarVisible = false; //hide sidebar

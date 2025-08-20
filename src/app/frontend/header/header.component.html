@@ -396,18 +396,21 @@
     <p-toast key="usertoastmsg"></p-toast>
     <div class="login-popup">
         <div id="login-register-description" class="sr-only">Choose to login to your existing account or register as a new user</div>
-        <p-tabView [(activeIndex)]="activeIndex">
-            <p-tabPanel header="Login">
-                <div class="forms">
-                    <form [formGroup]="loginForm" *ngIf="this.loginForm" (ngSubmit)="onSubmit()">
+        
+        <!-- SSR-safe TabView with browser-only rendering -->
+        <ng-container *ngIf="isBrowser; else tabsSsr">
+            <p-tabView [(activeIndex)]="activeIndex">
+                <p-tabPanel header="Login">
+                    <div class="forms">
+                        <form [formGroup]="loginForm" *ngIf="this.loginForm" (ngSubmit)="onSubmit()">
 
-                        <div class="form-group">
-                            <label>Email</label><span class="mandatory-fields"> *</span>
-                            <input type="email" formControlName="email" class="form-control form-control-light"
-                                placeholder="Enter your Email" type="text"
-                                [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.email.errors }" required>
-                            <div *ngIf="loginFormSubmitted && loginf.email.errors" class="invalid-feedback">
-                                <div *ngIf="loginf.email.errors.required">Email is required</div>
+                            <div class="form-group">
+                                <label>Email</label><span class="mandatory-fields"> *</span>
+                                <input type="email" formControlName="email" class="form-control form-control-light"
+                                    placeholder="Enter your Email" type="text"
+                                    [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.email.errors }" required>
+                                <div *ngIf="loginFormSubmitted && loginf.email.errors" class="invalid-feedback">
+                                    <div *ngIf="loginf.email.errors.required">Email is required</div>
                                 <div *ngIf="loginf.email.errors.email">Enter valid email address</div>
                             </div>
                         </div>
@@ -566,14 +569,47 @@
                         </div>
                     </form>
                 </div>
-
-
-
             </p-tabPanel>
-
         </p-tabView>
+        </ng-container>
+        
+        <!-- SSR fallback template for TabView -->
+        <ng-template #tabsSsr>
+            <div class="tabs-ssr">
+                <div class="tab-headers">
+                    <div class="tab-header active">Login</div>
+                    <div class="tab-header">Sign up</div>
+                </div>
+                <div class="forms">
+                    <!-- Show login form by default in SSR -->
+                    <form [formGroup]="loginForm" *ngIf="this.loginForm" (ngSubmit)="onSubmit()">
+                        <div class="form-group">
+                            <label>Email</label><span class="mandatory-fields"> *</span>
+                            <input type="email" formControlName="email" class="form-control form-control-light"
+                                placeholder="Enter your Email" type="text"
+                                [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.email.errors }" required>
+                            <div *ngIf="loginFormSubmitted && loginf.email.errors" class="invalid-feedback">
+                                <div *ngIf="loginf.email.errors.required">Email is required</div>
+                                <div *ngIf="loginf.email.errors.email">Please enter a valid email address</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label><span class="mandatory-fields"> *</span>
+                            <input type="password" formControlName="password" class="form-control form-control-light"
+                                placeholder="Enter your Password" 
+                                [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.password.errors }" required>
+                            <div *ngIf="loginFormSubmitted && loginf.password.errors" class="invalid-feedback">
+                                <div *ngIf="loginf.password.errors.required">Password is required</div>
+                            </div>
+                        </div>
+                        <div class="form-group mt-3">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </ng-template>
     </div>
-
 </p-dialog>
 <p-dialog [(visible)]="showForgotPasswordDialog" [modal]="true" [breakpoints]="{'960px': '60vw', '640px': '100vw'}"
     [baseZIndex]="10000" [draggable]="false" [resizable]="false"
@@ -647,7 +683,10 @@
     <div class="login-popup">
         <div id="vendor-description" class="sr-only">Vendor login and registration form to grow your business with EazyVenue</div>
         <h2 class="vendor-popup-heading">"Grow your Business With Eazy Venue"</h2>
-        <p-tabView [(activeIndex)]="activeIndex">
+        
+        <!-- SSR-safe vendor TabView -->
+        <ng-container *ngIf="isBrowser; else vendorTabsSsr">
+            <p-tabView [(activeIndex)]="activeIndex">
 
             <p-tabPanel header="Vendor Login">
                 <div class="forms">
@@ -764,6 +803,35 @@
             </p-tabPanel>
 
         </p-tabView>
+        </ng-container>
+        
+        <!-- SSR fallback for vendor tabs -->
+        <ng-template #vendorTabsSsr>
+            <div class="tabs-ssr">
+                <div class="tab-headers">
+                    <div class="tab-header active">Vendor Login</div>
+                    <div class="tab-header">Vendor Register</div>
+                </div>
+                <div class="forms">
+                    <!-- Default vendor login form for SSR -->
+                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                        <div class="form-group">
+                            <label>Email<span class="required-color"> *</span></label>
+                            <input type="email" formControlName="email" class="form-control"
+                                placeholder="Enter your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password <span class="required-color"> *</span></label>
+                            <input formControlName="password" class="form-control" placeholder="Enter your password"
+                                type="password" required>
+                        </div>
+                        <div class="popup-button">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </ng-template>
 
     </div>
 </p-dialog>

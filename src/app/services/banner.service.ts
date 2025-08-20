@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, timeout } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
 const USER_API = environment.apiUrl;
@@ -46,30 +46,58 @@ export class BannerService {
 
   /**
    * Get banners/posts with query parameters
+   * SSR-safe with timeout and error handling
    */
   getBanner(query: string = ''): Observable<any> {
     const url = query ? USER_API + "banner" + query : USER_API + "banner";
     return this.http.get(url)
       .pipe(
+        timeout(3000), // 3 second timeout for SSR
         tap(
           response => console.log('Banner API response:', response),
           error => console.error('Banner API error:', error)
         ),
-        catchError(this.handleError)
+        catchError(err => {
+          console.error('SSR banner fetch failed:', err?.message || err);
+          // Return safe default instead of throwing
+          return of({ 
+            items: [], 
+            data: { items: [], totalCount: 0 },
+            message: 'Banner service unavailable',
+            success: false 
+          });
+        })
       );
   }
 
   /**
    * Get banner list with enhanced filtering and pagination
+   * SSR-safe with timeout and error handling
    */
   getbannerList(query: string = ''): Observable<PostListResponse> {
     return this.http.get<PostListResponse>(USER_API + "banner" + query)
       .pipe(
+        timeout(3000), // 3 second timeout for SSR
         tap(
           response => console.log('Banner list response:', response),
           error => console.error('Banner list error:', error)
         ),
-        catchError(this.handleError)
+        catchError(err => {
+          console.error('SSR banner list fetch failed:', err?.message || err);
+          // Return safe default instead of throwing
+          return of({
+            totalCount: 0,
+            items: [],
+            data: {
+              items: [],
+              totalCount: 0,
+              currentPage: 1,
+              totalPages: 0
+            },
+            message: 'Banner service unavailable',
+            success: false
+          });
+        })
       );
   }
 

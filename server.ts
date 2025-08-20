@@ -1,6 +1,21 @@
 // Import server polyfills first - this must be the very first import
 import './src/server-polyfills.js';
 
+// SSR DOM shims for PrimeNG components
+if (typeof (global as any).getComputedStyle === 'undefined') {
+  (global as any).getComputedStyle = () => ({ 
+    getPropertyValue: () => '',
+    width: '0px',
+    height: '0px'
+  });
+}
+
+if (typeof (global as any).window === 'undefined') {
+  (global as any).window = {
+    getComputedStyle: (global as any).getComputedStyle
+  };
+}
+
 import 'zone.js/dist/zone-node';
 
 import { ngExpressEngine } from '@nguniversal/express-engine';
@@ -34,6 +49,11 @@ export function app(): express.Express {
   server.set('views', distFolder);
 
   // Example Express Rest API endpoints
+  // Health check endpoint that always returns 200
+  server.get('/health', (_req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+  
   // server.get('/api/**', (req, res) => { });
   // Serve static files from /browser
   server.get('*.*', express.static(distFolder, {
@@ -45,7 +65,8 @@ export function app(): express.Express {
     // Set timeout for SSR rendering
     res.setTimeout(15000, () => {
       console.warn('SSR timeout, serving fallback...');
-      res.status(503).send('Server rendering timeout');
+      // Serve static index.html instead of 503
+      res.sendFile(join(distFolder, 'index.html'));
     });
 
     res.render(indexHtml, { 
@@ -58,8 +79,8 @@ export function app(): express.Express {
     }, (err, html) => {
       if (err) {
         console.error('SSR Error:', err);
-        // Fallback to client-side rendering
-        res.sendFile(join(distFolder, 'index.html'));
+        // Fallback to client-side rendering - no 503!
+        res.status(200).sendFile(join(distFolder, 'index.html'));
       } else {
         res.send(html);
       }
