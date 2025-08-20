@@ -1,224 +1,387 @@
-// Container Styles
-.about-us-container {
-  padding: 3rem 2rem;
-  font-family: 'Arial', sans-serif;
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: #f8f9fa;
+// // Container Styles
+// .about-us-container {
+//   padding: 3rem 2rem;
+//   font-family: 'Arial', sans-serif;
+//   max-width: 1200px;
+//   margin: 0 auto;
+//   background-color: #f8f9fa;
+// }
+
+// // Hero Section Styling
+// .hero-section {
+//   text-align: center;
+// //   padding: 3rem;
+// //   background-color: #ec3539; // Primary red color
+//   color: white;
+//   border-radius: 10px;
+//   margin-bottom: 3rem;
+//   margin-top: 20px;
+
+//   .title {
+//     font-size: 3.5rem;
+//     font-weight: bold;
+//     margin-bottom: 1rem;
+//   }
+
+//   .subtitle {
+//     font-size: 1.25rem;
+//     line-height: 1.6;
+//   }
+// }
+
+// // Overview Section Styling
+// .overview {
+//   margin-bottom: 3rem;
+
+//   h2 {
+//     font-size: 2.5rem;
+//     color: #333;
+//     margin-bottom: 1.5rem;
+//   }
+
+//   p {
+//     font-size: 1.125rem;
+//     color: #555;
+//     line-height: 1.8;
+//     margin-bottom: 1.5rem;
+//   }
+// }
+
+// // Mission Section Styling
+// .mission {
+//   margin-bottom: 3rem;
+
+//   h2 {
+//     font-size: 2.5rem;
+//     color: #333;
+//     margin-bottom: 1.5rem;
+//   }
+
+//   p {
+//     font-size: 1.125rem;
+//     color: #555;
+//     line-height: 1.8;
+//     margin-bottom: 1.5rem;
+//   }
+// }
+
+// // How It Works Section Styling
+// .how-it-works {
+//   margin-bottom: 3rem;
+
+//   h2 {
+//     font-size: 2.5rem;
+//     color: #333;
+//     margin-bottom: 1.5rem;
+//   }
+
+//   ol {
+//     font-size: 1.125rem;
+//     color: #555;
+//     margin-left: 2rem;
+//   }
+
+//   li {
+//     margin-bottom: 1.25rem;
+//   }
+// }
+
+// // Key Features Section Styling
+// .key-features {
+//   margin-bottom: 3rem;
+
+//   h2 {
+//     font-size: 2.5rem;
+//     color: #333;
+//     margin-bottom: 1.5rem;
+//   }
+
+//   ul {
+//     list-style-type: none;
+//     padding-left: 0;
+//   }
+
+//   li {
+//     font-size: 1.125rem;
+//     color: #555;
+//     margin-bottom: 1.25rem;
+//   }
+
+//   li strong {
+//     color: #ec3539; // Highlight strong text with the primary red color
+//   }
+// }
+
+// // Contact Info Section Styling
+// .contact-info {
+//   text-align: center;
+//   margin-top: 2rem;
+//   margin-bottom: 40px;
+
+//   h2 {
+//     font-size: 2.5rem;
+//     color: #333;
+//     margin-bottom: 1.5rem;
+//   }
+
+//   p {
+//     font-size: 1.125rem;
+//     color: #555;
+//     line-height: 1.6;
+//   }
+
+//   a {
+//     color: #ec3539; // Link color matches the primary red color
+//     text-decoration: none;
+//     font-weight: bold;
+//   }
+
+//   a:hover {
+//     text-decoration: underline;
+//   }
+// }
+
+// // Mobile Responsive Design
+// @media (max-width: 768px) {
+//   .about-us-container {
+//     padding: 2rem 1rem;
+//   }
+
+//   .hero-section {
+//     padding: 2rem;
+//   }
+
+//   .hero-section .title {
+//     font-size: 2.5rem;
+//   }
+
+//   .hero-section .subtitle {
+//     font-size: 1.125rem;
+//   }
+
+//   .overview,
+//   .mission,
+//   .how-it-works,
+//   .key-features,
+//   .contact-info {
+//     margin-bottom: 2rem;
+//   }
+
+//   .overview h2,
+//   .mission h2,
+//   .how-it-works h2,
+//   .key-features h2,
+//   .contact-info h2 {
+//     font-size: 2rem;
+//   }
+
+//   .overview p,
+//   .mission p,
+//   .how-it-works li,
+//   .key-features li,
+//   .contact-info p {
+//     font-size: 1rem;
+//   }
+
+//   .how-it-works ol {
+//     margin-left: 1.5rem;
+//   }
+// }
+
+// // Mobile Smaller Devices (max-width: 480px)
+// @media (max-width: 480px) {
+//   .hero-section {
+//     padding: 1.5rem;
+//   }
+
+//   .hero-section .title {
+//     font-size: 2rem;
+//   }
+
+//   .hero-section .subtitle {
+//     font-size: 1rem;
+//   }
+
+//   .overview h2,
+//   .mission h2,
+//   .how-it-works h2,
+//   .key-features h2,
+//   .contact-info h2 {
+//     font-size: 1.75rem;
+//   }
+
+//   .overview p,
+//   .mission p,
+//   .how-it-works li,
+//   .key-features li,
+//   .contact-info p {
+//     font-size: 0.875rem;
+//   }
+
+//   .key-features li {
+//     margin-bottom: 1rem;
+//   }
+// }
+
+/* Global Styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 0;
+  background: #fdf2f8; /* very light pink background */
+  color: #333;
+  line-height: 1.6;
 }
 
-// Hero Section Styling
+.about-us-container {
+  margin: 80px auto 80px auto;   /* top = 100px, left/right auto, bottom 0 */
+  min-height: 80vh;
+  width: 90%;
+  max-width: 1200px;
+  padding: 40px 0;
+}
+
+
+/* Hero Section */
 .hero-section {
   text-align: center;
-//   padding: 3rem;
-//   background-color: #ec3539; // Primary red color
+  background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); /* pink-red gradient */
   color: white;
-  border-radius: 10px;
-  margin-bottom: 3rem;
-  margin-top: 20px;
-
-  .title {
-    font-size: 3.5rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
-
-  .subtitle {
-    font-size: 1.25rem;
-    line-height: 1.6;
-  }
+  padding: 60px 20px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  margin-bottom: 50px;
+  animation: fadeIn 1s ease-in-out;
 }
 
-// Overview Section Styling
-.overview {
-  margin-bottom: 3rem;
-
-  h2 {
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 1.5rem;
-  }
-
-  p {
-    font-size: 1.125rem;
-    color: #555;
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
-  }
+.hero-section .title {
+  font-size: 2.8rem;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+  animation: slideInDown 1s ease-in-out;
 }
 
-// Mission Section Styling
-.mission {
-  margin-bottom: 3rem;
-
-  h2 {
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 1.5rem;
-  }
-
-  p {
-    font-size: 1.125rem;
-    color: #555;
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
-  }
+.hero-section .subtitle {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  animation: fadeInUp 1.2s ease-in-out;
 }
 
-// How It Works Section Styling
-.how-it-works {
-  margin-bottom: 3rem;
-
-  h2 {
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 1.5rem;
-  }
-
-  ol {
-    font-size: 1.125rem;
-    color: #555;
-    margin-left: 2rem;
-  }
-
-  li {
-    margin-bottom: 1.25rem;
-  }
+/* Section Styling */
+.about-us-container > div:not(.hero-section) {
+  background: white;
+  margin-bottom: 30px;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-// Key Features Section Styling
-.key-features {
-  margin-bottom: 3rem;
-
-  h2 {
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 1.5rem;
-  }
-
-  ul {
-    list-style-type: none;
-    padding-left: 0;
-  }
-
-  li {
-    font-size: 1.125rem;
-    color: #555;
-    margin-bottom: 1.25rem;
-  }
-
-  li strong {
-    color: #ec3539; // Highlight strong text with the primary red color
-  }
+.about-us-container > div:not(.hero-section):hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.15);
 }
 
-// Contact Info Section Styling
-.contact-info {
-  text-align: center;
-  margin-top: 2rem;
-  margin-bottom: 40px;
-
-  h2 {
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 1.5rem;
-  }
-
-  p {
-    font-size: 1.125rem;
-    color: #555;
-    line-height: 1.6;
-  }
-
-  a {
-    color: #ec3539; // Link color matches the primary red color
-    text-decoration: none;
-    font-weight: bold;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
+/* Section Headings */
+.about-us-container h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #e6004c; /* deep pink/red */
+  position: relative;
 }
 
-// Mobile Responsive Design
+.about-us-container h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: #ff3366; /* bright pink */
+  margin-top: 8px;
+  border-radius: 2px;
+}
+
+/* Paragraphs */
+.about-us-container p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 15px;
+  transition: color 0.3s ease;
+}
+
+/* Apply hover only inside sections, not hero subtitle */
+.overview p:hover,
+.mission p:hover,
+.how-it-works li:hover,
+.key-features li:hover,
+.contact-info p:hover {
+  color: #d6004c;
+}
+
+/* Lists */
+.how-it-works ol,
+.key-features ul {
+  padding-left: 20px;
+}
+
+.how-it-works li,
+.key-features li {
+  margin-bottom: 12px;
+  font-size: 1rem;
+  position: relative;
+  padding-left: 5px;
+  transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.how-it-works li:hover,
+.key-features li:hover {
+  transform: translateX(5px);
+  color: #e6004c;
+}
+
+/* Strong Highlights */
+.key-features strong {
+  color: #ff3366;
+}
+
+.contact-info a {
+  color: #e6004c;
+  font-weight: bold;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+
+.contact-info a:hover {
+  color: #ff4b2b;
+  border-color: #ff4b2b;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeInUp {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+@keyframes slideInDown {
+  from {opacity: 0; transform: translateY(-30px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .about-us-container {
-    padding: 2rem 1rem;
-  }
-
-  .hero-section {
-    padding: 2rem;
-  }
-
-  .hero-section .title {
-    font-size: 2.5rem;
-  }
-
-  .hero-section .subtitle {
-    font-size: 1.125rem;
-  }
-
-  .overview,
-  .mission,
-  .how-it-works,
-  .key-features,
-  .contact-info {
-    margin-bottom: 2rem;
-  }
-
-  .overview h2,
-  .mission h2,
-  .how-it-works h2,
-  .key-features h2,
-  .contact-info h2 {
-    font-size: 2rem;
-  }
-
-  .overview p,
-  .mission p,
-  .how-it-works li,
-  .key-features li,
-  .contact-info p {
-    font-size: 1rem;
-  }
-
-  .how-it-works ol {
-    margin-left: 1.5rem;
-  }
-}
-
-// Mobile Smaller Devices (max-width: 480px)
-@media (max-width: 480px) {
-  .hero-section {
-    padding: 1.5rem;
-  }
-
   .hero-section .title {
     font-size: 2rem;
   }
-
   .hero-section .subtitle {
     font-size: 1rem;
   }
-
-  .overview h2,
-  .mission h2,
-  .how-it-works h2,
-  .key-features h2,
-  .contact-info h2 {
-    font-size: 1.75rem;
-  }
-
-  .overview p,
-  .mission p,
-  .how-it-works li,
-  .key-features li,
-  .contact-info p {
-    font-size: 0.875rem;
-  }
-
-  .key-features li {
-    margin-bottom: 1rem;
+  .about-us-container h2 {
+    font-size: 1.5rem;
   }
 }
