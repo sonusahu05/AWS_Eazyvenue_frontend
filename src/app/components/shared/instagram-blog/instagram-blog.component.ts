@@ -118,17 +118,132 @@
 //   }
 // }
 
-import { Component, Input, OnInit, AfterViewChecked } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+// import { Component, Input, OnInit, AfterViewChecked } from '@angular/core';
+// import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+// import { InstagramService, InstagramEmbed } from '../../../services/instagram.service';
+// import { NgZone } from '@angular/core';
+
+// @Component({
+//   selector: 'app-instagram-blog',
+//   templateUrl: './instagram-blog.component.html',
+//   styleUrls: ['./instagram-blog.component.scss']
+// })
+// export class InstagramBlogComponent implements OnInit, AfterViewChecked {
+//   @Input() limit: number = 6;
+//   @Input() account: string = '';
+//   @Input() showTitle: boolean = true;
+//   @Input() gridColumns: number = 3;
+
+//   instagramPosts: InstagramEmbed[] = [];
+//   loading = false;
+//   error: string | null = null;
+//   hasRendered = false;
+
+//   constructor(
+//     private instagramService: InstagramService,
+//     private sanitizer: DomSanitizer,
+//     private ngZone: NgZone
+//   ) {}
+
+//   ngOnInit(): void {
+//     this.loadPosts();
+//     this.instagramService.loadInstagramScript(); // ensure embed.js is loaded
+//   }
+
+//   ngAfterViewChecked(): void {
+//     // Run Instagram’s embed processor once after posts are inserted
+//     if (this.instagramPosts.length > 0 && !this.hasRendered) {
+//       this.hasRendered = true;
+//       this.instagramService.processEmbeds();
+//     }
+//   }
+
+//   // loadPosts(): void {
+//   //   this.loading = true;
+//   //   this.error = null;
+//   //   this.hasRendered = false;
+
+//   //   this.instagramService.getInstagramEmbedsByAccount(this.account, this.limit).subscribe({
+//   //     next: (response) => {
+//   //       if (response.success) {
+//   //         this.instagramPosts = response.data;
+//   //         console.log('Loaded Instagram posts:', this.instagramPosts);
+//   //       } else {
+//   //         this.error = 'No Instagram posts found.';
+//   //       }
+//   //       this.loading = false;
+//   //     },
+//   //     error: () => {
+//   //       this.error = 'Failed to load Instagram posts. Please try again later.';
+//   //       this.loading = false;
+//   //     }
+//   //   });
+//   // }
+//   loadPosts(): void {
+//   this.loading = true;
+//   this.error = null;
+
+//   this.instagramService.getInstagramEmbedsByAccount(this.account, this.limit).subscribe({
+//     next: (response) => {
+//       if (response.success) {
+//         this.instagramPosts = response.data;
+//         console.log('Loaded Instagram posts:', this.instagramPosts);
+
+//         // Process only once when DOM is stable
+//         const stableSub = this.ngZone.onStable.subscribe(() => {
+//           console.log("Running Instagram embed processor (once)...");
+//           this.instagramService.processEmbeds();
+//           stableSub.unsubscribe(); // ✅ prevents multiple calls
+//         });
+//       } else {
+//         this.error = 'No Instagram posts found.';
+//       }
+//       this.loading = false;
+//     },
+//     error: () => {
+//       this.error = 'Failed to load Instagram posts. Please try again later.';
+//       this.loading = false;
+//     }
+//   });
+// }
+
+
+//   refreshPosts(): void {
+//     this.loadPosts();
+//   }
+
+//   getSafeHtml(html: string): SafeHtml {
+//     return this.sanitizer.bypassSecurityTrustHtml(html);
+//   }
+
+//   getGridClass(): string {
+//     switch (this.gridColumns) {
+//       case 2: return 'col-md-6';
+//       case 3: return 'col-md-4';
+//       case 4: return 'col-md-3';
+//       default: return 'col-md-4';
+//     }
+//   }
+
+//   trackByPostId(index: number, post: InstagramEmbed): string {
+//     return post.id?.toString() || index.toString();
+//   }
+
+//   onPostClick(post: InstagramEmbed): void {
+//     if (post.url) {
+//       window.open(post.url, '_blank');
+//     }
+//   }
+// }
+import { Component, Input, OnInit } from '@angular/core';
 import { InstagramService, InstagramEmbed } from '../../../services/instagram.service';
-import { NgZone } from '@angular/core';
 
 @Component({
   selector: 'app-instagram-blog',
   templateUrl: './instagram-blog.component.html',
   styleUrls: ['./instagram-blog.component.scss']
 })
-export class InstagramBlogComponent implements OnInit, AfterViewChecked {
+export class InstagramBlogComponent implements OnInit {
   @Input() limit: number = 6;
   @Input() account: string = '';
   @Input() showTitle: boolean = true;
@@ -137,91 +252,49 @@ export class InstagramBlogComponent implements OnInit, AfterViewChecked {
   instagramPosts: InstagramEmbed[] = [];
   loading = false;
   error: string | null = null;
-  hasRendered = false;
 
-  constructor(
-    private instagramService: InstagramService,
-    private sanitizer: DomSanitizer,
-    private ngZone: NgZone
-  ) {}
+  constructor(private instagramService: InstagramService) {}
 
   ngOnInit(): void {
     this.loadPosts();
-    this.instagramService.loadInstagramScript(); // ensure embed.js is loaded
   }
 
-  ngAfterViewChecked(): void {
-    // Run Instagram’s embed processor once after posts are inserted
-    if (this.instagramPosts.length > 0 && !this.hasRendered) {
-      this.hasRendered = true;
-      this.instagramService.processEmbeds();
-    }
-  }
-getThumbnailSrc(post: InstagramEmbed): string {
-  return post.thumbnail || '/assets/instagram/placeholder.jpg';
-}
-
-onImgError(event: Event) {
-  const img = event.target as HTMLImageElement;
-  img.src = '/assets/instagram/placeholder.jpg';
-}
-
-  // loadPosts(): void {
-  //   this.loading = true;
-  //   this.error = null;
-  //   this.hasRendered = false;
-
-  //   this.instagramService.getInstagramEmbedsByAccount(this.account, this.limit).subscribe({
-  //     next: (response) => {
-  //       if (response.success) {
-  //         this.instagramPosts = response.data;
-  //         console.log('Loaded Instagram posts:', this.instagramPosts);
-  //       } else {
-  //         this.error = 'No Instagram posts found.';
-  //       }
-  //       this.loading = false;
-  //     },
-  //     error: () => {
-  //       this.error = 'Failed to load Instagram posts. Please try again later.';
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
   loadPosts(): void {
-  this.loading = true;
-  this.error = null;
+    this.loading = true;
+    this.error = null;
 
-  this.instagramService.getInstagramEmbedsByAccount(this.account, this.limit).subscribe({
-    next: (response) => {
-      if (response.success) {
-        this.instagramPosts = response.data;
-        console.log('Loaded Instagram posts:', this.instagramPosts);
-
-        // Process only once when DOM is stable
-        const stableSub = this.ngZone.onStable.subscribe(() => {
-          console.log("Running Instagram embed processor (once)...");
-          this.instagramService.processEmbeds();
-          stableSub.unsubscribe(); // ✅ prevents multiple calls
-        });
-      } else {
-        this.error = 'No Instagram posts found.';
+    this.instagramService.getInstagramEmbedsByAccount(this.account, this.limit).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.instagramPosts = response.data;
+          console.log('Loaded Instagram posts:', this.instagramPosts);
+        } else {
+          this.error = 'No Instagram posts found.';
+        }
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'Failed to load Instagram posts. Please try again later.';
+        this.loading = false;
       }
-      this.loading = false;
-    },
-    error: () => {
-      this.error = 'Failed to load Instagram posts. Please try again later.';
-      this.loading = false;
-    }
-  });
-}
-
+    });
+  }
 
   refreshPosts(): void {
     this.loadPosts();
   }
 
-  getSafeHtml(html: string): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(html);
+  // ✅ Return thumbnail URL
+  getThumbnailSrc(post: InstagramEmbed): string {
+    if ((post as any).thumbnail_url) {
+      return (post as any).thumbnail_url;
+    }
+    return `https://www.instagram.com/p/${post.post_id}/media/?size=l`;
+  }
+
+  // ✅ Handle image load errors
+  onImgError(event: Event): void {
+    (event.target as HTMLImageElement).src = 'https://via.placeholder.com/400x400.png?text=Image+Unavailable';
   }
 
   getGridClass(): string {
