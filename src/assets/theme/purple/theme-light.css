@@ -2579,10 +2579,10 @@ p-togglebutton.ng-dirty.ng-invalid > .p-togglebutton.p-button {
   padding: 1rem;
 }
 
-.fc {
+/* .fc { */
   /* FullCalendar 4 */
   /* FullCalendar 5 */
-}
+/* } */
 .fc.fc-unthemed .fc-view-container th {
   background: #FCFCFC;
   border: 1px solid #D4D6D9;

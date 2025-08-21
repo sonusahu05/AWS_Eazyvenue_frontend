@@ -731,26 +731,50 @@
 
 
 
+// @font-face {
+//     font-family: "SegoeUI-Semibold";
+//     font-style: normal;
+//     font-weight: 600;
+//     src: url("https://fonts.animaapp.com/SegoeUI-Semibold") format("truetype");
+// }
 @font-face {
-    font-family: "SegoeUI-Semibold";
-    font-style: normal;
-    font-weight: 600;
-    src: url("https://fonts.animaapp.com/SegoeUI-Semibold") format("truetype");
+  font-family: 'SegoeUI-Semibold';
+  font-style: normal;
+  font-weight: 600;
+  src: url('https://fonts.animaapp.com/SegoeUI-Semibold') format('truetype');
+  font-display: swap;
 }
 
+
+// @font-face {
+//     font-family: "SegoeUI-Regular";
+//     font-style: normal;
+//     font-weight: 400;
+//     src: url("https://fonts.animaapp.com/SegoeUI-Regular") format("truetype");
+// }
 @font-face {
-    font-family: "SegoeUI-Regular";
-    font-style: normal;
-    font-weight: 400;
-    src: url("https://fonts.animaapp.com/SegoeUI-Regular") format("truetype");
+  font-family: 'SegoeUI-Regular';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://fonts.animaapp.com/SegoeUI-Regular') format('truetype');
+  font-display: swap;
 }
 
+
+// @font-face {
+//     font-family: "SegoeUI-Bold";
+//     font-style: normal;
+//     font-weight: 700;
+//     src: url("https://fonts.animaapp.com/SegoeUI-Bold") format("truetype");
+// }
 @font-face {
-    font-family: "SegoeUI-Bold";
-    font-style: normal;
-    font-weight: 700;
-    src: url("https://fonts.animaapp.com/SegoeUI-Bold") format("truetype");
+  font-family: 'SegoeUI-Bold';
+  font-style: normal;
+  font-weight: 700;
+  src: url('https://fonts.animaapp.com/SegoeUI-Bold') format('truetype');
+  font-display: swap;
 }
+
 
 .component-6-8 {
     align-items: center;

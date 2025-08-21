@@ -1,15 +1,27 @@
-@font-face {
+/* @font-face {
     font-family: 'primeicons';
     font-display: auto;
     src: url('./icons/primeicons.eot');
     src: url('./icons/primeicons.eot?#iefix') format('embedded-opentype'), url('./icons/primeicons.ttf') format('truetype'), url('./icons/primeicons.woff') format('woff'), url('./fontsicons/primeicons.svg?#primeicons') format('svg');
     font-weight: normal;
     font-style: normal;
+} */
+@font-face {
+  font-family: 'primeicons';
+  font-style: normal;
+  font-weight: normal;
+  src: url('./icons/primeicons.eot');
+  src: url('./icons/primeicons.eot?#iefix') format('embedded-opentype'),
+       url('./icons/primeicons.ttf') format('truetype'),
+       url('./icons/primeicons.woff') format('woff'),
+       url('./fonts/icons/primeicons.svg?#primeicons') format('svg');
+  font-display: block;
 }
+
 
 .pi {
     font-family: 'primeicons';
-    speak: none;
+    /* speak: none; */
     font-style: normal;
     font-weight: normal;
     font-variant: normal;

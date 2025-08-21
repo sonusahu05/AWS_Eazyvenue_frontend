@@ -11,35 +11,67 @@ $gutter: 1rem; //for primeflex grid system
 @import "assets/demo/flags/flags.css";
 
 
+// @font-face {
+//     font-family: 'Segoe UI ';
+//     font-style: normal;
+//     font-weight: normal;
+//     src: local('Segoe UI'), url('assets/fonts/Segoe UI.woff') format('woff');
+// }
 @font-face {
-    font-family: 'Segoe UI ';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Segoe UI'), url('assets/fonts/Segoe UI.woff') format('woff');
-}
-
-@font-face {
-    font-family: 'Segoe UI Italic';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Segoe UI Italic'), url('assets/fonts/Segoe UI Italic.woff') format('woff');
-}
-
-
-@font-face {
-    font-family: 'Segoe UI Bold';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Segoe UI Bold'), url('assets/fonts/Segoe UI Bold.woff') format('woff');
+  font-family: 'Segoe UI';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Segoe UI'), url('assets/fonts/Segoe UI.woff') format('woff');
+  font-display: swap;
 }
 
 
+// @font-face {
+//     font-family: 'Segoe UI Italic';
+//     font-style: normal;
+//     font-weight: normal;
+//     src: local('Segoe UI Italic'), url('assets/fonts/Segoe UI Italic.woff') format('woff');
+// }
 @font-face {
-    font-family: 'Segoe UI Bold Italic';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Segoe UI Bold Italic'), url('assets/fonts/Segoe UI Bold Italic.woff') format('woff');
+  font-family: 'Segoe UI Italic';
+  font-style: italic;
+  font-weight: normal;
+  src: local('Segoe UI Italic'), url('assets/fonts/Segoe UI Italic.woff') format('woff');
+  font-display: swap;
 }
+
+
+
+// @font-face {
+//     font-family: 'Segoe UI Bold';
+//     font-style: normal;
+//     font-weight: normal;
+//     src: local('Segoe UI Bold'), url('assets/fonts/Segoe UI Bold.woff') format('woff');
+// }
+@font-face {
+  font-family: 'Segoe UI Bold';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Segoe UI Bold'), url('assets/fonts/Segoe UI Bold.woff') format('woff');
+  font-display: swap;
+}
+
+
+
+// @font-face {
+//     font-family: 'Segoe UI Bold Italic';
+//     font-style: normal;
+//     font-weight: normal;
+//     src: local('Segoe UI Bold Italic'), url('assets/fonts/Segoe UI Bold Italic.woff') format('woff');
+// }
+@font-face {
+  font-family: 'Segoe UI Bold Italic';
+  font-style: italic;
+  font-weight: bold;
+  src: local('Segoe UI Bold Italic'), url('assets/fonts/Segoe UI Bold Italic.woff') format('woff');
+  font-display: swap;
+}
+
 
 
 // @font-face {
