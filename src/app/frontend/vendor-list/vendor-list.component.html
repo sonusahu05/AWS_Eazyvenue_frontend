@@ -26,7 +26,7 @@
         <div [ngClass]="isNavbarFixed?'fixed':'notfixed'" (scroll)="onScroll()" style="width: 75%;">
             <div class="city-field col-md-3 p-p-0">
                 <span class="p-fluid">
-                    <label for="" class="icons-image"> <img src="assets/images/category-icons/celebration.svg"> </label>
+                    <label for="" class="icons-image"> <img src="assets/images/category-icons/celebration.svg" alt="Celebration Icon"> </label>
                     <p-dropdown [options]="vendorCategoryList" [filter]="true"
                         [(ngModel)]="selectedVendorCategory" placeholder="Vendor" optionLabel="name" optionValue="name"
                         (onChange)="onClickCategory($event)"></p-dropdown>
@@ -35,7 +35,7 @@
             <div class="serch-bar-field col-3 p-p-0">
                 <span class="p-fluid">
                     <label for="" class="icons-image search-icon"> <img src="assets/images/category-icons/search.png"
-                            class="search-icon"> </label>
+                            class="search-icon" alt="Search Icon"> </label>
                     <p-autoComplete [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedLocationFilter"
                         [suggestions]="locationList" (completeMethod)="onLocationSearch($event)"
                         (onSelect)="onSelectLocationSearch($event)" (onUnselect)="onUnselectSearchLocationItem($event)"
@@ -54,7 +54,7 @@
             </div>
 
             <div class="col-md-auto p-p-0 calendar-div">
-                <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg"></label>
+                <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg" alt="Calendar Icon"></label>
                 <p-calendar #searchCalendar dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
                     appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
                     [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
@@ -246,7 +246,7 @@
             <div class="city-field col-md-2 p-p-0">
                 <span class="p-fluid">
                     <label for="mobile-vendor-list" class="icons-image"> <img
-                            src="assets/images/category-icons/celebration.svg">
+                            src="assets/images/category-icons/celebration.svg" alt="Celebration Icon">
                     </label>
                     <p-dropdown [options]="vendorCategoryList" [filter]="true"
                         [(ngModel)]="selectedVendorCategory" placeholder="Vendor" optionLabel="name" optionValue="name"
@@ -256,7 +256,7 @@
             <div class="serch-bar-field col-3 p-p-0">
                 <span class="p-fluid">
                     <label for="" class="icons-image search-icon"> <img src="assets/images/category-icons/search.png"
-                            class="search-icon"> </label>
+                            alt="Search Icon" class="search-icon"> </label>
                     <p-autoComplete [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedLocationFilter"
                         [suggestions]="locationList" (completeMethod)="onLocationSearch($event)"
                         (onSelect)="onSelectLocationSearch($event)" (onUnselect)="onClearResetAllData($event)"
@@ -275,7 +275,7 @@
             </div>
 
             <div class="col-md-12 p-p-0 calendar-div">
-                <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg"></label>
+                <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg" alt="Calendar Icon"></label>
                 <p-calendar #searchCalendarMobile dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
                     appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
                     [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
@@ -407,7 +407,7 @@
                                                 <div class="p-mb-1">
                                                     <img src="assets/images/category-icons/{{propertyType.slug}}.svg"
                                                         class="product-image" tooltipPosition="top"
-                                                        pTooltip={{propertyType.name}} />
+                                                        pTooltip={{propertyType.name}} alt="{{propertyType.name}}" />
                                                 </div>
                                                 <div>
                                                     <h4 class="p-mb-1">{{propertyType.name}}</h4>

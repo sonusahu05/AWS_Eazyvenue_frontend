@@ -9,6 +9,7 @@
                     <label for="" class="icons-image">
                         <img
                             src="assets/images/category-icons/celebration.svg"
+                            alt="Celebration Icon"
                         />
                     </label>
                     <p-autoComplete
@@ -32,6 +33,7 @@
                         <img
                             src="assets/images/category-icons/search.png"
                             class="search-icon"
+                            alt="Search Icon"
                         />
                     </label>
                     <p-autoComplete
@@ -64,7 +66,7 @@
             <div class="col-2 guest_field_list p-p-0">
                 <div class="Guest-field">
                     <label for="" class="icons-image">
-                        <img src="assets/images/svg-icons/guest-icon.svg" />
+                        <img src="assets/images/svg-icons/guest-icon.svg" alt="Guest Icon" />
                     </label>
                     <p-dropdown
                         class=""
@@ -152,7 +154,7 @@
             </div>
             <div class="col-md-auto calendar-div p-p-0">
                 <label for="" class="icons-image"
-                    ><img src="assets/images/svg-icons/calender-icon.svg"
+                    ><img src="assets/images/svg-icons/calender-icon.svg" alt="Calendar Icon"
                 /></label>
                 <p-calendar
                     #searchCalendar
@@ -437,6 +439,7 @@
                                                 <img
                                                     class="mr-3"
                                                     src="assets/img/svg/user-check.svg"
+                                                    alt="User Check Icon"
                                                 />
                                             </div>
                                             <div class="media-body">
@@ -458,6 +461,7 @@
                                                 <img
                                                     class="mr-3"
                                                     src="assets/img/svg/eye.svg"
+                                                    alt="Eye Icon"
                                                 />
                                             </div>
                                             <div class="media-body">
@@ -503,6 +507,7 @@
                                 <ng-template pTemplate="item" let-item>
                                     <img
                                         [src]="item.venue_image_src"
+                                        alt="Venue Image"
                                         style="width: 100%; display: block"
                                     />
                                 </ng-template>
@@ -517,6 +522,7 @@
                                     >
                                         <img
                                             [src]="item.venue_image_src"
+                                            alt="Venue Image"
                                             style="display: block"
                                         />
                                     </div>
@@ -616,6 +622,7 @@
                                                 <div class="icon area-size">
                                                     <img
                                                         src="assets/images/category-icons/area.svg"
+                                                        alt="Area Icon"
                                                     />
                                                 </div>
                                             </div>
@@ -638,6 +645,7 @@
                                                 <div class="icon capacity-size">
                                                     <img
                                                         src="assets/images/category-icons/capacity.svg"
+                                                        alt="Capacity Icon"
                                                     />
                                                 </div>
                                             </div>
@@ -664,6 +672,7 @@
                                                 >
                                                     <img
                                                         src="assets/images/category-icons/round-table.svg"
+                                                        alt="Round Table Icon"
                                                     />
                                                 </div>
                                             </div>
@@ -690,6 +699,7 @@
                                                     <img
                                                         class="theater-seats-icon"
                                                         src="assets/images/category-icons/theater-seats.svg"
+                                                        alt="Theater Seats Icon"
                                                     />
                                                 </div>
                                             </div>
@@ -1116,6 +1126,7 @@
                                                                 foodType.slug
                                                             }}.png"
                                                             class="food-img"
+                                                            alt="{{ foodType.name }} Image"
                                                         />
                                                         {{ foodType.name }}
                                                     </label>
@@ -1187,6 +1198,7 @@
                                                                 <img
                                                                     src="assets/images/category-icons/plate.svg"
                                                                     class="food-img"
+                                                                    alt="Plate Icon"
                                                                 />
                                                             </div>
                                                             <div
@@ -1399,6 +1411,7 @@
                                         ><img
                                             src="assets/images/icons/coupon.png"
                                             class="icon-size"
+                                            alt="Coupon Icon"
                                     /></i>
                                     <input
                                         class="coupon-input coupon-box"
@@ -2020,7 +2033,7 @@
                                 <div class="vendor-location" style="margin-bottom: 10px;">
                                     <div class="location" style="display: flex; align-items: center; gap: 5px;">
                                         <span class="icon">
-                                            <img src="assets/img/svg/location-icon.svg" style="width: 12px; height: 12px;" />
+                                            <img src="assets/img/svg/location-icon.svg" style="width: 12px; height: 12px;" alt="Location Icon"/>
                                         </span>
                                         <span class="city" style="font-size: 13px; color: #666;">
                                             <span *ngIf="vendor.subArea">{{ vendor.subArea }}</span>
@@ -2157,7 +2170,7 @@
                                 <div class="category-icon" style="margin-bottom: 10px;">
                                     <div class="location" style="display: flex; align-items: center; gap: 5px;">
                                         <span class="icon">
-                                            <img src="assets/img/svg/location-icon.svg" style="width: 12px; height: 12px;" />
+                                            <img src="assets/img/svg/location-icon.svg" style="width: 12px; height: 12px;" alt="Location Icon"/>
                                         </span>
                                         <span class="city" style="font-size: 13px; color: #666;">
                                             <span *ngIf="venue.subarea">{{ venue.subarea }}</span>
@@ -2977,6 +2990,7 @@
         <img
             [src]="item.venue_image_src"
             style="width: 100%; height: 100%; display: block"
+            alt="Venue Image"
         />
     </ng-template>
 </p-galleria>
@@ -3599,6 +3613,7 @@
                                                     foodType.slug
                                                 }}.png"
                                                 class="food-img"
+                                                alt="{{ foodType.name }} Image"
                                             />
                                             {{ foodType.name }}
                                         </label>
@@ -3651,6 +3666,7 @@
                                                     <img
                                                         src="assets/images/category-icons/plate.svg"
                                                         class="food-img"
+                                                        alt="{{ foodMenuType.slug }} Image"
                                                     />
                                                 </div>
                                                 <div class="price-list">
@@ -3711,6 +3727,7 @@
                                             src="{{ decor.image }}"
                                             (click)="onClickDecorImage(decor)"
                                             class="decor-img"
+                                            alt="{{ decor.name }} Image"
                                         />
                                     </div>
                                     <div class="price-list">
@@ -3762,6 +3779,7 @@
                             ><img
                                 src="assets/images/icons/coupon.png"
                                 class="icon-size"
+                                alt="Coupon Icon"
                         /></i>
                         <input
                             class="coupon-input coupon-box"
@@ -3845,6 +3863,7 @@
                     <label for="" class="icons-image">
                         <img
                             src="assets/images/category-icons/celebration.svg"
+                            alt="Celebration Icon"
                         />
                     </label>
                     <!-- <p-autoComplete [(ngModel)]="selectedOccasion" (onSelect)="onClickOccasionCategory($event)"
@@ -3865,8 +3884,9 @@
                 <span class="p-fluid">
                     <label for="" class="icons-image search-icon">
                         <img
-                            src="assets/images/category-icons/search.png"
+                            src="assets/images/category-icons/search.png" 
                             class="search-icon"
+                            alt="Search Icon"
                         />
                     </label>
                     <p-autoComplete
@@ -3899,7 +3919,7 @@
             <div class="col-2 guest_field_list p-p-0">
                 <div class="Guest-field">
                     <label for="" class="icons-image">
-                        <img src="assets/images/svg-icons/guest-icon.svg" />
+                        <img src="assets/images/svg-icons/guest-icon.svg" alt="Guest Icon" />
                     </label>
                     <p-dropdown
                         appendTo="modal"
@@ -3987,7 +4007,7 @@
             </div>
             <div class="col-md-12 calendar-div p-p-0">
                 <label for="" class="icons-image"
-                    ><img src="assets/images/svg-icons/calender-icon.svg"
+                    ><img src="assets/images/svg-icons/calender-icon.svg" alt="Calendar Icon"
                 /></label>
                 <p-calendar
                     #searchCalendar

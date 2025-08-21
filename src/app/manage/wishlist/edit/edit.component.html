@@ -55,7 +55,7 @@
                             [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
                             [showItemNavigators]="true" [showThumbnails]="false">
                             <ng-template pTemplate="item" let-item>
-                                <img [src]="item.banner_image_src" style="width:100%; display: block;" />
+                                <img [src]="item.banner_image_src" style="width:100%; display: block;" alt="Banner Image" />
                             </ng-template>
                         </p-galleria>
                         <p-fileUpload name="myfiles[]" multiple="multiple" chooseLabel="Upload Banner Image"
@@ -87,7 +87,7 @@
                                     </p-radioButton>
                                 </div>-->
 
-                                <img class="banner-image" [src]="item.banner_image_src" />
+                                <img class="banner-image" [src]="item.banner_image_src" alt="Banner Image" />
 
                             </div>
                         </div>

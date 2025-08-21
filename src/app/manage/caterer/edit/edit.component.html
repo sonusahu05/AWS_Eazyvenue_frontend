@@ -197,7 +197,7 @@
                             [containerStyle]="{'max-width': '50%;'}" [numVisible]="5" [circular]="true"
                             [showItemNavigators]="true" [showThumbnails]="false">
                             <ng-template pTemplate="item" let-item>
-                                <img [src]="item.venue_image_src" style="width:100%; display: block;" />
+                                <img [src]="item.venue_image_src" style="width:100%; display: block;" alt="Portfolio Image" />
                             </ng-template>
                         </p-galleria>
                         <p-fileUpload name="myfiles[]" multiple="multiple"
@@ -219,7 +219,7 @@
                                     <button type="button" class="banner_trash-btn" pButton pRipple icon="pi pi-trash"
                                         (click)="removeportfolioPicImages(item.venue_image_src)"
                                         title="Delete"></button>
-                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" />
+                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" alt="Portfolio Image" />
                                 </div>
                             </div>
                         </div>

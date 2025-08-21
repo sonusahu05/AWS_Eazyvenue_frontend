@@ -41,6 +41,7 @@
                     <label for="" class="icons-image">
                         <img
                             src="assets/images/category-icons/celebration.svg"
+                            alt="Celebration Icon"
                         />
                     </label>
                     <p-autoComplete
@@ -63,6 +64,7 @@
                         <img
                             src="assets/images/category-icons/search.png"
                             class="search-icon"
+                            alt="Search Icon"
                         />
                     </label>
                     <p-autoComplete
@@ -95,7 +97,7 @@
             <div class="col-auto p-p-0 guest_field_list">
                 <div class="Guest-field">
                     <label for="" class="icons-image">
-                        <img src="assets/images/svg-icons/guest-icon.svg" />
+                        <img src="assets/images/svg-icons/guest-icon.svg" alt="Guest Icon"/>
                     </label>
                     <p-dropdown
                         class=""
@@ -181,7 +183,7 @@
             </div>
             <div class="col-md-auto p-p-0 calendar-div">
                 <label for="" class="icons-image"
-                    ><img src="assets/images/svg-icons/calender-icon.svg"
+                    ><img src="assets/images/svg-icons/calender-icon.svg" alt="Calendar Icon"
                 /></label>
                 <p-calendar
                     #searchCalendar
@@ -542,7 +544,7 @@
                                                                         tooltipPosition="top"
                                                                         pTooltip="{{
                                                                             propertyType.name
-                                                                        }}"
+                                                                        }}" alt="{{propertyType.name}}"
                                                                     />
                                                                 </div>
                                                                 <div>
@@ -821,7 +823,7 @@
                                         width: 900px;
                                         height: 250px;
                                         display: block;
-                                    "
+                                    " alt="{{ img.venue_name }}"
                                 />
                                 <video
                                     *ngIf="img.video"
@@ -844,7 +846,7 @@
                                         width: 100%;
                                         display: block;
                                         visibility: visible;
-                                    "
+                                    " alt="{{ img.venue_name }}"
                                 />
                                 <video
                                     *ngIf="img.video"
@@ -885,7 +887,7 @@
                                         width: 100%;
                                         display: block;
                                         visibility: visible;
-                                    "
+                                    " alt="{{ img.venue_name }}"
                                 />
                                 <video
                                     controls
@@ -946,7 +948,7 @@
                                                     width: 100%;
                                                     display: block;
                                                     visibility: visible;
-                                                "
+                                                " alt="{{ iItem.venue_name }}"
                                             />
                                             <video
                                                 *ngIf="iItem.video"
@@ -993,7 +995,7 @@
                                                 style="
                                                     width: 100%;
                                                     display: block;
-                                                "
+                                                " alt="{{ iItem.venue_name }}"
                                             />
                                             <video
                                                 *ngIf="iItem.video"
@@ -1247,7 +1249,7 @@
                                                                         "
                                                                     >
                                                                         <img
-                                                                            src="assets/images/category-icons/area.svg"
+                                                                            src="assets/images/category-icons/area.svg" alt="Area Icon"
                                                                         />
                                                                     </div>
                                                                 </div>
@@ -1291,7 +1293,7 @@
                                                                         "
                                                                     >
                                                                         <img
-                                                                            src="assets/images/category-icons/capacity.svg"
+                                                                            src="assets/images/category-icons/capacity.svg" alt="Capacity Icon"
                                                                         />
                                                                     </div>
                                                                 </div>
@@ -1336,6 +1338,7 @@
                                                                     >
                                                                         <img
                                                                             src="assets/images/category-icons/round-table.svg"
+                                                                            alt="Round Table Icon"
                                                                         />
                                                                     </div>
                                                                 </div>
@@ -1379,7 +1382,7 @@
                                                                         "
                                                                     >
                                                                         <img
-                                                                            src="assets/images/category-icons/theater-seats.svg"
+                                                                            src="assets/images/category-icons/theater-seats.svg" alt="Theater Seats Icon"
                                                                         />
                                                                     </div>
                                                                 </div>
@@ -1902,7 +1905,7 @@
                                                         tooltipPosition="top"
                                                         pTooltip="{{
                                                             propertyType.name
-                                                        }}"
+                                                        }}" alt="{{ propertyType.name }}"
                                                     />
                                                 </div>
                                                 <div>
@@ -2107,6 +2110,7 @@
                     <label for="" class="icons-image">
                         <img
                             src="assets/images/category-icons/celebration.svg"
+                            alt="Celebration Icon"
                         />
                     </label>
                     <p-dropdown
@@ -2127,6 +2131,7 @@
                         <img
                             src="assets/images/category-icons/search.png"
                             class="search-icon"
+                            alt="Search Icon"
                         />
                     </label>
                     <p-autoComplete
@@ -2159,7 +2164,7 @@
             <div class="col-auto p-p-0 guest_field_list">
                 <div class="Guest-field">
                     <label for="" class="icons-image">
-                        <img src="assets/images/svg-icons/guest-icon.svg" />
+                        <img src="assets/images/svg-icons/guest-icon.svg" alt="Guest Icon" />
                     </label>
 
                     <p-dropdown
@@ -2253,7 +2258,7 @@
             </div>
             <div class="col-md-12 p-p-0 calendar-div">
                 <label for="" class="icons-image"
-                    ><img src="assets/images/svg-icons/calender-icon.svg"
+                    ><img src="assets/images/svg-icons/calender-icon.svg" alt="Calendar Icon"
                 /></label>
                 <p-calendar
                     #searchCalendarMobile

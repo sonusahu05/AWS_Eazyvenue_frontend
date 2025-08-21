@@ -395,7 +395,7 @@
                                                 [circular]="true" [showItemNavigators]="true" [showThumbnails]="false">
                                                 <ng-template pTemplate="item" let-item>
                                                     <img [src]="item.venue_image_src"
-                                                        style="width:100%; display: block;" />
+                                                        style="width:100%; display: block;" alt="Venue Image" />
                                                 </ng-template>
                                             </p-galleria>
                                             <p-fileUpload name="myfiles[]" multiple="multiple"
@@ -409,7 +409,7 @@
                                                                 class="column banner-images">
 
                                                                 <img class="banner-image" [src]="item.venue_image_src"
-                                                                    width="100px" />
+                                                                    width="100px" alt="Venue Image" />
                                                                 <button type="button" class="banner_trash-btn" pButton
                                                                     pRipple icon="pi pi-trash"
                                                                     (click)="removeVenueImages(item.venue_image_src)"
@@ -460,7 +460,7 @@
                                                     [showThumbnails]="false">
                                                     <ng-template pTemplate="item" let-item>
                                                         <img [src]="item.venue_image_src"
-                                                            style="width: 200px;display: block;height: 140px;border-radius: 10px;" />
+                                                            style="width: 200px;display: block;height: 140px;border-radius: 10px;" alt="Decor Image" />
                                                     </ng-template>
                                                 </p-galleria>
                                                 <p-fileUpload name="myfiles[]" multiple="multiple"
@@ -474,7 +474,7 @@
                                                                 class="column banner-images">
 
                                                                 <img class="banner-image" [src]="item.venue_image_src"
-                                                                    width="100px" />
+                                                                    width="100px" alt="Decor Image" />
                                                                 <button type="button" class="banner_trash-btn" pButton
                                                                     pRipple icon="pi pi-trash"
                                                                     (click)="removeDecor1Images(item.venue_image_src)"
@@ -500,7 +500,7 @@
                                                     [showThumbnails]="false">
                                                     <ng-template pTemplate="item" let-item>
                                                         <img [src]="item.venue_image_src"
-                                                            style="width: 200px;display: block;height: 140px;border-radius: 10px;" />
+                                                            style="width: 200px;display: block;height: 140px;border-radius: 10px;" alt="Decor Image" />
                                                     </ng-template>
                                                 </p-galleria>
                                                 <p-fileUpload name="myfiles[]" multiple="multiple"
@@ -514,7 +514,7 @@
                                                                 class="column banner-images">
 
                                                                 <img class="banner-image" [src]="item.venue_image_src"
-                                                                    width="100px" />
+                                                                    width="100px" alt="Decor Image" />
                                                                 <button type="button" class="banner_trash-btn" pButton
                                                                     pRipple icon="pi pi-trash"
                                                                     (click)="removeDecor2Images(item.venue_image_src)"
@@ -539,7 +539,7 @@
                                                     [showThumbnails]="false">
                                                     <ng-template pTemplate="item" let-item>
                                                         <img [src]="item.venue_image_src"
-                                                            style="width: 200px;display: block;height: 140px;border-radius: 10px;" />
+                                                            style="width: 200px;display: block;height: 140px;border-radius: 10px;" alt="Decor Image" />
                                                     </ng-template>
                                                 </p-galleria>
                                                 <p-fileUpload name="myfiles[]" multiple="multiple"
@@ -553,7 +553,7 @@
                                                                 class="column banner-images">
 
                                                                 <img class="banner-image" [src]="item.venue_image_src"
-                                                                    width="100px" />
+                                                                    width="100px" alt="Decor Image" />
                                                                 <button type="button" class="banner_trash-btn m-10"
                                                                     pButton pRipple icon="pi pi-trash"
                                                                     (click)="removeDecor3Images(item.venue_image_src)"

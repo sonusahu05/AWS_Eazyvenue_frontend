@@ -32,7 +32,7 @@
         <div [ngClass]="isNavbarFixed?'fixed':'notfixed'" (scroll)="onScroll()" style="width: 75%;">
             <div class="city-field col-md-3 p-p-0">
                 <span class="p-fluid">
-                    <label for="" class="icons-image"> <img src="assets/images/category-icons/celebration.svg"> </label>
+                    <label for="" class="icons-image"> <img src="assets/images/category-icons/celebration.svg" alt="Celebration Icon"> </label>
                     <!-- <p-autoComplete [(ngModel)]="selectedVendor" (onSelect)="onClickCategory($event)"
                         (onClear)="onClickCategory($event)" placeholder="Occasion" class="occasion-list"
                         [dropdown]="true" [suggestions]="filterOccasion" (completeMethod)="filterCategory($event)"
@@ -49,7 +49,7 @@
             <div class="serch-bar-field col-3 p-p-0">
                 <span class="p-fluid">
                     <label for="" class="icons-image search-icon"> <img src="assets/images/category-icons/search.png"
-                            class="search-icon"> </label>
+                            class="search-icon" alt="Search Icon"> </label>
                     <p-autoComplete [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedLocationFilter"
                         [suggestions]="locationList" (completeMethod)="onLocationSearch($event)"
                         (onSelect)="onSelectLocationSearch($event)" (onUnselect)="onUnselectSearchLocationItem($event)"
@@ -68,7 +68,7 @@
             </div>
 
             <div class="col-md-auto p-p-0 calendar-div">
-                <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg"></label>
+                <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg" alt="Calendar Icon"></label>
                 <p-calendar #searchCalendar dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
                     appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
                     [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
@@ -328,7 +328,7 @@
                                                                     <div class="p-mb-1">
                                                                         <img src="assets/images/category-icons/{{propertyType.slug}}.svg"
                                                                             class="product-image" tooltipPosition="top"
-                                                                            pTooltip={{propertyType.name}} />
+                                                                            pTooltip={{propertyType.name}} alt="{{propertyType.name}}" />
                                                                     </div>
                                                                     <div>
                                                                         <h4 class="p-mb-1">{{propertyType.name}}</h4>
@@ -523,7 +523,7 @@
                                                                             <div class="icon"
                                                                                 style="width: 32px!important; height: 32px!important;">
                                                                                 <img
-                                                                                    src="assets/images/category-icons/package.png">
+                                                                                    src="assets/images/category-icons/package.png" alt="Package Icon">
                                                                             </div>
                                                                         </div>
                                                                         <div class="media-body">
@@ -562,7 +562,7 @@
                                                                             <div class="icon"
                                                                                 style="width: 36px!important; height: 36px!important;">
                                                                                 <img
-                                                                                    src="assets/images/category-icons/response_time.png">
+                                                                                    src="assets/images/category-icons/response_time.png" alt="Response Time Icon">
                                                                             </div>
                                                                         </div>
                                                                         <div class="media-body">
@@ -581,7 +581,7 @@
                                                                             <div class="icon"
                                                                                 style="width: 32px!important; height: 32px!important;">
                                                                                 <img
-                                                                                    src="assets/images/category-icons/experience.png">
+                                                                                    src="assets/images/category-icons/experience.png" alt="Experience Icon">
                                                                             </div>
                                                                         </div>
                                                                         <div class="media-body">
@@ -711,7 +711,7 @@
             <div class="city-field col-md-2 p-p-0">
                 <span class="p-fluid">
                     <label for="mobile-vendor-list" class="icons-image"> <img
-                            src="assets/images/category-icons/celebration.svg">
+                            src="assets/images/category-icons/celebration.svg" alt="Celebration Icon">
                     </label>
                     
                         <p-dropdown [options]="vendorCategoryList" [filter]="true"
@@ -723,7 +723,7 @@
             <div class="serch-bar-field col-3 p-p-0">
                 <span class="p-fluid">
                     <label for="" class="icons-image search-icon"> <img src="assets/images/category-icons/search.png"
-                            class="search-icon"> </label>
+                            class="search-icon" alt="Search Icon"> </label>
                     <p-autoComplete [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedLocationFilter"
                         [suggestions]="locationList" (completeMethod)="onLocationSearch($event)"
                         (onSelect)="onSelectLocationSearch($event)" (onUnselect)="onClearResetAllData($event)"
@@ -742,7 +742,7 @@
             </div>
 
             <div class="col-md-12 p-p-0 calendar-div">
-                <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg"></label>
+                <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg" alt="Calendar Icon"></label>
                 <p-calendar #searchCalendarMobile dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
                     appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
                     [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
@@ -910,7 +910,7 @@
                                                 <div class="p-mb-1">
                                                     <img src="assets/images/category-icons/{{propertyType.slug}}.svg"
                                                         class="product-image" tooltipPosition="top"
-                                                        pTooltip={{propertyType.name}} />
+                                                        pTooltip={{propertyType.name}} alt="{{propertyType.name}}"/>
                                                 </div>
                                                 <div>
                                                     <h4 class="p-mb-1">{{propertyType.name}}</h4>

@@ -202,7 +202,7 @@
                         icon="pi pi-trash" (click)="removeMenuImage(indexOfElement)"
                         title="Delete"></button>
                     <input type="text" [(ngModel)]="item.alt" placeholder="Alt text">
-                    <img class="menu-image" [src]="item.menu_image_src" width="100px" />
+                    <img class="menu-image" [src]="item.menu_image_src" width="100px" alt="Menu Image" />
                 </div>
             </div>
         </ng-template>
@@ -576,7 +576,7 @@
                                                 [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
                                                 [showItemNavigators]="true" [showThumbnails]="false">
                                                 <ng-template pTemplate="item" let-item>
-                                                    <img [src]="item.venue_image_src" style="width:100%; display: block;" />
+                                                    <img [src]="item.venue_image_src" style="width:100%; display: block;" alt="Venue Image" />
                                                 </ng-template>
                                             </p-galleria>
                                             <p-fileUpload name="myfiles[]" multiple="multiple" chooseLabel="Upload venue Image"
@@ -601,7 +601,7 @@
                                                     <p-radioButton formControlName="default_name_{{indexOfElement}}"
                                                         (onClick)=" changeDefault($event, item)" value="">
                                                     </p-radioButton>
-                                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" />
+                                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" alt="Venue Image" />
                                                 </div>
                                             </div>
                                         </div>
@@ -647,7 +647,7 @@
                                                 [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
                                                 [showItemNavigators]="true" [showThumbnails]="false">
                                                 <ng-template pTemplate="item" let-item>
-                                                    <img [src]="item.venue_image_src" style="width:100%; display: block;" />
+                                                    <img [src]="item.venue_image_src" style="width:100%; display: block;" alt="Decor Image" />
                                                 </ng-template>
                                             </p-galleria>
                                             <p-fileUpload name="myfiles[]" multiple="multiple" chooseLabel="Upload Decor 1 Image"
@@ -672,7 +672,7 @@
                                                     <p-radioButton formControlName="decor_one_default_name_{{indexOfElement}}"
                                                         (onClick)=" changeDefault($event, item)" value="">
                                                     </p-radioButton>
-                                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" />
+                                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" alt="Decor Image" />
                                                 </div>
                                             </div>
                                         </div>
@@ -695,7 +695,7 @@
                                                 [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
                                                 [showItemNavigators]="true" [showThumbnails]="false">
                                                 <ng-template pTemplate="item" let-item>
-                                                    <img [src]="item.venue_image_src" style="width:100%; display: block;" />
+                                                    <img [src]="item.venue_image_src" style="width:100%; display: block;" alt="Decor Image" />
                                                 </ng-template>
                                             </p-galleria>
                                             <p-fileUpload name="myfiles[]" multiple="multiple" chooseLabel="Upload Decor 2 Image"
@@ -720,7 +720,7 @@
                                                     <p-radioButton formControlName="decor_two_default_name_{{indexOfElement}}"
                                                         (onClick)=" changeDefault($event, item)" value="">
                                                     </p-radioButton>
-                                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" />
+                                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" alt="Decor Image" />
                                                 </div>
                                             </div>
                                         </div>
@@ -743,7 +743,7 @@
                                                 [containerStyle]="{'max-width': '100%;'}" [numVisible]="5" [circular]="true"
                                                 [showItemNavigators]="true" [showThumbnails]="false">
                                                 <ng-template pTemplate="item" let-item>
-                                                    <img [src]="item.venue_image_src" style="width:100%; display: block;" />
+                                                    <img [src]="item.venue_image_src" style="width:100%; display: block;" alt="Decor Image" />
                                                 </ng-template>
                                             </p-galleria>
                                             <p-fileUpload name="myfiles[]" multiple="multiple" chooseLabel="Upload Decor 3 Image"
@@ -768,7 +768,7 @@
                                                     <p-radioButton formControlName="decor_three_default_name_{{indexOfElement}}"
                                                         (onClick)=" changeDefault($event, item)" value="">
                                                     </p-radioButton>
-                                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" />
+                                                    <img class="banner-image" [src]="item.venue_image_src" width="100px" alt="Decor Image" />
                                                 </div>
                                             </div>
                                         </div>
