@@ -1,3 +1,4 @@
 User-agent: *
+Allow: /
 
-Sitemap: https://eazyvenue.com/sitemap_index.xml
+Sitemap: https://eazyvenue.in/sitemap_index.xml
