@@ -1,56 +1,256 @@
-<div class="blog-container">
-  <!-- Hero Section -->
-  <section class="hero-section">
-    <div class="container">
-      <h1 class="hero-title">Our Blog</h1>
-      <p class="hero-subtitle">Discover stories, tips, and insights from experts to help you stay ahead.</p>
-    </div>
-  </section>
+<!-- This container shows a loading spinner while blog posts are being fetched -->
+<div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading blog posts...</p>
+</div>
 
-  <!-- Blog Cards Section -->
-  <section class="blog-cards-section">
-    <div class="container">
-      <h2 class="section-title">Latest Posts</h2>
+<!-- This is the main container for the blog content, shown when loading is complete -->
+<div *ngIf="!loading" class="blog-container">
 
-      <!-- Grid of Blog Cards -->
-      <div class="blog-cards-grid">
-        <!-- Loop through blog posts -->
-        <div class="blog-card" *ngFor="let post of blogPosts">
-          <div class="card-image">
-            <img [src]="post.imageUrl" alt="Blog Post Image">
-          </div>
-          <div class="card-content">
-            <div class="post-meta">
-              <span class="category">{{ post.category }}</span>
-              <span class="date">{{ post.date }}</span>
-              <span class="reading-time">{{ post.readingTime }}</span>
-            </div>
-            <h3 class="card-title">{{ post.title }}</h3>
-            <p class="card-description">{{ post.excerpt }}</p>
-
-            <div class="tags">
-              <span class="tag" *ngFor="let tag of post.tags">{{ tag }}</span>
-            </div>
-
-            <div class="post-footer">
-              <span class="author">By {{ post.author }}</span>
-            </div>
-          </div>
+    <!-- Hero section with the main title and a button to create a new post -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Our Blog</h1>
+            <p class="hero-subtitle">Discover stories, insights, and inspiration</p>
+            <button (click)="showCreateForm = true" class="create-blog-btn">Create a blog</button>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-<!-- Instagram Section -->
-  <section class="instagram-section">
-    <div class="container">
-      <app-instagram-blog 
-        [limit]="6" 
-        [account]="'eazyvenue'" 
-        [showTitle]="true" 
-        [gridColumns]="3">
-      </app-instagram-blog>
+    <!-- Overlay form for creating a new blog post, shown when showCreateForm is true -->
+    <div *ngIf="showCreateForm" class="create-blog-overlay">
+        <section class="create-blog-section">
+            <div class="create-blog-header">
+                <h2>Create New Blog Post</h2>
+                <button (click)="showCreateForm = false" class="close-btn">&times;</button>
+            </div>
+            <form (ngSubmit)="createPost()" class="blog-form">
+                <label>Post Title</label>
+                <input type="text" [(ngModel)]="newPost.title" name="title" required />
+
+                <label>Upload Image</label>
+                <input type="file" (change)="onFileSelected($event)" accept="image/*" required />
+
+                <label>Category</label>
+                <select [(ngModel)]="newPost.category" name="category" required>
+                    <option *ngFor="let cat of categories" [value]="cat.id">{{cat.name}}</option>
+                </select>
+
+                <label>Content</label>
+                <textarea [(ngModel)]="newPost.content" name="content" rows="10" cols="80" required></textarea>
+
+                <label>Twitter Link (Optional)</label>
+                <div class="input-with-icon">
+                    <div class="icon-container">
+                        <i class="pi pi-twitter twitter-icon"></i>
+                    </div>
+                    <div class="input-container">
+                        <input type="url"
+                               pInputText
+                               [(ngModel)]="newPost.twitter_url"
+                               name="twitter_url"
+                               placeholder="Enter Twitter URL" />
+                    </div>
+                </div>
+
+                <label>LinkedIn Link (Optional)</label>
+                <div class="input-with-icon">
+                    <div class="icon-container">
+                        <i class="pi pi-linkedin linkedin-icon"></i>
+                    </div>
+                    <div class="input-container">
+                        <input type="url"
+                               pInputText
+                               [(ngModel)]="newPost.linkedin_url"
+                               name="linkedin_url"
+                               placeholder="Enter LinkedIn URL" />
+                    </div>
+                </div>
+
+                <p class="author-preview">By {{loggedInUser}}</p>
+
+                <button type="submit" class="publish-btn">Publish</button>
+            </form>
+        </section>
     </div>
-  </section>
+
+    <!-- Full post view overlay -->
+    <div *ngIf="selectedPost" class="full-post-overlay">
+        <div class="full-post-modal">
+            <div class="full-post-header">
+                <button (click)="closeFullPost()" class="close-btn">&times;</button>
+            </div>
+            <div class="full-post-content">
+                <div class="post-image" *ngIf="getImageUrl(selectedPost.banner_image && selectedPost.banner_image[0] ? selectedPost.banner_image[0].banner_image_src : '')">
+                    <img [src]="getImageUrl(selectedPost.banner_image && selectedPost.banner_image[0] ? selectedPost.banner_image[0].banner_image_src : '')" [alt]="selectedPost.banner_title" />
+                </div>
+                <div class="post-meta">
+                    <span class="category">{{formatCategoryName(selectedPost.category)}}</span>
+                    <span class="date">{{selectedPost.publish_date | date:'MMM dd, yyyy'}}</span>
+                </div>
+                <h1 class="post-title">{{selectedPost.banner_title}}</h1>
+                <div class="post-author">By {{selectedPost.createdByName}}</div>
+                <div class="post-full-content" [innerHTML]="selectedPost.banner_content"></div>
+                <div class="post-social-links" *ngIf="selectedPost.twitter_url || selectedPost.linkedin_url">
+                    <h4>Follow us:</h4>
+                    <div class="social-links">
+                        <a *ngIf="selectedPost.twitter_url" [href]="selectedPost.twitter_url" target="_blank" class="social-link twitter">
+                            <i class="pi pi-twitter"></i> Twitter
+                        </a>
+                        <a *ngIf="selectedPost.linkedin_url" [href]="selectedPost.linkedin_url" target="_blank" class="social-link linkedin">
+                            <i class="pi pi-linkedin"></i> LinkedIn
+                        </a>
+                    </div>
+                </div>
+                <div class="post-actions-full">
+                    <!-- <div class="share-buttons">
+                        <button (click)="sharePost(selectedPost, 'facebook')" class="share-btn facebook"><i class="pi pi-facebook"></i> Share</button>
+                        <button (click)="sharePost(selectedPost, 'twitter')" class="share-btn twitter"><i class="pi pi-twitter"></i> Tweet</button>
+                        <button (click)="sharePost(selectedPost, 'linkedin')" class="share-btn linkedin"><i class="pi pi-linkedin"></i> Share</button>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation tabs to filter blog posts -->
+    <section class="blog-navigation">
+        <div class="container">
+            <div class="nav-tabs">
+                <button class="nav-tab" [class.active]="activeTab === 'all'" (click)="setActiveTab('all')">All Posts</button>
+                <button class="nav-tab" [class.active]="activeTab === 'featured'" (click)="setActiveTab('featured')">Featured</button>
+                <button class="nav-tab" [class.active]="activeTab === 'instagram'" (click)="setActiveTab('instagram')">Instagram</button>
+                <button class="nav-tab" [class.active]="activeTab === 'regular'" (click)="setActiveTab('regular')">Latest Posts</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section for Featured Posts -->
+    <section *ngIf="activeTab === 'all' || activeTab === 'featured'" class="featured-section">
+        <div class="container">
+            <h2 class="section-title">Featured Posts</h2>
+            <div class="featured-grid" *ngIf="featuredPosts.length > 0">
+                <article *ngFor="let post of featuredPosts; let i = index" class="featured-card" [class.large]="i === 0">
+                    <div class="card-image">
+                        <img [src]="getImageUrl(post.banner_image && post.banner_image.length > 0 ? post.banner_image[0].banner_image_src : '')" [alt]="post.banner_title" loading="lazy">
+                        <div class="post-badge">Featured</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="post-meta">
+                            <span class="category">{{formatCategoryName(post.category)}}</span>
+                            <span class="date">{{post.publish_date | date:'MMM dd, yyyy'}}</span>
+                        </div>
+                        <h3 class="post-title">{{post.banner_title}}</h3>
+                        <p class="post-excerpt">{{truncateText(post.banner_content, 120)}}</p>
+                        <div class="post-footer">
+                            <div class="author"><span>By {{post.createdByName}}</span></div>
+                        </div>
+                        <div class="post-actions">
+                            <button class="read-more-btn" (click)="openFullPost(post)">Read More</button>
+                            <div class="share-buttons">
+                                <button (click)="sharePost(post, 'facebook')" class="share-btn facebook"><i class="pi pi-facebook"></i></button>
+                                <button (click)="sharePost(post, 'twitter')" class="share-btn twitter"><i class="pi pi-twitter"></i></button>
+                                <button (click)="sharePost(post, 'linkedin')" class="share-btn linkedin"><i class="pi pi-linkedin"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <div *ngIf="featuredPosts.length === 0" class="no-posts"><p>No featured posts available.</p></div>
+        </div>
+    </section>
+
+    <!-- Section for Instagram Posts -->
+    <section *ngIf="activeTab === 'all' || activeTab === 'instagram'" class="instagram-section">
+        <div class="container">
+            <h2 class="section-title">From Instagram</h2>
+            <div class="instagram-grid" *ngIf="instagramPosts.length > 0">
+                <div *ngFor="let post of instagramPosts" class="instagram-card" (click)="openInstagramPost(post.instagram_url)">
+                    <div class="instagram-image">
+                        <img [src]="getImageUrl(post.banner_image && post.banner_image[0] ? post.banner_image[0].banner_image_src : '')" [alt]="post.banner_title" loading="lazy">
+                        <div class="instagram-overlay">
+                            <div class="instagram-icon"><i class="pi pi-instagram"></i></div>
+                        </div>
+                    </div>
+                    <div class="instagram-caption"><p>{{truncateText(post.instagram_caption || post.banner_title, 60)}}</p></div>
+                </div>
+            </div>
+            <div *ngIf="instagramPosts.length === 0" class="no-posts"><p>No Instagram posts available.</p></div>
+        </div>
+    </section>
+
+    <!-- Section for Latest/Regular Posts with search and filtering -->
+    <section *ngIf="activeTab === 'all' || activeTab === 'regular'" class="regular-posts-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Latest Posts</h2>
+                <div class="controls-row">
+                    <div class="search-box">
+                        <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Search posts..." class="search-input">
+                        <i class="pi pi-search search-icon"></i>
+                    </div>
+                    <div class="category-filter">
+                        <select [(ngModel)]="selectedCategory" (change)="setActiveCategory($event.target.value)" class="category-select">
+                            <option value="all">All Categories</option>
+                            <option *ngFor="let category of categories" [value]="category.id">{{category.name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="posts-grid" *ngIf="getFilteredPosts().length > 0">
+                <article *ngFor="let post of getFilteredPosts()" class="post-card">
+                    <div class="card-image">
+                        <img [src]="getImageUrl(post.banner_image && post.banner_image[0] ? post.banner_image[0].banner_image_src : '')" [alt]="post.banner_title" loading="lazy">
+                    </div>
+                    <div class="card-content">
+                        <div class="post-meta">
+                            <span class="category">{{formatCategoryName(post.category)}}</span>
+                            <span class="date">{{post.publish_date | date:'MMM dd, yyyy'}}</span>
+                        </div>
+                        <h3 class="post-title">
+                            <span (click)="openFullPost(post)" class="clickable-title">{{post.banner_title}}</span>
+                        </h3>
+                        <p class="post-excerpt">{{truncateText(post.banner_content, 150)}}</p>
+                        <div class="post-footer">
+                            <div class="author"><span>By {{post.createdByName}}</span></div>
+                            <div class="post-tags" *ngIf="getPostTags(post).length > 0">
+                                <span class="tag" *ngFor="let tag of getPostTags(post).slice(0, 3)">{{tag}}</span>
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                            <button class="read-more-btn" (click)="openFullPost(post)">Read More</button>
+                            <div class="share-buttons">
+                                <button (click)="sharePost(post, 'facebook')" class="share-btn"><i class="pi pi-facebook"></i></button>
+                                <button (click)="sharePost(post, 'twitter')" class="share-btn"><i class="pi pi-twitter"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Message shown when no posts are found after filtering/searching -->
+            <div *ngIf="getFilteredPosts().length === 0 && !loading" class="no-posts">
+                <div class="no-posts-content">
+                    <i class="pi pi-search no-posts-icon"></i>
+                    <h3>No posts found</h3>
+                    <p *ngIf="searchTerm">No posts match your search for "{{searchTerm}}"</p>
+                    <p *ngIf="selectedCategory !== 'all' && !searchTerm">No posts found in this category</p>
+                    <p *ngIf="selectedCategory === 'all' && !searchTerm">No posts available at the moment</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instagram feed component section -->
+    <section class="instagram-section">
+        <div class="container">
+            <app-instagram-blog 
+                [limit]="6" 
+                [account]="'eazyvenue'" 
+                [showTitle]="true" 
+                [gridColumns]="3">
+            </app-instagram-blog>
+        </div>
+    </section>
 
 </div>
