@@ -756,19 +756,27 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     get h() {
         return this.mobileForm.controls;
     }
+// getCarouselReviews() {
+//   // This method is probably still using the old logic
+//   // Change it to:
+//   if (this.selectedReviewSource === 'google') {
+//     return this.googleReviews || [];
+//   } 
+// //   else if (this.selectedReviewSource === 'Compare Reviews') {
+// //     return this.CompareReviews || []; // Make sure this line exists
+// //   }
+//    else {
+//     return this.venueDetails.reviews || [];
+//   }
+// }
 getCarouselReviews() {
-  // This method is probably still using the old logic
-  // Change it to:
   if (this.selectedReviewSource === 'google') {
     return this.googleReviews || [];
-  } 
-//   else if (this.selectedReviewSource === 'Compare Reviews') {
-//     return this.CompareReviews || []; // Make sure this line exists
-//   }
-   else {
-    return this.venueDetails.reviews || [];
+  } else {
+    return this.venueDetails?.reviews || [];
   }
 }
+
 
   // Get total number of slides
   getTotalSlides(): number {
@@ -1002,19 +1010,44 @@ getReviewsCountText(): string {
 }
 
 // Enhanced getCurrentRating with compare reviews support
+// getCurrentRating(): number {
+//    if (this.selectedReviewSource === 'google') {
+//     return this.venueDetails.googleRating || 0;
+//   } else if (this.selectedReviewSource === 'Compare Reviews') {
+//     // Change this line:
+//     const compareReviews = this.CompareReviews; // Change from this.mockCompareReviews
+//     if (compareReviews && compareReviews.length > 0) {
+//       const totalRating = compareReviews.reduce((sum, review) => sum + review.rating, 0);
+//       return Math.round((totalRating / compareReviews.length) * 10) / 10;
+//     }
+//     return 0;
+//   } else {
+//     // EazyVenue reviews
+//     const eazyRating = this.venueDetails.eazyVenueRating || 0;
+//     const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
+
+//     if (eazyReviewsCount === 0 && this.venueDetails.googleRating) {
+//       return this.venueDetails.googleRating;
+//     }
+
+//     return eazyRating;
+//   }
+// }
 getCurrentRating(): number {
-   if (this.selectedReviewSource === 'google') {
+  if (!this.venueDetails) {
+    return 0;
+  }
+
+  if (this.selectedReviewSource === 'google') {
     return this.venueDetails.googleRating || 0;
   } else if (this.selectedReviewSource === 'Compare Reviews') {
-    // Change this line:
-    const compareReviews = this.CompareReviews; // Change from this.mockCompareReviews
+    const compareReviews = this.CompareReviews;
     if (compareReviews && compareReviews.length > 0) {
       const totalRating = compareReviews.reduce((sum, review) => sum + review.rating, 0);
       return Math.round((totalRating / compareReviews.length) * 10) / 10;
     }
     return 0;
   } else {
-    // EazyVenue reviews
     const eazyRating = this.venueDetails.eazyVenueRating || 0;
     const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
 
@@ -1025,6 +1058,7 @@ getCurrentRating(): number {
     return eazyRating;
   }
 }
+
 
 // Enhanced setInitialReviewSource with compare reviews consideration
 setInitialReviewSource() {
@@ -3678,49 +3712,67 @@ loadMoreGoogleReviews(): void {
             startDate +
             '&filterBySlotEndDate=' +
             endDate;
+        // this.postAvailabilityService
+        //     .getPostAvailabilityListWithoutAuth(query)
+        //     .subscribe(
+        //         (data) => {
+        //             let totalCount = data.data.totalCount;
+        //             let startDate = moment(
+        //                 this.selectedStartDate,
+        //                 'DD.MM.YYYY'
+        //             );
+        //             let endDate = moment(this.selectedEndDate, 'DD.MM.YYYY');
+        //             var days = endDate.diff(startDate, 'days');
+        //             days = Number(days) + Number(1);
+        //             let totalExpectedSlots = Number(days) * 3;
+        //             if (totalCount == totalExpectedSlots) {
+        //                 this.showAvailabilityMessage = false;
+        //             } else {
+        //                 this.showAvailabilityMessage = true;
+        //             }
+        //             //this.availabilityList = [];
+        //             //let availabilityList = data.data.items;
+        //             // this.availabilityList =
+        //             //     availabilityList.reduce((result, currentValue) => {
+        //             //         (result[currentValue.slotdate] = result[currentValue.slotdate] || []).push(
+        //             //             currentValue
+        //             //         );
+        //             //         return result;
+        //             //     }, {});
+        //             // this.availabilityList = Object.entries(this.availabilityList);
+        //             // this.availabilityList.forEach(element => {
+        //             //     if (element[0]) {
+        //             //         element[0] = moment(element[0]).local().format('DD-MM-YYYY');
+        //             //     }
+        //             //     if (element[1].length > 0) {
+        //             //         element[1].forEach(item => {
+        //             //             item['selected'] = false;
+        //             //         });
+        //             //     }
+        //             // });
+        //         },
+        //         (err) => {
+        //             this.errorMessage = err.error.message;
+        //         }
+        //     );
         this.postAvailabilityService
-            .getPostAvailabilityListWithoutAuth(query)
-            .subscribe(
-                (data) => {
-                    let totalCount = data.data.totalCount;
-                    let startDate = moment(
-                        this.selectedStartDate,
-                        'DD.MM.YYYY'
-                    );
-                    let endDate = moment(this.selectedEndDate, 'DD.MM.YYYY');
-                    var days = endDate.diff(startDate, 'days');
-                    days = Number(days) + Number(1);
-                    let totalExpectedSlots = Number(days) * 3;
-                    if (totalCount == totalExpectedSlots) {
-                        this.showAvailabilityMessage = false;
-                    } else {
-                        this.showAvailabilityMessage = true;
-                    }
-                    //this.availabilityList = [];
-                    //let availabilityList = data.data.items;
-                    // this.availabilityList =
-                    //     availabilityList.reduce((result, currentValue) => {
-                    //         (result[currentValue.slotdate] = result[currentValue.slotdate] || []).push(
-                    //             currentValue
-                    //         );
-                    //         return result;
-                    //     }, {});
-                    // this.availabilityList = Object.entries(this.availabilityList);
-                    // this.availabilityList.forEach(element => {
-                    //     if (element[0]) {
-                    //         element[0] = moment(element[0]).local().format('DD-MM-YYYY');
-                    //     }
-                    //     if (element[1].length > 0) {
-                    //         element[1].forEach(item => {
-                    //             item['selected'] = false;
-                    //         });
-                    //     }
-                    // });
-                },
-                (err) => {
-                    this.errorMessage = err.error.message;
-                }
-            );
+  .getPostAvailabilityListWithoutAuth(query)
+  .subscribe(
+    (data) => {
+      const totalCount = data?.data?.totalCount ?? 0; // ✅ Avoid crash if data or data.data is undefined
+
+      const startDate = moment(this.selectedStartDate, 'DD.MM.YYYY');
+      const endDate = moment(this.selectedEndDate, 'DD.MM.YYYY');
+      let days = endDate.diff(startDate, 'days') + 1;
+      const totalExpectedSlots = days * 3;
+
+      this.showAvailabilityMessage = totalCount !== totalExpectedSlots;
+    },
+    (err) => {
+      this.errorMessage = err?.error?.message || 'Something went wrong';
+    }
+  );
+
             
         // Track analytics for date selection
         console.log('📊 ANALYTICS: Event dates selected:', this.selectedStartDate, 'to', this.selectedEndDate);
