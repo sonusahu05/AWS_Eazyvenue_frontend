@@ -203,7 +203,7 @@ private loadGoogleMapsScript(): Promise<void> {
         }
 
         const script = document.createElement('script');
-        // script.src = `https://maps.googleapis.com/maps/api/js?key=${this.googleMapsApiKey}&libraries=places`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${this.googleMapsApiKey}&libraries=places`;
         script.async = true;
         script.defer = true;
 
