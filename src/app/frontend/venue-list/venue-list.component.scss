@@ -866,131 +866,131 @@ span.find-venue-icon {
     padding: 0px !important;
 }
 
-/* Image loading improvements */
-.listing-thumbnail img {
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-    background-color: #f8f9fa;
-    object-fit: cover;
-    width: 100% !important;
-    height: auto;
-    min-height: 200px;
-}
+// /* Image loading improvements */
+// .listing-thumbnail img {
+//     opacity: 0;
+//     transition: opacity 0.3s ease-in-out;
+//     background-color: #f8f9fa;
+//     object-fit: cover;
+//     width: 100% !important;
+//     height: auto;
+//     min-height: 200px;
+// }
 
-.listing-thumbnail img[src] {
-    opacity: 1;
-}
+// .listing-thumbnail img[src] {
+//     opacity: 1;
+// }
 
-.listing-thumbnail img[data-loaded="true"] {
-    opacity: 1;
-}
+// .listing-thumbnail img[data-loaded="true"] {
+//     opacity: 1;
+// }
 
-.listing-thumbnail {
-    position: relative;
-    background-color: #f8f9fa;
-    min-height: 200px;
-    overflow: hidden;
-}
-
-.listing-thumbnail::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-    z-index: 1;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-}
-
-.listing-thumbnail.loading::before {
-    opacity: 1;
-}
-
-.listing-thumbnail img,
-.listing-thumbnail video {
-    position: relative;
-    z-index: 2;
-}
-
-@keyframes loading {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
-    }
-}
-
-/* PrimeNG Galleria specific fixes */
-.p-galleria-thumbnail-item-content img {
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-    object-fit: cover;
-    width: 100% !important;
-    height: auto;
-}
-
-.p-galleria-thumbnail-item-content img[src] {
-    opacity: 1;
-}
-
-/* Fix z-index issue - ensure galleria stays below navigation */
-:host ::ng-deep .p-galleria,
-:host ::ng-deep .p-galleria-item-wrapper,
-:host ::ng-deep .p-galleria-item-container,
-:host ::ng-deep .p-galleria-item,
-:host ::ng-deep .p-galleria-item-nav {
-    z-index: 1 !important;
-}
-
-// /* Ensure navigation header stays on top */
-// :host ::ng-deep .sigma_header {
-//     z-index: 999999 !important;
+// .listing-thumbnail {
 //     position: relative;
+//     background-color: #f8f9fa;
+//     min-height: 200px;
+//     overflow: hidden;
 // }
 
-// /* Additional fix for any overlay panels */
-// :host ::ng-deep .p-overlaypanel {
-//     z-index: 1000 !important;
+// .listing-thumbnail::before {
+//     content: '';
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     right: 0;
+//     bottom: 0;
+//     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+//     background-size: 200% 100%;
+//     animation: loading 1.5s infinite;
+//     z-index: 1;
+//     opacity: 0;
+//     transition: opacity 0.3s ease-in-out;
 // }
 
-.p-galleria-thumbnail-item-content img[data-loaded="true"] {
-    opacity: 1;
-}
+// .listing-thumbnail.loading::before {
+//     opacity: 1;
+// }
 
-.p-galleria-item-wrapper img {
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-    object-fit: cover;
-}
+// .listing-thumbnail img,
+// .listing-thumbnail video {
+//     position: relative;
+//     z-index: 2;
+// }
 
-.p-galleria-item-wrapper img[src] {
-    opacity: 1;
-}
+// @keyframes loading {
+//     0% {
+//         background-position: 200% 0;
+//     }
+//     100% {
+//         background-position: -200% 0;
+//     }
+// }
 
-.p-galleria-item-wrapper img[data-loaded="true"] {
-    opacity: 1;
-}
+// /* PrimeNG Galleria specific fixes */
+// .p-galleria-thumbnail-item-content img {
+//     opacity: 0;
+//     transition: opacity 0.3s ease-in-out;
+//     object-fit: cover;
+//     width: 100% !important;
+//     height: auto;
+// }
 
-/* Force PrimeNG to refresh content */
-.p-galleria-thumbnail-container .p-galleria-thumbnail-items {
-    transition: transform 0.5s ease;
-}
+// .p-galleria-thumbnail-item-content img[src] {
+//     opacity: 1;
+// }
 
-/* Ensure images have proper dimensions */
-.p-galleria-item {
-    img {
-        width: 100% !important;
-        height: auto !important;
-        max-height: 300px;
-        object-fit: cover;
-    }
-}
+// /* Fix z-index issue - ensure galleria stays below navigation */
+// :host ::ng-deep .p-galleria,
+// :host ::ng-deep .p-galleria-item-wrapper,
+// :host ::ng-deep .p-galleria-item-container,
+// :host ::ng-deep .p-galleria-item,
+// :host ::ng-deep .p-galleria-item-nav {
+//     z-index: 1 !important;
+// }
+
+// // /* Ensure navigation header stays on top */
+// // :host ::ng-deep .sigma_header {
+// //     z-index: 999999 !important;
+// //     position: relative;
+// // }
+
+// // /* Additional fix for any overlay panels */
+// // :host ::ng-deep .p-overlaypanel {
+// //     z-index: 1000 !important;
+// // }
+
+// .p-galleria-thumbnail-item-content img[data-loaded="true"] {
+//     opacity: 1;
+// }
+
+// .p-galleria-item-wrapper img {
+//     opacity: 0;
+//     transition: opacity 0.3s ease-in-out;
+//     object-fit: cover;
+// }
+
+// .p-galleria-item-wrapper img[src] {
+//     opacity: 1;
+// }
+
+// .p-galleria-item-wrapper img[data-loaded="true"] {
+//     opacity: 1;
+// }
+
+// /* Force PrimeNG to refresh content */
+// .p-galleria-thumbnail-container .p-galleria-thumbnail-items {
+//     transition: transform 0.5s ease;
+// }
+
+// /* Ensure images have proper dimensions */
+// .p-galleria-item {
+//     img {
+//         width: 100% !important;
+//         height: auto !important;
+//         max-height: 300px;
+//         object-fit: cover;
+//     }
+// }
 
 .row.justify-content-center.search-bar.search_bar_listing_page.search-bar-popup {
     position: absolute;
