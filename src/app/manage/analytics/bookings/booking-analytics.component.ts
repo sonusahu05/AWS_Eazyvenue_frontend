@@ -1233,62 +1233,94 @@ export class BookingAnalyticsComponent implements OnInit, OnDestroy {
   hasVenueLocation(venue: VenueOption): boolean {
     return !!(venue.city || venue.state);
   }
+  // booking-analytics.component.ts
+
   async loadAdvancedAnalytics(): Promise<void> {
     try {
       this.loading = true;
       console.log('🔄 ===============================================');
-      console.log('🔄 LOADING REAL ANALYTICS FROM venue_clicks COLLECTION');
+      console.log('🔄 LOADING AGGREGATED ANALYTICS FROM BACKEND');
       console.log('🔄 Venue ID:', this.selectedVenueId || 'All Venues');
-      console.log('🔄 Venue Name:', this.selectedVenue?.name || 'All Venues');
-      console.log('🔄 Collection: analytics.geography.venue_clicks');
       console.log('🔄 ===============================================');
       
       // Clear existing data before loading new data
-      console.log('🧹 Clearing existing analytics data...');
       this.clearAllCharts();
       
-      // Load ONLY real analytics data from venue_clicks collection
-      console.log('📊 Loading real analytics data from venue_clicks collection...');
-      await this.loadRealVenueClicksData();
+      const params = {
+        from: this.getDateRange().from,
+        to: this.getDateRange().to,
+        limit: 50
+      };
+      
+      // Call the dedicated, aggregated analytics endpoints in parallel
+      const [hotDatesResponse, funnelResponse, leadsResponse] = await Promise.all([
+          this.venueAnalyticsService.getHotDatesAnalytics(this.selectedVenueId, params).toPromise(),
+          this.venueAnalyticsService.getEngagementFunnel(this.selectedVenueId, params).toPromise(),
+          this.venueAnalyticsService.getLeadsAnalytics(this.selectedVenueId, { ...params, limit: 20 }).toPromise()
+      ]);
 
-      // Update all charts with real data
-      console.log('🔄 Updating charts with real data...');
+      // Process Hot Dates
+      if (hotDatesResponse && hotDatesResponse.success) {
+          this.hotDatesData = hotDatesResponse.data || [];
+      } else {
+          console.warn('Could not load hot dates, using mock data.');
+          this.hotDatesData = this.generateMockHotDatesData();
+      }
+
+      // Process Engagement Funnel
+      if (funnelResponse && funnelResponse.success) {
+          this.engagementFunnelData = funnelResponse.data || {};
+      } else {
+          console.warn('Could not load engagement funnel, using mock data.');
+          this.engagementFunnelData = this.generateMockEngagementFunnelData();
+      }
+
+      // Process Leads
+      if (leadsResponse && leadsResponse.success) {
+          this.leadsData = leadsResponse.data?.leads || [];
+          this.totalStats = leadsResponse.data?.stats || {};
+      } else {
+          console.warn('Could not load leads, using mock data.');
+          const mockLeads = this.generateMockLeadsData();
+          this.leadsData = mockLeads.leads;
+          this.totalStats = mockLeads.stats;
+      }
+      
+      // Ensure totalViews is synced
+      if (this.engagementFunnelData?.totalViews) {
+          this.totalStats.totalViews = this.engagementFunnelData.totalViews;
+      }
+
+      // Update all charts with the new, aggregated data
       this.updateAllCharts();
       
       console.log('✅ ===============================================');
-      console.log('✅ REAL ANALYTICS LOADING COMPLETED');
+      console.log('✅ AGGREGATED ANALYTICS LOADING COMPLETED');
       console.log('✅ Final Data State:', {
         hotDatesCount: this.hotDatesData?.length || 0,
-        engagementFunnelData: this.engagementFunnelData,
         leadsCount: this.leadsData?.length || 0,
         totalStats: this.totalStats,
-        venueSpecific: !!this.selectedVenueId,
-        venueName: this.selectedVenue?.name || 'All Venues'
       });
       console.log('✅ ===============================================');
 
     } catch (error) {
       console.error('❌ ===============================================');
-      console.error('❌ REAL ANALYTICS LOADING FAILED');
-      console.error('❌ Error:', error);
-      console.error('❌ Venue:', this.selectedVenue?.name || 'All Venues');
-      console.error('❌ Cannot load data without real database connection');
+      console.error('❌ AGGREGATED ANALYTICS LOADING FAILED', error);
       console.error('❌ ===============================================');
       
       this.messageService.add({
         severity: 'error',
-        summary: 'Database Connection Required',
-        detail: 'Cannot load analytics without connection to venue_clicks collection. Please check backend server.',
-        life: 10000
+        summary: 'Analytics Error',
+        detail: 'Failed to load aggregated analytics data from the server.',
+        life: 8000
       });
       
-      // Clear all data since we can't load real data
-      this.clearAllCharts();
+      // Fallback to mock data on failure
+      this.loadMockAnalyticsData();
     } finally {
       this.loading = false;
     }
   }
-
   // NEW: Load real venue clicks data from analytics.geography.venue_clicks collection
   async loadRealVenueClicksData(): Promise<void> {
     try {

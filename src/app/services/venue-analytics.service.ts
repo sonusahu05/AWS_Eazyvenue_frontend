@@ -146,24 +146,28 @@ export class VenueAnalyticsService {
   /**
    * Get hot dates analytics - shows which dates are trending for bookings
    */
-  getHotDatesAnalytics(venueId?: string, params?: any): Observable<any> {
+  
+// And update the getHotDatesAnalytics method:
+getHotDatesAnalytics(venueId?: string, params?: any): Observable<any> {
     const headers = this.getAuthHeaders();
     let queryParams = '';
     
     if (params) {
-      const searchParams = new URLSearchParams();
-      if (params.from) searchParams.append('from', params.from);
-      if (params.to) searchParams.append('to', params.to);
-      if (params.limit) searchParams.append('limit', params.limit.toString());
-      queryParams = searchParams.toString() ? '?' + searchParams.toString() : '';
+        const searchParams = new URLSearchParams();
+        if (params.from) searchParams.append('from', params.from);
+        if (params.to) searchParams.append('to', params.to);
+        if (params.limit) searchParams.append('limit', params.limit.toString());
+        queryParams = searchParams.toString() ? '?' + searchParams.toString() : '';
     }
 
     const endpoint = venueId 
-      ? `${this.apiUrl}/hot-dates/${venueId}${queryParams}`
-      : `${this.apiUrl}/hot-dates${queryParams}`;
+        ? `${this.apiUrl}/hot-dates/${venueId}${queryParams}`
+        : `${this.apiUrl}/hot-dates${queryParams}`;
 
+    console.log('🌐 Hot dates API endpoint:', endpoint);
+    
     return this.http.get<any>(endpoint, { headers });
-  }
+}
 
   /**
    * Get engagement funnel analytics
