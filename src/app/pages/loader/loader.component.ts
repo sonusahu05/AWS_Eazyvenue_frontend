@@ -13,12 +13,20 @@ export class LoaderComponent implements OnInit, OnDestroy {
   loading: boolean;
   private loadingSubscription: Subscription;
 
+  // constructor(private loaderService: LoaderService) {
+  //   // Initialize subscription in constructor for immediate loading state
+  //   this.loadingSubscription = this.loaderService.isLoading.subscribe((v) => {
+  //     this.loading = v;
+  //   });
+  // }
   constructor(private loaderService: LoaderService) {
-    // Initialize subscription in constructor for immediate loading state
-    this.loadingSubscription = this.loaderService.isLoading.subscribe((v) => {
+  this.loadingSubscription = this.loaderService.isLoading.subscribe((v) => {
+    setTimeout(() => {
       this.loading = v;
     });
-  }
+  });
+}
+
 
   ngOnInit() {
     // Component initialization logic can go here if needed

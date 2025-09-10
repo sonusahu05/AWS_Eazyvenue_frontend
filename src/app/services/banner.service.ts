@@ -74,32 +74,59 @@ export class BannerService {
    * Get banner list with enhanced filtering and pagination
    * SSR-safe with timeout and error handling
    */
+  // getbannerList(query: string = ''): Observable<PostListResponse> {
+  //   return this.http.get<PostListResponse>(USER_API + "banner" + query)
+  //     .pipe(
+  //       timeout(3000), // 3 second timeout for SSR
+  //       tap(
+  //         response => console.log('Banner list response:', response),
+  //         error => console.error('Banner list error:', error)
+  //       ),
+  //       catchError(err => {
+  //         console.error('SSR banner list fetch failed:', err?.message || err);
+  //         // Return safe default instead of throwing
+  //         return of({
+  //           totalCount: 0,
+  //           items: [],
+  //           data: {
+  //             items: [],
+  //             totalCount: 0,
+  //             currentPage: 1,
+  //             totalPages: 0
+  //           },
+  //           message: 'Banner service unavailable',
+  //           success: false
+  //         });
+  //       })
+  //     );
+  // }
   getbannerList(query: string = ''): Observable<PostListResponse> {
-    return this.http.get<PostListResponse>(USER_API + "banner" + query)
-      .pipe(
-        timeout(3000), // 3 second timeout for SSR
-        tap(
-          response => console.log('Banner list response:', response),
-          error => console.error('Banner list error:', error)
-        ),
-        catchError(err => {
-          console.error('SSR banner list fetch failed:', err?.message || err);
-          // Return safe default instead of throwing
-          return of({
-            totalCount: 0,
+  return this.http.get<PostListResponse>(USER_API + "banner" + query)
+    .pipe(
+      timeout(10000), // Increased timeout to 10 seconds
+      tap(
+        response => console.log('Banner list response:', response),
+        error => console.error('Banner list error:', error)
+      ),
+      catchError(err => {
+        console.error('SSR banner list fetch failed:', err?.message || err);
+        // Return safe default instead of throwing
+        return of({
+          totalCount: 0,
+          items: [],
+          data: {
             items: [],
-            data: {
-              items: [],
-              totalCount: 0,
-              currentPage: 1,
-              totalPages: 0
-            },
-            message: 'Banner service unavailable',
-            success: false
-          });
-        })
-      );
-  }
+            totalCount: 0,
+            currentPage: 1,
+            totalPages: 0
+          },
+          message: 'Banner service unavailable',
+          success: false
+        });
+      })
+    );
+}
+
 
   /**
    * Get posts with structured filtering

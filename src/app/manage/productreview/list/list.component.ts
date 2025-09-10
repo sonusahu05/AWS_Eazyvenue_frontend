@@ -66,13 +66,30 @@ export class ListComponent implements OnInit {
 
 
     this.refreshProductreviewList();
+    // if (isPlatformBrowser(this.platformId)) {
+    //   this.userRoles = JSON.parse(sessionStorage.getItem("userRoles"));
+    //   this.productreviewAdd = this.userRoles.productreview.add;
+    //   this.productreviewEdit = this.userRoles.productreview.edit;
+    //   this.productreviewView = this.userRoles.productreview.view;
+    //   this.productreviewDelete = this.userRoles.productreview.delete;
+    // }
     if (isPlatformBrowser(this.platformId)) {
-      this.userRoles = JSON.parse(sessionStorage.getItem("userRoles"));
+  const rolesData = sessionStorage.getItem("userRoles");
+  if (rolesData) {
+    this.userRoles = JSON.parse(rolesData);
+    if (this.userRoles?.productreview) {
       this.productreviewAdd = this.userRoles.productreview.add;
       this.productreviewEdit = this.userRoles.productreview.edit;
       this.productreviewView = this.userRoles.productreview.view;
       this.productreviewDelete = this.userRoles.productreview.delete;
+    } else {
+      console.warn("⚠️ 'productreview' not found in userRoles");
     }
+  } else {
+    console.warn("⚠️ 'userRoles' not found in sessionStorage");
+  }
+}
+
 
   }
 
