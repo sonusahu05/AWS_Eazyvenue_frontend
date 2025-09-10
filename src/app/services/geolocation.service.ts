@@ -52,10 +52,17 @@ export class GeolocationService {
     }
 
     return new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error('Location services are not supported by your browser'));
-        return;
-      }
+      // if (!navigator.geolocation) {
+      //   reject(new Error('Location services are not supported by your browser'));
+      //   return;
+      // }
+      if (!bypassDeniedCheck && this.wasLocationDenied()) {
+  // OPTIONAL: log or show message here
+  // Automatically bypass the denial check once after some time, or let user retry manually
+  this.clearLocationDeniedFlag(); // clear the denial so user can retry
+  // Proceed to request location again instead of blocking
+}
+
 
       // Only check denied flag if not bypassing (for manual enable attempts)
       if (!bypassDeniedCheck && this.wasLocationDenied()) {
