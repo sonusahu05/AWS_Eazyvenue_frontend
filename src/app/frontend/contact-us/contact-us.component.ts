@@ -188,21 +188,57 @@ export class ContactUsComponent implements OnInit {
   //       this.errorMessage = err.error.message;
   //     });
   // }
-  getBanner() {
+//   getBanner() {
+//   const query = "?filterByDisable=false&filterByStatus=true&filterBySlug=contact_us";
+  
+//   this.bannerService.getbannerList(query).subscribe(
+//     (data) => {
+//       this.loading = false;
+
+//       if (data?.data?.items) {
+//         this.bannerList = data.data.items;
+//         this.totalRecords = data.data.totalCount;
+
+//         // Collect all banner images
+//         this.bannerImageList = this.bannerList.map(item => item.banner_image);
+
+//         console.log(this.bannerImageList);
+//       } else {
+//         console.warn("No banner items found in response:", data);
+//         this.bannerList = [];
+//         this.bannerImageList = [];
+//         this.totalRecords = 0;
+//       }
+//     },
+//     (err) => {
+//       this.loading = false;
+//       this.errorMessage = err?.error?.message || "An error occurred while fetching banners.";
+//       console.error(this.errorMessage);
+//     }
+//   );
+// }
+getBanner() {
   const query = "?filterByDisable=false&filterByStatus=true&filterBySlug=contact_us";
   
   this.bannerService.getbannerList(query).subscribe(
     (data) => {
       this.loading = false;
 
-      if (data?.data?.items) {
-        this.bannerList = data.data.items;
-        this.totalRecords = data.data.totalCount;
+      // ✅ Updated to match actual response shape
+      if (Array.isArray(data?.items)) {
+        this.bannerList = data.items;
 
-        // Collect all banner images
+        // ✅ Handle totalCount properly
+        if (Array.isArray(data.totalCount)) {
+          this.totalRecords = data.totalCount.length; // or set to 0 if it doesn't make sense
+        } else {
+          this.totalRecords = data.totalCount || 0;
+        }
+
+        // ✅ Get all banner images from the items
         this.bannerImageList = this.bannerList.map(item => item.banner_image);
 
-        console.log(this.bannerImageList);
+        console.log('Banner images:', this.bannerImageList);
       } else {
         console.warn("No banner items found in response:", data);
         this.bannerList = [];

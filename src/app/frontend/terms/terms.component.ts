@@ -165,22 +165,54 @@ getNextClassIdx(): number {
   //       this.errorMessage = err.error.message;
   //     });
   // }
-  getBanner() {
+  //   getBanner() {
+  //   const query = "?filterByDisable=false&filterByStatus=true&filterBySlug=terms";
+
+  //   this.bannerService.getbannerList(query).subscribe(
+  //     (data) => {
+  //       this.loading = false;
+
+  //       if (data?.data?.items) {
+  //         this.bannerList = data.data.items;
+  //         this.totalRecords = data.data.totalCount;
+
+  //         // Collect all banner images into an array
+  //         this.bannerImageList = this.bannerList.map(item => item.banner_image);
+
+  //         // Optional: log the result
+  //         // console.log(this.bannerImageList);
+  //       } else {
+  //         console.warn("No banner items found in response:", data);
+  //         this.bannerList = [];
+  //         this.bannerImageList = [];
+  //         this.totalRecords = 0;
+  //       }
+  //     },
+  //     (err) => {
+  //       this.loading = false;
+  //       this.errorMessage = err?.error?.message || "An error occurred while fetching banners.";
+  //       console.error(this.errorMessage);
+  //     }
+  //   );
+  // }
+getBanner() {
   const query = "?filterByDisable=false&filterByStatus=true&filterBySlug=terms";
 
   this.bannerService.getbannerList(query).subscribe(
     (data) => {
       this.loading = false;
 
-      if (data?.data?.items) {
-        this.bannerList = data.data.items;
-        this.totalRecords = data.data.totalCount;
+      // ✅ Match the real response structure
+      if (Array.isArray(data?.items) && data.items.length > 0) {
+        this.bannerList = data.items;
 
-        // Collect all banner images into an array
+        // ✅ Handle totalCount: number or array fallback
+        this.totalRecords = Array.isArray(data.totalCount)
+          ? data.totalCount.length
+          : (typeof data.totalCount === 'number' ? data.totalCount : 0);
+
+        // ✅ Safely map banner images
         this.bannerImageList = this.bannerList.map(item => item.banner_image);
-
-        // Optional: log the result
-        // console.log(this.bannerImageList);
       } else {
         console.warn("No banner items found in response:", data);
         this.bannerList = [];

@@ -149,19 +149,45 @@ getNextClassIdx(): number {
   }
 
 
+  // getBanner() {
+  //   let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=about_us";
+  //   this.bannerService.getbannerList(query).subscribe(
+  //     data => {
+  //       this.loading = false;
+  //       this.bannerList = data.data.items;
+  //       this.totalRecords = data.data.totalCount;
+  //       this.bannerList.forEach(element => {
+  //         this.bannerImageList = element.banner_image;
+  //       });
+  //     },
+  //     err => {
+  //       this.errorMessage = err.error.message;
+  //     });
+  // }
   getBanner() {
-    let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=about_us";
-    this.bannerService.getbannerList(query).subscribe(
-      data => {
-        this.loading = false;
+  let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=about_us";
+  this.bannerService.getbannerList(query).subscribe(
+    data => {
+      this.loading = false;
+      console.log('API raw response:', data);
+
+      if (data && data.data && Array.isArray(data.data.items) && data.data.items.length > 0) {
         this.bannerList = data.data.items;
         this.totalRecords = data.data.totalCount;
-        this.bannerList.forEach(element => {
-          this.bannerImageList = element.banner_image;
-        });
-      },
-      err => {
-        this.errorMessage = err.error.message;
-      });
-  }
+
+        // Assuming only one banner image is needed
+        this.bannerImageList = this.bannerList.map(item => item.banner_image);
+      } else {
+        console.warn('No banner items found in response:', data);
+        this.bannerList = [];
+        this.bannerImageList = [];
+      }
+    },
+    err => {
+      console.error('Error loading banners:', err);
+      this.errorMessage = err.error?.message || 'An error occurred while fetching banners.';
+      this.loading = false;
+    });
+}
+
 }

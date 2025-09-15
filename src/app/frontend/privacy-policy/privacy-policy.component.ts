@@ -167,21 +167,58 @@ getNextClassIdx(): number {
   //       this.errorMessage = err.error.message;
   //     });
   // }
-  getBanner() {
-  const query = "?filterByDisable=false&filterByStatus=true&filterBySlug=privacy_policy";
+//   getBanner() {
+//   const query = "?filterByDisable=false&filterByStatus=true&filterBySlug=privacy_policy";
   
+//   this.bannerService.getbannerList(query).subscribe(
+//     (data) => {
+//       this.loading = false;
+
+//       if (data?.data?.items) {
+//         this.bannerList = data.data.items;
+//         this.totalRecords = data.data.totalCount;
+
+//         // Collect all banner images into an array instead of overwriting
+//         this.bannerImageList = this.bannerList.map(element => element.banner_image);
+
+//         // Optional: console.log(this.bannerImageList);
+//       } else {
+//         console.warn("No banner items found in response:", data);
+//         this.bannerList = [];
+//         this.bannerImageList = [];
+//         this.totalRecords = 0;
+//       }
+//     },
+//     (err) => {
+//       this.loading = false;
+//       this.errorMessage = err?.error?.message || "An error occurred while fetching banners.";
+//       console.error(this.errorMessage);
+//     }
+//   );
+// }
+getBanner() {
+  const query = "?filterByDisable=false&filterByStatus=true&filterBySlug=privacy_policy";
+
   this.bannerService.getbannerList(query).subscribe(
     (data) => {
       this.loading = false;
 
-      if (data?.data?.items) {
-        this.bannerList = data.data.items;
-        this.totalRecords = data.data.totalCount;
+      // ✅ Check if items is a valid array
+      if (Array.isArray(data?.items)) {
+        this.bannerList = data.items;
 
-        // Collect all banner images into an array instead of overwriting
+        // ✅ Handle totalCount being an array (buggy response) or number
+        if (Array.isArray(data.totalCount)) {
+          this.totalRecords = data.totalCount.length; // not ideal, but workaround
+        } else {
+          this.totalRecords = data.totalCount || 0;
+        }
+
+        // ✅ Safely map banner images
         this.bannerImageList = this.bannerList.map(element => element.banner_image);
 
-        // Optional: console.log(this.bannerImageList);
+        // Optional: log images
+        // console.log(this.bannerImageList);
       } else {
         console.warn("No banner items found in response:", data);
         this.bannerList = [];
@@ -196,5 +233,6 @@ getNextClassIdx(): number {
     }
   );
 }
+
 
 }
