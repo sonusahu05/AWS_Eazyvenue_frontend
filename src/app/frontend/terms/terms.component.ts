@@ -195,6 +195,38 @@ getNextClassIdx(): number {
   //     }
   //   );
   // }
+// getBanner() {
+//   const query = "?filterByDisable=false&filterByStatus=true&filterBySlug=terms";
+
+//   this.bannerService.getbannerList(query).subscribe(
+//     (data) => {
+//       this.loading = false;
+
+//       // ✅ Match the real response structure
+//       if (Array.isArray(data?.items) && data.items.length > 0) {
+//         this.bannerList = data.items;
+
+//         // ✅ Handle totalCount: number or array fallback
+//         this.totalRecords = Array.isArray(data.totalCount)
+//           ? data.totalCount.length
+//           : (typeof data.totalCount === 'number' ? data.totalCount : 0);
+
+//         // ✅ Safely map banner images
+//         this.bannerImageList = this.bannerList.map(item => item.banner_image);
+//       } else {
+//         console.warn("No banner items found in response:", data);
+//         this.bannerList = [];
+//         this.bannerImageList = [];
+//         this.totalRecords = 0;
+//       }
+//     },
+//     (err) => {
+//       this.loading = false;
+//       this.errorMessage = err?.error?.message || "An error occurred while fetching banners.";
+//       console.error(this.errorMessage);
+//     }
+//   );
+// }
 getBanner() {
   const query = "?filterByDisable=false&filterByStatus=true&filterBySlug=terms";
 
@@ -211,10 +243,15 @@ getBanner() {
           ? data.totalCount.length
           : (typeof data.totalCount === 'number' ? data.totalCount : 0);
 
-        // ✅ Safely map banner images
-        this.bannerImageList = this.bannerList.map(item => item.banner_image);
+        // ✅ Safely map banner images with fallback if missing
+        this.bannerImageList = this.bannerList.map(item => item.banner_image || 'default-image.jpg'); // Add fallback image
+
+        console.log("Fetched Banner List:", this.bannerList); // Optional debug log
       } else {
-        console.warn("No banner items found in response:", data);
+        // Removed the console.warn line
+        // console.warn("No banner items found in response:", data);
+
+        // Set fallback values
         this.bannerList = [];
         this.bannerImageList = [];
         this.totalRecords = 0;
