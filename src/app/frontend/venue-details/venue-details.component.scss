@@ -48,82 +48,127 @@
 }
 
 // Amenities Section
+// .amenities_1 {
+//     margin-bottom: 1.5rem;
+
+//     .media {
+//         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+//         padding: 12px 8px;
+//         border-radius: 12px;
+//         box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+//         border: 1px solid #e9ecef;
+//         transition: all 0.3s ease;
+//         position: relative;
+//         overflow: hidden;
+
+//         &::before {
+//             content: '';
+//             position: absolute;
+//             top: 0;
+//             left: 0;
+//             width: 4px;
+//             height: 100%;
+//             background: linear-gradient(180deg, #ff0018 0%, #ff4757 100%);
+//             opacity: 0;
+//             transition: opacity 0.3s ease;
+//         }
+
+//         &:hover {
+//             transform: translateY(-4px);
+//             box-shadow: 0 8px 25px rgba(255, 0, 24, 0.15);
+//             border-color: #ff0018;
+
+//             &::before {
+//                 opacity: 1;
+//             }
+//         }
+
+//         .media-left {
+//             margin-right: 18px;
+
+//             .icon {
+//                 width: 48px;
+//                 height: 48px;
+//                 display: flex;
+//                 align-items: center;
+//                 justify-content: center;
+//                 background: linear-gradient(135deg, #ff0018 0%, #ff4757 100%);
+//                 border-radius: 12px;
+//                 box-shadow: 0 4px 12px rgba(255, 0, 24, 0.25);
+//                 transition: all 0.3s ease;
+
+//                 img {
+//                     max-width: 26px;
+//                     height: auto;
+//                     filter: brightness(0) invert(1);
+//                 }
+//             }
+//         }
+
+//         .media-body {
+//             display: flex;
+//             flex-direction: column;
+//             justify-content: center;
+
+//             h4.amenities-size {
+//                 margin: 0 0 4px 0;
+//                 font-size: 15px;
+//                 font-weight: 600;
+//                 color: #2c3e50;
+//                 line-height: 1.2;
+//             }
+
+//             h5 {
+//                 margin: 0;
+//                 font-size: 13px;
+//                 font-weight: 500;
+//                 color: #7f8c8d;
+//                 line-height: 1.3;
+//             }
+//         }
+//     }
+// }
 .amenities_1 {
     margin-bottom: 1.5rem;
 
     .media {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        padding: 12px 8px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        border: 1px solid #e9ecef;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-
-        &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, #ff0018 0%, #ff4757 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.2s;
 
         &:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(255, 0, 24, 0.15);
-            border-color: #ff0018;
-
-            &::before {
-                opacity: 1;
-            }
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .media-left {
-            margin-right: 18px;
+            margin-right: 15px;
 
             .icon {
-                width: 48px;
-                height: 48px;
+                width: 40px;
+                height: 40px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: linear-gradient(135deg, #ff0018 0%, #ff4757 100%);
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(255, 0, 24, 0.25);
-                transition: all 0.3s ease;
 
                 img {
-                    max-width: 26px;
+                    max-width: 100%;
                     height: auto;
-                    filter: brightness(0) invert(1);
                 }
             }
         }
 
         .media-body {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            align-items: center;
 
             h4.amenities-size {
-                margin: 0 0 4px 0;
-                font-size: 15px;
-                font-weight: 600;
-                color: #2c3e50;
-                line-height: 1.2;
-            }
-
-            h5 {
                 margin: 0;
-                font-size: 13px;
+                font-size: 14px;
                 font-weight: 500;
-                color: #7f8c8d;
-                line-height: 1.3;
+                color: #333;
             }
         }
     }

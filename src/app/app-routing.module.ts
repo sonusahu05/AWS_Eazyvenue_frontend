@@ -126,6 +126,10 @@ import { HomeDataResolver } from './services/home-data.resolver';
             { path: 'services', component: ServicesComponent },
             { path: 'blog', component: BlogComponent },
             { path: 'sign-in', component: SignInComponent },
+            { 
+                path: 'careers',
+                loadChildren: () => import('./frontend/careers/careers.module').then(m => m.CareersModule)
+            },
             // { path: 'venue/:id', component: VenueDetailsComponent },
             // Venue Details
             {

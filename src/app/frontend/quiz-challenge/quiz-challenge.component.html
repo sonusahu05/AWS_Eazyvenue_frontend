@@ -1,0 +1,339 @@
+<div class="quiz-challenge-container">
+    <!-- Welcome Screen -->
+    <div *ngIf="showWelcome" class="welcome-screen">
+        <div class="welcome-content">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <div class="spinning-wheel-preview">
+                        <div class="preview-wheel"></div>
+                        <div class="sparkles">✨</div>
+                    </div>
+                    <h1 class="main-title animated-title">
+                        🎯 <span class="gradient-text">SPIN & WIN</span> 🎯
+                    </h1>
+                    <p class="epic-subtitle">
+                        The Ultimate Prize Wheel Challenge at EazyVenue!
+                    </p>
+                    <div class="excitement-badges">
+                        <span class="badge">🔥 HOT PRIZES</span>
+                        <span class="badge">⚡ INSTANT WIN</span>
+                        <span class="badge">🎊 FREE TO PLAY</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prize-section">
+                <h3>�️ Amazing Vouchers to Win!</h3>
+                <div class="prizes-grid">
+                    <div class="prize-card first-prize">
+                        <div class="prize-icon">🎟️</div>
+                        <h4>₹500 OFF</h4>
+                        <p>Venue Booking Voucher</p>
+                    </div>
+                    <div class="prize-card second-prize">
+                        <div class="prize-icon">🎫</div>
+                        <h4>₹300 OFF</h4>
+                        <p>Party Hall Voucher</p>
+                    </div>
+                    <div class="prize-card third-prize">
+                        <div class="prize-icon">💳</div>
+                        <h4>₹200 OFF</h4>
+                        <p>Wedding Venue Voucher</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gameplay-section">
+                <h2 class="section-title">
+                    🎮 HOW TO PLAY & WIN BIG! 🎮
+                </h2>
+                <div class="steps-container">
+                    <div class="step-card step-1">
+                        <div class="step-number">1</div>
+                        <div class="step-icon">📱</div>
+                        <h4>Login & Verify</h4>
+                        <p>Enter your mobile number and verify with OTP. Quick & secure!</p>
+                    </div>
+
+                    <div class="step-card step-2">
+                        <div class="step-number">2</div>
+                        <div class="step-icon">🎯</div>
+                        <h4>Spin the Wheel</h4>
+                        <p>Click the big SPIN button and watch the magic happen!</p>
+                    </div>
+
+                    <div class="step-card step-3">
+                        <div class="step-number">3</div>
+                        <div class="step-icon">🏆</div>
+                        <h4>Win Amazing Prizes</h4>
+                        <p>60% chance to win real prizes! Winners contacted in 24 hours!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rules-excitement-section">
+                <div class="excitement-box">
+                    <h3>🔥 WHY SPIN FOR VOUCHERS? 🔥</h3>
+                    <div class="excitement-grid">
+                        <div class="excitement-item">
+                            <span class="icon">⚡</span>
+                            <span>Instant Vouchers</span>
+                        </div>
+                        <div class="excitement-item">
+                            <span class="icon">�️</span>
+                            <span>Real Savings</span>
+                        </div>
+                        <div class="excitement-item">
+                            <span class="icon">🚀</span>
+                            <span>Easy to Use</span>
+                        </div>
+                        <div class="excitement-item">
+                            <span class="icon">💯</span>
+                            <span>Trusted Discounts</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rules-box">
+                    <h3>📋 Voucher Rules & Info</h3>
+                    <ul class="rules-list">
+                        <li>✅ <strong>One spin per user per day</strong></li>
+                        <li>✅ <strong>Must be logged in to play</strong></li>
+                        <li>✅ <strong>Voucher code sent instantly</strong></li>
+                        <li>✅ <strong>60% chance to win vouchers</strong></li>
+                        <li>✅ <strong>Valid for 6 months from win date</strong></li>
+                        <li>✅ <strong>Use on any venue booking</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="start-section">
+                <button class="start-quiz-btn" (click)="startSpinGame()">
+                    🎰 Start Spin Challenge
+                </button>
+                <p class="login-hint" *ngIf="!isLoggedIn">
+                    You'll be asked to login if you haven't already!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spin Wheel Screen -->
+    <div *ngIf="showQuiz" class="spin-screen">
+        <div class="spin-content">
+            <div class="spin-header">
+                <h2>🎰 Spin the Wheel!</h2>
+                <p>Click the spin button and try your luck!</p>
+            </div>
+
+            <div class="wheel-container">
+                <div class="wheel" [style.transform]="'rotate(' + wheelRotation + 'deg)'"
+                     [class.spinning]="isSpinning">
+                    <!-- iPhone Section - Top Right -->
+                    <div class="wheel-section section-1">
+                        <div class="prize-content">
+                            <div class="prize-icon">{{spinPrizes[0].icon}}</div>
+                        </div>
+                    </div>
+                    <!-- iPad Section - Bottom Right -->
+                    <div class="wheel-section section-2">
+                        <div class="prize-content">
+                            <div class="prize-icon">{{spinPrizes[1].icon}}</div>
+                        </div>
+                    </div>
+                    <!-- AirPods Section - Bottom Left -->
+                    <div class="wheel-section section-3">
+                        <div class="prize-content">
+                            <div class="prize-icon">{{spinPrizes[2].icon}}</div>
+                        </div>
+                    </div>
+                    <!-- Try Again Section - Top Left -->
+                    <div class="wheel-section section-4">
+                        <div class="prize-content">
+                            <div class="prize-icon">{{spinPrizes[3].icon}}</div>
+                        </div>
+                    </div>
+                    <div class="wheel-center">
+                        <div class="center-dot"></div>
+                    </div>
+                </div>
+                <div class="wheel-pointer">🔽</div>
+            </div>
+
+            <div class="spin-actions">
+                <button class="spin-btn"
+                        [disabled]="isSpinning"
+                        (click)="spinWheel()">
+                    {{isSpinning ? 'Spinning...' : '🎰 SPIN NOW!'}}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div *ngIf="showResults" class="results-screen">
+        <div class="results-content">
+            <div class="result-section">
+                <div class="result-circle" [style.background-color]="spinResult?.color">
+                    <span class="result-icon">{{spinResult?.icon}}</span>
+                </div>
+                <h2 class="result-message">{{spinResult?.name}}</h2>
+                <p class="prize-description">{{getPrizeMessage()}}</p>
+            </div>
+
+            <div *ngIf="isRegisteredForPrizes && spinResult?.id !== 4" class="registration-success">
+                <div class="success-icon">🎊</div>
+                <h3>Congratulations!</h3>
+                <p>You won {{spinResult?.name}}!</p>
+                <div class="registration-number">
+                    Registration #: <strong>{{registrationNumber}}</strong>
+                </div>
+                <p class="winner-announcement">Our team will contact you within 24 hours!</p>
+            </div>
+
+            <div class="results-actions">
+                <button class="action-btn restart-btn" (click)="restartGame()">
+                    🔄 Try Again Tomorrow
+                </button>
+                <button class="action-btn explore-btn" (click)="router.navigate(['/'])">
+                    🏠 Explore Venues
+                </button>
+            </div>
+
+            <div class="social-share">
+                <p>Share your spin:</p>
+                <div class="share-buttons">
+                    <button class="share-btn facebook">Facebook</button>
+                    <button class="share-btn twitter">Twitter</button>
+                    <button class="share-btn whatsapp">WhatsApp</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Login Popup - Mobile Number -->
+<p-dialog [(visible)]="numberPopup" [modal]="true" class="offer-popup-login"
+          [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000"
+          [draggable]="false" [resizable]="false" [closable]="false">
+    <div class="login-popup">
+        <h2 class="popup-heading mb-0">Start Spin <span class="offer-text">Challenge</span> now!</h2>
+        <p class="mobile-num-design">Please provide your contact number to participate in the spin game.</p>
+
+        <form [formGroup]="mobileForm" (ngSubmit)="onSubmitNumber()">
+            <div class="mb-3 row justify-content-md-center">
+                <label for="inputMobile" class="col-auto col-form-label">
+                    Mobile Number <span class="mandatory-fields">*</span>
+                </label>
+                <div class="col-lg-7 col-md-8 col-sm-10">
+                    <input type="number" autocomplete="on" formControlName="mobileNumber"
+                           placeholder="Enter Mobile Number" class="form-control"
+                           [ngClass]="{ 'is-invalid': submitted && h.mobileNumber.errors }">
+                    <div *ngIf="submitted && h.mobileNumber.errors" class="invalid-feedback">
+                        <div *ngIf="h.mobileNumber.errors.required">Mobile number is required</div>
+                        <div *ngIf="h.mobileNumber.errors.pattern">Invalid Mobile number</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="popup-button mt-2">
+                <p-button type="submit" label="Start Quiz!" class="p-button-text secondary"></p-button>
+            </div>
+        </form>
+    </div>
+</p-dialog>
+
+<!-- Login Popup - OTP Verification -->
+<p-dialog [(visible)]="otpPopup" [modal]="true" class="otp-popup-login"
+          [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000"
+          [draggable]="false" [resizable]="false" [closable]="false">
+    <div class="login-popup">
+        <form (ngSubmit)="otpSubmit()">
+            <div class="form-group mb-3 p-2">
+                <div *ngIf="oldUser.userType == 'old'" class="old-user" style="margin-top: -20px;">
+                    <h3 style="color: #EC3539; font-size: 1rem; text-align: center; margin-top: -20px; margin-bottom: 0px;">
+                        Welcome, {{oldUser.firstName}}&nbsp;{{oldUser.lastName}}
+                    </h3>
+                    <h5 class="otp-head" style="color: #9e9b9b; font-size: 14px !important">
+                        Please insert OTP sent to your mobile number
+                    </h5>
+                </div>
+
+                <div *ngIf="oldUser.userType == 'new'" class="new-user" style="margin-top: -20px">
+                    <h3 style="color: #ec3539; font-size: 1rem; text-align: center; margin-top: -20px; margin-bottom: 0px;">
+                        Hi there, Enter following details
+                    </h3>
+
+                    <div class="custom-input-box">
+                        <p>First Name:</p>
+                        <input type="text" [(ngModel)]="userFirstName" name="firstName"
+                               (blur)="validateFirstName()" placeholder="Enter First Name" class="form-control">
+                        <div *ngIf="firstNameError" class="text-danger">
+                            Please enter a valid first name (minimum 4 characters)
+                        </div>
+                    </div>
+
+                    <div class="custom-input-box">
+                        <p>Last Name:</p>
+                        <input type="text" [(ngModel)]="userLastName" name="lastName"
+                               (blur)="validateLastName()" placeholder="Enter Last Name" class="form-control">
+                        <div *ngIf="lastNameError" class="text-danger">
+                            Please enter a valid last name (minimum 4 characters)
+                        </div>
+                    </div>
+
+                    <h5 class="otp-head" style="color: #9e9b9b; font-size: 14px !important; font-weight: 500; margin-top: 8px !important;">
+                        Please insert OTP sent to your mobile number
+                    </h5>
+                </div>
+
+                <div class="row align-items-center">
+                    <div class="col-2 text-center">
+                        <h4 class="otp-head1" style="margin-top: 20px; font-size: 1rem">OTP</h4>
+                    </div>
+                    <div class="col-8">
+                        <div id="otp" class="inputs d-flex justify-content-center">
+                            <div class="otp-container">
+                                <div class="otp-box">
+                                    <input type="text" #txt1 id="txt1" (input)="pastedEvent($event)"
+                                           (keyup)="move($event, '', txt1, txt2, 0)" />
+                                </div>
+                                <div class="otp-box">
+                                    <input type="text" #txt2 id="txt2" (keyup)="move($event, txt1, txt2, txt3, 1)" />
+                                </div>
+                                <div class="otp-box">
+                                    <input type="text" #txt3 id="txt3" (keyup)="move($event, txt2, txt3, txt4, 2)" />
+                                </div>
+                                <div class="otp-box">
+                                    <input type="text" #txt4 id="txt4" (keyup)="move($event, txt3, txt4, '', 3)" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="showOtpErrors" class="text-danger text-center mt-2">
+                            Please enter a valid OTP
+                        </div>
+
+                        <div *ngIf="otpError" class="text-danger text-center mt-2">
+                            {{otpError}}
+                        </div>
+                    </div>
+                    <div class="col-2 text-center">
+                        <h5 class="resend-head" (click)="resendOtp()" style="cursor: pointer; font-size: 12px !important">
+                            Resend OTP
+                        </h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="popup-button">
+                <p-button type="submit" label="Verify & Start Quiz" class="p-button-text secondary"></p-button>
+            </div>
+
+            <h5 class="resend-head" style="cursor: pointer; font-size: 12px !important" (click)="changeMobileNumber()">
+                Change mobile number
+            </h5>
+        </form>
+    </div>
+</p-dialog>
+
+<p-toast key="quiz-toast"></p-toast>

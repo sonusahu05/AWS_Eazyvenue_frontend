@@ -183,6 +183,7 @@ import { ViewvenueorderComponent } from './manage/venue/venueorder/view/view.com
 
 import { FrontendCategoryComponent } from './frontend/category/category.component';
 import { SignInComponent } from './frontend/sign-in/sign-in.component';
+import { QuizChallengeComponent } from './frontend/quiz-challenge/quiz-challenge.component';
 import { UserComponent } from './manage/user/user.component';
 import { UserAddComponent } from './manage/user/add/add.component';
 import { UserEditComponent } from './manage/user/edit/edit.component';
@@ -346,6 +347,7 @@ FullCalendarModule.registerPlugins([
 
         BlogComponent,
         SignInComponent,
+        QuizChallengeComponent,
         CalendarComponent,
         ContactUsComponent,
 

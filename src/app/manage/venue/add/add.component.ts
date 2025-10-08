@@ -40,9 +40,20 @@ export class AddComponent implements OnInit {
     { name: 'Swimming Pool', icon: 'pool-icon.png' },
     { name: 'Sound System', icon: 'sound-icon.png' },
     { name: 'Green Rooms', icon: 'green-room-icon.png' },
-    { name: 'Parking', icon: 'parking-icon.png' }
+    { name: 'Parking', icon: 'parking-icon.png' },
+    { name: 'Parking', value: 'parking' },
+    { name: 'WiFi', value: 'wifi' },
+    { name: 'Air Conditioning', value: 'ac' },
+    { name: 'Power Backup', value: 'power_backup' },
+    { name: 'Security', value: 'security' },
+    { name: 'Wheelchair Access', value: 'wheelchair' },
+    { name: 'Smoking Area', value: 'smoking_area' },
+    { name: 'Bar', value: 'bar' }
 ];
-selectedAmenities: string[] = [];
+// selectedAmenities: string[] = [];
+selectedAmenities: any[] = [];
+menuPDFFile: File | null = null;
+menuPDFUrl: string = '';
 menuImages: any[] = [];
 menuImagesArray: any[] = [];
     decor2Image: any;
@@ -150,6 +161,63 @@ public metaDescription: string;
     public eazyVenueRating = environment.eazyVenueRating;
     public selectedGoogleRating;
     public selectedEazyVenueRating;
+
+    
+    onMenuPDFUpload(event: any) {
+        const file = event.files[0];
+        if (file) {
+            this.menuPDFFile = file;
+            // Create a URL for preview if needed
+            this.menuPDFUrl = URL.createObjectURL(file);
+
+            // If we're editing a venue and have an id, upload immediately
+            if (this.id) {
+                this.uploadMenuPDF(this.id);
+            }
+        }
+    }
+
+    private uploadMenuPDF(venueId: string) {
+        if (this.menuPDFFile) {
+            this.VenueService.uploadMenuPDF(venueId, this.menuPDFFile).subscribe({
+                next: (response) => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Menu PDF uploaded successfully'
+                    });
+                },
+                error: (error) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: 'Failed to upload menu PDF'
+                    });
+                    console.error('Error uploading menu PDF:', error);
+                }
+            });
+        }
+    }
+
+    onAmenityChange(event: any) {
+        this.selectedAmenities = event.value;
+        console.log('Selected amenities (raw):', this.selectedAmenities);
+        console.log('Event value:', event.value);
+        console.log('Amenities are objects?', this.selectedAmenities.length > 0 && typeof this.selectedAmenities[0] === 'object');
+
+        // Update the form control directly with the selected amenities
+        this.venueForm.patchValue({
+            amenities: this.selectedAmenities
+        });
+        
+        console.log('Form control value after update:', this.venueForm.get('amenities')?.value);
+    }
+
+    removeMenuPDF() {
+        this.menuPDFFile = null;
+        this.menuPDFUrl = '';
+    }
+
     constructor(
         private VenueService: VenueService,
         private tokenStorageService: TokenStorageService,
@@ -191,6 +259,7 @@ public metaDescription: string;
             name: ['', [Validators.required]],
             category: ['', [Validators.required]],
             propertyType: ['', [Validators.required]],
+            amenities: [[]],
             foodType: ['', [Validators.required]],
             email: ['', [Validators.required, Validators.email, CustomValidators.email]],
             shortdescription: [''],
@@ -223,7 +292,7 @@ public metaDescription: string;
             parkingdetails: [''],
             kitchendetails: [''],
             decorationdetails: [''],
-            amenities: [''],
+
             amenitiesArray: [[]],
             menuImages: [[]],
             // Conditionally add validators based on user role
@@ -764,17 +833,113 @@ removeMenuImage(index: number) {
             venueData['role'] = this.venueownerRoleid;
             venueData['eazyVenueRating'] = this.selectedEazyVenueRating;
             venueData['googleRating'] = this.selectedGoogleRating;
-            venueData = JSON.stringify(venueData, null, 4);
+            // venueData = JSON.stringify(venueData, null, 4);
             // console.log('venueData', venueData);
-            this.VenueService.addVenue(this.venueForm.value).subscribe(
-                data => {
+            // this.VenueService.addVenue(this.venueForm.value).subscribe(
+                // data => {
+            
+            // Make sure amenities are properly formatted
+            if (this.selectedAmenities && this.selectedAmenities.length > 0) {
+                // Send amenities as objects with name and value for backend compatibility
+                venueData['amenities'] = this.selectedAmenities.map((amenity: any) => {
+                    if (typeof amenity === 'string') {
+                        // If it's a string, find the corresponding object from amenitiesList
+                        const amenityObj = this.amenitiesList.find(a => a.name === amenity || a.value === amenity);
+                        return amenityObj || { name: amenity, value: amenity.toLowerCase().replace(/\s+/g, '_') };
+                    } else if (amenity && amenity.name && amenity.value) {
+                        // If it's already an object with name and value, use it as is
+                        return amenity;
+                    } else {
+                        // Convert to proper format
+                        return { name: amenity.name || amenity, value: amenity.value || (amenity.name || amenity).toLowerCase().replace(/\s+/g, '_') };
+                    }
+                });
+                
+                // Extract values for boolean flag mapping
+                const amenityValues = this.selectedAmenities.map((amenity: any) => amenity.value || amenity);
+                console.log('Amenity values for boolean mapping:', amenityValues);
+                
+                // Map amenities to boolean flags that the backend expects
+                venueData['isParking'] = amenityValues.includes('parking');
+                venueData['isAC'] = amenityValues.includes('ac');
+                venueData['isPowerBackup'] = amenityValues.includes('power_backup');
+                venueData['isWaiterService'] = amenityValues.includes('security');
+                venueData['isVIPSection'] = amenityValues.includes('wheelchair');
+                venueData['isDJ'] = amenityValues.includes('smoking_area');
+                venueData['isEntertainmentLicense'] = amenityValues.includes('bar');
+            } else {
+                venueData['amenities'] = [];
+                // Set all boolean flags to false when no amenities selected
+                venueData['isParking'] = false;
+                venueData['isAC'] = false;
+                venueData['isPowerBackup'] = false;
+                venueData['isWaiterService'] = false;
+                venueData['isVIPSection'] = false;
+                venueData['isDJ'] = false;
+                venueData['isEntertainmentLicense'] = false;
+            }
+
+            // Include menu PDF file for upload after venue creation
+            if (this.menuPDFFile) {
+                venueData['hasPendingMenuPDF'] = true;
+            }
+
+            // Don't stringify - Angular HttpClient will handle this automatically
+            console.log('venueData before sending:', venueData);
+            this.VenueService.addVenue(venueData).subscribe(
+                (data: any) => {
+                    console.log('Add venue response:', data);
+                    console.log('Response type:', typeof data);
+                    console.log('Response keys:', Object.keys(data || {}));
+
+                    // Extract venue ID from response - try multiple possible locations
+                    let venueId = null;
+                    if (data) {
+                        // Try common response structures
+                        if (data.data) {
+                            venueId = data.data.id || data.data._id || data.data.venueId;
+                            console.log('Venue ID from data.data:', venueId);
+                        }
+                        if (!venueId) {
+                            venueId = data.id || data._id || data.venueId;
+                            console.log('Venue ID from data:', venueId);
+                        }
+                        // For MongoDB responses, the venue object might be the entire response
+                        if (!venueId && data.name && data.email) {
+                            venueId = data._id || data.id;
+                            console.log('Venue ID from venue object:', venueId);
+                        }
+                        // Try to get from nested venue object
+                        if (!venueId && data.venue) {
+                            venueId = data.venue._id || data.venue.id;
+                            console.log('Venue ID from data.venue:', venueId);
+                        }
+                        // Try to get from success response format
+                        if (!venueId && data.success && data.venue) {
+                            venueId = data.venue._id || data.venue.id;
+                            console.log('Venue ID from success response:', venueId);
+                        }
+                    }
+
+                    console.log('Final extracted venue ID:', venueId);
+
+                    // If there's a menu PDF file, upload it after venue creation
+                    if (this.menuPDFFile && venueId) {
+                        console.log('Uploading menu PDF for venue:', venueId);
+                        this.uploadMenuPDF(venueId);
+                    } else if (this.menuPDFFile && !venueId) {
+                        console.warn('Menu PDF file exists but no venue ID found for upload');
+                    }
+
                     this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Venue Added', life: 6000 });
                     setTimeout(() => {
                         this.router.navigate(['/manage/venue']);
                     }, 2000);
                 },
                 ((err) => {
-                    this.messageService.add({ key: 'toastmsg', severity: 'error', summary: err.error.error, detail: 'Add Venue failed.', life: 6000 });
+                    console.error('Add venue error:', err);
+                    this.messageService.add({ key: 'toastmsg', severity: 'error', summary: err.error?.error || 'Error', detail: 'Add Venue failed.', life: 6000 });
+                    // this.messageService.add({ key: 'toastmsg', severity: 'error', summary: err.error.error, detail: 'Add Venue failed.', life: 6000 });
                 })
             );
         }

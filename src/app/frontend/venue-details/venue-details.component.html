@@ -745,6 +745,47 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- New amenities -->
+                                        <div *ngFor="let amenity of venueDetails.amenities"
+                                             class="col-lg-3 col-md-3 col-sm-6 amenities_1">
+                                            <div class="media">
+                                                <div class="media-left">
+                                                    <div class="icon ac-icon">
+                                                        <img [src]="getAmenityIcon(amenity)"
+                                                             [alt]="amenity"
+                                                             onerror="this.src='assets/images/amenities/default-amenity.png'">
+                                                    </div>
+                                                </div>
+                                                <div class="media-body">
+                                                    <h4 class="amenities-size">{{ amenity }}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Menu PDF Section -->
+                                <div class="div" *ngIf="venueDetails.menuPDF">
+                                    <h2>Menu PDF</h2>
+                                    <div class="row menu-pdf-section">
+                                        <div class="col-12">
+                                            <div class="pdf-card p-3 d-flex align-items-center justify-content-between">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="pi pi-file-pdf text-danger" style="font-size: 2rem;"></i>
+                                                    <div class="ms-3">
+                                                        <h4 class="mb-0">{{ venueDetails.menuPDF.filename }}</h4>
+                                                        <small class="text-muted">Uploaded: {{ venueDetails.menuPDF.uploadDate | date }}</small>
+                                                    </div>
+                                                </div>
+                                                <button pButton
+                                                        icon="pi pi-download"
+                                                        class="p-button-outlined"
+                                                        (click)="downloadMenuPDF()"
+                                                        label="Download Menu">
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 

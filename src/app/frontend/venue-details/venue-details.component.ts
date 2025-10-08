@@ -155,6 +155,41 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     { name: "DJ", slug: "dj" },
     { name: "Makeup Artist", slug: "makeup-artist" }
   ];
+  
+  // Amenity icons mapping
+  amenityIcons = {
+    'parking': 'parking-icon.svg',
+    'wifi': 'wifi-icon.svg',
+    'ac': 'ac-icon.svg',
+    'power_backup': 'power_backup.svg',
+    'security': 'security-icon.svg',
+    'wheelchair': 'wheelchair-icon.svg',
+    'smoking_area': 'smoking-icon.svg',
+    'bar': 'bar-icon.svg'
+  };
+
+  getAmenityIcon(amenityName: string): string {
+    const iconName = this.amenityIcons[amenityName.toLowerCase()] || 'default-amenity.png';
+    return `assets/images/amenities/${iconName}`;
+  }
+
+  downloadMenuPDF() {
+    if (this.venueDetails?.menuPDF?.path) {
+      const apiUrl = environment.apiUrl;
+      const fullPath = `${apiUrl}${this.venueDetails.menuPDF.path}`;
+
+      // Create a temporary link element
+      const link = document.createElement('a');
+      link.href = fullPath;
+      link.target = '_blank';
+      link.download = this.venueDetails.menuPDF.filename || 'menu.pdf';
+
+      // Append to body, click and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
   selectedVendorCategory: string = "";
   vendorPageNumber: number = 1;
   vendorRows: number = 10;

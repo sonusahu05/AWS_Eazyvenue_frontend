@@ -5,6 +5,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { UserService } from '../services/user.service';
 import { RoleService } from '../services/role.service';
 import { CommonService } from '../services/common.service';
+import { AuthService } from '../services/auth.service';
 import { MustMatch } from '../_helpers/must-match.validator';
 import { CustomValidators } from 'ng2-validation';
 import * as moment from 'moment-timezone';
@@ -51,6 +52,7 @@ export class SignupComponent implements OnInit {
         private roleService: RoleService,
         private commonService: CommonService,
         private userService: UserService,
+        private authService: AuthService,
         private formBuilder: FormBuilder,
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
@@ -84,16 +86,8 @@ export class SignupComponent implements OnInit {
             password: ['', [Validators.required, Validators.minLength(6)]],
             confirmPassword: ['', Validators.required],
             mobileNumber: ['', [Validators.required, Validators.pattern("^[0-9]*$")]],
-            address: [''],
             country: ['', Validators.required],
-            state: [''],
-            city: [''],
-            zipcode: [''],
-            status: [{ label: 'Active', value: true }, Validators.required],
-            disable: [false],
-            gender: ['', Validators.required],
-            dob: ['', Validators.required],
-            timeZone: [{ name: this.timeZone, code: this.timeZoneOffset }, Validators.required]
+            gender: ['', Validators.required]
         }, {
             validator: MustMatch('password', 'confirmPassword')
         });
@@ -111,7 +105,7 @@ export class SignupComponent implements OnInit {
         if (!isPlatformBrowser(this.platformId)) {
             return;
         }
-        
+
         for (let file of event.files) {
             this.uploadedFiles.push(file);
             var reader = new FileReader();
@@ -199,23 +193,22 @@ export class SignupComponent implements OnInit {
         if (this.userForm.invalid) {
             return;
         }
-        var userData = this.userForm.value;
-        userData['profilepic'] = this.profilepic;
-        userData['role'] = this.venueOwnerRoleId;
-        userData['status'] = this.userstatus;
-        userData['gender'] = this.usergender;
-        userData['countrycode'] = this.countrycode;
-        userData['countryname'] = this.countryname;
-        userData['statecode'] = this.statecode;
-        userData['statename'] = this.statename;
-        userData['citycode'] = this.citycode;
-        userData['cityname'] = this.cityname;
-        userData['timeZone'] = this.timeZone;
-        userData['timeZoneOffset'] = this.timeZoneOffset;
-        userData['dob'] = moment(this.userForm.value.dob).format("YYYY-MM-DD");
 
-        userData = JSON.stringify(userData, null, 4);
-        this.userService.addUser(userData).subscribe(
+        // Prepare data in the format expected by the auth service
+        var userData = {
+            firstName: this.userForm.value.firstName,
+            lastName: this.userForm.value.lastName,
+            email: this.userForm.value.email,
+            password: this.userForm.value.password,
+            mobileNumber: this.userForm.value.mobileNumber,
+            gender: this.usergender,
+            userType: 'venueowner', // This should match the role name in your backend
+            registerFrom: 'web', // Add registration source
+            countrycode: this.countrycode,
+            countryname: this.countryname,
+        };
+
+        this.authService.signUp(userData).subscribe(
             data => {
                 this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Registration Complete', life: 6000 });
                 setTimeout(() => {
@@ -223,7 +216,7 @@ export class SignupComponent implements OnInit {
                 }, 2000);
             },
             ((err) => {
-                this.messageService.add({ key: 'toastmsg', severity: 'error', summary: err.error.message, detail: 'Registration failed', life: 6000 });
+                this.messageService.add({ key: 'toastmsg', severity: 'error', summary: err.error.error || 'Registration failed', detail: 'Please try again', life: 6000 });
             })
         );
     }
