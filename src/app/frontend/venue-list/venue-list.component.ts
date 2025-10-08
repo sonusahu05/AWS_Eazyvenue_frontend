@@ -155,6 +155,14 @@ clearAIResults() {
     locationPermissionState: 'granted' | 'denied' | 'prompt' | 'unsupported' = 'prompt';
     locationLoading: boolean = false;
     showLocationHelp: boolean = false;
+        
+    // Progressive distance loading for mobile
+    progressiveDistanceRanges: number[] = [5, 10, 20];
+    currentDistanceStage: number = 0;
+    showDistanceExpandPopup: boolean = false;
+    distanceExpandMessage: string = '';
+    venuesByDistance: { [key: number]: any[] } = {};
+    
     showoccasionerror = false;
     showvenuecityerror = false;
     venuecityname: any;
@@ -173,6 +181,11 @@ clearAIResults() {
     private touchThreshold = 10;
     val2: number = 3;
     val3: number = 5;
+
+    // Call Now functionality
+    isCallActive: boolean = false;
+    callingVenueId: string | null = null;
+    callTimer: any;
     val4: number = 5;
     val5: number;
     msg: string;
@@ -833,18 +846,41 @@ displayLimit: number = 25;
           return;
         }
 
-        const result = this.geolocationService.getVenuesWithDistanceFilter(
-          this.finalVenueList,
-          this.userLocation
-        );
+                // For mobile, use progressive distance loading
+        if (this.isMobileDevice()) {
+          this.resetProgressiveDistance(); // Reset to start fresh
+          this.organizeVenuesByDistance(); // Organize venues by distance
+          this.updateDisplayedVenues(); // This will now use progressive loading
+          
+          const currentDistance = this.progressiveDistanceRanges[this.currentDistanceStage];
+          const venueCount = this.venuesByDistance[currentDistance]?.length || 0;
+          console.log(`📱 Mobile: Starting with ${venueCount} venues within ${currentDistance}km`);
+        } else {
+          // Desktop behavior - use standard filtering
+          const result = this.geolocationService.getVenuesWithDistanceFilter(
+            this.finalVenueList,
+            this.userLocation
+          );
 
-        this.finalVenueList = result.venues;
-        this.currentRadius = result.radiusUsed;
+          this.finalVenueList = result.venues;
+          this.currentRadius = result.radiusUsed;
+          this.updateDisplayedVenues();
 
-        this.updateDisplayedVenues();
+          if (result.radiusUsed > 0) {
+            console.log(`🖥️ Desktop: Showing ${result.totalFound} venues within ${result.radiusUsed}km`);
+          }
+        // const result = this.geolocationService.getVenuesWithDistanceFilter(
+        //   this.finalVenueList,
+        //   this.userLocation
+        // );
 
-        if (result.radiusUsed > 0) {
-          console.log(`Showing ${result.totalFound} venues within ${result.radiusUsed}km`);
+        // this.finalVenueList = result.venues;
+        // this.currentRadius = result.radiusUsed;
+
+        // this.updateDisplayedVenues();
+
+        // if (result.radiusUsed > 0) {
+        //   console.log(`Showing ${result.totalFound} venues within ${result.radiusUsed}km`);
         }
       }
 
@@ -1116,12 +1152,46 @@ displayLimit: number = 25;
             });
     }
     onScrollDown() {
+                // For mobile with location enabled, check if we should expand distance
+        if (this.locationEnabled && this.userLocation && this.isMobileDevice()) {
+            // Check if user scrolled to end of current venues
+            const scrolledToBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+            
+            if (scrolledToBottom && this.canExpandDistance()) {
+                this.expandToNextDistance();
+                return;
+            }
+        }
+
+        // Standard pagination behavior
         this.pageNumber++;
         this.direction = "down";
         //dialog show
         // console.log('show');
 
         this.getVenueList();
+    }
+    
+    // Add scroll listener for progressive distance loading
+    @HostListener('window:scroll', ['$event'])
+    onWindowScroll(event: any) {
+        if (this.locationEnabled && this.userLocation && this.isMobileDevice()) {
+            this.checkForDistanceExpansion();
+        }
+    }
+
+    // Check if we should expand distance based on scroll position
+    checkForDistanceExpansion() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        
+        // If user scrolled to bottom 90% and can expand distance
+        const scrollPercentage = (scrollTop + windowHeight) / documentHeight;
+        
+        if (scrollPercentage > 0.9 && this.canExpandDistance()) {
+            this.expandToNextDistance();
+        }
     }
     onClickCalendarClose() {
         this.datePicker.overlayVisible = false;
@@ -1177,9 +1247,18 @@ displayLimit: number = 25;
     }
 
     updateDisplayedVenues() {
-        const startIndex = 0;
-        const endIndex = this.pageNumber * this.pageSize;
-        this.displayedVenueList = this.finalVenueList.slice(startIndex, endIndex);
+                // Check if we should use progressive distance loading for mobile
+        if (this.locationEnabled && this.userLocation && this.isMobileDevice()) {
+            this.updateDisplayedVenuesWithProgressiveDistance();
+        } else {
+            // Desktop/non-location behavior
+            const startIndex = 0;
+            const endIndex = this.pageNumber * this.pageSize;
+            this.displayedVenueList = this.finalVenueList.slice(startIndex, endIndex);
+        }
+        // const startIndex = 0;
+        // const endIndex = this.pageNumber * this.pageSize;
+        // this.displayedVenueList = this.finalVenueList.slice(startIndex, endIndex);
         
         // Generate ItemList schema for venue listings
         if (this.displayedVenueList && this.displayedVenueList.length > 0) {
@@ -1192,8 +1271,128 @@ displayLimit: number = 25;
         }, 100);
     }
 
+    
+    // Progressive distance loading for mobile devices
+    updateDisplayedVenuesWithProgressiveDistance() {
+        if (!this.venuesByDistance || Object.keys(this.venuesByDistance).length === 0) {
+            this.organizeVenuesByDistance();
+        }
+
+        const currentDistance = this.progressiveDistanceRanges[this.currentDistanceStage];
+        let displayVenues = [];
+
+        // Collect venues up to current distance stage
+        for (let i = 0; i <= this.currentDistanceStage; i++) {
+            const distance = this.progressiveDistanceRanges[i];
+            if (this.venuesByDistance[distance]) {
+                displayVenues = displayVenues.concat(this.venuesByDistance[distance]);
+            }
+        }
+
+        // Sort by distance
+        displayVenues.sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
+        
+        this.displayedVenueList = displayVenues;
+        console.log(`📱 Mobile: Showing ${displayVenues.length} venues within ${currentDistance}km`);
+    }
+
+    // Organize venues by distance ranges for progressive loading
+    organizeVenuesByDistance() {
+        if (!this.finalVenueList || !this.userLocation) return;
+
+        // Initialize distance buckets
+        this.venuesByDistance = {};
+        this.progressiveDistanceRanges.forEach(distance => {
+            this.venuesByDistance[distance] = [];
+        });
+
+        // Add distances to venues if not already calculated
+        const venuesWithDistance = this.geolocationService.addDistanceToVenues(
+            this.finalVenueList, 
+            this.userLocation
+        );
+
+        // Organize venues by distance ranges
+        venuesWithDistance.forEach(venue => {
+            if (venue.distance !== Infinity) {
+                for (const distance of this.progressiveDistanceRanges) {
+                    if (venue.distance <= distance) {
+                        this.venuesByDistance[distance].push(venue);
+                        break;
+                    }
+                }
+            }
+        });
+
+        console.log('📊 Venues organized by distance:', {
+            '5km': this.venuesByDistance[5]?.length || 0,
+            '10km': this.venuesByDistance[10]?.length || 0,
+            '20km': this.venuesByDistance[20]?.length || 0
+        });
+    }
+
+    // Check if more venues are available at next distance
+    canExpandDistance(): boolean {
+        const nextStage = this.currentDistanceStage + 1;
+        if (nextStage >= this.progressiveDistanceRanges.length) return false;
+
+        const nextDistance = this.progressiveDistanceRanges[nextStage];
+        const currentDistance = this.progressiveDistanceRanges[this.currentDistanceStage];
+        
+        const nextDistanceVenues = this.venuesByDistance[nextDistance]?.length || 0;
+        const currentDistanceVenues = this.venuesByDistance[currentDistance]?.length || 0;
+
+        return nextDistanceVenues > currentDistanceVenues;
+    }
+
+    // Expand to next distance range
+    expandToNextDistance() {
+        if (this.canExpandDistance()) {
+            this.currentDistanceStage++;
+            const newDistance = this.progressiveDistanceRanges[this.currentDistanceStage];
+            
+            this.distanceExpandMessage = `Showing venues within ${newDistance}km`;
+            this.showDistanceExpandPopup = true;
+            
+            // Auto-hide popup after 3 seconds
+            setTimeout(() => {
+                this.showDistanceExpandPopup = false;
+            }, 3000);
+            
+            this.updateDisplayedVenuesWithProgressiveDistance();
+            console.log(`📱 Expanded to ${newDistance}km radius`);
+        }
+    }
+
+    // Mobile device detection
+    isMobileDevice(): boolean {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+               window.innerWidth <= 768;
+    }
+
+    // Close distance expand popup
+    closeDistancePopup() {
+        this.showDistanceExpandPopup = false;
+    }
+
+    // Reset progressive distance loading
+    resetProgressiveDistance() {
+        this.currentDistanceStage = 0;
+        this.venuesByDistance = {};
+        this.showDistanceExpandPopup = false;
+    }
+
       // Load more venues when "Show More" button is clicked
       loadMoreVenues() {
+                // For mobile with location enabled, use progressive distance loading
+        if (this.locationEnabled && this.userLocation && this.isMobileDevice()) {
+            if (this.canExpandDistance()) {
+                this.expandToNextDistance();
+                return;
+            }
+        }
+
+        // Standard pagination for desktop or when progressive distance is exhausted
         if (this.displayedVenueList.length < this.totalRecords) {
           this.pageNumber++;
 
@@ -1218,7 +1417,9 @@ displayLimit: number = 25;
         this.appLoading = true;
         
         let params = "";
-        let rows = 32;
+        // Increase page size for better location filtering results
+        let rows = 64; // Double the venues per page for better location coverage
+        // let rows = 32;
         let query = "filterByDisable=false&filterByStatus=true&filterByAssured=true";
         if (this.selectedCategoryId !== undefined) {
             query += "&filterByCategory=" + this.selectedCategoryId;
@@ -1290,7 +1491,25 @@ displayLimit: number = 25;
                 this.preloadVenueImages();
                 this.totalRecords = data.data.totalCount;
                 if (this.finalVenueList.length > 0) {
+                                        // Debug: Log venue coordinates to identify missing data
+                    console.log(`🏢 Loaded ${this.finalVenueList.length} venues`);
+                    let venuesWithCoords = 0;
+                    let venuesWithoutCoords = 0;
                     this.finalVenueList.forEach(element => {
+                        // Check for coordinate data
+                        const hasCoords = (element.lat && element.lng) || (element.latitude && element.longitude);
+                        if (hasCoords) {
+                            venuesWithCoords++;
+                        } else {
+                            venuesWithoutCoords++;
+                            // Log venues missing coordinates
+                            console.log(`❌ Venue "${element.name}" missing coordinates`, {
+                                lat: element.lat,
+                                lng: element.lng,
+                                latitude: element.latitude,
+                                longitude: element.longitude
+                            });
+                        }
                         this.allFoodMenuPriceArray = [];
                         if (element.foodMenuType) {
                             //element.foodMenuType.forEach(fElement => {
@@ -1338,9 +1557,27 @@ displayLimit: number = 25;
                         }
                         element['minPrice'] = minPrice;
                     });
+                                        
+                    // Log coordinate summary
+                    console.log(`📊 Coordinate Summary: ${venuesWithCoords} with coords, ${venuesWithoutCoords} without coords`);
+                    
                     if (this.locationEnabled && this.userLocation) {
+                        console.log(`🌍 Applying location filter from ${this.userLocation.lat}, ${this.userLocation.lng}`);
                         this.applyLocationFilter();
+                                                
+                        // Auto-load more venues if location filtering resulted in too few venues
+                        setTimeout(() => {
+                            const displayedCount = this.displayedVenueList?.length || 0;
+                            const canLoadMore = this.totalRecords > this.finalVenueList.length;
+                            
+                            if (displayedCount < 10 && canLoadMore && this.pageNumber < 3) {
+                                console.log(`📈 Only ${displayedCount} venues shown, auto-loading more for better coverage...`);
+                                this.pageNumber++;
+                                this.getVenueList();
+                            }
+                        }, 500);
                     } else {
+                            console.log(`⚠️ Location filter not applied - locationEnabled: ${this.locationEnabled}, userLocation: ${!!this.userLocation}`);
                         this.updateDisplayedVenues();
                     }
                     this.noVenueFlag = false;
@@ -1882,6 +2119,28 @@ displayLimit: number = 25;
             }, 2000);
         }
     }
+        
+    // Call Now functionality
+    onCallClick(event: Event, venueId: string): void {
+        // Set calling state for this specific venue
+        this.isCallActive = true;
+        this.callingVenueId = venueId;
+        
+        // Clear any existing timer
+        if (this.callTimer) {
+            clearTimeout(this.callTimer);
+        }
+        
+        // Reset to normal state after 3 seconds
+        this.callTimer = setTimeout(() => {
+            this.isCallActive = false;
+            this.callingVenueId = null;
+        }, 3000);
+        
+        // Don't prevent the default tel: link behavior
+        // The browser will handle opening the dialer
+    }
+    
     open(event) {
         this.activeIndex = 0;
         this.displayBasic = true;

@@ -49,6 +49,7 @@ import { RazorpayService } from 'src/app/services/razorpay.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { GeolocationService, UserLocation, VenueWithDistance } from '../../services/geolocation.service';
 import { BookingService, BookingData } from '../../services/booking.service';
+import { LoaderService } from '../../services/loader.service';
 import { Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 declare var google: any;
@@ -168,10 +169,10 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     'bar': 'bar-icon.svg'
   };
 
-  getAmenityIcon(amenityName: string): string {
-    const iconName = this.amenityIcons[amenityName.toLowerCase()] || 'default-amenity.png';
-    return `assets/images/amenities/${iconName}`;
-  }
+//   getAmenityIcon(amenityName: string): string {
+//     const iconName = this.amenityIcons[amenityName.toLowerCase()] || 'default-amenity.png';
+//     return `assets/images/amenities/${iconName}`;
+//   }
 
   downloadMenuPDF() {
     if (this.venueDetails?.menuPDF?.path) {
@@ -247,6 +248,7 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     public venueImageNumVisible: number = 8;
     public listingblock;
     public loading: boolean = true;
+     public contentReady: boolean = false; // New flag to track when content is fully ready
     public bannerList: any[] = [];
     public bannerImageList: any[] = [];
     public venueList: any[] = [];
@@ -255,7 +257,8 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     public pagination = environment.pagination;
     downloadFlg: boolean = false;
     public id;
-    public venueDetails;
+    // public venueDetails;
+    public venueDetails: any = null; // Initialize as null to prevent template errors
     private lazyLoadEvent: LazyLoadEvent;
     public facilitiesArray: any[] = [];
     public cityName;
@@ -358,6 +361,7 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     public selectedEndDate;
     public showAvailabilityMessage: boolean = false;
     public oldDecorPrice: number = 0;
+    public premiumDecor: boolean = false;
     
     // Analytics tracking properties
     public sendEnquiryClicked: boolean = false;
@@ -457,6 +461,7 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
         private analyticsService: AnalyticsService,
         private geolocationService: GeolocationService,
         private bookingService: BookingService,
+        private loaderService: LoaderService,
         private fb: FormBuilder,
         @Inject(PLATFORM_ID) private platformId: Object,
         @Inject(DOCUMENT) private document: Document
@@ -469,6 +474,9 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.initReviewForm();
+
+        // Disable the global loader for venue details page
+        this.loaderService.isLoading.next(false);
 
         // Browser-only code - wrapped in platform check
         if (isPlatformBrowser(this.platformId)) {
@@ -1097,26 +1105,40 @@ getCurrentRating(): number {
 
 // Enhanced setInitialReviewSource with compare reviews consideration
 setInitialReviewSource() {
-  const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
+//   const eazyReviewsCount = this.venueDetails.reviews?.length || 0;
+    const eazyReviewsCount = this.venueDetails?.reviews?.length || 0;
   const googleReviewsCount = this.googleReviews?.length || 0;
- const compareReviewsCount = this.CompareReviews?.length || 0;
+      // Always start with EazyVenue reviews for immediate display
+    // Google reviews will be switched to automatically when they load (if needed)
+    if (eazyReviewsCount > 0) {
+      this.selectedReviewSource = 'eazyvenue';
+    } else {
+      // If no EazyVenue reviews, default to eazyvenue for review form
+      // Google reviews will be switched to when they load
+      this.selectedReviewSource = 'eazyvenue';
+    }
 
-  if (eazyReviewsCount <= 2 && googleReviewsCount > 0) {
-    this.selectedReviewSource = 'google';
-  } else if (eazyReviewsCount > 0) {
-    this.selectedReviewSource = 'eazyvenue';
-  } else if (googleReviewsCount > 0) {
-    this.selectedReviewSource = 'google';
-  } else if (compareReviewsCount > 0) {
-    this.selectedReviewSource = 'Compare Reviews';
-  } else {
-    this.selectedReviewSource = 'eazyvenue'; // Default to EazyVenue for writing reviews
+    console.log(`Reviews initialized: EazyVenue (${eazyReviewsCount}), Google (${googleReviewsCount}), Selected: ${this.selectedReviewSource}`);
   }
-}
+//  const compareReviewsCount = this.CompareReviews?.length || 0;
+
+//   if (eazyReviewsCount <= 2 && googleReviewsCount > 0) {
+//     this.selectedReviewSource = 'google';
+//   } else if (eazyReviewsCount > 0) {
+//     this.selectedReviewSource = 'eazyvenue';
+//   } else if (googleReviewsCount > 0) {
+//     this.selectedReviewSource = 'google';
+//   } else if (compareReviewsCount > 0) {
+//     this.selectedReviewSource = 'Compare Reviews';
+//   } else {
+//     this.selectedReviewSource = 'eazyvenue'; // Default to EazyVenue for writing reviews
+//   }
+// }
 
 // Enhanced loadGoogleReviews with better error handling
 loadGoogleReviews() {
-  if (!this.venueDetails.name || !this.venueDetails.cityname) {
+//   if (!this.venueDetails.name || !this.venueDetails.cityname) {
+if (!this.venueDetails?.name || !this.venueDetails?.cityname) {
     console.log('Venue name or city not available for Google reviews');
     return;
   }
@@ -1128,7 +1150,8 @@ loadGoogleReviews() {
       next: (response) => {
         console.log('Google reviews response:', response);
 
-        if (response.result && response.result.reviews) {
+        // if (response.result && response.result.reviews) {
+        if (response?.result?.reviews) {
           this.googleReviews = response.result.reviews.map(review => ({
             ...review,
             reviewtitle: this.generateReviewTitle(review.rating),
@@ -3418,7 +3441,7 @@ loadMoreGoogleReviews(): void {
         this.showDecorImages = true;
         this.decorImages = decor.decorImages;
     }
-    premiumDecor: boolean = false;
+    // premiumDecor: boolean = false;
     onClickDecor(decor) {
         this.decorArray.forEach((element) => {
             if (element.name == decor.name) {

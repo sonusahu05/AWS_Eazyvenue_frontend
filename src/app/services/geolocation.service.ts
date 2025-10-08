@@ -304,23 +304,54 @@ export class GeolocationService {
   }
 
   addDistanceToVenues(venues: any[], userLocation: UserLocation): VenueWithDistance[] {
-    return venues.map(venue => {
-      if (venue.lat && venue.lng) {
+    // return venues.map(venue => {
+      // if (venue.lat && venue.lng) {
+          console.log(`🌍 Adding distance to ${venues.length} venues from user location: ${userLocation.lat}, ${userLocation.lng}`);
+
+    return venues.map((venue, index) => {
+      // Handle both lat/lng and latitude/longitude field names
+      const venueLat = venue.lat ? parseFloat(venue.lat) :
+                      (venue.latitude ? parseFloat(venue.latitude) : null);
+      const venueLng = venue.lng ? parseFloat(venue.lng) :
+                      (venue.longitude ? parseFloat(venue.longitude) : null);
+
+      if (venueLat && venueLng) {
         const distance = this.calculateDistance(
           userLocation.lat,
           userLocation.lng,
-          venue.lat,
-          venue.lng
+        //   venue.lat,
+        //   venue.lng
+        // );
+          venueLat,
+          venueLng
         );
+
+        // Log first few venues for debugging
+        if (index < 5) {
+          console.log(`📍 Venue "${venue.name}": ${distance}km away (${venueLat}, ${venueLng})`);
+        }
+
+        // Special logging for venues with "nesco" or "goregaon" in the name
+        if (venue.name.toLowerCase().includes('nesco') || venue.name.toLowerCase().includes('goregaon')) {
+          console.log(`🎯 Found relevant venue: "${venue.name}" at ${distance}km (${venueLat}, ${venueLng})`);
+        }
 
         return {
           ...venue,
           distance: distance,
           distanceText: this.formatDistance(distance)
         };
-      }
+              } else {
+        // Log venues without coordinates
+        if (index < 5) {
+          console.log(`❌ Venue "${venue.name}" missing coordinates (lat: ${venue.lat || venue.latitude}, lng: ${venue.lng || venue.longitude})`);
+        }
 
-      return { ...venue, distance: Infinity, distanceText: 'Distance unknown' };
+        return { ...venue, distance: Infinity, distanceText: 'Distance unknown' };
+      }
+      // }
+
+      // return { ...venue, distance: Infinity, distanceText: 'Distance unknown' };
     });
   }
 
@@ -341,26 +372,45 @@ export class GeolocationService {
     radiusUsed: number;
     totalFound: number;
   } {
+    console.log(`🔍 Filtering ${venues.length} venues by distance from ${userLocation.lat}, ${userLocation.lng}`);
+
     const venuesWithDistance = this.addDistanceToVenues(venues, userLocation);
     const distanceRanges = [5, 10, 25];
+    
+    // Count venues with valid distances
+    const venuesWithValidDistance = venuesWithDistance.filter(v => v.distance !== Infinity);
+    console.log(`📊 Venues with valid coordinates: ${venuesWithValidDistance.length}/${venues.length}`);
+
+    // Dynamic threshold based on total venues available
+    const dynamicThreshold = venues.length > 40 ? 12 : 8; // Higher threshold when more venues available
+    console.log(`🎯 Using threshold of ${dynamicThreshold} venues`);
 
     for (const radius of distanceRanges) {
       const filteredVenues = this.filterVenuesByDistance(venuesWithDistance, radius);
+      console.log(`🌐 Within ${radius}km: ${filteredVenues.length} venues`);
 
-      if (filteredVenues.length >= 15 || radius === distanceRanges[distanceRanges.length - 1]) {
-        return {
+      // Use dynamic threshold for better results with more data
+      if (filteredVenues.length >= dynamicThreshold || radius === distanceRanges[distanceRanges.length - 1]) {
+        const result = {
+      // if (filteredVenues.length >= 15 || radius === distanceRanges[distanceRanges.length - 1]) {
+      //   return {
           venues: this.sortVenuesByDistance(filteredVenues),
           radiusUsed: radius,
           totalFound: filteredVenues.length
         };
+        console.log(`✅ Using ${radius}km radius with ${result.totalFound} venues`);
+        return result;
       }
     }
 
-    return {
+    // return {
+    const fallbackResult = {
       venues: this.sortVenuesByDistance(venuesWithDistance),
       radiusUsed: 0,
       totalFound: venuesWithDistance.length
     };
+    console.log(`⚠️ Fallback: showing all ${fallbackResult.totalFound} venues`);
+    return fallbackResult;
   }
 
   getCachedUserLocation(): UserLocation | null {

@@ -649,6 +649,16 @@
                                             class="btn-custom btn-sm secondary"
                                             >View Details</a
                                         >
+                                        <!-- NEW: Call Now Button -->
+                                        <a
+                                            href="tel:+917506422269"
+                                            class="btn-custom btn-sm primary call-now-btn"
+                                            (click)="onCallClick($event, item.id)"
+                                            [class.calling]="isCallActive && callingVenueId === item.id"
+                                            >
+                                            <i class="pi pi-phone"></i>
+                                            <span class="call-text">{{ (isCallActive && callingVenueId === item.id) ? 'Calling...' : 'Call Now' }}</span>
+                                        </a>
                                         <!-- <a  [routerLink]="['/venue', item.id]" class=" btn-custom btn-sm secondary">View
                                                 Details</a> -->
                                         <div class="review-list">

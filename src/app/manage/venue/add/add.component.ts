@@ -52,8 +52,8 @@ export class AddComponent implements OnInit {
 ];
 // selectedAmenities: string[] = [];
 selectedAmenities: any[] = [];
-menuPDFFile: File | null = null;
-menuPDFUrl: string = '';
+// menuPDFFile: File | null = null;
+// menuPDFUrl: string = '';
 menuImages: any[] = [];
 menuImagesArray: any[] = [];
     decor2Image: any;
@@ -163,41 +163,41 @@ public metaDescription: string;
     public selectedEazyVenueRating;
 
     
-    onMenuPDFUpload(event: any) {
-        const file = event.files[0];
-        if (file) {
-            this.menuPDFFile = file;
-            // Create a URL for preview if needed
-            this.menuPDFUrl = URL.createObjectURL(file);
+    // onMenuPDFUpload(event: any) {
+    //     const file = event.files[0];
+    //     if (file) {
+    //         this.menuPDFFile = file;
+    //         // Create a URL for preview if needed
+    //         this.menuPDFUrl = URL.createObjectURL(file);
 
-            // If we're editing a venue and have an id, upload immediately
-            if (this.id) {
-                this.uploadMenuPDF(this.id);
-            }
-        }
-    }
+    //         // If we're editing a venue and have an id, upload immediately
+    //         if (this.id) {
+    //             this.uploadMenuPDF(this.id);
+    //         }
+    //     }
+    // }
 
-    private uploadMenuPDF(venueId: string) {
-        if (this.menuPDFFile) {
-            this.VenueService.uploadMenuPDF(venueId, this.menuPDFFile).subscribe({
-                next: (response) => {
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Success',
-                        detail: 'Menu PDF uploaded successfully'
-                    });
-                },
-                error: (error) => {
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail: 'Failed to upload menu PDF'
-                    });
-                    console.error('Error uploading menu PDF:', error);
-                }
-            });
-        }
-    }
+    // private uploadMenuPDF(venueId: string) {
+    //     if (this.menuPDFFile) {
+    //         this.VenueService.uploadMenuPDF(venueId, this.menuPDFFile).subscribe({
+    //             next: (response) => {
+    //                 this.messageService.add({
+    //                     severity: 'success',
+    //                     summary: 'Success',
+    //                     detail: 'Menu PDF uploaded successfully'
+    //                 });
+    //             },
+    //             error: (error) => {
+    //                 this.messageService.add({
+    //                     severity: 'error',
+    //                     summary: 'Error',
+    //                     detail: 'Failed to upload menu PDF'
+    //                 });
+    //                 console.error('Error uploading menu PDF:', error);
+    //             }
+    //         });
+    //     }
+    // }
 
     onAmenityChange(event: any) {
         this.selectedAmenities = event.value;
@@ -213,10 +213,10 @@ public metaDescription: string;
         console.log('Form control value after update:', this.venueForm.get('amenities')?.value);
     }
 
-    removeMenuPDF() {
-        this.menuPDFFile = null;
-        this.menuPDFUrl = '';
-    }
+    // removeMenuPDF() {
+    //     this.menuPDFFile = null;
+    //     this.menuPDFUrl = '';
+    // }
 
     constructor(
         private VenueService: VenueService,
@@ -880,9 +880,9 @@ removeMenuImage(index: number) {
             }
 
             // Include menu PDF file for upload after venue creation
-            if (this.menuPDFFile) {
-                venueData['hasPendingMenuPDF'] = true;
-            }
+            // if (this.menuPDFFile) {
+            //     venueData['hasPendingMenuPDF'] = true;
+            // }
 
             // Don't stringify - Angular HttpClient will handle this automatically
             console.log('venueData before sending:', venueData);
@@ -924,12 +924,12 @@ removeMenuImage(index: number) {
                     console.log('Final extracted venue ID:', venueId);
 
                     // If there's a menu PDF file, upload it after venue creation
-                    if (this.menuPDFFile && venueId) {
-                        console.log('Uploading menu PDF for venue:', venueId);
-                        this.uploadMenuPDF(venueId);
-                    } else if (this.menuPDFFile && !venueId) {
-                        console.warn('Menu PDF file exists but no venue ID found for upload');
-                    }
+                    // if (this.menuPDFFile && venueId) {
+                    //     console.log('Uploading menu PDF for venue:', venueId);
+                    //     this.uploadMenuPDF(venueId);
+                    // } else if (this.menuPDFFile && !venueId) {
+                    //     console.warn('Menu PDF file exists but no venue ID found for upload');
+                    // }
 
                     this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Venue Added', life: 6000 });
                     setTimeout(() => {
