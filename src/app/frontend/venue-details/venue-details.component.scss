@@ -4681,6 +4681,92 @@ h5.resend-head {
         }
     }
 }
+
+
+/* Call Now Button Styles */
+.call-btn {
+    margin-top: 10px;
+    
+    .call-now-button {
+        background-color: #007bff !important;
+        border-color: #007bff !important;
+        font-size: 20px !important;
+        font-weight: 400 !important;
+        
+        &.calling {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+            animation: pulse 1.5s infinite;
+        }
+        
+        &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+            background-color: #0056b3 !important;
+            border-color: #0056b3 !important;
+        }
+        
+        &:focus {
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .pi-phone {
+            font-size: 14px !important;
+        }
+        
+        .call-text {
+            font-weight: 400 !important;
+        }
+    }
+}
+
+// Make sure the call button matches PrimeNG button styling exactly
+button.p-element.btn.btn-custom.w-100.price-btn.call-now-button.p-button.p-component {
+    font-size: 20px !important;
+    font-weight: 400 !important;
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+    
+    &.calling {
+        background-color: #28a745 !important;
+        border-color: #28a745 !important;
+    }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.02); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+    .call-btn .call-now-button {
+        padding: 12px 16px !important;
+        font-size: 14px !important;
+        
+        .pi-phone {
+            font-size: 12px !important;
+        }
+        
+        .call-text {
+            font-size: 14px !important;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .call-btn .call-now-button {
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+        
+        .call-text {
+            font-size: 13px !important;
+        }
+    }
+}
+
+
 .comparison-container {
   max-width: 1400px;
   margin: 0 auto;

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { VenueService } from 'src/app/manage/venue/service/venue.service';
+import { CallTrackingService } from 'src/app/services/call-tracking.service';
 import { isPlatformBrowser } from '@angular/common';
 import * as XLSX from 'xlsx';
 
@@ -22,9 +23,15 @@ export class EnquiryListComponent implements OnInit {
   showVenueFilter: boolean = false;
 selectedVenueFilter: string | null = null;
 showAddEnquiryModal: boolean = false;
+showImportCsvModal: boolean = false; // New property for CSV import modal
 venueOptions: any[] = [];
 selectedVenues: any[] = [];
 leadEntries: any[] = [];
+csvFile: File | null = null; // For storing selected CSV file
+csvData: any[] = []; // For storing parsed CSV data
+importVenueId: string | null = null; // Selected venue for CSV import
+processingCsvImport: boolean = false; // Loading state for CSV import
+csvImportResults: any = null; // Results of CSV import
 statusOptions: any[] = [
   { label: 'New', value: 'New' },
   { label: 'WhatsApp Contacted', value: 'WhatsApp Contacted' },
@@ -35,10 +42,14 @@ submittingEnquiry: boolean = false;
 showValidationErrors: boolean = false;
 private leadIdCounter: number = 1;
 uniqueVenues: any[] = [];
+filteredUniqueVenues: any[] = []; // For search filtering
+venueSearchText: string = ''; // Search input text
 filteredEnquiryList: any[] = [];
   userEmail: string = '';
   userVenueIds: string[] = []; // Store venue IDs owned by this user
   expandedLeads: { [key: string]: boolean } = {}; // Track which venue's leads are expanded
+  callTrackingData: any[] = []; // Store call tracking records
+  showCallTrackingModal: boolean = false; // For showing call tracking details
 
   // 🔥 REVOLUTIONARY FEATURES - Live Behavior Tracking
   liveTrackingData: { [key: string]: any } = {}; // Store live tracking data for each lead
@@ -63,6 +74,7 @@ filteredEnquiryList: any[] = [];
     private messageService: MessageService,
     private tokenStorageService: TokenStorageService,
     private venueService: VenueService,
+    private callTrackingService: CallTrackingService,
     private fb: FormBuilder,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -384,6 +396,348 @@ createEnquiriesSequentially(enquiries: any[], currentIndex: number) {
   );
 }
 
+
+// CSV Import functionality
+openImportCsvModal() {
+  this.showImportCsvModal = true;
+  this.csvFile = null;
+  this.csvData = [];
+  this.importVenueId = null;
+  this.csvImportResults = null;
+  this.loadVenueOptions();
+}
+
+closeImportCsvModal() {
+  this.showImportCsvModal = false;
+  this.csvFile = null;
+  this.csvData = [];
+  this.importVenueId = null;
+  this.csvImportResults = null;
+}
+
+onCsvFileSelected(event: any) {
+  const file = event.target.files[0];
+  if (file && (file.type === 'text/csv' || file.name.endsWith('.csv'))) {
+    this.csvFile = file;
+    this.parseCsvFile(file);
+  } else {
+    this.messageService.add({
+      key: 'toastmsg',
+      severity: 'error',
+      summary: 'Invalid File',
+      detail: 'Please select a valid CSV file'
+    });
+  }
+}
+
+parseCsvFile(file: File) {
+  console.log('📊 CSV IMPORT: Reading file:', file.name, 'Size:', file.size, 'Type:', file.type);
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const csvText = e.target?.result as string;
+      console.log('📊 CSV IMPORT: File read successfully, length:', csvText.length);
+      console.log('📊 CSV IMPORT: First 200 characters:', csvText.substring(0, 200));
+      
+      this.csvData = this.parseCSV(csvText);
+      console.log('📊 CSV IMPORT: Parsed', this.csvData.length, 'rows');
+      
+      if (this.csvData.length > 0) {
+        console.log('📊 CSV IMPORT: Sample row:', this.csvData[0]);
+      }
+    } catch (error) {
+      console.error('📊 CSV IMPORT: Error parsing file:', error);
+      this.messageService.add({
+        key: 'toastmsg',
+        severity: 'error',
+        summary: 'File Error',
+        detail: 'Could not parse CSV file. Please check the format.'
+      });
+    }
+  };
+  
+  reader.onerror = (error) => {
+    console.error('📊 CSV IMPORT: Error reading file:', error);
+    this.messageService.add({
+      key: 'toastmsg',
+      severity: 'error',
+      summary: 'File Error',
+      detail: 'Could not read the uploaded file.'
+    });
+  };
+  
+  reader.readAsText(file, 'UTF-8');
+}
+
+parseCSV(csvText: string): any[] {
+  const lines = csvText.split('\n').filter(line => line.trim());
+  
+  if (lines.length === 0) return [];
+  
+  // Try to detect delimiter (tab or comma)
+  const firstLine = lines[0];
+  // const delimiter = firstLine.includes('\t') ? '\t' : ',';
+  let delimiter = ',';
+  
+  // Check for tab delimiter first
+  if (firstLine.includes('\t')) {
+    delimiter = '\t';
+  }
+  
+  console.log('📊 CSV PARSING: Using delimiter:', delimiter === '\t' ? 'TAB' : 'COMMA');
+  console.log('📊 CSV PARSING: First line:', firstLine);
+
+  // Parse headers and clean them
+  const headers = firstLine.split(delimiter).map(h => h.trim().replace(/"/g, ''));
+  // const headers = firstLine.split(delimiter).map(h => h.trim());
+  console.log('📊 CSV PARSING: Headers found:', headers);
+
+  // Look for our specific columns
+  const eventTypeColumn = headers.find(h => h.includes('are_you_hosting_an_event'));
+  const eventDateColumn = headers.find(h => h.includes('what_is_your_date_of_event'));
+  const platformColumn = headers.find(h => h.toLowerCase() === 'platform');
+  
+  console.log('📊 CSV PARSING: Event type column:', eventTypeColumn);
+  console.log('📊 CSV PARSING: Event date column:', eventDateColumn);
+  console.log('📊 CSV PARSING: Platform column:', platformColumn);
+  
+  const data = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line) {
+      // Split by delimiter and clean values
+      const values = line.split(delimiter).map(v => v.trim().replace(/"/g, ''));
+      // const values = line.split(delimiter);
+      const row: any = {};
+      
+      headers.forEach((header, index) => {
+        const value = values[index] || '';
+        // const value = values[index] ? values[index].trim() : '';
+        row[header] = value;
+      });
+      
+      // Debug first few rows
+      if (i <= 3) {
+        console.log(`📊 CSV PARSING: Row ${i}:`, row);
+        console.log(`📊 CSV PARSING: Event type value:`, row[eventTypeColumn || '']);
+        console.log(`📊 CSV PARSING: Event date value:`, row[eventDateColumn || '']);
+        console.log(`📊 CSV PARSING: Platform value:`, row[platformColumn || '']);
+      }
+      
+      data.push(row);
+    }
+  }
+
+  console.log('📊 CSV PARSING: Total rows parsed:', data.length);
+  return data;
+}
+
+// Debug method to check CSV data structure
+debugCsvData() {
+  if (this.csvData.length > 0) {
+    console.log('🔍 CSV DEBUG: Headers available:', Object.keys(this.csvData[0]));
+    console.log('🔍 CSV DEBUG: Sample data:', this.csvData[0]);
+    console.log('🔍 CSV DEBUG: Full name:', this.csvData[0]['full_name']);
+    console.log('🔍 CSV DEBUG: Phone:', this.csvData[0]['phone_number']);
+    console.log('🔍 CSV DEBUG: Email:', this.csvData[0]['email']);
+    
+    // Show alert with debug info
+    alert(`Debug Info:\nHeaders: ${Object.keys(this.csvData[0]).join(', ')}\n\nSample Data:\nName: ${this.csvData[0]['full_name'] || 'NOT FOUND'}\nPhone: ${this.csvData[0]['phone_number'] || 'NOT FOUND'}\nEmail: ${this.csvData[0]['email'] || 'NOT FOUND'}`);
+  } else {
+    alert('No CSV data found to debug');
+  }
+}
+
+// Show expected CSV format
+showExpectedFormat() {
+  const expectedFormat = `Expected CSV format (tab-separated):
+id	created_time	ad_id	ad_name	adset_id	adset_name	campaign_id	campaign_name	form_id	form_name	is_organic	platform	are_you_hosting_an_event_?	what_is_your_date_of_event?	full_name	phone_number	email
+l:123456	2025-07-09T10:43:19+05:30	ag:123	Ad Name	as:456	Adset Name	c:789	Campaign Name	f:999	Form Name	FALSE	ig	wedding	26 Dec25	John Doe	+919999999999	john@example.com`;
+  
+  alert(expectedFormat);
+}
+
+mapCsvToEnquiry(csvRow: any, venueName: string): any {
+  // Debug: Log the CSV row to see what data we have
+  console.log('🔍 CSV ROW DEBUG:', csvRow);
+  console.log('🔍 Available keys:', Object.keys(csvRow));
+  
+  // Find the correct column names dynamically
+  const keys = Object.keys(csvRow);
+  const eventTypeKey = keys.find(k => 
+    k.includes('event_type') || 
+    k.includes('are_you_hosting_an_event') || 
+    k.toLowerCase().includes('event')
+  ) || 'event_type';
+  
+  const eventDateKey = keys.find(k => 
+    k.includes('date_of_event') || 
+    k.includes('what_is_your_date_of_event') || 
+    k.toLowerCase().includes('date')
+  ) || 'date_of_event';
+  
+  const platformKey = keys.find(k => k.toLowerCase() === 'platform') || 'platform';
+  
+  console.log('🔍 Event type key:', eventTypeKey);
+  console.log('🔍 Event date key:', eventDateKey);
+  console.log('🔍 Platform key:', platformKey);
+  console.log('🔍 Event type field:', csvRow[eventTypeKey]);
+  console.log('🔍 Event date field:', csvRow[eventDateKey]);
+  console.log('🔍 Platform field:', csvRow[platformKey]);
+
+  // Extract phone number (remove 'p:' prefix if present)
+  const phoneNumber = csvRow['phone_number'] ? csvRow['phone_number'].replace('p:', '').replace('+', '') : '';
+  
+
+  // Parse event date - copy exact value from CSV
+  const eventDate = csvRow[eventDateKey] || '';
+  
+  // Determine event type - search for wedding or reception keywords
+  const eventTypeField = csvRow[eventTypeKey] || '';
+  let eventType = 'N/A';
+  
+  if (eventTypeField) {
+    const lowerEventType = eventTypeField.toLowerCase();
+    if (lowerEventType.includes('wedding')) {
+      eventType = 'Wedding';
+    } else if (lowerEventType.includes('reception')) {
+      eventType = 'Reception';
+    } else if (lowerEventType.includes('birthday')) {
+      eventType = 'Birthday';
+    } else if (lowerEventType.includes('anniversary')) {
+      eventType = 'Anniversary';
+    } else if (lowerEventType.includes('corporate')) {
+      eventType = 'Corporate';
+    } else if (lowerEventType.includes('engagement')) {
+      eventType = 'Engagement';
+    } else if (lowerEventType.includes('sangeet')) {
+      eventType = 'Sangeet';
+    } else if (lowerEventType.includes('mehendi')) {
+      eventType = 'Mehendi';
+    } else if (lowerEventType.includes('haldi')) {
+      eventType = 'Haldi';
+    } else if (lowerEventType.includes('party')) {
+      eventType = 'Party';
+    } else if (lowerEventType.includes('social')) {
+      eventType = 'Social Event';
+    } else {
+      // If no keywords found, show the original value or N/A
+      eventType = eventTypeField || 'N/A';
+    }
+  }
+  
+  // Parse platform - fb = Facebook, ig = Instagram
+  const platform = csvRow[platformKey] || '';
+  
+  console.log('🔍 MAPPED VALUES:', { eventType, eventDate, platform });
+  // Parse event date
+  // const eventDate = csvRow['what_is_your_date_of_event?'] || '';
+  
+  // Determine event type
+  // const eventType = csvRow['are_you_hosting_an_event_?'] || 'wedding';
+  
+  return {
+    venueId: this.importVenueId,
+    venueName: venueName,
+    userName: csvRow['full_name'] || '',
+    userContact: phoneNumber,
+    userEmail: csvRow['email'] || '',
+    status: 'New',
+    notes: `Import from ${csvRow['platform'] || 'CSV'} - Event: ${eventType} - Date: ${eventDate} - Campaign: ${csvRow['campaign_name'] || 'N/A'}`,
+    created_at: csvRow['created_time'] ? new Date(csvRow['created_time']) : new Date(),
+    isManualEntry: false,
+    importSource: 'csv',
+    leadId: csvRow['id'] || '',
+    adName: csvRow['ad_name'] || '',
+    campaignName: csvRow['campaign_name'] || '',
+    platform: csvRow['platform'] || '',
+    eventType: eventType,
+    eventDate: eventDate
+  };
+}
+
+processCsvImport() {
+  if (!this.importVenueId || !this.csvData.length) {
+    this.messageService.add({
+      key: 'toastmsg',
+      severity: 'warn',
+      summary: 'Validation Error',
+      detail: 'Please select a venue and upload a valid CSV file'
+    });
+    return;
+  }
+
+  this.processingCsvImport = true;
+
+  // Get selected venue info
+  const selectedVenue = this.venueOptions.find(v => v.value === this.importVenueId);
+  const venueName = selectedVenue ? selectedVenue.venueName : '';
+
+  // Map CSV data to enquiry format
+  const enquiriesToCreate = this.csvData
+    .filter(row => row['full_name'] && row['phone_number']) // Filter valid entries
+    .map(row => this.mapCsvToEnquiry(row, venueName));
+
+  console.log('📊 CSV IMPORT: Creating', enquiriesToCreate.length, 'enquiries from CSV');
+
+  if (enquiriesToCreate.length === 0) {
+    this.processingCsvImport = false;
+    this.messageService.add({
+      key: 'toastmsg',
+      severity: 'warn',
+      summary: 'No Valid Data',
+      detail: 'No valid entries found in CSV. Please check the format.'
+    });
+    return;
+  }
+
+  // Create enquiries sequentially
+  this.createCsvEnquiriesSequentially(enquiriesToCreate, 0);
+}
+
+createCsvEnquiriesSequentially(enquiries: any[], currentIndex: number) {
+  if (currentIndex >= enquiries.length) {
+    // All enquiries created successfully
+    this.processingCsvImport = false;
+    
+    this.csvImportResults = {
+      total: enquiries.length,
+      successful: currentIndex,
+      failed: enquiries.length - currentIndex
+    };
+
+    this.messageService.add({
+      key: 'toastmsg',
+      severity: 'success',
+      summary: 'CSV Import Complete',
+      detail: `Successfully imported ${enquiries.length} enquiries from CSV!`
+    });
+
+    this.loadEnquiries();
+    this.closeImportCsvModal();
+    return;
+  }
+
+  const currentEnquiry = enquiries[currentIndex];
+
+  this.enquiryService.createEnquiry(currentEnquiry).subscribe(
+    (response) => {
+      console.log(`📊 CSV IMPORT: Created enquiry ${currentIndex + 1}/${enquiries.length}`);
+      
+      // Create next enquiry
+      this.createCsvEnquiriesSequentially(enquiries, currentIndex + 1);
+    },
+    (error) => {
+      console.error(`📊 CSV IMPORT: Error creating enquiry ${currentIndex + 1}:`, error);
+      
+      // Continue with next enquiry even if one fails
+      this.createCsvEnquiriesSequentially(enquiries, currentIndex + 1);
+    }
+  );
+}
+
   checkUserRole() {
     const userData = this.tokenStorageService.getUser();
     console.log('📊 ENQUIRY: User data:', userData);
@@ -419,6 +773,9 @@ generateUniqueVenues() {
 
     this.uniqueVenues = Array.from(venueMap.values())
         .sort((a, b) => b.count - a.count);
+
+        // Initialize filtered venues with all venues
+    this.filteredUniqueVenues = [...this.uniqueVenues];
 }
 
 selectVenueFilter(venue: any) {
@@ -487,6 +844,9 @@ getDisplayEnquiries() {
       // For non-venue owners, load all enquiries
       this.loadAllEnquiries();
     }
+
+    // Load call tracking data
+    this.loadCallTrackingData();
   }
 
   // Load enquiries for venue owners
@@ -573,6 +933,102 @@ getDisplayEnquiries() {
           reject(error);
         }
       );
+    });
+  }
+
+  // Load call tracking data for all venues or a specific venue
+  loadCallTrackingData(venueId?: string) {
+    const currentUser = this.tokenStorageService.getUser();
+    if (!currentUser || !currentUser.id) {
+      return;
+    }
+
+    // Use filtered data if the user is a venue owner
+    const filters: any = {};
+    
+    if (this.isVenueOwner && venueId) {
+      filters.venueId = venueId;
+    }
+    
+    // Add date range if needed (e.g., last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    filters.startDate = thirtyDaysAgo;
+
+    this.callTrackingService.getCallTrackingWithFilters(filters).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          this.callTrackingData = response.data || [];
+          console.log('📞 Call tracking data loaded:', this.callTrackingData);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading call tracking data:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load call tracking data'
+        });
+      }
+    });
+  }
+
+  // Get call count for a specific venue
+  getVenueCallCount(venueId: string): number {
+    return this.callTrackingData.filter(call => call.venueId === venueId).length;
+  }
+
+  // Get recent calls for a venue
+  getVenueRecentCalls(venueId: string, limit: number = 5): any[] {
+    return this.callTrackingData
+      .filter(call => call.venueId === venueId)
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, limit);
+  }
+
+  // Show call tracking modal
+  showCallTrackingDetails(venueId: string) {
+    this.loadCallTrackingData(venueId);
+    this.showCallTrackingModal = true;
+  }
+
+  // Track phone call from leads page
+  trackPhoneCall(enquiry: any) {
+    const currentUser = this.tokenStorageService.getUser();
+    if (!currentUser || !currentUser.id) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Login Required',
+        detail: 'Please login to track calls'
+      });
+      return;
+    }
+
+    // Get venue info from enquiry
+    const venueInfo = enquiry.venueInfo || {};
+    
+    this.callTrackingService.trackCall({
+      userId: currentUser.id,
+      venueId: venueInfo.id || enquiry.venueId,
+      venueName: enquiry.venueName || venueInfo.name,
+      venuePhone: venueInfo.phone || enquiry.phone || '+917506422269',
+      source: 'leads_page'
+    }).subscribe({
+      next: (response) => {
+        console.log('📞 Call tracked from leads page:', response);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Call Tracked',
+          detail: 'Call has been recorded successfully'
+        });
+        
+        // Refresh call tracking data
+        this.loadCallTrackingData();
+      },
+      error: (error) => {
+        console.error('Error tracking call:', error);
+        // Don't show error to user, just log it
+      }
     });
   }
 
@@ -783,6 +1239,9 @@ ${venueName} Team`;
   contactViaPhone(enquiry: any) {
     const currentUser = this.getCurrentUser(enquiry);
     this.contactViaPhoneForLead(currentUser, enquiry);
+
+    // Track the call
+    this.trackPhoneCall(enquiry);
   }
 
   // Contact via Phone for specific lead - now tracks click count
@@ -1023,13 +1482,34 @@ toggleVenueFilter() {
     this.showVenueFilter = !this.showVenueFilter;
     if (this.showVenueFilter) {
         this.generateUniqueVenues();
+        this.venueSearchText = ''; // Reset search when opening
     }
 }
 
 clearVenueFilter() {
     this.selectedVenueFilter = null;
     this.showVenueFilter = false;
+    this.venueSearchText = ''; // Clear search text
     this.applyVenueFilter();
+}
+
+
+// Search venues by name
+searchVenues() {
+    if (!this.venueSearchText.trim()) {
+        this.filteredUniqueVenues = [...this.uniqueVenues];
+    } else {
+        const searchText = this.venueSearchText.toLowerCase().trim();
+        this.filteredUniqueVenues = this.uniqueVenues.filter(venue => 
+            venue.name.toLowerCase().includes(searchText)
+        );
+    }
+}
+
+// Clear venue search
+clearVenueSearch() {
+    this.venueSearchText = '';
+    this.filteredUniqueVenues = [...this.uniqueVenues];
 }
 
   updateStatus(enquiry: any, status: string) {
@@ -2237,5 +2717,82 @@ clearVenueFilter() {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     return `${diffDays}d ago`;
+  }
+
+  /**
+   * Get Event Type Display
+   */
+  getEventTypeDisplay(eventType: string): string {
+    if (!eventType) return 'N/A';
+    
+    const type = eventType.toLowerCase();
+    
+    // Check for specific keywords
+    if (type.includes('wedding')) return 'Wedding';
+    if (type.includes('reception')) return 'Reception';
+    if (type.includes('birthday')) return 'Birthday';
+    if (type.includes('anniversary')) return 'Anniversary';
+    if (type.includes('corporate')) return 'Corporate';
+    if (type.includes('party')) return 'Party';
+    if (type.includes('engagement')) return 'Engagement';
+    if (type.includes('sangeet')) return 'Sangeet';
+    if (type.includes('mehendi')) return 'Mehendi';
+    if (type.includes('haldi')) return 'Haldi';
+    if (type.includes('social')) return 'Social Event';
+    
+    // If no keywords found, return the original value with proper capitalization
+    return eventType.charAt(0).toUpperCase() + eventType.slice(1);
+  }
+
+  /**
+   * Get Platform Display
+   */
+  getPlatformDisplay(platform: string): string {
+    if (!platform) return 'Manual';
+    
+    switch (platform.toLowerCase()) {
+      case 'fb':
+        return 'Facebook';
+      case 'ig':
+        return 'Instagram';
+      case 'google':
+      case 'goc':  // Handle truncated 'goc' data
+        return 'Google';
+      case 'website':
+        return 'Website';
+      default:
+        return platform.charAt(0).toUpperCase() + platform.slice(1);
+    }
+  }
+
+  /**
+   * Helper functions for CSV preview
+   */
+  getEventTypeFromRow(row: any): string {
+    const keys = Object.keys(row);
+    // Look for multiple possible column names
+    const eventTypeKey = keys.find(k => 
+      k.includes('event_type') || 
+      k.includes('are_you_hosting_an_event') || 
+      k.toLowerCase().includes('event')
+    ) || 'event_type';
+    return row[eventTypeKey] || '';
+  }
+
+  getEventDateFromRow(row: any): string {
+    const keys = Object.keys(row);
+    // Look for multiple possible column names
+    const eventDateKey = keys.find(k => 
+      k.includes('date_of_event') || 
+      k.includes('what_is_your_date_of_event') || 
+      k.toLowerCase().includes('date')
+    ) || 'date_of_event';
+    return row[eventDateKey] || '';
+  }
+
+  getPlatformFromRow(row: any): string {
+    const keys = Object.keys(row);
+    const platformKey = keys.find(k => k.toLowerCase() === 'platform') || 'platform';
+    return row[platformKey] || '';
   }
 }

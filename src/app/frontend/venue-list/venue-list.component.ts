@@ -190,6 +190,14 @@ clearAIResults() {
     val5: number;
     msg: string;
     products: Product[];
+
+    // Category filtering method
+    filterByCategory(category: string) {
+        // You can implement category filtering logic here
+        console.log('Filtering by category:', category);
+        // Example: Navigate to filtered results or apply filters
+        // this.router.navigate(['/venues'], { queryParams: { category: category } });
+    }
     // images: any[] | undefined;
     vendorSelection: boolean | undefined;
     public oldUser: any = {};
@@ -336,6 +344,7 @@ clearAIResults() {
     errorMessage = '';
     public pagination = [8, 10, 20, 50, 100, 1000, { showAll: 'All' }];
     public categoryMenuList: any[] = [];
+    public showOccasionFilter: boolean = false;
     public parentCategoryId;
     public parentCategoryDetails;
     downloadFlg: boolean = false;
@@ -1231,6 +1240,11 @@ displayLimit: number = 25;
         this.pageNumber = 1;
         this.getVenueList();
     }
+
+    toggleOccasionFilter() {
+        this.showOccasionFilter = !this.showOccasionFilter;
+    }
+
     onSelectDate(event) {
         this.startDate = this.rangeDates[0];
         this.endDate = this.rangeDates[1];

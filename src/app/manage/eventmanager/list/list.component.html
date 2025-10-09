@@ -39,6 +39,14 @@
                     <span class="btn-text">Add Enquiries</span>
                 </button>
                 <button
+                    class="action-btn import-csv-btn"
+                    (click)="openImportCsvModal()"
+                    *ngIf="!isVenueOwner"
+                    title="Import CSV Leads">
+                    <i class="fas fa-file-csv"></i>
+                    <span class="btn-text">Import CSV</span>
+                </button>
+                <button
                     class="action-btn export-btn"
                     (click)="exportEnquiriesToCSV()"
                     title="Export to CSV">
@@ -69,10 +77,37 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
+                
+        <!-- Search Input -->
+        <div class="venue-search-container">
+            <div class="search-input-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input 
+                    type="text" 
+                    class="venue-search-input" 
+                    placeholder="Search venues..." 
+                    [(ngModel)]="venueSearchText"
+                    (input)="searchVenues()"
+                    (keyup.escape)="clearVenueSearch()">
+                <button 
+                    class="clear-search-btn" 
+                    *ngIf="venueSearchText" 
+                    (click)="clearVenueSearch()"
+                    title="Clear search">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Venues List -->
         <div class="venue-options">
+            <div class="no-venues-found" *ngIf="filteredUniqueVenues.length === 0 && venueSearchText">
+                <i class="fas fa-search"></i>
+                <span>No venues found matching "{{venueSearchText}}"</span>
+            </div>
             <div
                 class="venue-option"
-                *ngFor="let venue of uniqueVenues"
+                *ngFor="let venue of filteredUniqueVenues"
                 (click)="selectVenueFilter(venue)"
                 [class.selected]="selectedVenueFilter === venue.id">
                 <span class="venue-name">{{venue.name}}</span>
@@ -98,6 +133,8 @@
                 <tr>
                     <th class="venue-col">Venue Details</th>
                     <th class="user-col">Contact Info</th>
+                    <th class="event-col">Event Details</th>
+                    <th class="platform-col">Source</th>
                     <th class="leads-col">Leads</th>
                     <th class="date-col">Latest Activity</th>
                     <th class="status-col">Status</th>
@@ -111,9 +148,17 @@
                 <tr class="data-row">
                     <td class="venue-cell">
     <div class="venue-info">
-        <div class="venue-name">
+        <!-- <div class="venue-name"> -->
+            <div class="venue-name" [attr.data-venue-name]="enquiry.venueName">
             <i class="fas fa-map-marker-alt venue-icon"></i>
             <strong>{{enquiry.venueName}}</strong>
+            <!-- Call tracking indicator -->
+            <span class="call-tracking-badge" 
+                  *ngIf="getVenueCallCount(enquiry.venueId || enquiry.id) > 0"
+                  title="{{getVenueCallCount(enquiry.venueId || enquiry.id)}} calls tracked">
+                <i class="fas fa-phone"></i>
+                {{getVenueCallCount(enquiry.venueId || enquiry.id)}}
+            </span>
         </div>
 
         <!-- Show lead info when venue filter is active -->
@@ -132,6 +177,43 @@
                             <div class="user-contact">
                                 <i class="fas fa-phone-alt"></i>
                                 {{getCurrentUser(enquiry).userContact}}
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Event Details Column -->
+                    <td class="event-cell">
+                        <div class="event-info">
+                            <div class="event-type" *ngIf="getCurrentUser(enquiry).eventType">
+                                <i class="fas fa-heart" *ngIf="getCurrentUser(enquiry).eventType.toLowerCase().includes('wedding')"></i>
+                                <i class="fas fa-glass-cheers" *ngIf="getCurrentUser(enquiry).eventType.toLowerCase().includes('reception')"></i>
+                                <i class="fas fa-birthday-cake" *ngIf="getCurrentUser(enquiry).eventType.toLowerCase().includes('birthday')"></i>
+                                <i class="fas fa-calendar-check" *ngIf="!getCurrentUser(enquiry).eventType.toLowerCase().includes('wedding') && !getCurrentUser(enquiry).eventType.toLowerCase().includes('reception') && !getCurrentUser(enquiry).eventType.toLowerCase().includes('birthday')"></i>
+                                <span>{{getEventTypeDisplay(getCurrentUser(enquiry).eventType)}}</span>
+                            </div>
+                            <div class="event-date" *ngIf="getCurrentUser(enquiry).eventDate">
+                                <i class="fas fa-calendar"></i>
+                                <small>{{getCurrentUser(enquiry).eventDate}}</small>
+                            </div>
+                            <div class="no-event-info" *ngIf="!getCurrentUser(enquiry).eventType && !getCurrentUser(enquiry).eventDate">
+                                <i class="fas fa-question-circle"></i>
+                                <small>N/A</small>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Platform/Source Column -->
+                    <td class="platform-cell">
+                        <div class="platform-info">
+                            <div class="platform-badge" *ngIf="getCurrentUser(enquiry).platform">
+                                <i class="fab fa-facebook" *ngIf="getCurrentUser(enquiry).platform === 'fb'"></i>
+                                <i class="fab fa-instagram" *ngIf="getCurrentUser(enquiry).platform === 'ig'"></i>
+                                <i class="fas fa-globe" *ngIf="getCurrentUser(enquiry).platform !== 'fb' && getCurrentUser(enquiry).platform !== 'ig'"></i>
+                                <span>{{getPlatformDisplay(getCurrentUser(enquiry).platform)}}</span>
+                            </div>
+                            <div class="manual-entry" *ngIf="!getCurrentUser(enquiry).platform">
+                                <i class="fas fa-user-edit"></i>
+                                <small>Manual</small>
                             </div>
                         </div>
                     </td>
@@ -275,6 +357,7 @@
                                 (click)="contactViaWhatsApp(enquiry)"
                                 title="Contact via WhatsApp">
                                 <i class="fab fa-whatsapp"></i>
+                                <span class="btn-text">WhatsApp</span>
                             </button>
 
                             <button
@@ -282,6 +365,7 @@
                                 (click)="contactViaPhone(enquiry)"
                                 title="Contact via Phone">
                                 <i class="fas fa-phone"></i>
+                                <span class="btn-text">Call</span>
                             </button>
 
                             <button
@@ -289,6 +373,7 @@
                                 (click)="deleteLead(enquiry)"
                                 title="Delete this lead">
                                 <i class="fas fa-trash-alt"></i>
+                                <span class="btn-text">Delete</span>
                             </button>
                         </div>
                     </td>
@@ -324,6 +409,31 @@
                                             <div class="contact-email" *ngIf="lead.userEmail">
                                                 <i class="fas fa-envelope"></i>
                                                 {{lead.userEmail}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Event Details for Expanded Lead -->
+                                        <div class="lead-event-details" *ngIf="lead.eventType || lead.eventDate">
+                                            <div class="event-type" *ngIf="lead.eventType">
+                                                <i class="fas fa-heart" *ngIf="lead.eventType.toLowerCase().includes('wedding')"></i>
+                                                <i class="fas fa-glass-cheers" *ngIf="lead.eventType.toLowerCase().includes('reception')"></i>
+                                                <i class="fas fa-birthday-cake" *ngIf="lead.eventType.toLowerCase().includes('birthday')"></i>
+                                                <i class="fas fa-calendar-check" *ngIf="!lead.eventType.toLowerCase().includes('wedding') && !lead.eventType.toLowerCase().includes('reception') && !lead.eventType.toLowerCase().includes('birthday')"></i>
+                                                <span>{{getEventTypeDisplay(lead.eventType)}}</span>
+                                            </div>
+                                            <div class="event-date" *ngIf="lead.eventDate">
+                                                <i class="fas fa-calendar"></i>
+                                                <span>{{lead.eventDate}}</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Platform/Source for Expanded Lead -->
+                                        <div class="lead-platform" *ngIf="lead.platform">
+                                            <div class="platform-badge">
+                                                <i class="fab fa-facebook" *ngIf="lead.platform === 'fb'"></i>
+                                                <i class="fab fa-instagram" *ngIf="lead.platform === 'ig'"></i>
+                                                <i class="fas fa-globe" *ngIf="lead.platform !== 'fb' && lead.platform !== 'ig'"></i>
+                                                <span>{{getPlatformDisplay(lead.platform)}}</span>
                                             </div>
                                         </div>
 
@@ -446,6 +556,31 @@
                         <div class="user-email" *ngIf="getCurrentUser(enquiry).userEmail">
                             <i class="fas fa-envelope"></i>
                             {{getCurrentUser(enquiry).userEmail}}
+                        </div>
+
+                        <!-- Event Details for Mobile -->
+                        <div class="mobile-event-details" *ngIf="getCurrentUser(enquiry).eventType || getCurrentUser(enquiry).eventDate">
+                            <div class="event-type-mobile" *ngIf="getCurrentUser(enquiry).eventType">
+                                <i class="fas fa-heart" *ngIf="getCurrentUser(enquiry).eventType.toLowerCase().includes('wedding')"></i>
+                                <i class="fas fa-glass-cheers" *ngIf="getCurrentUser(enquiry).eventType.toLowerCase().includes('reception')"></i>
+                                <i class="fas fa-birthday-cake" *ngIf="getCurrentUser(enquiry).eventType.toLowerCase().includes('birthday')"></i>
+                                <i class="fas fa-calendar-check" *ngIf="!getCurrentUser(enquiry).eventType.toLowerCase().includes('wedding') && !getCurrentUser(enquiry).eventType.toLowerCase().includes('reception') && !getCurrentUser(enquiry).eventType.toLowerCase().includes('birthday')"></i>
+                                <span>{{getEventTypeDisplay(getCurrentUser(enquiry).eventType)}}</span>
+                            </div>
+                            <div class="event-date-mobile" *ngIf="getCurrentUser(enquiry).eventDate">
+                                <i class="fas fa-calendar"></i>
+                                <span>{{getCurrentUser(enquiry).eventDate}}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Platform Source for Mobile -->
+                        <div class="mobile-platform" *ngIf="getCurrentUser(enquiry).platform">
+                            <div class="platform-mobile">
+                                <i class="fab fa-facebook" *ngIf="getCurrentUser(enquiry).platform === 'fb'"></i>
+                                <i class="fab fa-instagram" *ngIf="getCurrentUser(enquiry).platform === 'ig'"></i>
+                                <i class="fas fa-globe" *ngIf="getCurrentUser(enquiry).platform !== 'fb' && getCurrentUser(enquiry).platform !== 'ig'"></i>
+                                <span>{{getPlatformDisplay(getCurrentUser(enquiry).platform)}}</span>
+                            </div>
                         </div>
                     </div>
                     <div class="contact-date">
@@ -613,6 +748,31 @@
                                     <div class="contact-email-mobile" *ngIf="lead.userEmail">
                                         <i class="fas fa-envelope"></i>
                                         {{lead.userEmail}}
+                                    </div>
+                                </div>
+
+                                <!-- Event Details for Mobile Expanded Lead -->
+                                <div class="lead-event-mobile" *ngIf="lead.eventType || lead.eventDate">
+                                    <div class="event-type-mobile" *ngIf="lead.eventType">
+                                        <i class="fas fa-heart" *ngIf="lead.eventType.toLowerCase().includes('wedding')"></i>
+                                        <i class="fas fa-glass-cheers" *ngIf="lead.eventType.toLowerCase().includes('reception')"></i>
+                                        <i class="fas fa-birthday-cake" *ngIf="lead.eventType.toLowerCase().includes('birthday')"></i>
+                                        <i class="fas fa-calendar-check" *ngIf="!lead.eventType.toLowerCase().includes('wedding') && !lead.eventType.toLowerCase().includes('reception') && !lead.eventType.toLowerCase().includes('birthday')"></i>
+                                        <span>{{getEventTypeDisplay(lead.eventType)}}</span>
+                                    </div>
+                                    <div class="event-date-mobile" *ngIf="lead.eventDate">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>{{lead.eventDate}}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Platform/Source for Mobile Expanded Lead -->
+                                <div class="lead-platform-mobile" *ngIf="lead.platform">
+                                    <div class="platform-badge-mobile">
+                                        <i class="fab fa-facebook" *ngIf="lead.platform === 'fb'"></i>
+                                        <i class="fab fa-instagram" *ngIf="lead.platform === 'ig'"></i>
+                                        <i class="fas fa-globe" *ngIf="lead.platform !== 'fb' && lead.platform !== 'ig'"></i>
+                                        <span>{{getPlatformDisplay(lead.platform)}}</span>
                                     </div>
                                 </div>
 
@@ -1201,6 +1361,161 @@
                     Send Email
                 </button>
             </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- CSV Import Modal -->
+<div class="modal-overlay" *ngIf="showImportCsvModal" (click)="closeImportCsvModal()">
+    <div class="csv-import-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>
+                <i class="fas fa-file-csv"></i>
+                Import CSV Leads
+            </h3>
+            <button class="close-btn" (click)="closeImportCsvModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-content">
+            <div class="import-instructions">
+                <div class="instruction-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Upload a CSV file with leads data. The file should contain columns for: full_name, phone_number, email, etc.</span>
+                </div>
+                <div class="instruction-item">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Supported format: Comma-separated values (CSV) exported from Facebook/Instagram lead forms</span>
+                </div>
+            </div>
+
+            <!-- Venue Selection -->
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-building"></i>
+                    Select Venue for Import
+                </label>
+                <p-dropdown 
+                    [options]="venueOptions" 
+                    [(ngModel)]="importVenueId"
+                    optionLabel="venueName" 
+                    optionValue="value"
+                    placeholder="Choose a venue..."
+                    [style]="{'width': '100%'}"
+                    styleClass="venue-dropdown">
+                </p-dropdown>
+            </div>
+
+            <!-- File Upload -->
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-upload"></i>
+                    Select CSV File
+                </label>
+                <div class="file-upload-container">
+                    <input 
+                        type="file" 
+                        #csvFileInput
+                        accept=".csv,.tsv,.txt"
+                        (change)="onCsvFileSelected($event)"
+                        class="file-input">
+                    <div class="file-upload-area" (click)="csvFileInput.click()">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-text">
+                            <span *ngIf="!csvFile">Click to select CSV file or drag and drop</span>
+                            <span *ngIf="csvFile" class="selected-file">
+                                <i class="fas fa-file-csv"></i>
+                                {{csvFile.name}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Format Help Button -->
+                <div class="format-help">
+                    <button class="format-btn" (click)="showExpectedFormat()" title="Show Expected CSV Format">
+                        <i class="fas fa-question-circle"></i> CSV Format Help
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview Data -->
+            <div class="csv-preview" *ngIf="csvData.length > 0">
+                <h4>
+                    <i class="fas fa-eye"></i>
+                    Data Preview ({{csvData.length}} records found)
+                    <button class="debug-btn" (click)="debugCsvData()" title="Debug CSV Data">
+                        <i class="fas fa-bug"></i> Debug
+                    </button>
+                </h4>
+                <div class="preview-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Event Type</th>
+                                <th>Event Date</th>
+                                <th>Platform</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let row of csvData.slice(0, 5)">
+                                <td>{{row['full_name'] || '-'}}</td>
+                                <td>{{row['phone_number']?.replace('p:', '') || '-'}}</td>
+                                <td>{{row['email'] || '-'}}</td>
+                                <td>{{row['are_you_hosting_an_event_?'] || '-'}}</td>
+                                <td>{{row['what_is_your_date_of_event?'] || '-'}}</td>
+                                <td>{{row['platform'] || '-'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="preview-note" *ngIf="csvData.length > 5">
+                        <i class="fas fa-info-circle"></i>
+                        Showing first 5 records. {{csvData.length - 5}} more records will be imported.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Import Results -->
+            <div class="import-results" *ngIf="csvImportResults">
+                <div class="results-summary">
+                    <i class="fas fa-chart-pie"></i>
+                    <h4>Import Results</h4>
+                    <div class="results-stats">
+                        <div class="stat-item success">
+                            <span class="stat-number">{{csvImportResults.successful}}</span>
+                            <span class="stat-label">Successful</span>
+                        </div>
+                        <div class="stat-item total">
+                            <span class="stat-number">{{csvImportResults.total}}</span>
+                            <span class="stat-label">Total</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button 
+                class="btn btn-secondary" 
+                (click)="closeImportCsvModal()"
+                [disabled]="processingCsvImport">
+                Cancel
+            </button>
+            <button 
+                class="btn btn-primary import-btn" 
+                (click)="processCsvImport()"
+                [disabled]="!importVenueId || !csvData.length || processingCsvImport">
+                <i class="fas fa-spinner fa-spin" *ngIf="processingCsvImport"></i>
+                <i class="fas fa-upload" *ngIf="!processingCsvImport"></i>
+                {{processingCsvImport ? 'Importing...' : 'Import ' + csvData.length + ' Records'}}
+            </button>
         </div>
     </div>
 </div>

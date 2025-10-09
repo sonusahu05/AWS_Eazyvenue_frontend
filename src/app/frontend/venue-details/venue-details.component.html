@@ -212,13 +212,25 @@
   }">
     <button
       (click)="venueDetailfilter()"
-      style="flex: 1; border: none; outline: none; background-color: transparent; color: white; font-weight: 500; font-size: 16px; padding: 15px 0; cursor: pointer; font-family: Arial, sans-serif;">
+      style="flex: 2; border: none; outline: none; background-color: transparent; color: white; font-weight: 500; font-size: 14px; padding: 15px 5px; cursor: pointer; font-family: Arial, sans-serif;">      
       Book Now
     </button>
-    <div style="width: 1px; background-color: white;"></div>
+    <!-- <div style="width: 1px; background-color: white;"></div> -->
+     <div style="width: 2px; background: linear-gradient(to bottom, transparent 20%, white 20%, white 80%, transparent 80%);"></div>
+    <a
+      [href]="'tel:' + (venueDetails?.phone || '+917506422269')"
+      (click)="onCallClick()"
+      [class.calling]="isCallActive"
+      style="flex: 1.5; border: none; outline: none; background-color: #28a745; color: white; font-weight: 600; font-size: 12px; padding: 15px 3px; cursor: pointer; font-family: Arial, sans-serif; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 4px;"
+      [style.background-color]="isCallActive ? '#1e7e34' : '#28a745'"
+      [style.animation]="isCallActive ? 'pulse 1s infinite' : 'none'">
+      <i class="pi pi-phone" style="font-size: 11px;"></i>
+      <span style="font-size: 11px;">{{ isCallActive ? 'Calling...' : 'Call Now' }}</span>
+    </a>
+    <div style="width: 2px; background: linear-gradient(to bottom, transparent 20%, white 20%, white 80%, transparent 80%);"></div>
     <button
       (click)="venueSendquery()"
-      style="flex: 1; border: none; outline: none; background-color: transparent; color: white; font-weight: 500; font-size: 16px; padding: 15px 0; cursor: pointer; font-family: Arial, sans-serif;">
+      style="flex: 2; border: none; outline: none; background-color: transparent; color: white; font-weight: 500; font-size: 14px; padding: 15px 5px; cursor: pointer; font-family: Arial, sans-serif;">
       Enquire Now
     </button>
   </div>
@@ -1628,6 +1640,22 @@ app-loader {
                                     <!-- {{bookingPrice|currency:'INR'}} -->
                                 </button>
                             </div>
+                            <!-- Call Now Button for Booking Section -->
+                            <div class="col-md-12 call-btn">
+                                <button
+                                    type="button"
+                                    (click)="handleCallClick()"
+                                    pButton
+                                    class="btn btn-custom w-100 price-btn call-now-button"
+                                    [class.calling]="isCallActive"
+                                    [style.background-color]="isCallActive ? '#28a745' : '#007bff'"
+                                    [style.border-color]="isCallActive ? '#28a745' : '#007bff'"
+                                    style="color: white; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px;"
+                                >
+                                    <i class="pi pi-phone" style="font-size: 14px;"></i>
+                                    <span class="call-text">{{ isCallActive ? 'Calling... (' + callTimer + 's)' : 'Call Now for Instant Booking' }}</span>
+                                </button>
+                            </div>
                             <div class="col-md-12 advantages">
                                 <h5 class="heading-ad">
                                     UNLOCKED AFTER BOOKING:
@@ -2415,11 +2443,25 @@ app-loader {
                                     </div>
                                 </div>
 
-                                <!-- View Details Button -->
-                                <div class="listing-gallery-wrapper" style="display: flex; justify-content: space-between; align-items: center;">
+                                <!-- Action Buttons -->
+                                <div class="listing-gallery-wrapper" style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
                                     <a class="btn-custom btn-sm secondary"
-                                       style="background: #007bff; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; border: none; cursor: pointer;">
+                                       style="background: #007bff; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; border: none; cursor: pointer; flex: 1; text-align: center;">
                                         View Details
+                                    </a>
+
+                                    <!-- Call Now Button for Similar Venues -->
+                                    <a href="tel:+917506422269"
+                                       (click)="onCallClick($event, venue.id); $event.stopPropagation();"
+                                       class="btn btn-call-now btn-sm"
+                                       [class.calling]="isCallActive && callingVenueId === venue.id"
+                                       style="background-color: #007bff; border-color: #007bff; color: white; padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 4px; text-decoration: none; display: flex; align-items: center; gap: 4px; transition: all 0.3s ease; white-space: nowrap;"
+                                       [style.background-color]="(isCallActive && callingVenueId === venue.id) ? '#28a745' : '#007bff'"
+                                       [style.border-color]="(isCallActive && callingVenueId === venue.id) ? '#28a745' : '#007bff'"
+                                       title="Call Now">
+                                        <i class="pi pi-phone" style="font-size: 10px;"></i>
+                                        <span *ngIf="!(isCallActive && callingVenueId === venue.id)">Call</span>
+                                        <span *ngIf="isCallActive && callingVenueId === venue.id">{{ callTimer }}s</span>
                                     </a>
 
                                     <!-- Ratings -->
@@ -3542,6 +3584,22 @@ app-loader {
                     >
                         Send Enquiries
                         <!-- {{bookingPrice|currency:'INR'}} -->
+                    </button>
+                </div>
+                <!-- Call Now Button for Second Booking Section -->
+                <div class="col-md-12 call-btn">
+                    <button
+                        type="button"
+                        (click)="handleCallClick()"
+                        pButton
+                        class="btn btn-custom w-100 price-btn call-now-button"
+                        [class.calling]="isCallActive"
+                        [style.background-color]="isCallActive ? '#28a745' : '#007bff'"
+                        [style.border-color]="isCallActive ? '#28a745' : '#007bff'"
+                        style="color: white; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px;"
+                    >
+                        <i class="pi pi-phone" style="font-size: 14px;"></i>
+                        <span class="call-text">{{ isCallActive ? 'Calling... (' + callTimer + 's)' : 'Call Now for Instant Booking' }}</span>
                     </button>
                 </div>
                 <!-- <p-button (click)="schedulevisit()" icon="pi pi-external-link" label="Show"></p-button> -->

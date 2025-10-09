@@ -1,6 +1,6 @@
 <ng-container *ngIf="!appLoading; else venueSkeleton">
 <p-toast key="toastmsg"></p-toast>
-<div class="sigma_header-bottom filter-div">
+<!-- <div class="sigma_header-bottom filter-div">
     <div class="sigma_header-bottom-inner">
         <div class="w-100 container-fluid">
             <div class="p-1 occasion-icons">
@@ -50,7 +50,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 <div class="row justify-content-center search-bar search_bar_listing_page">
     <div
         class="vendor-text w-100 text-primary h-50 v-center padding-h-10 h6 bg-white text-bold f-space-between"
@@ -305,6 +305,70 @@
 </div>
 
 </div>
+
+<!-- Collapsible Filter Section -->
+<div class="collapsible-filter-container">
+    <div class="container-fluid">
+        <!-- Filter Toggle Button -->
+        <div class="filter-toggle-wrapper">
+            <button 
+                class="filter-toggle-btn"
+                (click)="toggleOccasionFilter()"
+                [class.active]="showOccasionFilter"
+                pButton
+                pRipple
+            >
+                <i class="pi pi-sliders-h"></i>
+                <span class="filter-text">{{ showOccasionFilter ? 'Hide Filters' : 'Filter Occasions' }}</span>
+            </button>
+        </div>
+
+        <!-- Expandable Filter Content -->
+        <div 
+            class="occasion-filter-content"
+            [class.expanded]="showOccasionFilter"
+        >
+            <div class="occasion-filter-inner">
+                <div class="row align-items-center">
+                    <div class="col-auto d-flex align-items-center occasionhd">
+                        <h3 class="filter-title">What's your occasion?</h3>
+                    </div>
+                    <div class="col occasion-carousel-wrapper">
+                        <p-carousel
+                            [value]="categoryMenuList"
+                            [numVisible]="8"
+                            [numScroll]="8"
+                            [circular]="false"
+                            [showIndicators]="false"
+                            [responsiveOptions]="carouselResponsiveOptions"
+                        >
+                            <ng-template let-categoryMenu pTemplate="item">
+                                <div class="occasion-item">
+                                    <div
+                                        (click)="onClickCategory(categoryMenu)"
+                                        class="occasion-card {{categoryMenu.show ? 'active' : ''}}"
+                                    >
+                                        <div class="occasion-icon">
+                                            <img
+                                                src="assets/images/category-icons/{{categoryMenu.slug}}.svg"
+                                                class="occasion-image"
+                                                alt="{{ categoryMenu.name }} category icon"
+                                            />
+                                        </div>
+                                        <div class="occasion-label">
+                                            <span class="occasion-name">{{ categoryMenu.name }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-carousel>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div
     class="section section-padding sigma_header listings"
     *ngIf="!vendorSelection"
@@ -321,29 +385,45 @@
         <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <div class="location-info" *ngIf="!locationEnabled && showLocationPrompt">
+                    <div
+                        class="location-info"
+                        *ngIf="!locationEnabled && showLocationPrompt"
+                    >
+                    <!-- <div class="location-info" *ngIf="!locationEnabled && showLocationPrompt"> -->
                         <i class="pi pi-map-marker"></i>
                         <span>Enable location to find venues near you</span>
                     </div>
                     <div class="location-info" *ngIf="locationEnabled">
-                        <i class="pi pi-check-circle" style="color: #28a745;"></i>
+                        <i
+                            class="pi pi-check-circle"
+                            style="color: #28a745"
+                        ></i>
+                        <!-- <i class="pi pi-check-circle" style="color: #28a745;"></i> -->
                         <span *ngIf="currentRadius > 0">
-                            Showing venues within {{currentRadius}}km of your location
+                           Showing venues within {{ currentRadius }}km of your
+                            location
+                            <!-- Showing venues within {{currentRadius}}km of your location -->
                         </span>
                         <span *ngIf="currentRadius === 0">
                             Showing all venues sorted by distance
                         </span>
                     </div>
                     <div class="location-error" *ngIf="locationError">
-                        <i class="pi pi-exclamation-triangle" style="color: #dc3545;"></i>
-                        <span>{{locationError}}</span>
+                        <i
+                            class="pi pi-exclamation-triangle"
+                            style="color: #dc3545"
+                        ></i>
+                        <span>{{ locationError }}</span>
+                        <!-- <i class="pi pi-exclamation-triangle" style="color: #dc3545;"></i> -->
+                        <!-- <span>{{locationError}}</span> -->
                     </div>
                 </div>
                 <div class="col-md-4 text-right">
                     <button
                         class="btn btn-sm btn-outline-primary"
                         *ngIf="!locationEnabled"
-                        (click)="requestUserLocation()">
+                        (click)="requestUserLocation()"
+                    >
                         <i class="pi pi-map-marker"></i> Enable Location
                     </button>
                 </div>
@@ -412,18 +492,51 @@
         <div class="row">
             <div class="col-md-12 venue_listing latestVenue_listing">
                 <div *ngIf="displayedVenueList.length > 0" class="col-md-12">
-                    <div class="row">
-                        <div
+                    <div class="venues-grid">
+                    <!-- <div class="row"> -->
+                        <!-- <div
                             class="col-xl-3 col-lg-4 col-md-6"
                             *ngFor="let item of displayedVenueList"
+                        > -->
+                        <div
+                            class="venue-card-wrapper"
+                            *ngFor="let item of displayedVenueList"
                         >
-                            <div class="listing">
-                                <div class="listing-thumbnail loading">
-                                    <div
+                            <!-- <div class="listing"> -->
+                                <div class="modern-venue-card">
+                                <!-- Image Section -->
+                                <!-- <div class="listing-thumbnail loading"> -->
+                                    <div class="venue-image-container">
+                                    <!-- <div
                                         class="mobile-view-gallery"
                                         #galleryContainer
+                                    > -->
+                                    <div
+                                        class="venue-gallery"
+                                        #galleryContainer
                                     >
-                                        <p-galleria
+                                    <p-galleria
+                                            [(value)]="item.venueImage"
+                                            [responsiveOptions]="
+                                                responsiveOptions
+                                            "
+                                            [containerStyle]="{
+                                                'max-width': '100%'
+                                            }"
+                                            [numVisible]="1"
+                                            [circular]="true"
+                                            [showItemNavigators]="true"
+                                            [showThumbnails]="false"
+                                            [showIndicators]="true"
+                                            [showItemNavigatorsOnHover]="true"
+                                            [showIndicatorsOnItem]="true"
+                                            [attr.aria-label]="
+                                                item.name +
+                                                ' venue image gallery'
+                                            "
+                                            role="region"
+                                        >
+                                        <!-- <p-galleria
                                             [(value)]="item.venueImage"
                                             [responsiveOptions]="
                                                 responsiveOptions
@@ -507,12 +620,13 @@
                                             [changeItemOnIndicatorHover]="false"
                                             [attr.aria-label]="item.name + ' venue image gallery'"
                                             role="region"
-                                        >
+                                        > -->
+
                                             <ng-template
                                                 pTemplate="item"
                                                 let-iItem
                                             >
-                                                <a [routerLink]="['/venue', item.metaUrl]" 
+                                                <!-- <a [routerLink]="['/venue', item.metaUrl]" 
                                                    style="display: block;"
                                                    [attr.aria-label]="'View details for ' + item.name + ' venue'">
                                                     <img
@@ -532,8 +646,32 @@
                                                         (error)="onImageError($event, iItem)"
                                                         (load)="onImageLoad($event)"
                                                     />
+                                                </a> -->
+                                                <a
+                                                    [routerLink]="[
+                                                        '/venue',
+                                                        item.metaUrl
+                                                    ]"
+                                                    style="display: block"
+                                                    [attr.aria-label]="
+                                                        'View details for ' +
+                                                        item.name +
+                                                        ' venue'
+                                                    "
+                                                >
+                                                    <img
+                                                        *ngIf="!iItem.video"
+                                                        [src]="
+                                                            iItem.venue_image_src
+                                                        "
+                                                        class="venue-main-image"
+                                                        [alt]="
+                                                            item.name +
+                                                            ' venue image'
+                                                        "
+                                                    />
                                                 </a>
-                                                <a [routerLink]="['/venue', item.metaUrl]" 
+                                                <!-- <a [routerLink]="['/venue', item.metaUrl]" 
                                                    style="display: block;"
                                                    [attr.aria-label]="'Watch video tour of ' + item.name + ' venue'">
                                                     <video
@@ -554,174 +692,231 @@
                                                         Your browser does not
                                                         support the video tag.
                                                     </video>
+                                                </a> -->
+                                                <a
+                                                    [routerLink]="[
+                                                        '/venue',
+                                                        item.metaUrl
+                                                    ]"
+                                                    style="display: block"
+                                                    [attr.aria-label]="
+                                                        'Watch video tour of ' +
+                                                        item.name +
+                                                        ' venue'
+                                                    "
+                                                >
+                                                    <video
+                                                        *ngIf="iItem.video"
+                                                        class="venue-main-video"
+                                                        muted
+                                                        controls
+                                                        loop
+                                                    >
+                                                        <source
+                                                            src="{{
+                                                                iItem.video
+                                                            }}"
+                                                            type="video/mp4"
+                                                        />
+                                                        Your browser does not
+                                                        support the video tag.
+                                                    </video>
                                                 </a>
                                             </ng-template>
                                         </p-galleria>
                                     </div>
-                                    <div class="listing-badges">
-                                        <span
+
+                                    <!-- Badges -->
+                                     <div class="venue-badges">
+                                    <!-- <div class="listing-badges"> -->
+                                        <!-- <span
                                             class="listing-badge Assured"
                                             *ngIf="item.assured"
+                                        > -->
+                                        <span
+                                            class="assured-badge"
+                                            *ngIf="item.assured"
                                         >
-                                            <i class="pi pi-check"></i>
-                                            Assured</span
-                                        >
+                                            <i class="pi pi-shield"></i>
+                                            Assured
+                                        </span>
                                     </div>
-                                </div>
-                                <div class="listing-body">
-                                    <h5 class="listing-title">
-                                        <a
-                                            [routerLink]="['/venue', item.metaUrl]"
-                                            [title]="item.name"
-                                            class="mb-0"
-                                            >{{ item.name }}</a
-                                        >
-                                    </h5>
-                                    <div class="category-icon">
-                                        <div class="location">
-                                            <span class="icon">
-                                                <img
-                                                    src="assets/img/svg/location-icon.svg"
-                                                    alt="Location icon"
-                                                />
-                                            </span>
-                                            <span class="city"
-                                                >{{ item.subarea
-                                                }}<span *ngIf="item.subarea"
-                                                    >,</span
-                                                >
-                                                {{ item.cityname }}
-                                            </span>
-                                            <span class="distance-info" *ngIf="item.distanceText && locationEnabled">
-                                                • {{ item.distanceText }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="short-discription">
-                                        <a
-                                            class="read-more"
-                                            [routerLink]="['/venue', item.metaUrl]"
-                                        >
-                                            <p
-                                                class="listing-text"
-                                                [innerHTML]="
-                                                    item.shortdescription
-                                                "
 
-                                            ></p>
-                                        </a>
-                                    </div>
-                                    <div class="price-icons">
-                                        <div class="price-div">
-                                            <div class="acr-listing-icons pt-0">
-                                                <div class="acr-listing-icon">
-                                                    <!-- tooltipPosition="top" pTooltip="Guests" -->
-                                                    <i class="pi pi-users"></i>
-                                                    Per Person:
-                                                    <span
-                                                        *ngIf="
-                                                            item.minPrice > 0
-                                                        "
-                                                        class="acr-listing-icon-value"
+                                    <!-- Wishlist Button -->
+                                    <button
+                                        class="wishlist-btn"
+                                        title="Add to wishlist"
+                                    >
+                                        <i class="pi pi-heart"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Content Section -->
+                                <div class="venue-content">
+                                    <div class="venue-content-top">
+                                        <!-- Title and Location -->
+                                        <div class="venue-header">
+                                            <h3 class="venue-title">
+                                                <a
+                                                    [routerLink]="[
+                                                        '/venue',
+                                                        item.metaUrl
+                                                    ]"
+                                                    [title]="item.name"
+                                                >
+                                                    {{ item.name }}
+                                                </a>
+                                            </h3>
+                                            <div class="venue-location">
+                                                <i class="pi pi-map-marker"></i>
+                                                <span
+                                                    >{{ item.subarea
+                                                    }}<span *ngIf="item.subarea"
+                                                        >,</span
                                                     >
-                                                        {{
-                                                            item.minPrice
-                                                                | currency
-                                                                    : "INR"
-                                                        }}
-                                                    </span>
-                                                    <span
-                                                        *ngIf="
-                                                            item.minPrice == 0
-                                                        "
-                                                        class="acr-listing-icon-value"
-                                                    >
-                                                        N/A
-                                                    </span>
-                                                </div>
+                                                    {{ item.cityname }}</span
+                                                >
+                                                <span
+                                                    class="distance-info"
+                                                    *ngIf="
+                                                        item.distanceText &&
+                                                        locationEnabled
+                                                    "
+                                                >
+                                                    • {{ item.distanceText }}
+                                                </span>
                                             </div>
                                         </div>
-                                        <div class="category-icon"></div>
+
+                                        <!-- Description -->
+                                        <div class="venue-description">
+                                            <p
+                                                [innerHTML]="item.shortdescription"
+                                            ></p>
+                                        </div>
+
+                                        <!-- Price and Capacity -->
+                                        <div class="venue-details">
+                                            <div class="venue-price">
+                                                <span class="price-label"
+                                                    >Per Person:</span
+                                                >
+                                                <span
+                                                    class="price-value"
+                                                    *ngIf="item.minPrice > 0"
+                                                >
+                                                    {{
+                                                        item.minPrice
+                                                            | currency : "INR"
+                                                    }}
+                                                </span>
+                                                <span
+                                                    class="price-value"
+                                                    *ngIf="item.minPrice == 0"
+                                                >
+                                                    N/A
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="listing-gallery-wrapper">
-                                        <a
-                                            [routerLink]="['/venue', item.metaUrl]"
-                                            class="btn-custom btn-sm secondary"
-                                            >View Details</a
-                                        >
-                                        <!-- NEW: Call Now Button -->
-                                        <a
-                                            href="tel:+917506422269"
-                                            class="btn-custom btn-sm primary call-now-btn"
-                                            (click)="onCallClick($event, item.id)"
-                                            [class.calling]="isCallActive && callingVenueId === item.id"
-                                            >
-                                            <i class="pi pi-phone"></i>
-                                            <span class="call-text">{{ (isCallActive && callingVenueId === item.id) ? 'Calling...' : 'Call Now' }}</span>
-                                        </a>
-                                        <!-- <a  [routerLink]="['/venue', item.id]" class=" btn-custom btn-sm secondary">View
-                                                Details</a> -->
-                                        <div class="review-list">
-                                            <div
-                                                class="icon-review google-ratings"
-                                            >
+
+                                    <div class="venue-content-bottom">
+                                        <!-- Ratings -->
+                                        <div class="venue-ratings">
+                                            <div class="rating-item google-rating">
                                                 <img
                                                     src="assets/img/svg/google.png"
-                                                    alt="Google ratings icon"
+                                                    alt="Google ratings"
+                                                    class="rating-icon"
                                                 />
-                                                <i
-                                                    class="pi pi-star-fill"
-                                                    style="font-size: 12px"
-                                                    ><span class="rating-style">
-                                                        <b>
-                                                            {{
-                                                                item.googleRating
-                                                            }}</b
-                                                        >/5</span
-                                                    ></i
-                                                >
-                                                <!-- <p-rating [(ngModel)]="val4" readonly="true" [cancel]="false"></p-rating> -->
+                                                <div class="rating-info">
+                                                    <i class="pi pi-star-fill"></i>
+                                                    <span class="rating-value"
+                                                        >{{
+                                                            item.googleRating
+                                                        }}/5</span
+                                                    >
+                                                </div>
                                             </div>
-                                            <div class="vl"></div>
+                                            <div class="rating-divider"></div>
                                             <div
-                                                class="icon-review eazy-venue-ratings"
+                                                class="rating-item eazyvenue-rating"
                                             >
                                                 <img
                                                     src="assets/images/logo.png"
-                                                    alt="EazyVenue ratings icon"
+                                                    alt="EazyVenue ratings"
+                                                    class="rating-icon"
                                                 />
-                                                <i
-                                                    class="pi pi-star-fill"
-                                                    style="font-size: 12px"
-                                                    ><span class="rating-style">
-                                                        <b>
-                                                            {{
-                                                                item.eazyVenueRating
-                                                            }}</b
-                                                        >/5</span
-                                                    ></i
-                                                >
-                                                <!-- <p-rating [(ngModel)]="val4" readonly="true" [cancel]="false"></p-rating> -->
+                                                <div class="rating-info">
+                                                    <i class="pi pi-star-fill"></i>
+                                                    <span class="rating-value"
+                                                        >{{
+                                                            item.eazyVenueRating
+                                                        }}/5</span
+                                                    >
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                        <!-- Action Buttons -->
+                                        <div class="venue-actions">
+                                            <a
+                                                [routerLink]="[
+                                                    '/venue',
+                                                    item.metaUrl
+                                                ]"
+                                                class="btn-view-details"
+                                            >
+                                                View Details
+                                            </a>
+                                            <a
+                                                href="tel:+917506422269"
+                                                class="btn-call-now"
+                                                (click)="
+                                                    onCallClick($event, item.id)
+                                                "
+                                                [class.calling]="
+                                                    isCallActive &&
+                                                    callingVenueId === item.id
+                                                "
+                                            >
+                                                <i class="pi pi-phone"></i>
+                                                <span class="call-text">{{
+                                                    isCallActive &&
+                                                    callingVenueId === item.id
+                                                        ? "Calling..."
+                                                        : "Call Now"
+                                                }}</span>
+                                            </a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row mt-4 show-more-container">
-                        <div class="col-12 text-center" *ngIf="showMoreVisible">
+                </div>
+            </div>
+                    <!-- <div class="row mt-4 show-more-container"> -->
+                        <!-- <div class="col-12 text-center" *ngIf="showMoreVisible">
                             <button
                             (click)="handleShowMoreClick()"
                                 class="btn-custom btn-lg secondary show-more-btn"
                             >
                                 <span *ngIf="!loading">Show More Venues</span>
                             </button>
-                        </div>
+                        </div> -->
+
+
+                        <!-- Show More Button -->
+                    <div class="show-more-section" *ngIf="showMoreVisible">
+                        <button
+                            (click)="handleShowMoreClick()"
+                            class="show-more-venues-btn"
+                        >
+                            <span *ngIf="!loading">Show More Venues</span>
+                            <span *ngIf="loading">Loading...</span>
+                        </button>
                     </div>
                 </div>
 
-                <p-dialog
+                <!-- <p-dialog
 [visible]="bannerPopupVisible && !isMobileView"
 [modal]="true"
 [closable]="true"
@@ -760,10 +955,109 @@ aria-describedby="banner-description"
         ></button>
     </div>
 </div>
-</p-dialog>
+</p-dialog> -->
+<p-dialog
+                    [visible]="bannerPopupVisible && !isMobileView"
+                    [modal]="true"
+                    [closable]="true"
+                    [showHeader]="false"
+                    [baseZIndex]="9999"
+                    [style]="{ width: '80vw', maxWidth: '800px' }"
+                    [draggable]="false"
+                    [resizable]="false"
+                    styleClass="banner-popup-dialog"
+                    aria-label="Promotional Banner Video"
+                    role="dialog"
+                    aria-describedby="banner-description"
+                >
+                    <div class="banner-container">
+                        <div id="banner-description" class="sr-only">
+                            Promotional video showcasing EazyVenue's premium
+                            venues and services
+                        </div>
+                        <button
+                            class="close-banner-btn"
+                            (click)="closeBannerPopup()"
+                            aria-label="Close banner"
+                        >
+                            <i class="pi pi-times"></i>
+                        </button>
+                        <video
+                            #bannerVideo
+                            autoplay
+                            loop
+                            muted
+                            playsinline
+                            preload="auto"
+                            class="dubai-fullscreen-video"
+                        >
+                            <source src="assets/Dubai.mp4" type="video/mp4" />
+                        </video>
+                        <div class="banner-cta">
+                            <button
+                                pButton
+                                label="Enquiry Now"
+                                class="p-button-rounded p-button-danger secondary btn-custom"
+                                (click)="handleEnquiry()"
+                            ></button>
+                        </div>
+                    </div>
+                </p-dialog>
 
 <!-- Mobile Dialog -->
-<p-dialog
+<!-- Mobile Dialog -->
+                <p-dialog
+                    [visible]="bannerPopupVisible && isMobileView"
+                    [modal]="true"
+                    [closable]="true"
+                    [showHeader]="false"
+                    [baseZIndex]="9999"
+                    [style]="{ width: '90vw', maxWidth: '360px' }"
+                    [draggable]="false"
+                    [resizable]="false"
+                    styleClass="mobile-banner-popup-dialog"
+                    aria-label="Mobile Promotional Banner"
+                    role="dialog"
+                    aria-describedby="mobile-banner-description"
+                >
+                    <div class="mobile-banner-container">
+                        <div id="mobile-banner-description" class="sr-only">
+                            Mobile promotional content showcasing EazyVenue's
+                            services and special offers
+                        </div>
+                        <button
+                            class="close-banner-btn"
+                            (click)="closeBannerPopup()"
+                            aria-label="Close banner"
+                        >
+                            <i class="pi pi-times"></i>
+                        </button>
+                        <video
+                            autoplay
+                            loop
+                            muted
+                            playsinline
+                            preload="auto"
+                            class="mobile-video"
+                        >
+                            <source
+                                src="assets/Dubai_mobile.mp4"
+                                type="video/mp4"
+                            />
+                        </video>
+                        <div class="banner-cta">
+                            <button
+                                pButton
+                                label="Enquiry"
+                                class="p-button-sm p-button-success"
+                                (click)="handleEnquiry()"
+                            ></button>
+                        </div>
+                    </div>
+                </p-dialog>
+
+
+<!-- <p-dialog
 [visible]="bannerPopupVisible && isMobileView"
 [modal]="true"
 [closable]="true"
@@ -801,14 +1095,465 @@ aria-describedby="mobile-banner-description"
         ></button>
     </div>
 </div>
-</p-dialog>
+</p-dialog> -->
 
 
                 <!-- No venues message -->
                 <div *ngIf="noVenueFlag" class="col-md-12 text-center my-5">
                     <h3>No venues found matching your criteria</h3>
                 </div>
-                <style>
+                </div>
+        </div>
+    </div>
+</div>
+
+<!-- Categories Section -->
+<div class="categories-section">
+    <div class="container-fluid">
+        <div class="section-header text-center">
+            <h2 class="section-title">Explore Event Categories</h2>
+            <p class="section-subtitle">
+                Find the perfect venue for every occasion
+            </p>
+        </div>
+        <div class="categories-grid">
+            <div
+                class="category-card wedding-category"
+                (click)="filterByCategory('wedding')"
+            >
+                <div class="category-image">
+                    <img
+                        src="assets/images/venues/wedding-venue.jpg"
+                        alt="Wedding venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    />
+                </div>
+                <div class="category-overlay">
+                    <div class="category-content">
+                        <i class="category-icon pi pi-heart"></i>
+                        <h3 class="category-name">Wedding</h3>
+                        <p class="category-description">
+                            Beautiful venues for your special day
+                        </p>
+                        <span class="category-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="category-card reception-category"
+                (click)="filterByCategory('reception')"
+            >
+                <div class="category-image">
+                    <img
+                        src="assets/images/venues/reception-venue.jpg"
+                        alt="Reception venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    />
+                </div>
+                <div class="category-overlay">
+                    <div class="category-content">
+                        <i class="category-icon pi pi-calendar"></i>
+                        <h3 class="category-name">Reception</h3>
+                        <p class="category-description">
+                            Elegant spaces for your celebration
+                        </p>
+                        <span class="category-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="category-card corporate-events-category"
+                (click)="filterByCategory('corporate-events')"
+            >
+                <div class="category-image">
+                    <img
+                        src="assets/images/venues/corporate-venue.jpg"
+                        alt="Corporate events venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    />
+                </div>
+                <div class="category-overlay">
+                    <div class="category-content">
+                        <i class="category-icon pi pi-briefcase"></i>
+                        <h3 class="category-name">Corporate Events</h3>
+                        <p class="category-description">
+                            Professional venues for corporate gatherings
+                        </p>
+                        <span class="category-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="category-card corporate-meetings-category"
+                (click)="filterByCategory('corporate-meetings')"
+            >
+                <div class="category-image">
+                    <img
+                        src="assets/images/venues/meeting-venue.jpg"
+                        alt="Corporate meetings venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    />
+                </div>
+                <div class="category-overlay">
+                    <div class="category-content">
+                        <i class="category-icon pi pi-users"></i>
+                        <h3 class="category-name">Corporate Meetings</h3>
+                        <p class="category-description">
+                            Modern spaces for productive meetings
+                        </p>
+                        <span class="category-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="category-card anniversary-category"
+                (click)="filterByCategory('anniversary')"
+            >
+                <div class="category-image">
+                    <img
+                        src="assets/images/venues/anniversary-venue.jpg"
+                        alt="Anniversary venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    />
+                </div>
+                <div class="category-overlay">
+                    <div class="category-content">
+                        <i class="category-icon pi pi-star"></i>
+                        <h3 class="category-name">Anniversary</h3>
+                        <p class="category-description">
+                            Memorable venues for special milestones
+                        </p>
+                        <span class="category-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FAQs Section -->
+<div class="faqs-section">
+    <div class="container-fluid">
+        <div class="section-header text-center">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">
+                Get answers to common venue booking questions
+            </p>
+        </div>
+        <div class="faqs-container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <p-accordion [multiple]="true" class="modern-accordion">
+                        <p-accordionTab
+                            header="How far in advance should I book a venue?"
+                        >
+                            <p>
+                                We recommend booking your venue at least 6-12
+                                months in advance for peak seasons (spring and
+                                fall) and 3-6 months for off-peak times. Popular
+                                venues tend to book up quickly, especially for
+                                weekends.
+                            </p>
+                        </p-accordionTab>
+
+                        <p-accordionTab
+                            header="What's included in the venue rental price?"
+                        >
+                            <p>
+                                Basic venue rental typically includes tables,
+                                chairs, basic lighting, and access to restrooms.
+                                Additional services like catering, decorations,
+                                sound equipment, and extended hours may incur
+                                extra charges. Always check with the venue for
+                                specific inclusions.
+                            </p>
+                        </p-accordionTab>
+
+                        <p-accordionTab
+                            header="Can I visit the venue before booking?"
+                        >
+                            <p>
+                                Absolutely! We highly recommend scheduling a
+                                site visit before making your final decision.
+                                Most venues offer guided tours where you can see
+                                the space, ask questions, and envision your
+                                event. Contact us to arrange a viewing.
+                            </p>
+                        </p-accordionTab>
+
+                        <p-accordionTab
+                            header="What happens if I need to cancel my booking?"
+                        >
+                            <p>
+                                Cancellation policies vary by venue and are
+                                outlined in your booking agreement. Generally,
+                                there's a grace period for full refunds,
+                                followed by scaled refund amounts. We recommend
+                                purchasing event insurance for added protection.
+                            </p>
+                        </p-accordionTab>
+
+                        <p-accordionTab
+                            header="Do venues provide catering services?"
+                        >
+                            <p>
+                                Many venues offer in-house catering or have
+                                preferred vendor lists. Some venues require you
+                                to use their catering exclusively, while others
+                                allow outside caterers. We'll help you
+                                understand each venue's catering policies and
+                                options.
+                            </p>
+                        </p-accordionTab>
+
+                        <p-accordionTab
+                            header="Are there any hidden fees I should know about?"
+                        >
+                            <p>
+                                EazyVenue believes in transparent pricing.
+                                Common additional fees include service charges,
+                                gratuities, overtime fees, damage deposits, and
+                                vendor fees. We provide a detailed breakdown of
+                                all costs upfront so there are no surprises.
+                            </p>
+                        </p-accordionTab>
+                    </p-accordion>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews Section -->
+<div class="reviews-section">
+    <div class="container-fluid">
+        <div class="section-header text-center">
+            <h2 class="section-title">What Our Customers Say</h2>
+            <p class="section-subtitle">Real experiences from real customers</p>
+        </div>
+        <div class="reviews-container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <i class="pi pi-user"></i>
+                                </div>
+                                <div class="reviewer-details">
+                                    <h4 class="reviewer-name">Sarah Johnson</h4>
+                                    <p class="reviewer-event">
+                                        Wedding Reception
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            <p>
+                                "EazyVenue made finding our dream wedding venue
+                                so simple! The platform is user-friendly and the
+                                venue options are incredible. Our special day
+                                was absolutely perfect thanks to their help."
+                            </p>
+                        </div>
+                        <div class="review-date">
+                            <span>2 weeks ago</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <i class="pi pi-user"></i>
+                                </div>
+                                <div class="reviewer-details">
+                                    <h4 class="reviewer-name">Michael Chen</h4>
+                                    <p class="reviewer-event">
+                                        Corporate Event
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            <p>
+                                "Outstanding service! Found the perfect
+                                corporate event space within minutes. The
+                                booking process was seamless and the customer
+                                support team was incredibly helpful throughout."
+                            </p>
+                        </div>
+                        <div class="review-date">
+                            <span>1 month ago</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <i class="pi pi-user"></i>
+                                </div>
+                                <div class="reviewer-details">
+                                    <h4 class="reviewer-name">
+                                        Emily Rodriguez
+                                    </h4>
+                                    <p class="reviewer-event">
+                                        Anniversary Celebration
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            <p>
+                                "Amazing variety of venues! We celebrated our
+                                25th anniversary at a beautiful venue we found
+                                through EazyVenue. The photos and descriptions
+                                were accurate, and the booking was hassle-free."
+                            </p>
+                        </div>
+                        <div class="review-date">
+                            <span>3 weeks ago</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <i class="pi pi-user"></i>
+                                </div>
+                                <div class="reviewer-details">
+                                    <h4 class="reviewer-name">
+                                        David Thompson
+                                    </h4>
+                                    <p class="reviewer-event">
+                                        Corporate Meeting
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star"></i>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            <p>
+                                "Great platform for business events. Found
+                                multiple options within our budget and location
+                                preferences. The filtering system is very
+                                efficient and saves a lot of time."
+                            </p>
+                        </div>
+                        <div class="review-date">
+                            <span>2 months ago</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <i class="pi pi-user"></i>
+                                </div>
+                                <div class="reviewer-details">
+                                    <h4 class="reviewer-name">Lisa Park</h4>
+                                    <p class="reviewer-event">Birthday Party</p>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            <p>
+                                "Excellent experience from start to finish! The
+                                venue recommendations were spot-on, and the
+                                entire process was smooth. Highly recommend
+                                EazyVenue for any event planning needs."
+                            </p>
+                        </div>
+                        <div class="review-date">
+                            <span>1 month ago</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <i class="pi pi-user"></i>
+                                </div>
+                                <div class="reviewer-details">
+                                    <h4 class="reviewer-name">Robert Wilson</h4>
+                                    <p class="reviewer-event">Conference</p>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                                <i class="pi pi-star-fill"></i>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            <p>
+                                "Professional service and great venue selection.
+                                Organized a successful conference for 200+
+                                attendees. The venue met all our requirements
+                                and the staff was very accommodating."
+                            </p>
+                        </div>
+                        <div class="review-date">
+                            <span>6 weeks ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <!-- <style>
                     /* Screen reader only content */
                     .sr-only {
                         position: absolute;
@@ -931,11 +1676,10 @@ aria-describedby="mobile-banner-description"
                     .listing-thumbnail a[href] video::-webkit-media-controls-panel {
                         pointer-events: auto;
                     }
-                </style>
+                </style> -->
             </div>
         </div>
     </div>
-</div>
 
 <p-dialog
     header=""
@@ -1004,10 +1748,25 @@ aria-describedby="mobile-banner-description"
         </form>
     </div>
 </p-dialog>
-<p-dialog [(visible)]="otpPopup" [modal]="true" class="otp-popup-login" 
+
+<!-- <p-dialog [(visible)]="otpPopup" [modal]="true" class="otp-popup-login" 
     aria-label="OTP Verification" role="dialog" aria-describedby="otp-description">
     <div class="login-popup">
-        <div id="otp-description" class="sr-only">Enter the OTP (One Time Password) sent to your mobile number to verify your account</div>
+        <div id="otp-description" class="sr-only">Enter the OTP (One Time Password) sent to your mobile number to verify your account</div> -->
+
+        <p-dialog
+    [(visible)]="otpPopup"
+    [modal]="true"
+    class="otp-popup-login"
+    aria-label="OTP Verification"
+    role="dialog"
+    aria-describedby="otp-description"
+>
+    <div class="login-popup">
+        <div id="otp-description" class="sr-only">
+            Enter the OTP (One Time Password) sent to your mobile number to
+            verify your account
+        </div>
         <!-- <h2 class="offer-popup-heading">Receive<span class="offer-popup-heading1"> 20%</span> off on our Photography now!</h2> -->
         <form (ngSubmit)="otpSubmit()">
             <div class="form-group mb-3 p-2">
@@ -1265,7 +2024,11 @@ aria-describedby="mobile-banner-description"
         >
             <div class="city-field col-md-12 p-p-0">
                 <label for="" class="icons-image">
-                    <img src="assets/images/category-icons/celebration.svg" alt="Celebration category icon" />
+                    <img
+                        src="assets/images/category-icons/celebration.svg"
+                        alt="Celebration category icon"
+                    />
+                    <!-- <img src="assets/images/category-icons/celebration.svg" alt="Celebration category icon" /> -->
                 </label>
                 <span class="p-fluid">
                     <p-dropdown
@@ -1323,7 +2086,10 @@ aria-describedby="mobile-banner-description"
             <div class="col-md-12 p-p-0 guest_field_list">
                 <div class="Guest-field">
                     <label for="" class="icons-image">
-                        <img src="assets/images/svg-icons/guest-icon.svg" alt="Guest count icon" />
+                         <img
+                            src="assets/images/svg-icons/guest-icon.svg"
+                            alt="Guest count icon"
+                        />
                     </label>
                     <p-dropdown
                         [editable]="true"
@@ -1338,7 +2104,9 @@ aria-describedby="mobile-banner-description"
             </div>
             <div class="col-md-12 p-p-0 calendar-div">
                 <label for="" class="icons-image"
-                    ><img src="assets/images/svg-icons/calender-icon.svg" alt="Calendar date selection icon"
+                    ><img
+                        src="assets/images/svg-icons/calender-icon.svg"
+                        alt="Calendar date selection icon"
                 /></label>
                 <!-- <p-calendar [(ngModel)]="rangeDates" [showButtonBar]="true" selectionMode="range" (click)="onClickClear()"></p-calendar> -->
                 <p-calendar

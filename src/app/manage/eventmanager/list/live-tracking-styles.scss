@@ -951,17 +951,146 @@
   }
 }
 
-// Live Indicator in Header
+// Live Indicator in Header - Compact Modern Design
 .live-indicator {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 12px;
+  // font-size: 12px;
+  padding: 3px 8px;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.08) 0%, rgba(0, 255, 136, 0.03) 100%);
+  border: 1px solid rgba(0, 255, 136, 0.25);
+  border-radius: 12px;
+  font-size: 9px;
+  font-weight: 600;
   color: #00ff88;
-  margin-left: 15px;
+  // margin-left: 15px;
+  margin-left: 20px;
+  margin-right: 20px;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  
+  // Animated background glow
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.15), transparent);
+    animation: shimmer 3s infinite;
+  }
 
   .pulse-dot {
-    animation: pulse 1.5s infinite;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #00ff88;
+    position: relative;
+    animation: pulse-enhanced 1.5s infinite;
+    flex-shrink: 0;
+    
+    // Add outer glow ring
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      width: 10px;
+      height: 10px;
+      border: 1px solid rgba(0, 255, 136, 0.25);
+      border-radius: 50%;
+      animation: pulse-ring 1.5s infinite;
+    }
+  }
+
+  .live-text {
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+    font-size: inherit;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.12) 0%, rgba(0, 255, 136, 0.06) 100%);
+    border-color: rgba(0, 255, 136, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 255, 136, 0.2);
+  }
+}
+
+// Enhanced pulse animation for the dot
+@keyframes pulse-enhanced {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Pulse ring animation for outer glow
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+// Shimmer effect animation
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .live-indicator {
+    padding: 2px 6px;
+    gap: 4px;
+    font-size: 8px;
+    margin-left: 12px;
+    margin-right: 12px;
+    border-radius: 10px;
+    
+    .pulse-dot {
+      width: 5px;
+      height: 5px;
+      
+      &::before {
+        top: -1.5px;
+        left: -1.5px;
+        width: 8px;
+        height: 8px;
+        border-width: 0.5px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .live-indicator {
+    margin-left: 8px;
+    margin-right: 8px;
   }
 }
 
@@ -978,22 +1107,73 @@
     .live-status {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
+      // gap: 6px;
+      gap: 8px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      // font-size: 12px;
+      // font-weight: 600;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      position: relative;
 
       &.online {
         color: #00ff88;
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%);
+        border: 1px solid rgba(0, 255, 136, 0.2);
+        
+        i {
+          color: #00ff88;
+          font-size: 10px;
+          animation: pulse-enhanced 1.5s infinite;
+          
+          &.pulse-dot {
+            position: relative;
+            
+            &::before {
+              content: '';
+              position: absolute;
+              top: -2px;
+              left: -2px;
+              width: 14px;
+              height: 14px;
+              border: 1px solid rgba(0, 255, 136, 0.3);
+              border-radius: 50%;
+              animation: pulse-ring 1.5s infinite;
+            }
+          }
+        }
+        
+        // Add shimmer effect
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.2), transparent);
+          animation: shimmer 3s infinite;
+          border-radius: inherit;
+        }
       }
 
       &:not(.online) {
-        color: #999;
-      }
+        // color: #999;
+        color: #6b7280;
+        background: rgba(107, 114, 128, 0.1);
+        border: 1px solid rgba(107, 114, 128, 0.2);
 
       i {
-        font-size: 8px;
+        // font-size: 8px;
+        color: #6b7280;
+          font-size: 8px;
       }
     }
+  }
 
     .activity-summary {
       display: flex;
@@ -1342,6 +1522,56 @@
 
         i {
           color: #667eea;
+        }
+        // Enhanced styling for h4 with live indicator
+        .live-indicator {
+          margin-left: auto;
+          padding: 4px 10px;
+          background: linear-gradient(135deg, rgba(0, 255, 136, 0.15) 0%, rgba(0, 255, 136, 0.08) 100%);
+          border: 1px solid rgba(0, 255, 136, 0.3);
+          border-radius: 16px;
+          font-size: 10px;
+          font-weight: 700;
+          color: #00ff88;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          position: relative;
+          overflow: hidden;
+
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.2), transparent);
+            animation: shimmer 2.5s infinite;
+          }
+
+          .pulse-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #00ff88;
+            position: relative;
+            animation: pulse-enhanced 1.5s infinite;
+            
+            &::before {
+              content: '';
+              position: absolute;
+              top: -3px;
+              left: -3px;
+              width: 12px;
+              height: 12px;
+              border: 1px solid rgba(0, 255, 136, 0.3);
+              border-radius: 50%;
+              animation: pulse-ring 1.5s infinite;
+            }
+          }
         }
       }
 

@@ -194,7 +194,13 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
   selectedVendorCategory: string = "";
   vendorPageNumber: number = 1;
   vendorRows: number = 10;
-  vendorLoading: boolean = false;
+  vendorLoading: boolean = false;  
+
+  // Call Now functionality
+  isCallActive: boolean = false;
+  callingVenueId: string | null = null;
+  callTimer: any;
+  isMobile: boolean = false;
     occasion: City[];
     cities: City[];
     selectedCity1: City;
@@ -2122,6 +2128,10 @@ isCompareReview(review: any): boolean {
 
     checkScreenSize() {
         this.isMobile = window.innerWidth <= 768;
+    }
+
+    getWindowWidth() {
+        return typeof window !== 'undefined' ? window.innerWidth : 0;
     }
 
 getSimilarVenues(): void {
@@ -4308,6 +4318,49 @@ loadMoreGoogleReviews(): void {
     }
     onClickCloseCancelation() {
         this.visible = false;
+    }
+
+    // Call Now functionality
+    onCallClick(event: Event, venueId?: string): void {
+        // For similar venues, set the calling venue ID
+        if (venueId) {
+            this.callingVenueId = venueId;
+        }
+        
+        // Set calling state
+        this.isCallActive = true;
+        
+        // Clear any existing timer
+        if (this.callTimer) {
+            clearTimeout(this.callTimer);
+        }
+        
+        // Start countdown timer
+        let countdown = 3;
+        this.callTimer = countdown;
+        
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            this.callTimer = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                this.isCallActive = false;
+                this.callingVenueId = null;
+                this.callTimer = null;
+            }
+        }, 1000);
+        
+        // Don't prevent the default tel: link behavior
+        // The browser will handle opening the dialer
+    }
+
+    handleCallClick() {
+        const phoneNumber = this.venueDetails?.phone || '+917506422269';
+        // Trigger phone call
+        window.location.href = `tel:${phoneNumber}`;
+        // Also trigger the visual feedback
+        this.onCallClick(new Event('click'));
     }
 
     onClickSendEnquiries(mode) {

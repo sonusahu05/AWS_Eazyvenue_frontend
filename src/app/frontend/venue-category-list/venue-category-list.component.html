@@ -1513,6 +1513,16 @@
                                                     class="btn-custom btn-sm secondary"
                                                     >View Details
                                                 </a>
+                                                <!-- Call Now Button -->
+                                                <a
+                                                    href="tel:+917506422269"
+                                                    (click)="onCallClick($event, venue.id)"
+                                                    class="btn-custom btn-sm primary call-now-btn"
+                                                    [class.calling]="isCallActive && callingVenueId === venue.id"
+                                                    >
+                                                    <i class="pi pi-phone"></i>
+                                                    <span class="call-text">{{ (isCallActive && callingVenueId === venue.id) ? 'Calling...' : 'Call Now' }}</span>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

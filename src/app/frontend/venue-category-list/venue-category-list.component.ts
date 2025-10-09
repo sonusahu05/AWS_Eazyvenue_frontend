@@ -198,6 +198,11 @@ export class VenueCategoryListComponent {
     public selectedAmenitiesNew: any[] = [];
     public swimmingPoolFilter: boolean = false;
     public parkingFilter: boolean = false;
+
+    // Call Now functionality
+    isCallActive: boolean = false;
+    callingVenueId: string | null = null;
+    callTimer: any;
     public acFilter: boolean = false;
     public greenRoomsFilter: boolean = false;
     public powerBackupFilter: boolean = false;
@@ -1710,6 +1715,21 @@ onOtpChange(otp: string) {
             },
             reject: () => {},
         });
+    }
+
+    onCallClick(venue) {
+        this.callingVenueId = venue.id;
+        this.isCallActive = true;
+        this.callTimer = 3;
+        
+        const countdown = setInterval(() => {
+            this.callTimer--;
+            if (this.callTimer <= 0) {
+                clearInterval(countdown);
+                this.isCallActive = false;
+                this.callingVenueId = null;
+            }
+        }, 1000);
     }
 
     onSelectAmenities(amenity, event) {
