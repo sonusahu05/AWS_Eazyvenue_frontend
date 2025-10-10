@@ -60,6 +60,7 @@ import { AboutUsComponent } from './frontend/about-us/about-us.component';
 import { ContactUsComponent } from './frontend/contact-us/contact-us.component';
 import { BlogComponent } from './frontend/blog/blog.component';
 import { SignInComponent } from './frontend/sign-in/sign-in.component';
+import { QuizChallengeComponent } from './frontend/quiz-challenge/quiz-challenge.component';
 import { UserComponent } from './manage/user/user.component';
 import { UserAddComponent } from './manage/user/add/add.component';
 import { UserEditComponent } from './manage/user/edit/edit.component';
@@ -126,6 +127,7 @@ import { HomeDataResolver } from './services/home-data.resolver';
             { path: 'services', component: ServicesComponent },
             { path: 'blog', component: BlogComponent },
             { path: 'sign-in', component: SignInComponent },
+            { path: 'quiz-challenge', component: QuizChallengeComponent },
             { 
                 path: 'careers',
                 loadChildren: () => import('./frontend/careers/careers.module').then(m => m.CareersModule)

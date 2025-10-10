@@ -1107,102 +1107,209 @@ aria-describedby="mobile-banner-description"
     </div>
 </div>
 
-<!-- Categories Section -->
+<!-- Cities Section -->
 <div class="categories-section">
     <div class="container-fluid">
         <div class="section-header text-center">
-            <h2 class="section-title">Explore Event Categories</h2>
+            <!-- <h2 class="section-title">Explore Event Categories</h2> -->
+             <h2 class="section-title">Browse in Cities</h2>
             <p class="section-subtitle">
-                Find the perfect venue for every occasion
+                Find the perfect venue in your preferred city
+            </p>
+        </div>
+        <div class="categories-grid">
+            <!-- <div
+                class="category-card wedding-category"
+                (click)="filterByCategory('wedding')"
+            > -->
+            <div
+                class="category-card mumbai-city"
+                (click)="filterByCity('mumbai')"
+            >
+                <div class="category-image">
+                    <!-- <img
+                        src="assets/images/venues/wedding-venue.jpg"
+                        alt="Wedding venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    /> -->
+                    <img
+                        src="assets/images/cities/mumbai-city.jpg"
+                        alt="Mumbai venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    />
+                </div>
+                <div class="category-overlay">
+                    <div class="category-content">
+                        <!-- <i class="category-icon pi pi-heart"></i>
+                        <h3 class="category-name">Wedding</h3>
+                        <p class="category-description">
+                            Beautiful venues for your special day
+                        </p> -->
+                        <i class="category-icon pi pi-map-marker"></i>
+                        <h3 class="category-name">Mumbai</h3>
+                        <p class="category-description">
+                            Premium venues in the city of dreams
+                        </p>
+                        <span class="category-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div
+                class="category-card reception-category"
+                (click)="filterByCategory('reception')"
+            > -->
+            <div
+                class="category-card thane-city"
+                (click)="filterByCity('thane')"
+            >
+                <div class="category-image">
+                    <!-- <img
+                        src="assets/images/venues/reception-venue.jpg"
+                        alt="Reception venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    /> -->
+                    <img
+                        src="assets/images/cities/thane-city.jpg"
+                        alt="Thane venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    />
+                </div>
+                <div class="category-overlay">
+                    <div class="category-content">
+                        <!-- <i class="category-icon pi pi-calendar"></i>
+                        <h3 class="category-name">Reception</h3>
+                        <p class="category-description">
+                            Elegant spaces for your celebration
+                        </p> -->
+                        <i class="category-icon pi pi-map-marker"></i>
+                        <h3 class="category-name">Thane</h3>
+                        <p class="category-description">
+                            Beautiful venues in the lake city
+                        </p>
+                        <span class="category-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div
+                class="category-card corporate-events-category"
+                (click)="filterByCategory('corporate-events')"
+            > -->
+            <div
+                class="category-card nashik-city"
+                (click)="filterByCity('nashik')"
+            >
+                <div class="category-image">
+                    <!-- <img
+                        src="assets/images/venues/corporate-venue.jpg"
+                        alt="Corporate events venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    /> -->
+                    <img
+                        src="assets/images/cities/nashik-city.jpg"
+                        alt="Nashik venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    />
+                </div>
+                <div class="category-overlay">
+                    <div class="category-content">
+                        <!-- <i class="category-icon pi pi-briefcase"></i>
+                        <h3 class="category-name">Corporate Events</h3>
+                        <p class="category-description">
+                            Professional venues for corporate gatherings
+                        </p> -->
+                        <i class="category-icon pi pi-map-marker"></i>
+                        <h3 class="category-name">Nashik</h3>
+                        <p class="category-description">
+                            Scenic venues in the wine capital
+                        </p>
+                        <span class="category-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Subareas Section -->
+<div class="categories-section subareas-section">
+    <div class="container-fluid">
+        <div class="section-header text-center">
+            <h2 class="section-title">Browse in Subareas</h2>
+            <p class="section-subtitle">
+                Discover venues in specific localities within Mumbai
             </p>
         </div>
         <div class="categories-grid">
             <div
-                class="category-card wedding-category"
-                (click)="filterByCategory('wedding')"
+                class="category-card powai-subarea"
+                (click)="filterBySubarea('powai')"
             >
-                <div class="category-image">
-                    <img
-                        src="assets/images/venues/wedding-venue.jpg"
-                        alt="Wedding venues"
-                        onerror="this.src='assets/images/bannerimage2.jpeg'"
-                    />
-                </div>
-                <div class="category-overlay">
-                    <div class="category-content">
-                        <i class="category-icon pi pi-heart"></i>
-                        <h3 class="category-name">Wedding</h3>
-                        <p class="category-description">
-                            Beautiful venues for your special day
-                        </p>
-                        <span class="category-arrow">→</span>
-                    </div>
-                </div>
-            </div>
-
-            <div
-                class="category-card reception-category"
-                (click)="filterByCategory('reception')"
-            >
-                <div class="category-image">
-                    <img
-                        src="assets/images/venues/reception-venue.jpg"
-                        alt="Reception venues"
-                        onerror="this.src='assets/images/bannerimage2.jpeg'"
-                    />
-                </div>
-                <div class="category-overlay">
-                    <div class="category-content">
-                        <i class="category-icon pi pi-calendar"></i>
-                        <h3 class="category-name">Reception</h3>
-                        <p class="category-description">
-                            Elegant spaces for your celebration
-                        </p>
-                        <span class="category-arrow">→</span>
-                    </div>
-                </div>
-            </div>
-
-            <div
-                class="category-card corporate-events-category"
-                (click)="filterByCategory('corporate-events')"
-            >
-                <div class="category-image">
-                    <img
-                        src="assets/images/venues/corporate-venue.jpg"
-                        alt="Corporate events venues"
-                        onerror="this.src='assets/images/bannerimage2.jpeg'"
-                    />
-                </div>
-                <div class="category-overlay">
-                    <div class="category-content">
-                        <i class="category-icon pi pi-briefcase"></i>
-                        <h3 class="category-name">Corporate Events</h3>
-                        <p class="category-description">
-                            Professional venues for corporate gatherings
-                        </p>
-                        <span class="category-arrow">→</span>
-                    </div>
-                </div>
-            </div>
-
-            <div
+            <!-- <div
                 class="category-card corporate-meetings-category"
                 (click)="filterByCategory('corporate-meetings')"
-            >
+            > -->
                 <div class="category-image">
-                    <img
+                    <!-- <img
                         src="assets/images/venues/meeting-venue.jpg"
                         alt="Corporate meetings venues"
                         onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    /> -->
+                    <img
+                        src="assets/images/subareas/powai-subarea.jpg"
+                        alt="Powai venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
                     />
                 </div>
                 <div class="category-overlay">
                     <div class="category-content">
-                        <i class="category-icon pi pi-users"></i>
+                        <!-- <i class="category-icon pi pi-users"></i>
                         <h3 class="category-name">Corporate Meetings</h3>
                         <p class="category-description">
                             Modern spaces for productive meetings
+                        </p> -->
+                        <i class="category-icon pi pi-map"></i>
+                        <h3 class="category-name">Powai</h3>
+                        <p class="category-description">
+                            Modern venues near the IT hub and lake
+                        </p>
+                        <span class="category-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div
+                class="category-card anniversary-category"
+                (click)="filterByCategory('anniversary')"
+            > -->
+            <div
+                class="category-card andheri-east-subarea"
+                (click)="filterBySubarea('andheri-east')"
+            >
+                <div class="category-image">
+                    <!-- <img
+                        src="assets/images/venues/anniversary-venue.jpg"
+                        alt="Anniversary venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    /> -->
+                    <img
+                        src="assets/images/subareas/andheri-east-subarea.jpg"
+                        alt="Andheri East venues"
+                        onerror="this.src='assets/images/bannerimage2.jpeg'"
+                    />
+                </div>
+                <div class="category-overlay">
+                    <div class="category-content">
+                        <!-- <i class="category-icon pi pi-star"></i>
+                        <h3 class="category-name">Anniversary</h3>
+                        <p class="category-description">
+                            Memorable venues for special milestones
+                        </p> -->
+                        <i class="category-icon pi pi-map"></i>
+                        <h3 class="category-name">Andheri East</h3>
+                        <p class="category-description">
+                            Premium venues in the commercial district
                         </p>
                         <span class="category-arrow">→</span>
                     </div>
@@ -1210,22 +1317,22 @@ aria-describedby="mobile-banner-description"
             </div>
 
             <div
-                class="category-card anniversary-category"
-                (click)="filterByCategory('anniversary')"
+                class="category-card goregaon-subarea"
+                (click)="filterBySubarea('goregaon')"
             >
                 <div class="category-image">
                     <img
-                        src="assets/images/venues/anniversary-venue.jpg"
-                        alt="Anniversary venues"
+                        src="assets/images/subareas/goregaon-subarea.jpg"
+                        alt="Goregaon venues"
                         onerror="this.src='assets/images/bannerimage2.jpeg'"
                     />
                 </div>
                 <div class="category-overlay">
                     <div class="category-content">
-                        <i class="category-icon pi pi-star"></i>
-                        <h3 class="category-name">Anniversary</h3>
+                        <i class="category-icon pi pi-map"></i>
+                        <h3 class="category-name">Goregaon</h3>
                         <p class="category-description">
-                            Memorable venues for special milestones
+                            Accessible venues with excellent connectivity
                         </p>
                         <span class="category-arrow">→</span>
                     </div>
@@ -1345,7 +1452,8 @@ aria-describedby="mobile-banner-description"
                                     <i class="pi pi-user"></i>
                                 </div>
                                 <div class="reviewer-details">
-                                    <h4 class="reviewer-name">Sarah Johnson</h4>
+                                    <!-- <h4 class="reviewer-name">Sarah Johnson</h4> -->
+                                     <h4 class="reviewer-name">Sarah John</h4>
                                     <p class="reviewer-event">
                                         Wedding Reception
                                     </p>
@@ -1381,7 +1489,8 @@ aria-describedby="mobile-banner-description"
                                     <i class="pi pi-user"></i>
                                 </div>
                                 <div class="reviewer-details">
-                                    <h4 class="reviewer-name">Michael Chen</h4>
+                                    <!-- <h4 class="reviewer-name">Michael Chen</h4> -->
+                                     <h4 class="reviewer-name">Aniket Surve</h4>
                                     <p class="reviewer-event">
                                         Corporate Event
                                     </p>
@@ -1493,7 +1602,8 @@ aria-describedby="mobile-banner-description"
                                     <i class="pi pi-user"></i>
                                 </div>
                                 <div class="reviewer-details">
-                                    <h4 class="reviewer-name">Lisa Park</h4>
+                                    <!-- <h4 class="reviewer-name">Lisa Park</h4> -->
+                                     <h4 class="reviewer-name">Vishnnu Dhanmesh</h4>
                                     <p class="reviewer-event">Birthday Party</p>
                                 </div>
                             </div>
@@ -1527,7 +1637,8 @@ aria-describedby="mobile-banner-description"
                                     <i class="pi pi-user"></i>
                                 </div>
                                 <div class="reviewer-details">
-                                    <h4 class="reviewer-name">Robert Wilson</h4>
+                                    <!-- <h4 class="reviewer-name">Robert Wilson</h4> -->
+                                     <h4 class="reviewer-name">Vedant Helwatkar</h4>
                                     <p class="reviewer-event">Conference</p>
                                 </div>
                             </div>

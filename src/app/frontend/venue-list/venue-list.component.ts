@@ -198,6 +198,50 @@ clearAIResults() {
         // Example: Navigate to filtered results or apply filters
         // this.router.navigate(['/venues'], { queryParams: { category: category } });
     }
+
+    filterByCity(city: string) {
+        // Navigate to city-specific venue pages
+        const cityUrls: { [key: string]: string } = {
+            'mumbai': '/banquet-halls/wedding/mumbai',
+            'thane': '/banquet-halls/wedding/thane',
+            'nashik': '/banquet-halls/wedding/nashik',
+            'pune': '/banquet-halls/wedding/pune',
+            'bhiwandi': '/banquet-halls/wedding/bhiwandi',
+            'ratnagiri': '/banquet-halls/wedding/ratnagiri',
+            'lonavala': '/banquet-halls/wedding/lonavala'
+        };
+
+        const targetUrl = cityUrls[city.toLowerCase()];
+        if (targetUrl) {
+            console.log('Navigating to city page:', city, targetUrl);
+            this.router.navigate([targetUrl]);
+        } else {
+            console.log('City not found:', city);
+            // Fallback to general venues page with city filter
+            this.router.navigate(['/venues'], { queryParams: { city: city } });
+        }
+    }
+
+    // Subarea filtering method
+    filterBySubarea(subarea: string) {
+        // Navigate to subarea-specific venue pages within Mumbai
+        const subareaUrls: { [key: string]: string } = {
+            'powai': '/banquet-halls/wedding/mumbai/powai',
+            'andheri-east': '/banquet-halls/wedding/mumbai/andheri-east',
+            'goregaon': '/banquet-halls/wedding/mumbai/goregaon'
+        };
+
+        const targetUrl = subareaUrls[subarea.toLowerCase()];
+        if (targetUrl) {
+            console.log('Navigating to subarea page:', subarea, targetUrl);
+            this.router.navigate([targetUrl]);
+        } else {
+            console.log('Subarea not found:', subarea);
+            // Fallback to Mumbai venues page with subarea filter
+            this.router.navigate(['/banquet-halls/wedding/mumbai'], { queryParams: { subarea: subarea } });
+        }
+    }
+
     // images: any[] | undefined;
     vendorSelection: boolean | undefined;
     public oldUser: any = {};
