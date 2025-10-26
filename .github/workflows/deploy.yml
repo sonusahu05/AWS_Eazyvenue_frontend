@@ -111,8 +111,8 @@ jobs:
               name: 'eazyvenue-frontend-ssr',
               script: 'dist/freya-ng/server/main.js',
               cwd: '/home/ubuntu/aws/eazyvenue-frontend',
-              instances: 2,
-              exec_mode: 'cluster',
+              instances: 1,
+              exec_mode: 'fork',
               env: {
                 NODE_ENV: 'production',
                 PORT: 4000
