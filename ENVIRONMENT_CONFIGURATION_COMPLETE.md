@@ -55,7 +55,7 @@ git push origin main
 ## 🏗️ **Server Architecture**
 
 ```
-AWS EC2 (13.61.182.152)
+AWS EC2 (13.53.126.243)
 ├── Nginx (Port 80/443)
 │   ├── eazyvenue.in → Frontend SSR (Port 4000)  [NEW]
 │   └── api.eazyvenue.in → Backend API (Port 3006) ✅

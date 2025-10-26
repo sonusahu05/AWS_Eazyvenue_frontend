@@ -20,273 +20,124 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          set -e
-          
-          # Function for error handling
-          handle_error() {
-            echo "❌ Error occurred in deployment. Checking logs..."
-            if [ -f "/home/ubuntu/aws/eazyvenue-frontend/logs/frontend-error.log" ]; then
-              echo "📜 Recent error logs:"
-              tail -20 /home/ubuntu/aws/eazyvenue-frontend/logs/frontend-error.log
-            fi
-            exit 1
-          }
-          
-          # Set error trap
-          trap 'handle_error' ERR
-          
-          echo "🚀 Starting Eazyvenue Frontend Deployment..."
-          
-          # Set deployment directory
+          set -euo pipefail
           DEPLOY_DIR="/home/ubuntu/aws/eazyvenue-frontend"
           REPO_URL="https://${{ secrets.ACCESS_TOKEN }}@github.com/sonusahu05/AWS_Eazyvenue_frontend.git"
-          
-          echo "Deploy directory: $DEPLOY_DIR"
-          
-          # Create deployment directory if it doesn't exist
+
+          echo "🚀 Starting cost-efficient frontend deployment..."
+
+          # Ensure directories and permissions
           mkdir -p /home/ubuntu/aws
-          
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/aws || true
+
+          # Clean old backups to save disk space
+          find /home/ubuntu/aws -maxdepth 1 -type d -name "*_backup_*" -mtime +7 -exec rm -rf {} \; || true
+
           # Clone or update repository
-          echo "📥 Cloning repository..."
-          if [ -d "$DEPLOY_DIR" ]; then
-            cd $DEPLOY_DIR
-            echo "🧹 Cleaning working directory..."
-            git reset --hard HEAD
-            git clean -fd
-            git fetch origin main
-            git reset --hard origin/main
+          if [ -d "$DEPLOY_DIR/.git" ]; then
+            echo "📥 Updating repository..."
+            cd "$DEPLOY_DIR"
+            git fetch origin main || true
+            git reset --hard origin/main || true
           else
-            git clone $REPO_URL $DEPLOY_DIR
-            cd $DEPLOY_DIR
+            echo "📥 Cloning fresh repository..."
+            rm -rf "$DEPLOY_DIR"
+            git clone --depth=1 --branch main "$REPO_URL" "$DEPLOY_DIR"
           fi
-          
-          # Install Node.js 18 if not already installed
-          if ! node --version | grep -q "v18"; then
+
+          cd "$DEPLOY_DIR"
+
+          # Install Node.js 18 if not already installed (but skip if already present)
+          if ! node --version 2>/dev/null | grep -q "v18"; then
             echo "📦 Installing Node.js 18..."
             curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
             sudo apt-get install -y nodejs
-            
-            # Downgrade npm to version 7 for Angular 12 compatibility
-            echo "📦 Downgrading npm to version 7 for Angular 12 compatibility..."
             sudo npm install -g npm@7
           fi
-          
-          # Verify versions
-          echo "Node version: $(node --version)"
-          echo "NPM version: $(npm --version)"
-          
-          # Install dependencies
+
+          echo "Node: $(node --version), NPM: $(npm --version)"
+
+          # Install dependencies efficiently
           echo "📦 Installing dependencies..."
-          
-          # Clean npm cache and remove yarn lock to avoid conflicts (keep package-lock.json for npm ci)
           npm cache clean --force
           rm -f yarn.lock
-          
-          # Install with legacy peer deps and additional flags for compatibility
+
           npm ci --legacy-peer-deps --no-audit --no-fund --prefer-offline || {
-            echo "❌ npm ci failed, trying npm install instead..."
+            echo "⚠️ npm ci failed, trying npm install..."
             rm -rf node_modules 
             npm install --legacy-peer-deps --no-audit --no-fund --prefer-offline
           }
-          
-          # Build the application for production with SSR
+
+          # Build with optimized memory settings
           echo "🏗️ Building application..."
-          
-          # Set Node options for Angular 12 compatibility
-          export NODE_OPTIONS="--max-old-space-size=8192 --openssl-legacy-provider"
-          
+          export NODE_OPTIONS="--max-old-space-size=4096 --openssl-legacy-provider"
           npm run build:ssr
-          
-          # Install PM2 globally if not already installed
-          if ! command -v pm2 &> /dev/null; then
-            echo "📦 Installing PM2..."
+
+          # Install PM2 if missing
+          if ! command -v pm2 &>/dev/null; then
             sudo npm install -g pm2
           fi
-          
-          # Create PM2 ecosystem configuration
+
+          # Clean old PM2 processes
+          echo "🧹 Cleaning old PM2 processes..."
+          pm2 delete eazyvenue-frontend-ssr 2>/dev/null || true
+
+          # Create cost-efficient PM2 config (single instance)
           echo "⚙️ Creating PM2 configuration..."
-          cat > ecosystem.config.js << 'EOF'
+          cat > ecosystem.config.js <<'EOF'
           module.exports = {
             apps: [{
               name: 'eazyvenue-frontend-ssr',
               script: 'dist/freya-ng/server/main.js',
               cwd: '/home/ubuntu/aws/eazyvenue-frontend',
-              instances: 2,
-              exec_mode: 'cluster',
+              instances: 1,
+              exec_mode: 'fork',
+              max_memory_restart: '600M',
+              log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+              combine_logs: true,
+              error_file: 'logs/frontend-error.log',
+              out_file: 'logs/frontend-out.log',
+              autorestart: true,
               env: {
                 NODE_ENV: 'production',
                 PORT: 4000
-              },
-              error_file: 'logs/frontend-error.log',
-              out_file: 'logs/frontend-out.log',
-              log_file: 'logs/frontend-combined.log',
-              time: true,
-              max_memory_restart: '500M'
+              }
             }]
           };
           EOF
-          
+
           # Create logs directory
           mkdir -p logs
-          
-          # Install and configure Nginx if not already configured for frontend
-          echo "🔧 Configuring Nginx..."
-          sudo apt-get update
-          sudo apt-get install -y nginx
-          
-          # Create Nginx configuration for frontend
-          sudo tee /etc/nginx/sites-available/eazyvenue-frontend << 'EOF'
-          server {
-              listen 80;
-              server_name eazyvenue.in www.eazyvenue.in;
-              
-              # Redirect HTTP to HTTPS
-              return 301 https://$server_name$request_uri;
-          }
-          
-          server {
-              listen 443 ssl http2;
-              server_name eazyvenue.in www.eazyvenue.in;
-              
-              # SSL certificates (will be configured by certbot)
-              ssl_certificate /etc/letsencrypt/live/eazyvenue.in/fullchain.pem;
-              ssl_certificate_key /etc/letsencrypt/live/eazyvenue.in/privkey.pem;
-              
-              # SSL configuration
-              ssl_protocols TLSv1.2 TLSv1.3;
-              ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384;
-              ssl_prefer_server_ciphers off;
-              ssl_session_cache shared:SSL:10m;
-              ssl_session_timeout 10m;
-              
-              # Security headers
-              add_header X-Frame-Options "SAMEORIGIN" always;
-              add_header X-XSS-Protection "1; mode=block" always;
-              add_header X-Content-Type-Options "nosniff" always;
-              add_header Referrer-Policy "no-referrer-when-downgrade" always;
-              # add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
-              add_header Content-Security-Policy "default-src 'self' https: data: blob; script-src 'self' https: 'unsafe-inline'; style-src 'self' https: 'unsafe-inline'" always;
-              add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-              
-              # Gzip compression
-              gzip on;
-              gzip_vary on;
-              gzip_min_length 1024;
-              gzip_proxied expired no-cache no-store private auth;
-              gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
-              
-              # Proxy to Angular Universal SSR
-              location / {
-                  proxy_pass http://localhost:4000;
-                  proxy_http_version 1.1;
-                  proxy_set_header Upgrade $http_upgrade;
-                  proxy_set_header Connection 'upgrade';
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-                  proxy_cache_bypass $http_upgrade;
-                  
-                  # Timeouts
-                  proxy_connect_timeout 60s;
-                  proxy_send_timeout 60s;
-                  proxy_read_timeout 60s;
-              }
-              
-              # Static assets caching
-              location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
-                  proxy_pass http://localhost:4000;
-                  proxy_http_version 1.1;
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-                  
-                  # Cache static assets
-                  expires 1y;
-                  add_header Cache-Control "public, immutable";
-              }
-              
-              # Health check endpoint
-              location /health {
-                  proxy_pass http://localhost:4000/health;
-                  proxy_http_version 1.1;
-                  proxy_set_header Host $host;
-                  access_log off;
-              }
-          }
-          EOF
-          
-          # Enable the site
-          sudo ln -sf /etc/nginx/sites-available/eazyvenue-frontend /etc/nginx/sites-enabled/
-          
-          # Test Nginx configuration
-          sudo nginx -t
-          
-          # 🔒 Set up SSL certificate for eazyvenue.in
-          echo "🔒 Setting up SSL certificate..."
-          
-          # Install certbot if not already installed
-          sudo snap install core; sudo snap refresh core
-          sudo snap install --classic certbot
-          sudo ln -sf /snap/bin/certbot /usr/bin/certbot
-          
-          # Get SSL certificate for eazyvenue.in
-          sudo certbot --nginx -d eazyvenue.in -d www.eazyvenue.in --non-interactive --agree-tos --email admin@eazyvenue.in || echo "Certificate already exists or other certbot issue"
-          
-          # Reload Nginx with new configuration
-          sudo systemctl reload nginx
-          
-          # Stop existing frontend PM2 processes
-          echo "🚀 Starting application with PM2..."
-          pm2 delete eazyvenue-frontend-ssr 2>/dev/null || true
-          
-          # Verify the built server file exists
+
+          # Verify build exists
           if [ ! -f "dist/freya-ng/server/main.js" ]; then
-            echo "❌ Error: Server build file not found at dist/freya-ng/server/main.js"
-            echo "📁 Checking dist directory structure..."
-            find dist -type f -name "*.js" | head -10
+            echo "❌ Error: Server build file not found!"
+            find dist -type f -name "*.js" | head -10 || true
             exit 1
           fi
-          
-          # Start the application with PM2
+
+          # Start application
+          echo "🚀 Starting single PM2 instance..."
           pm2 start ecosystem.config.js
-          
-          # Wait a bit for PM2 to start
-          sleep 5
-          
-          # Check if PM2 started successfully
-          if pm2 list | grep -q "eazyvenue-frontend-ssr.*online"; then
-            echo "✅ PM2 started successfully"
-          else
-            echo "❌ PM2 failed to start. Checking logs..."
-            pm2 logs eazyvenue-frontend-ssr --lines 50
-            exit 1
-          fi
-          
           pm2 save
-          
-          # Set up PM2 to start on boot
-          pm2 startup systemd -u ubuntu --hp /home/ubuntu 2>/dev/null || true
-          
-          # Wait for application to initialize
-          echo "⏳ Waiting for application to initialize..."
-          sleep 10
-          
+          pm2 startup systemd -u ubuntu --hp /home/ubuntu || true
+
+          # Wait for startup
+          echo "⏳ Waiting for application to start..."
+          sleep 8
+
           # Verify deployment
           echo "🔍 Verifying deployment..."
-          
-          echo "PM2 Status:"
-          pm2 status
-          
-          echo "Testing local frontend server:"
-          curl -f http://localhost:4000 && echo "✅ Frontend server responding" || echo "⚠️ Frontend server not responding"
-          
-          echo "Testing HTTPS frontend:"
-          curl -f https://eazyvenue.in && echo "✅ HTTPS frontend working" || echo "⚠️ HTTPS frontend not responding"
-          
-          echo "🎉 Frontend deployment completed successfully!"
-          echo "==============================================="
-          echo "✅ Frontend URL: https://eazyvenue.in"
-          echo "✅ Backend API: https://api.eazyvenue.in"
-          echo "==============================================="
+          pm2 list
+
+          # Test application
+          echo "🔍 Testing frontend server..."
+          if curl -fsS --max-time 10 http://localhost:4000 >/dev/null; then
+            echo "✅ Frontend server responding on localhost:4000"
+          else
+            echo "❌ Frontend server not responding, checking logs..."
+            pm2 logs eazyvenue-frontend-ssr --lines 20 --nostream || true
+            exit 1
+          fi
+
+          echo "✅ Cost-efficient frontend deployment completed!"

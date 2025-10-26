@@ -41,7 +41,7 @@ frontEnd: { domain: 'https://eazyvenue.in', picPath: 'https://api.eazyvenue.in' 
 
 ### **Step 2: Create GitHub Actions Workflow**
 - Set up automated deployment similar to backend
-- Deploy to same EC2 server (13.61.182.152)
+- Deploy to same EC2 server (13.53.126.243)
 - Build Angular SSR application
 - Deploy to `/home/ubuntu/aws/eazyvenue-frontend`
 
@@ -61,7 +61,7 @@ frontEnd: { domain: 'https://eazyvenue.in', picPath: 'https://api.eazyvenue.in' 
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                 AWS EC2 (13.61.182.152)                │
+│                 AWS EC2 (13.53.126.243)                │
 ├─────────────────────────────────────────────────────────┤
 │  Nginx (Port 80/443)                                   │
 │  ├── eazyvenue.in → Frontend (Port 4000)               │

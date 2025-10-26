@@ -21,7 +21,7 @@ Navigate to: `https://github.com/sonusahu05/AWS_Eazyvenue_frontend/settings/secr
 
 #### **🖥️ EC2_HOST**
 - **Name**: `EC2_HOST`
-- **Value**: `13.61.182.152`
+- **Value**: `13.53.126.243`
 
 #### **👤 EC2_USERNAME**
 - **Name**: `EC2_USERNAME`
@@ -48,7 +48,7 @@ Navigate to: `https://github.com/sonusahu05/AWS_Eazyvenue_frontend/settings/secr
 ```bash
 # If you have GitHub CLI installed
 gh secret set ACCESS_TOKEN --body 'your_github_token_here' --repo sonusahu05/AWS_Eazyvenue_frontend
-gh secret set EC2_HOST --body '13.61.182.152' --repo sonusahu05/AWS_Eazyvenue_frontend
+gh secret set EC2_HOST --body '13.53.126.243' --repo sonusahu05/AWS_Eazyvenue_frontend
 gh secret set EC2_USERNAME --body 'ubuntu' --repo sonusahu05/AWS_Eazyvenue_frontend
 gh secret set EC2_SSH_KEY --body "$(cat '/Users/sonusahu/Desktop/AWS Eazyvenue/General/eazyvenue-key-new.pem')" --repo sonusahu05/AWS_Eazyvenue_frontend
 ```
@@ -70,7 +70,7 @@ Copy the entire output (including `-----BEGIN RSA PRIVATE KEY-----` and `-----EN
 
 You should have these 4 secrets in your frontend repository:
 - ✅ ACCESS_TOKEN
-- ✅ EC2_HOST (13.61.182.152)
+- ✅ EC2_HOST (13.53.126.243)
 - ✅ EC2_USERNAME (ubuntu)
 - ✅ EC2_SSH_KEY (your private key content)
 
