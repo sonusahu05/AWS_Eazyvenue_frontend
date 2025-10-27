@@ -169,10 +169,10 @@ export class VenueDetailsComponent implements OnInit, OnDestroy {
     'bar': 'bar-icon.svg'
   };
 
-//   getAmenityIcon(amenityName: string): string {
-//     const iconName = this.amenityIcons[amenityName.toLowerCase()] || 'default-amenity.png';
-//     return `assets/images/amenities/${iconName}`;
-//   }
+  getAmenityIcon(amenityName: string): string {
+    const iconName = this.amenityIcons[amenityName.toLowerCase()] || 'default-amenity.png';
+    return `assets/images/amenities/${iconName}`;
+  }
 
   downloadMenuPDF() {
     if (this.venueDetails?.menuPDF?.path) {
@@ -2748,364 +2748,55 @@ loadMoreGoogleReviews(): void {
     }
 
     getVenueDetails() {
-        this.venueService.getVenueDetailsByMeta(this.metaUrl).subscribe(
-            // this.venueService.getVenueDetails(this.id).subscribe(
-            async (data) => {
-                console.log(data);
+    this.venueService.getVenueDetailsByMeta(this.metaUrl).subscribe(
+        (data: any) => {
+            // 1. Assign essential data (assuming you fixed the path, e.g., data.data.venue)
+            this.venueDetails = data; 
+            this.id = this.venueDetails?.id || this.activeRoute.snapshot.params.id; // Ensure ID is set
 
-                this.venueDetails = data;
-                
-                setTimeout(() => this.loadGoogleReviews(), 100);
-                this.title.setTitle(
-                    this.venueDetails.name + ' - ' + 'Eazyvenue.com'
-                );
-                this.meta.addTag({
-                    name: 'title',
-                    content: this.venueDetails.name + ' - ' + 'Eazyvenue.com',
-                });
-                this.meta.addTag({
-                    name: 'description',
-                    content: this.venueDetails.metaDescription,
-                });
-                this.meta.addTag({
-                    name: 'keywords',
-                    content: this.venueDetails.metaKeywords,
-                });
-                this.meta.addTag({ name: 'robots', content: 'index, follow' });
+            // 2. Load immediate sync dependencies
+            this.getCategoryDetails();
+            this.getSlots();
+            this.getCategoryBySlug();
 
-                const localBusinessSchema = {
-                    '@context': 'http://schema.org/',
-                    '@type': 'LocalBusiness',
-                    '@id': location.href,
-                    name: this.venueDetails.name + ' - ' + 'Eazyvenue.com',
-                    description: this.venueDetails.metaDescription,
-                    image: [this.venueDetails.venueImage[0]?.venue_image_src],
-                    address: {
-                        '@type': 'PostalAddress',
-                        // "streetAddress": "Near thane,Mumbai, Maharashtra",
-                        streetAddress:
-                            'Near ' +
-                            this.venueDetails.subarea +
-                            ', ' +
-                            this.venueDetails.cityname +
-                            ',' +
-                            this.venueDetails.statename +
-                            '',
-                        // "addressLocality": "Near thane, Mumbai, Maharashtra",
-                        addressLocality:
-                            'Near ' +
-                            this.venueDetails.subarea +
-                            ', ' +
-                            this.venueDetails.cityname +
-                            ',' +
-                            this.venueDetails.statename +
-                            '',
-                        // "addressRegion": "Mumbai",
-                        addressRegion: this.venueDetails.cityname,
-                        // "postalCode": "400601",
-                        postalCode: this.venueDetails.zipcode,
-                        addressCountry: 'India',
-                    },
-                    aggregateRating: {
-                        '@type': 'AggregateRating',
-                        ratingValue: this.venueDetails.googleRating,
-                        reviewCount: '1206',
-                        bestRating: '5',
-                        worstRating: '1.2',
-                    },
-                    priceRange:
-                        'Menu starts from Rs.' +
-                        this.venueDetails.foodMenuType.veg_food[0].value +
-                        ' to Rs.' +
-                        this.venueDetails.foodMenuType.veg_food[
-                            this.venueDetails.foodMenuType.veg_food.length - 1
-                        ].value,
-                    telephone: '+91 93720 91300',
-                };
-                const localBusinessScript = document.createElement('script');
-                localBusinessScript.type = 'application/ld+json';
-                localBusinessScript.text = JSON.stringify(localBusinessSchema);
-                document.body.appendChild(localBusinessScript);
+            // 3. Set the initial successful loading state IMMEDIATELY
+            this.loading = false;
+            this.contentReady = true;
 
-                const itemListSchema = {
-                    itemListElement: [
-                        {
-                            item: 'https://eazyvenue.com/',
-                            '@type': 'ListItem',
-                            name: 'Home',
-                            position: '1',
-                        },
-                        {
-                            item: 'https://eazyvenue.com/banquet-halls/',
-                            '@type': 'ListItem',
-                            name: 'Venues',
-                            position: '2',
-                        },
-                        {
-                            item: location.href,
-                            '@type': 'ListItem',
-                            name: this.venueDetails.name,
-                            position: '3',
-                        },
-                    ],
-                    '@type': 'BreadcrumbList',
-                    '@context': 'http://schema.org',
-                };
+            // 4. Start all secondary, non-critical tasks as separate promises/observables that do *not* block rendering
+            this.initializeMapNonBlocking();
+            this.getSubareas(); // This can now run asynchronously
+            this.getCities(); // This can now run asynchronously
+            this.loadNearbyVendors(); 
 
-                const itemListScript = document.createElement('script');
-                itemListScript.type = 'application/ld+json';
-                itemListScript.text = JSON.stringify(itemListSchema);
-                document.body.appendChild(itemListScript);
-
-                this.selectedVenueList = [data];
-                this.cityName = this.venueDetails.cityname.toLowerCase();
-                var googleMapSource =
-                    'https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=' +
-                    this.cityName +
-                    '&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed';
-                // window.location.replace(this.googleMapSource);
-                //this.googleMapSource.toString();
-                this.tmpVenueList.forEach((element) => {
-                    if (element.venueVideo !== '') {
-                        element.venueImage.push({ video: element.venueVideo });
-                    }
-                });
-                this.finalVenueList = [...this.venueList, ...this.tmpVenueList];
-                this.googleMapSource =
-                    this.sanitizer.bypassSecurityTrustResourceUrl(
-                        googleMapSource
-                    );
-                this.googleMapSource =
-                    this.googleMapSource.changingThisBreaksApplicationSecurity;
-                // this.url = this.googleMapSource.changingThisBreaksApplicationSecurity;
-                let swimmingObj = {
-                    title: 'Swimming Pool',
-                    details: this.venueDetails.swimmingdetails,
-                    icon: 'assets/images/category-icons/pool_party.svg',
-                };
-                let parkingObj = {
-                    title: 'Parking',
-                    details: this.venueDetails.parkingdetails,
-                    icon: 'assets/images/category-icons/parking-icon.svg',
-                };
-                let acObj = {
-                    title: 'A/C',
-                    details: this.venueDetails.acdetails,
-                    icon: 'assets/images/category-icons/ac-icon.svg',
-                };
-                let roomsObj = {
-                    title: 'Rooms',
-                    details: this.venueDetails.capacityDescription,
-                    icon: 'assets/images/category-icons/rooms-icons.svg',
-                };
-                let powerBackupObj = {
-                    title: 'Power Backup',
-                    details: this.venueDetails.powerbackupdetails,
-                    icon: 'assets/images/category-icons/power_backup.svg',
-                };
-                let djObj = {
-                    title: 'DJ',
-                    details: this.venueDetails.djdetails,
-                    icon: 'assets/images/category-icons/dj-music.svg',
-                };
-                let entertainmentLicenseObj = {
-                    title: 'Entertainment License',
-                    details: this.venueDetails.entertainmentlicensedetails,
-                    icon: 'assets/images/category-icons/entertainment.svg',
-                };
-                this.venueImageNumVisible = Number(
-                    this.venueDetails.venueImage.length
-                );
-                if (this.venueImageNumVisible < 8) {
-                    let hideThumbnailClass =
-                        this.el.nativeElement.querySelector(
-                            '.section-venuelisting-details'
-                        );
-                    //showp2Table.classList.remove('hide-columns');
-                }
-                if (this.venueImageNumVisible > 8) {
-                    this.venueImageNumVisible = Number(2);
-                }
-                if (this.venueDetails.isSwimmingPool == true) {
-                    this.facilitiesArray.push(swimmingObj);
-                }
-                if (this.venueDetails.isParking == true) {
-                    this.facilitiesArray.push(parkingObj);
-                }
-                if (this.venueDetails.isAC == true) {
-                    this.facilitiesArray.push(acObj);
-                }
-                if (this.venueDetails.isGreenRooms == true) {
-                    this.facilitiesArray.push(roomsObj);
-                }
-                if (this.venueDetails.isPowerBackup == true) {
-                    this.facilitiesArray.push(powerBackupObj);
-                }
-                if (this.venueDetails.isDJ == true) {
-                    this.facilitiesArray.push(djObj);
-                }
-                if (this.venueDetails.isEntertainmentLicense == true) {
-                    this.facilitiesArray.push(entertainmentLicenseObj);
-                }
-                if (
-                    this.venueDetails.decor1Price != undefined ||
-                    this.venueDetails.decor1Price != ''
-                ) {
-                    let decor1img = '';
-                    if (this.venueDetails.decor1Image.length > 0) {
-                        // if (this.venueDetails.decor1Image[0].venue_image_src) {
-                        decor1img =
-                            this.venueDetails.decor1Image[0].venue_image_src;
-                        this.decorArray.push({
-                            name: 'Basic',
-                            price: this.venueDetails.decor1Price,
-                            image: '/assets/images/icons/Basic.jpg',
-                            selected: false,
-                            decorImages: this.venueDetails.decor1Image,
-                        });
-                        // }
-                    }
-                }
-                if (
-                    this.venueDetails.decor2Price != undefined ||
-                    this.venueDetails.decor2Price != ''
-                ) {
-                    let decor2img = '';
-                    // console.log(this.venueDetails.decor2Image[0].venue_image_src)
-                    if (this.venueDetails.decor2Image.length > 0) {
-                        // if (this.venueDetails.decor2Image[0].venue_image_src) {
-                        decor2img =
-                            this.venueDetails.decor2Image[0].venue_image_src;
-                        this.decorArray.push({
-                            name: 'Standard',
-                            price: this.venueDetails.decor2Price,
-                            image: '/assets/images/icons/Standard.jpg',
-                            selected: false,
-                            decorImages: this.venueDetails.decor2Image,
-                        });
-                        // }
-                    }
-                }
-                if (
-                    this.venueDetails.decor3Price != undefined ||
-                    this.venueDetails.decor3Price != ''
-                ) {
-                    let decor3img = '';
-                    if (this.venueDetails.decor3Image.length > 0) {
-                        // if (this.venueDetails.decor3Image[0].venue_image_src) {
-                        decor3img =
-                            this.venueDetails.decor3Image[0].venue_image_src;
-                        this.decorArray.push({
-                            name: 'Premium',
-                            price: this.venueDetails.decor3Price,
-                            image: '/assets/images/icons/Premium.jpg',
-                            selected: false,
-                            decorImages: this.venueDetails.decor3Image,
-                        });
-                        // }
-                    }
-                }
-                this.allFoodMenuPriceArray = [];
-                if (this.venueDetails.foodMenuType) {
-                    //this.venueDetails.foodMenuType.forEach(fElement => {
-                    if (this.venueDetails.foodMenuType.jainFood !== undefined) {
-                        if (
-                            this.venueDetails.foodMenuType.jainFood.length > 0
-                        ) {
-                            this.venueDetails.foodMenuType.jainFood.forEach(
-                                (jfElement) => {
-                                    if (jfElement.value > 0) {
-                                        this.allFoodMenuPriceArray.push(
-                                            jfElement.value
-                                        );
-                                    }
-                                }
-                            );
-                        }
-                    }
-                    if (this.venueDetails.foodMenuType.mixFood !== undefined) {
-                        if (this.venueDetails.foodMenuType.mixFood.length > 0) {
-                            this.venueDetails.foodMenuType.mixFood.forEach(
-                                (mfElement) => {
-                                    if (mfElement.value > 0) {
-                                        this.allFoodMenuPriceArray.push(
-                                            mfElement.value
-                                        );
-                                    }
-                                }
-                            );
-                        }
-                    }
-                    if (this.venueDetails.foodMenuType.non_veg !== undefined) {
-                        if (this.venueDetails.foodMenuType.non_veg.length > 0) {
-                            this.venueDetails.foodMenuType.non_veg.forEach(
-                                (nvElement) => {
-                                    if (nvElement.value > 0) {
-                                        this.allFoodMenuPriceArray.push(
-                                            nvElement.value
-                                        );
-                                    }
-                                }
-                            );
-                        }
-                    }
-                    if (this.venueDetails.foodMenuType.veg_food !== undefined) {
-                        if (
-                            this.venueDetails.foodMenuType.veg_food.length > 0
-                        ) {
-                            this.venueDetails.foodMenuType.veg_food.forEach(
-                                (vElement) => {
-                                    if (vElement.value > 0) {
-                                        this.allFoodMenuPriceArray.push(
-                                            vElement.value
-                                        );
-                                    }
-                                }
-                            );
-                        }
-                    }
-                    let minPrice = 0;
-                    if (this.allFoodMenuPriceArray.length > 0) {
-                        minPrice = Math.min(...this.allFoodMenuPriceArray);
-                    }
-                    // if (this.capacity > 0) {
-                    this.venueDetails['minVenuePrice'] = minPrice;
-                    // }
-
-                    // });
-                }
-                this.venueCapacity = this.venueDetails.capacity;
-                this.venuePrice = this.venueDetails.venuePrice;
-                this.bookingPrice = this.venueDetails.bookingPrice;
-                this.foodMenuTypeArray = this.venueDetails.foodMenuType;
-                this.totalPeopleBooked = this.venueDetails.peopleBooked;
-                this.currentViews = this.venueDetails.views;
-                
-                // Load booked dates for calendar highlighting
-                this.loadVenueBookedDates();
-                
-                this.onClickEventDate(this.selectedStartDate);
-                this.getCategoryDetails();
-                this.getSlots();
-                this.getCategoryBySlug();
-                await this.getSubareas();
-                await this.getCities();
-                await this.initializeMap();
-                if (!this.isLoggedIn) {
-                    setTimeout(() => {
-                        this.numberPopup = true;
-                        this.otpPopup = false;
-                        this.otpthankyouPopup = false;
-                    }, 4000);
-                }
-                setTimeout(() => this.getSimilarVenues(), 100);
-                this.checkAndStartEnquiryTimer();
-            },
-            (err) => {
-                this.errorMessage = err.error.message;
+            // 5. Handle UI popups after a slight delay
+            if (!this.isLoggedIn) {
+                setTimeout(() => { this.numberPopup = true; }, 4000);
             }
-        );
+        },
+        (err) => {
+            console.error('Error loading venue details:', err);
+            this.errorMessage = err.error?.message || 'Failed to load venue.';
+            // Set final state even on error to dismiss the loading overlay
+            this.loading = false;
+            this.contentReady = true;
+        }
+    );
+}
+
+// Create a non-blocking map initializer
+async initializeMapNonBlocking() {
+    try {
+        await this.initializeMap(); // The error is handled inside initializeMap
+        this.loadVenueBookedDates();
+        this.onClickEventDate(this.selectedStartDate);
+        setTimeout(() => this.getSimilarVenues(), 100);
+        this.checkAndStartEnquiryTimer();
+    } catch(e) {
+        console.error('Non-critical async initialization failed:', e);
+        // This failure does NOT prevent the main view from rendering
     }
+}
 
     getUserDetails(id: string) {
         this.userService.getUserDetails(id).subscribe(
@@ -3716,7 +3407,10 @@ loadMoreGoogleReviews(): void {
         if (this.selectedEndDate === null) {
             endDate = moment(this.selectedStartDate).format('DD/MM/YYYY');
         } else {
-            this.datePicker.overlayVisible = false;
+            // FIX: Use an explicit if-check to ensure this.datePicker is defined
+            if (this.datePicker) { // <--- Added this check
+                this.datePicker.overlayVisible = false; // <--- This line is now safe
+            }
             endDate = moment(this.selectedEndDate).format('DD/MM/YYYY');
         }
         
@@ -3955,43 +3649,72 @@ loadMoreGoogleReviews(): void {
         this.filteredList = filtered;
     }
     async getSubareas() {
-        let query = '?filterByDisable=false&filterByStatus=true';
+    let query = '?filterByDisable=false&filterByStatus=true';
+    
+    // 🛑 CRITICAL FIX: Wrap in Promise to support 'await' and prevent blocking execution on error
+    return new Promise<void>((resolve, reject) => {
         this.subareaService.getSubareaList(query).subscribe(
-            (data) => {
-                this.subareaList = data.data.items;
-                this.selectedSubareaData = [];
-                this.subareaList.forEach((element) => {
-                    if (this.filterSubareaIds != undefined) {
-                        if (this.filterSubareaIds.length > 0) {
-                            this.filterSubareaIds.forEach((sElement) => {
-                                if (sElement === element.id) {
-                                    this.selectedSubareaData.push(element);
-                                    if (this.selectedFilter === undefined) {
-                                        this.selectedFilter = [element];
-                                    } else {
-                                        this.selectedFilter.push(element);
+            (data: any) => {
+                // 🛑 CRITICAL SAFETY CHECK: Ensure data.data.items is present and an array
+                const subareaItems = data?.data?.items;
+                
+                if (subareaItems && Array.isArray(subareaItems)) {
+                    this.subareaList = subareaItems;
+                    this.selectedSubareaData = [];
+                    
+                    this.subareaList.forEach((element) => {
+                        if (this.filterSubareaIds != undefined) {
+                            if (this.filterSubareaIds.length > 0) {
+                                this.filterSubareaIds.forEach((sElement) => {
+                                    if (sElement === element.id) {
+                                        this.selectedSubareaData.push(element);
+                                        if (this.selectedFilter === undefined) {
+                                            this.selectedFilter = [element];
+                                        } else {
+                                            this.selectedFilter.push(element);
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+                    resolve(); // ✅ Resolve the promise on success
+                } else {
+                    this.subareaList = [];
+                    this.selectedSubareaData = [];
+                    console.warn('Subarea API succeeded but returned empty or malformed data.');
+                    resolve(); // ✅ Resolve even on empty data to continue
+                }
             },
             (err) => {
-                this.errorMessage = err.error.message;
+                this.errorMessage = err.error?.message || 'Error fetching subareas.';
+                console.error('Error in getSubareas:', err);
+                this.subareaList = [];
+                this.selectedSubareaData = [];
+                resolve(); // ✅ CRITICAL: Resolve on error to continue flow and dismiss loader
             }
         );
-    }
+    });
+}
     async getCities() {
-        let query = '?filterByDisable=false&filterByStatus=true';
+    let query = '?filterByDisable=false&filterByStatus=true';
+
+    // 🛑 Wrap in Promise to support 'await' and prevent blocking execution 🛑
+    return new Promise<void>((resolve, reject) => {
         this.cityService.getcityList(query).subscribe(
-            (data) => {
-                this.cityList = data.data.items;
-                if (this.cityList.length > 0) {
-                    this.selectedFilter = [];
-                    this.cityList.forEach((element) => {
-                        if (this.filterCityIds !== undefined) {
-                            if (this.filterCityIds.length > 0) {
+            (data: any) => {
+                // 🛑 CRITICAL SAFETY CHECK: Ensure data.data.items is present and an array 🛑
+                const cityItems = data?.data?.items;
+                
+                if (cityItems && Array.isArray(cityItems)) {
+                    this.cityList = cityItems; // Safely assign the array
+                    
+                    if (this.cityList.length > 0) {
+                        this.selectedFilter = [];
+                        
+                        // Iteration 1 is now safe
+                        this.cityList.forEach((element) => {
+                            if (this.filterCityIds !== undefined && this.filterCityIds.length > 0) {
                                 this.filterCityIds.forEach((cElement) => {
                                     element.mode = 'city';
                                     if (cElement === element.id) {
@@ -4003,25 +3726,39 @@ loadMoreGoogleReviews(): void {
                                     }
                                 });
                             }
-                        }
-                    });
-                    this.selectedSubareaData.forEach((sElement) => {
-                        sElement.mode = 'subarea';
-                        this.selectedFilter.push(sElement);
-                    });
-                    if (this.selectedVenueList.length > 0) {
-                        this.selectedVenueList.forEach((vElement) => {
-                            vElement.mode = 'venue';
-                            this.selectedFilter.push(vElement);
                         });
+                        
+                        // Iteration 2 is now safe because selectedSubareaData is checked via optional chaining
+                        this.selectedSubareaData?.forEach((sElement) => {
+                            sElement.mode = 'subarea';
+                            this.selectedFilter.push(sElement);
+                        });
+                        
+                        if (this.selectedVenueList.length > 0) {
+                            this.selectedVenueList.forEach((vElement) => {
+                                vElement.mode = 'venue';
+                                this.selectedFilter.push(vElement);
+                            });
+                        }
+                    } else {
+                        this.cityList = []; // Ensure it's an empty array even if API returns no results
                     }
+                    resolve(); // ✅ SUCCESS: Resolve the promise to continue flow
+                } else {
+                    this.cityList = [];
+                    console.warn('City list API succeeded but returned empty or malformed data.');
+                    resolve(); // ✅ Resolve even on empty data to continue
                 }
             },
             (err) => {
-                this.errorMessage = err.error.message;
+                this.errorMessage = err.error?.message || 'Error fetching cities.';
+                console.error('Error in getCities:', err);
+                this.cityList = [];
+                resolve(); // ✅ CRITICAL: Resolve on error to continue flow and dismiss loader
             }
         );
-    }
+    });
+}
 
     onClearResetAllData(event) {
         if (event.mode === 'venue') {
